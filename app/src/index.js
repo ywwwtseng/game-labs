@@ -1,38 +1,41 @@
-import SpriteSheet from '@/js/SpriteSheet';
-import { loadImage, loadLand } from '@/js/loaders';
-import TexturedGrass_PNG from '@/img/MiniWorldSprites/Ground/TexturedGrass.png';
-
-function drawBackground(background, context, sprites) {
-  background.ranges.forEach(([x1, x2, y1, y2]) => {
-    for (let x = x1; x < x2; ++x) {
-      for (let y = y1; y < y2; ++y) {
-        sprites.draw(background.tile, context, x * 16, y * 16);
-      }
-    }
-  });
-}
+import Compositor from '@/js/Compositor';
+import { loadLand } from '@/js/loaders';
+import { loadKanjiSprite, loadBackgroundSprites } from '@/js/sprites';
+import { createBackgroundLayer } from '@/js/layers';
 
 const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d');
 
+function createSpriteLayer(sprite, pos) {
+  return function drawSpriteLayer(context) {
+    sprite.draw('idle', context, pos.x, pos.y);
+  };
+}
 
+Promise.all([
+  loadKanjiSprite(),
+  loadBackgroundSprites(),
+  loadLand('1-1')
+]).then(([kanjiSprite, backgroundSprites, land]) => {
+  const comp = new Compositor();
 
-loadImage(TexturedGrass_PNG)
-  .then(image => {
-    const sprites = new SpriteSheet(image, 16, 16);
-    sprites.define('grass-4', 2, 1);
-    sprites.define('grass-3', 2, 0);
+  const backgroundLayer = createBackgroundLayer(land.backgrounds, backgroundSprites);
+  comp.layers.push(backgroundLayer);
 
-    loadLand('1-1')
-      .then(land => {
-        land.backgrounds.forEach(background => {
-          drawBackground(background, context, sprites)
-        });
-      });
+  const pos = {
+    x: 16,
+    y: 16,
+  }
 
-    for (let x = 0; x < 25; ++x) {
-      for (let y = 12; y < 14; ++y) {
-        sprites.draw('grass-3', context, x * 16, y * 16);
-      }
-    }
-  });
+  const spriteLayer = createSpriteLayer(kanjiSprite, pos);
+  comp.layers.push(spriteLayer);
+
+  function update() {
+    comp.draw(context);
+    pos.x +=2;
+    pos.y2 +=2
+    requestAnimationFrame(update);
+  }
+
+  update();
+});
