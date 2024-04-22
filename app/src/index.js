@@ -1,41 +1,46 @@
 import Compositor from '@/js/Compositor';
+import Timer from '@/js/Timer';
 import { loadLand } from '@/js/loaders';
-import { loadKanjiSprite, loadBackgroundSprites } from '@/js/sprites';
+import { createKanji } from '@/js/entities';
+import { loadBackgroundSprites } from '@/js/sprites';
 import { createBackgroundLayer } from '@/js/layers';
+import Entity from '@/js/Entity';
 
 const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d');
 
-function createSpriteLayer(sprite, pos) {
+function createSpriteLayer(entity) {
   return function drawSpriteLayer(context) {
-    sprite.draw('idle', context, pos.x, pos.y);
+    entity.draw(context);
   };
 }
 
 Promise.all([
-  loadKanjiSprite(),
+  createKanji(),
   loadBackgroundSprites(),
   loadLand('1-1')
-]).then(([kanjiSprite, backgroundSprites, land]) => {
+]).then(([kanji, backgroundSprites, land]) => {
   const comp = new Compositor();
 
   const backgroundLayer = createBackgroundLayer(land.backgrounds, backgroundSprites);
   comp.layers.push(backgroundLayer);
 
-  const pos = {
-    x: 16,
-    y: 16,
-  }
 
-  const spriteLayer = createSpriteLayer(kanjiSprite, pos);
+  const gravity = 2000;
+  kanji.pos.set(64, 180);
+  kanji.vel.set(200, -600);
+
+
+  const spriteLayer = createSpriteLayer(kanji);
   comp.layers.push(spriteLayer);
 
-  function update() {
+  const timer = new Timer(1/60);
+
+  timer.update = function update(deltaTime) {
+    kanji.update(deltaTime);
     comp.draw(context);
-    pos.x +=2;
-    pos.y2 +=2
-    requestAnimationFrame(update);
+    kanji.vel.y += gravity * deltaTime;
   }
 
-  update();
+  timer.start();
 });
