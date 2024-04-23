@@ -39,4 +39,8 @@ export default class SpriteSheet {
       y,
     );
   }
+
+  drawTile(name, context, x, y) {
+    this.draw(name, context, x * this.width, y * this.height);
+  }
 }

@@ -11,11 +11,11 @@ export function loadKanjiSprite() {
 }
 
 export function loadBackgroundSprites() {
-  return loadImage('/img/MiniWorldSprites/Ground/TexturedGrass.png')
+  return loadImage('/img/MiniWorldSprites/AllAssetsPreview.png')
     .then(image => {
       const sprites = new SpriteSheet(image, 16, 16);
-      sprites.defineTile('grass-4', 2, 1);
-      sprites.defineTile('grass-3', 2, 0);
+      sprites.defineTile('land', 10, 16);
+      sprites.defineTile('tree', 3, 15);
       return sprites;
     });
 }

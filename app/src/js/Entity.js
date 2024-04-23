@@ -6,7 +6,7 @@ export class Trait {
   }
 
   update() {
-    console.log('unhandled update call in Trait')
+    console.log('unhandled update call in Trait');
   }
 }
 

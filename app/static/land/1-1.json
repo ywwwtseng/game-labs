@@ -1,7 +1,7 @@
 {
   "backgrounds": [
     {
-      "tile": "grass-4",
+      "tile": "land",
       "ranges": [
         [
           0, 25,
@@ -10,7 +10,7 @@
       ]
     },
     {
-      "tile": "grass-3",
+      "tile": "tree",
       "ranges": [
         [
           0, 25,
