@@ -47,7 +47,21 @@ export function createCollisionLayer(land) {
   return function drawCollision(context) {
     context.strokeStyle = 'blue';
     resolvedTiles.forEach(({x, y}) => {
-      console.log('world', x, y);
+      context.beginPath();
+      context.rect(x * tileSize, y * tileSize, tileSize, tileSize);
+      context.stroke();
+    });
+
+    context.strokeStyle = 'red';
+    land.entities.forEach((entity) => {
+      context.beginPath();
+      context.rect(
+        entity.pos.x,
+        entity.pos.y,
+        entity.size.x,
+        entity.size.y
+      );
+      context.stroke();
     });
 
     resolvedTiles.length = 0;

@@ -1,5 +1,6 @@
 import Entity from '@/js/Entity';
-import Velocity from '@/js/traits/Velocity';
+import Go from '@/js/traits/Go';
+// import Velocity from '@/js/traits/Velocity';
 import Jump from '@/js/traits/Jump';
 import { loadKanjiSprite } from '@/js/sprites';
 
@@ -8,9 +9,10 @@ export function createKanji() {
     .then((sprite) => {
       const kanji = new Entity();
 
-      kanji.addTrait(new Velocity());
+      kanji.addTrait(new Go());
       kanji.addTrait(new Jump());
-
+      // kanji.addTrait(new Velocity());
+      
       kanji.draw = function drawKanji(context) {
         sprite.draw('idle', context, this.pos.x, this.pos.y);
       };
