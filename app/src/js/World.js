@@ -2,7 +2,7 @@ import Compositor from '@/js/Compositor';
 import TileCollider from '@/js/TileCollider';
 import { Matrix } from '@/js/math';
 
-export default class Land {
+export default class World {
   constructor() {
     // this.gravity = 2000;
 

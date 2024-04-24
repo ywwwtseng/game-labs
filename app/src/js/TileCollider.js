@@ -26,7 +26,7 @@ export default class TileCollider {
         return;
       }
   
-      if (match.tile.name === 'land') {
+      if (match.tile.type === 'ground') {
         return;
       }
   
@@ -64,7 +64,7 @@ export default class TileCollider {
         return;
       }
   
-      if (match.tile.name === 'land') {
+      if (match.tile.type === 'ground') {
         return;
       }
   

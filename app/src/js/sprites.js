@@ -9,13 +9,3 @@ export function loadKanjiSprite() {
       return sprites;
     });
 }
-
-export function loadBackgroundSprites() {
-  return loadImage('/img/MiniWorldSprites/AllAssetsPreview.png')
-    .then(image => {
-      const sprites = new SpriteSheet(image, 16, 16);
-      sprites.defineTile('land', 10, 16);
-      sprites.defineTile('tree', 3, 15);
-      return sprites;
-    });
-}
