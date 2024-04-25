@@ -5,6 +5,7 @@ import { Matrix } from '@/js/math';
 export default class World {
   constructor() {
     // this.gravity = 2000;
+    this.totalTime = 0;
 
     this.comp = new Compositor();
     this.entities = new Set();
@@ -22,6 +23,8 @@ export default class World {
       entity.pos.y += entity.vel.y * deltaTime;
       this.tileCollider.checkY(entity);
       // entity.vel.z += this.gravity * deltaTime;
+
+      this.totalTime += deltaTime;
     });
   }
 }

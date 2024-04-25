@@ -1,14 +1,8 @@
 import Keyboard from '@/js/KeyboardState';
-import { DIRECTION } from '@/js/traits/Go';
+import { DIRECTION } from '@/js/constants';
 
 export function setupKeyboard(entity) {
   const input = new Keyboard();
-
-  input.addMapping('Space', (keyState) => {
-    if (keyState) {
-      entity.jump.start();
-    }
-  });
 
   input.addMapping('ArrowUp', (keyState) => {
     if (keyState) {

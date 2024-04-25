@@ -1,0 +1,86 @@
+{
+  "imageURL": "/img/MiniWorldSprites/Characters/Champions/Kanji.png",
+
+  "frames": [
+    {
+      "name": "idle.down",
+      "rect": [0, 0, 16, 16]
+    },
+    {
+      "name": "run-2.down",
+      "rect": [16, 0, 16, 16]
+    },
+    {
+      "name": "run-3.down",
+      "rect": [32, 0, 16, 16]
+    },
+    {
+      "name": "run-4.down",
+      "rect": [48, 0, 16, 16]
+    },
+    {
+      "name": "run-5.down",
+      "rect": [64, 0, 16, 16]
+    },
+    {
+      "name": "idle.up",
+      "rect": [0, 16, 16, 16]
+    },
+    {
+      "name": "run-2.up",
+      "rect": [16, 16, 16, 16]
+    },
+    {
+      "name": "run-3.up",
+      "rect": [32, 16, 16, 16]
+    },
+    {
+      "name": "run-4.up",
+      "rect": [48, 16, 16, 16]
+    },
+    {
+      "name": "run-5.up",
+      "rect": [64, 16, 16, 16]
+    },
+    {
+      "name": "idle.right",
+      "rect": [0, 32, 16, 16]
+    },
+    {
+      "name": "run-2.right",
+      "rect": [16, 32, 16, 16]
+    },
+    {
+      "name": "run-3.right",
+      "rect": [32, 32, 16, 16]
+    },
+    {
+      "name": "run-4.right",
+      "rect": [48, 32, 16, 16]
+    },
+    {
+      "name": "run-5.right",
+      "rect": [64, 32, 16, 16]
+    },
+    {
+      "name": "idle.left",
+      "rect": [0, 48, 16, 16]
+    },
+    {
+      "name": "run-2.left",
+      "rect": [16, 48, 16, 16]
+    },
+    {
+      "name": "run-3.left",
+      "rect": [32, 48, 16, 16]
+    },
+    {
+      "name": "run-4.left",
+      "rect": [48, 48, 16, 16]
+    },
+    {
+      "name": "run-5.left",
+      "rect": [64, 48, 16, 16]
+    }
+  ]
+}
