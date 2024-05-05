@@ -1,6 +1,4 @@
-import World from '@/js/World';
 import SpriteSheet from '@/js/SpriteSheet';
-import { createBackgroundLayer, createSpriteLayer } from '@/js/layers';
 import { createAnim } from '@/js/anim';
 
 export function loadImage(url) {
@@ -51,8 +49,20 @@ export function loadSpriteSheet(name) {
 
       if (sheetSpec.animations) {
         sheetSpec.animations.forEach((animSpec) => {
-          const animation = createAnim(animSpec.frames, animSpec.frameLen);
-          sprites.defineAnim(animSpec.name, animation);
+          if (animSpec.directions) {
+            const animation = animSpec.directions.reduce((animation, direction) => {
+              animation[direction] = createAnim(animSpec.frames.map((frame) => `${frame}${direction}`), animSpec.frameLen);
+              return animation;
+            }, {});
+
+            sprites.defineAnim(animSpec.name, animation);
+          } else {
+            const animation = createAnim(animSpec.frames, animSpec.frameLen);
+            sprites.defineAnim(animSpec.name, animation);
+          }
+          
+
+          
         });
       }
 

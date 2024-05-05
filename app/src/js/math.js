@@ -35,6 +35,10 @@ export class Vec2 {
     this.set(x, y);
   }
 
+  clone() {
+    return new Vec2(this.x, this.y);
+  }
+
   set(x, y) {
     this.x = x;
     this.y = y;

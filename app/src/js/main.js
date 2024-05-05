@@ -1,7 +1,7 @@
 import Camera from '@/js/Camera';
 import Timer from '@/js/Timer';
 import { loadWorld } from '@/js/loaders/world';
-import { loadRole } from '@/js/entities/Mario';
+import { loadCharacter } from '@/js/entities/Character';
 import { createCollisionLayer, createCameraLayer } from '@/js/layers';
 import { setupKeyboard } from '@/js/input';
 import { setupMouseControl } from '@/js/debug';
@@ -12,16 +12,16 @@ const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d');
 
 Promise.all([
-  loadRole(),
+  loadCharacter(),
   loadWorld('1-1')
-]).then(([createRole, world]) => {
+]).then(([createCharacter, world]) => {
   const camera = new Camera();
   window.camera = camera;
 
-  const role = createRole();
-  role.pos.set(64, 64);
-  world.entities.add(role);
-  const input = setupKeyboard(role);
+  const character = createCharacter();
+  character.pos.set(151 * 16, 151 * 16);
+  world.entities.add(character);
+  const input = setupKeyboard(character);
   input.listenTo(window);  
 
   if (debugMode) {
@@ -29,7 +29,7 @@ Promise.all([
       createCollisionLayer(world),
       createCameraLayer(camera),
     );
-    setupMouseControl(canvas, role, camera);
+    setupMouseControl(canvas, character, camera);
   }
 
   
@@ -40,6 +40,10 @@ Promise.all([
 
   timer.update = function update(deltaTime) {
     world.update(deltaTime);
+
+    camera.pos.x = character.pos.x - camera.size.x / 2 + character.size.x / 2;
+    camera.pos.y = character.pos.y - camera.size.y / 2 + character.size.y / 2;
+
     world.comp.draw(context, camera);
   }
 
