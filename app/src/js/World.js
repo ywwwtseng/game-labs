@@ -1,6 +1,5 @@
 import Compositor from '@/js/Compositor';
 import TileCollider from '@/js/TileCollider';
-import { Matrix } from '@/js/math';
 
 export default class World {
   constructor() {
@@ -9,9 +8,12 @@ export default class World {
 
     this.comp = new Compositor();
     this.entities = new Set();
-    this.tiles = new Matrix();
 
-    this.tileCollider = new TileCollider(this.tiles);
+    this.tileCollider = null;
+  }
+
+  setCollisionGird(matrix) {
+    this.tileCollider = new TileCollider(matrix);
   }
 
   update(deltaTime) {

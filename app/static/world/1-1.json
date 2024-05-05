@@ -1,41 +1,89 @@
 {
   "spriteSheet": "world",
 
-  "backgrounds": [
+  "layers": [
     {
-      "tile": "land",
-      "type": "ground",
-      "ranges": [
-        [
-          0, 212,
-          0, 14
-        ]
+      "tiles": [
+        {
+          "name": "land",
+          "type": "ground",
+          "ranges": [
+            [
+              -100, 212,
+              0, 14
+            ]
+          ]
+        }
       ]
+      
     },
     {
-      "tile": "tree",
-      "ranges": [
-        [
-          1,
-          1
-        ],
-        [
-          5, 13, 5
-        ],
-        [
-          12, 2,
-          10, 2
-        ]
-      ]
-    },
-    {
-      "tile": "knight.down",
-      "ranges": [
-        [
-          3,
-          3
-        ]
+      "tiles": [
+        {
+          "name": "tree",
+          "ranges": [
+            [
+              1,
+              1
+            ],
+            [
+              5, 13, 5
+            ],
+            [
+              12, 2,
+              10, 2
+            ]
+          ]
+        },
+        {
+          "name": "knight.down",
+          "ranges": [
+            [
+              3,
+              3
+            ]
+          ]
+        },
+        {
+          "pattern": "castle",
+          "ranges": [
+            [
+              1,
+              8
+            ]
+          ]
+        }
       ]
     }
-  ]
+  ],
+  "patterns": {
+    "castle": {
+      "tiles": [
+        {
+          "name": "castle-top-left",
+          "ranges": [
+            [0, 0]
+          ]
+        },
+        {
+          "name": "castle-top-right",
+          "ranges": [
+            [1, 0]
+          ]
+        },
+        {
+          "name": "castle-bottom-left",
+          "ranges": [
+            [0, 1]
+          ]
+        },
+        {
+          "name": "castle-bottom-right",
+          "ranges": [
+            [1, 1]
+          ]
+        }
+      ]
+    }
+  }
 }

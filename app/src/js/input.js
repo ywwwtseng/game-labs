@@ -5,35 +5,19 @@ export function setupKeyboard(entity) {
   const input = new Keyboard();
 
   input.addMapping('ArrowUp', (keyState) => {
-    if (keyState) {
-      entity.go.dir = DIRECTION.UP;
-    } else {
-      entity.go.dir = DIRECTION.NONE;
-    }
+    entity.go.dir.y += keyState ? -1 : 1;
   });
 
   input.addMapping('ArrowDown', (keyState) => {
-    if (keyState) {
-      entity.go.dir = DIRECTION.DOWN;
-    } else {
-      entity.go.dir = DIRECTION.NONE;
-    }
+    entity.go.dir.y += keyState ? 1 : -1;
   });
 
   input.addMapping('ArrowLeft', (keyState) => {
-    if (keyState) {
-      entity.go.dir = DIRECTION.LEFT;
-    } else {
-      entity.go.dir = DIRECTION.NONE;
-    }
+    entity.go.dir.x += keyState ? -1 : 1;
   });
 
   input.addMapping('ArrowRight', (keyState) => {
-    if (keyState) {
-      entity.go.dir = DIRECTION.RIGHT;
-    } else {
-      entity.go.dir = DIRECTION.NONE;
-    }
+    entity.go.dir.x += keyState ? 1 : -1;
   });
 
   return input;
