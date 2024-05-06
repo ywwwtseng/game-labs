@@ -1,6 +1,5 @@
 import Entity from '@/js/Entity';
 import Go from '@/js/traits/Go';
-import Jump from '@/js/traits/Jump';
 import { loadSpriteSheet } from '@/js/loaders';
 import { DIRECTION } from '@/js/constants';
 
@@ -40,7 +39,6 @@ export function createCharacterFactory(sprite) {
     const character = new Entity();
     character.size.set(16, 16);
     character.addTrait(new Go());
-    character.addTrait(new Jump());
     character.draw = drawCharacter;
     return character;
   }

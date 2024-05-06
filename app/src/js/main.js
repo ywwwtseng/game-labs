@@ -1,7 +1,7 @@
 import Camera from '@/js/Camera';
 import Timer from '@/js/Timer';
 import { loadWorld } from '@/js/loaders/world';
-import { loadCharacter } from '@/js/entities/Character';
+import { loadEntities } from '@/js/entities/entities';
 import { createCollisionLayer, createCameraLayer } from '@/js/layers';
 import { setupKeyboard } from '@/js/input';
 import { setupMouseControl } from '@/js/debug';
@@ -12,15 +12,21 @@ const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d');
 
 Promise.all([
-  loadCharacter(),
+  loadEntities(),
   loadWorld('1-1')
-]).then(([createCharacter, world]) => {
+]).then(([factory, world]) => {
   const camera = new Camera();
   window.camera = camera;
 
-  const character = createCharacter();
+  const character = factory.character();
   character.pos.set(151 * 16, 151 * 16);
   world.entities.add(character);
+
+  const chicken = factory.chicken();
+  chicken.pos.set(151 * 16, 153 * 16);
+  world.entities.add(chicken);
+
+  
   const input = setupKeyboard(character);
   input.listenTo(window);  
 

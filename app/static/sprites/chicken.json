@@ -1,0 +1,84 @@
+{
+  "imageURL": "/img/MiniWorldSprites/Animals/Chicken.png",
+
+  "frames": [
+    {
+      "name": "walk-1.down",
+      "rect": [0, 0, 16, 16]
+    },
+    {
+      "name": "walk-2.down",
+      "rect": [16, 0, 16, 16]
+    },
+    {
+      "name": "walk-3.down",
+      "rect": [32, 0, 16, 16]
+    },
+    {
+      "name": "walk-4.down",
+      "rect": [48, 0, 16, 16]
+    },
+    {
+      "name": "walk-1.up",
+      "rect": [0, 16, 16, 16]
+    },
+    {
+      "name": "walk-2.up",
+      "rect": [16, 16, 16, 16]
+    },
+    {
+      "name": "walk-3.up",
+      "rect": [32, 16, 16, 16]
+    },
+    {
+      "name": "walk-4.up",
+      "rect": [48, 16, 16, 16]
+    },
+    {
+      "name": "walk-1.left",
+      "rect": [0, 32, 16, 16]
+    },
+    {
+      "name": "walk-2.left",
+      "rect": [16, 32, 16, 16]
+    },
+    {
+      "name": "walk-3.left",
+      "rect": [32, 32, 16, 16]
+    },
+    {
+      "name": "walk-4.left",
+      "rect": [48, 32, 16, 16]
+    },
+    {
+      "name": "walk-1.right",
+      "rect": [0, 48, 16, 16]
+    },
+    {
+      "name": "walk-2.right",
+      "rect": [16, 48, 16, 16]
+    },
+    {
+      "name": "walk-3.right",
+      "rect": [32, 48, 16, 16]
+    },
+    {
+      "name": "walk-4.right",
+      "rect": [48, 48, 16, 16]
+    }
+
+  ],
+  "animations": [
+    {
+      "name": "walk",
+      "directions": [".down", ".up", ".right", ".left"],
+      "frameLen": 0.15,
+      "frames": [
+        "walk-1",
+        "walk-2",
+        "walk-3",
+        "walk-4"
+      ]
+    }
+  ]
+}
