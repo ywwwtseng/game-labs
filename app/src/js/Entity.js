@@ -1,22 +1,17 @@
 import { Vec2 } from '@/js/math';
+import { Sides } from '@/js/constants';
 import BoundingBox from '@/js/BoundingBox';
-export const Sides = {
-  TOP: Symbol('top'),
-  BOTTOM: Symbol('bottom'),
-  RIGHT: Symbol('right'),
-  LEFT: Symbol('left'),
-};
 
 export class Trait {
   constructor(name) {
     this.NAME = name;
   }
 
+  collides(us, them) {}
+
   obstruct() {}
 
-  update() {
-    console.log('unhandled update call in Trait');
-  }
+  update() {}
 }
 
 export default class Entity {
@@ -34,6 +29,12 @@ export default class Entity {
   addTrait(trait) {
     this.traits.push(trait);
     this[trait.NAME] = trait;
+  }
+
+  collides(candidate) {
+    this.traits.forEach((trait) => {
+      trait.collides(this, candidate);
+    });
   }
 
   obstruct(side) {

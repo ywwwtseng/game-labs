@@ -1,5 +1,6 @@
 import Compositor from '@/js/Compositor';
 import TileCollider from '@/js/TileCollider';
+import EntityCollider from '@/js/EntityCollider';
 
 export default class World {
   constructor() {
@@ -9,6 +10,7 @@ export default class World {
     this.comp = new Compositor();
     this.entities = new Set();
 
+    this.entityCollider = new EntityCollider(this.entities);
     this.tileCollider = null;
   }
 
@@ -24,9 +26,13 @@ export default class World {
       this.tileCollider.checkX(entity);
       entity.pos.y += entity.vel.y * deltaTime;
       this.tileCollider.checkY(entity);
+
+      this.entityCollider.check(entity);
       // entity.vel.z += this.gravity * deltaTime;
 
-      this.totalTime += deltaTime;
+      
     });
+
+    this.totalTime += deltaTime;
   }
 }

@@ -1,3 +1,6 @@
+import { Sides } from '@/js/constants';
+import { Vec2 } from '@/js/math';
+
 export default class BoundingBox {
   constructor(pos, size, offset) {
     this.pos = pos;
@@ -52,5 +55,9 @@ export default class BoundingBox {
 
   set right(x) {
     this.pos.x = x - (this.size.x + this.offset.x);
+  }
+
+  get center() {
+    return new Vec2(this.left + this.size.x / 2, this.top + this.size.y / 2);
   }
 }

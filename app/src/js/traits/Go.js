@@ -11,6 +11,21 @@ export default class Go extends Trait {
 
     this.distance = new Vec2(0, 0);
     this.heading = DIRECTION.DOWN;
+    this.touched = false;
+  }
+  
+  collides(us, them) {
+    const dir = them.bounds.center.clone().sub(us.bounds.center).dir();
+
+    if (dir >= Math.atan2(1, 1) && dir < Math.atan2(1, -1)) {
+      us.bounds.bottom = them.bounds.top;
+    } else if (dir >= Math.atan2(-1, 1) && dir < Math.atan2(1, 1)) {
+      us.bounds.right = them.bounds.left;
+    } else if (dir >= Math.atan2(-1, -1) && dir < Math.atan2(-1, 1)) {
+      us.bounds.top = them.bounds.bottom;
+    } else {
+      us.bounds.left = them.bounds.right;
+    }
   }
 
   update(entity, deltaTime) {
@@ -22,6 +37,8 @@ export default class Go extends Trait {
     } else if (this.dir.x) {
       this.heading = this.dir.x > 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
     }
+
+    
 
     if (this.dir.x) {
       this.distance.x += Math.abs(entity.vel.x) * deltaTime;

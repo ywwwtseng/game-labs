@@ -49,4 +49,14 @@ export class Vec2 {
     this.y += v.y;
     return this;
   }
+
+  sub(v) {
+    this.x -= v.x;
+    this.y -= v.y;
+    return this;
+  }
+
+  dir() {
+    return Math.atan2(this.y, this.x);
+  }
 }

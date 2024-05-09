@@ -1,6 +1,6 @@
 
 import TileResolver from '@/js/TileResolver';
-import { Sides } from '@/js/Entity';
+import { Sides } from '@/js/constants';
 
 export default class TileCollider {
   constructor(tileMatrix) {

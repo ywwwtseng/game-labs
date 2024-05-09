@@ -8,10 +8,6 @@ export default class PendulumWalk extends Trait {
     this.distance = 0;
   }
 
-  cancel() {
-    this.engageTime = 0;
-  }
-
   update(entity, deltaTime) {
     if (entity.vel.x === 0) {
       entity.vel.x = this.speed;

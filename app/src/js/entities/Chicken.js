@@ -38,7 +38,8 @@ export function createChickenFactory(sprite) {
 
   return function createChicken() {
     const chicken = new Entity();
-    chicken.size.set(16, 16);
+    chicken.size.set(8, 8);
+    chicken.offset.set(4, 6);
 
     chicken.addTrait(new PendulumWalk());
     

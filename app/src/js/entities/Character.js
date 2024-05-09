@@ -37,7 +37,8 @@ export function createCharacterFactory(sprite) {
 
   return function createCharacter() {
     const character = new Entity();
-    character.size.set(16, 16);
+    character.size.set(14, 14);
+    character.offset.set(1, 1);
     character.addTrait(new Go());
     character.draw = drawCharacter;
     return character;
