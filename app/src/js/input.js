@@ -20,5 +20,11 @@ export function setupKeyboard(entity) {
     entity.go.dir.x += keyState ? 1 : -1;
   });
 
+  input.addMapping('Space', (keyState) => {
+    if (keyState) {
+      entity.attack.start();
+    }
+  });
+
   return input;
 }

@@ -81,7 +81,120 @@
     {
       "name": "run-4.left",
       "rect": [64, 48, 16, 16]
+    },
+    {
+      "name": "attack-1.down",
+      "rect": [0, 64, 16, 16]
+    },
+    {
+      "name": "attack-2.down",
+      "rect": [16, 64, 16, 16]
+    },
+    {
+      "name": "attack-3.down",
+      "rect": [32, 64, 16, 16]
+    },
+    {
+      "name": "attack-4.down",
+      "rect": [48, 64, 16, 16]
+    },
+    {
+      "name": "attack-5.down",
+      "rect": [64, 64, 16, 16]
+    },
+    {
+      "name": "attack-6.down",
+      "rect": [80, 64, 16, 16]
+    },
+    {
+      "name": "attack-7.down",
+      "rect": [96, 64, 16, 16]
+    },
+    {
+      "name": "attack-1.up",
+      "rect": [0, 80, 16, 16]
+    },
+    {
+      "name": "attack-2.up",
+      "rect": [16, 80, 16, 16]
+    },
+    {
+      "name": "attack-3.up",
+      "rect": [32, 80, 16, 16]
+    },
+    {
+      "name": "attack-4.up",
+      "rect": [48, 80, 16, 16]
+    },
+    {
+      "name": "attack-5.up",
+      "rect": [64, 80, 16, 16]
+    },
+    {
+      "name": "attack-6.up",
+      "rect": [80, 80, 16, 16]
+    },
+    {
+      "name": "attack-7.up",
+      "rect": [96, 80, 16, 16]
+    },
+    {
+      "name": "attack-1.right",
+      "rect": [0, 96, 16, 16]
+    },
+    {
+      "name": "attack-2.right",
+      "rect": [16, 96, 16, 16]
+    },
+    {
+      "name": "attack-3.right",
+      "rect": [32, 96, 16, 16]
+    },
+    {
+      "name": "attack-4.right",
+      "rect": [48, 96, 16, 16]
+    },
+    {
+      "name": "attack-5.right",
+      "rect": [64, 96, 16, 16]
+    },
+    {
+      "name": "attack-6.right",
+      "rect": [80, 96, 16, 16]
+    },
+    {
+      "name": "attack-7.right",
+      "rect": [96, 96, 16, 16]
+    },
+    {
+      "name": "attack-1.left",
+      "rect": [0, 112, 16, 16]
+    },
+    {
+      "name": "attack-2.left",
+      "rect": [16, 112, 16, 16]
+    },
+    {
+      "name": "attack-3.left",
+      "rect": [32, 112, 16, 16]
+    },
+    {
+      "name": "attack-4.left",
+      "rect": [48, 112, 16, 16]
+    },
+    {
+      "name": "attack-5.left",
+      "rect": [64, 112, 16, 16]
+    },
+    {
+      "name": "attack-6.left",
+      "rect": [80, 112, 16, 16]
+    },
+    {
+      "name": "attack-7.left",
+      "rect": [96, 112, 16, 16]
     }
+
   ],
   "animations": [
     {
@@ -93,6 +206,20 @@
         "run-2",
         "run-3",
         "run-4"
+      ]
+    },
+    {
+      "name": "attack",
+      "directions": [".down", ".up", ".right", ".left"],
+      "frameLen": 0.06666666666666667,
+      "frames": [
+        "attack-1",
+        "attack-2",
+        "attack-3",
+        "attack-4",
+        "attack-5",
+        "attack-6",
+        "attack-7"
       ]
     }
   ]

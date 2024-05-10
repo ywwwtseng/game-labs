@@ -1,10 +1,21 @@
 import Camera from '@/js/Camera';
+import Entity from '@/js/Entity';
+import PlayerController from '@/js/traits/PlayerController';
 import Timer from '@/js/Timer';
 import { loadWorldLoader } from '@/js/loaders/world';
 import { loadEntities } from '@/js/entities/entities';
 import { createCollisionLayer, createCameraLayer } from '@/js/layers';
 import { setupKeyboard } from '@/js/input';
 import { setupMouseControl } from '@/js/debug';
+
+function createPlayerEnv(playerEntity) {
+  const playerEnv = new Entity();
+  const playerControl = new PlayerController();
+  playerControl.checkpoint.set(151 * 16, 151 * 16);
+  playerControl.setPlayer(playerEntity);
+  playerEnv.addTrait(playerControl);
+  return playerEnv;
+}
 
 async function main(canvas) {
   const context = canvas.getContext('2d');
@@ -17,6 +28,9 @@ async function main(canvas) {
   const character = entityFactory.character();
   character.pos.set(151 * 16, 151 * 16);
   world.entities.add(character);
+
+  const playerEnv = createPlayerEnv(character);
+  world.entities.add(playerEnv);
 
   const input = setupKeyboard(character);
   input.listenTo(window);  

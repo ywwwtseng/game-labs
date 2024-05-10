@@ -4,7 +4,6 @@ import EntityCollider from '@/js/EntityCollider';
 
 export default class World {
   constructor() {
-    // this.gravity = 2000;
     this.totalTime = 0;
 
     this.comp = new Compositor();
@@ -20,17 +19,15 @@ export default class World {
 
   update(deltaTime) {
     this.entities.forEach((entity) => {
-      entity.update(deltaTime);
+      entity.update(deltaTime, this);
+    });
 
-      entity.pos.x += entity.vel.x * deltaTime;
-      this.tileCollider.checkX(entity);
-      entity.pos.y += entity.vel.y * deltaTime;
-      this.tileCollider.checkY(entity);
-
+    this.entities.forEach((entity) => {
       this.entityCollider.check(entity);
-      // entity.vel.z += this.gravity * deltaTime;
+    });
 
-      
+    this.entities.forEach((entity) => {
+      entity.finalize();
     });
 
     this.totalTime += deltaTime;

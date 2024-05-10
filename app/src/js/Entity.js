@@ -5,6 +5,17 @@ import BoundingBox from '@/js/BoundingBox';
 export class Trait {
   constructor(name) {
     this.NAME = name;
+
+    this.tasks = [];
+  }
+
+  finalize() {
+    this.tasks.forEach((task) => task());
+    this.tasks.length = 0;
+  }
+
+  queue(task) {
+    this.tasks.push(task);
   }
 
   collides(us, them) {}
@@ -37,15 +48,23 @@ export default class Entity {
     });
   }
 
-  obstruct(side) {
+  obstruct(side, match) {
     this.traits.forEach((trait) => {
-      trait.obstruct(this, side);
+      trait.obstruct(this, side, match);
     });
   }
 
-  update(deltaTime) {
+  draw() {}
+
+  finalize() {
     this.traits.forEach((trait) => {
-      trait.update(this, deltaTime);
+      trait.finalize();
+    });
+  }
+
+  update(deltaTime, world) {
+    this.traits.forEach((trait) => {
+      trait.update(this, deltaTime, world);
     });
 
     this.lifetime += deltaTime;

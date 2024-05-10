@@ -1,6 +1,8 @@
-import Entity from '@/js/Entity';
-import Go from '@/js/traits/Go';
-import PendulumWalk from '@/js/traits/PendulumWalk';
+import Entity, { Trait } from '@/js/Entity';
+import Physics from '@/js/traits/Physics';
+import Solid from '@/js/traits/Solid';
+import PendulumMove from '@/js/traits/PendulumMove';
+import Killable from '@/js/traits/Killable';
 import { loadSpriteSheet } from '@/js/loaders';
 import { DIRECTION } from '@/js/constants';
 
@@ -9,27 +11,33 @@ export function loadChicken() {
     .then(createChickenFactory);
 }
 
+class Behavior extends Trait {
+  constructor() {
+    super('behavior');
+  }
+
+  collides(us, them) {
+    if (us.killable.dead) {
+      return;
+    }
+
+    if (them.attack.engageTime) {
+      us.pendulumMove.enable = false;
+      us.killable.kill();
+      // them.killable.kill();
+    }
+  }
+}
+
 export function createChickenFactory(sprite) {
   const walkAnim = sprite.animations.get('walk');
 
   function routeFrame(chicken) {
-    if (chicken.vel.x > 0) {
-      return walkAnim[DIRECTION.RIGHT](chicken.lifetime);
+    if (chicken.pendulumMove.speed > 0) {
+      return walkAnim[DIRECTION.RIGHT](chicken.pendulumMove.lifetime);
     }
 
-    if (chicken.vel.x < 0) {
-      return walkAnim[DIRECTION.LEFT](chicken.lifetime);
-    }
-
-    if (chicken.vel.y > 0) {
-      return walkAnim[DIRECTION.DOWN](chicken.lifetime);
-    }
-
-    if (chicken.vel.y < 0) {
-      return walkAnim[DIRECTION.UP](chicken.lifetime);
-    }
-
-    return walkAnim[DIRECTION.RIGHT](chicken.lifetime);
+    return walkAnim[DIRECTION.LEFT](chicken.pendulumMove.lifetime);
   }
 
   function drawChicken(context) {
@@ -41,7 +49,11 @@ export function createChickenFactory(sprite) {
     chicken.size.set(8, 8);
     chicken.offset.set(4, 6);
 
-    chicken.addTrait(new PendulumWalk());
+    chicken.addTrait(new Physics());
+    chicken.addTrait(new Solid());
+    chicken.addTrait(new PendulumMove());
+    chicken.addTrait(new Behavior());
+    chicken.addTrait(new Killable());
     
     chicken.draw = drawChicken;
 
