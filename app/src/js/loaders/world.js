@@ -1,6 +1,7 @@
 import { Matrix } from '@/js/math';
 import World from '@/js/World';
-import { createBackgroundLayer, createSpriteLayer } from '@/js/layers';
+import { createBackgroundLayer } from '@/js/layers/background';
+import { createSpriteLayer } from '@/js/layers/sprites';
 import { loadJSON, loadSpriteSheet } from '@/js/loaders';
 
 function setupCollision(worldSpec, world) {

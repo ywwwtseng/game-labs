@@ -4,8 +4,11 @@ import PlayerController from '@/js/traits/PlayerController';
 import Timer from '@/js/Timer';
 import { loadWorldLoader } from '@/js/loaders/world';
 import { loadEntities } from '@/js/entities/entities';
-import { createCollisionLayer, createCameraLayer } from '@/js/layers';
+import { loadFont } from '@/js/loaders/fonts';
 import { setupKeyboard } from '@/js/input';
+import { createCollisionLayer } from '@/js/layers/collision';
+import { createCameraLayer } from '@/js/layers/camera';
+import { createDashboardLayer } from '@/js/layers/dashboard';
 import { setupMouseControl } from '@/js/debug';
 
 function createPlayerEnv(playerEntity) {
@@ -19,7 +22,10 @@ function createPlayerEnv(playerEntity) {
 
 async function main(canvas) {
   const context = canvas.getContext('2d');
-  const entityFactory = await loadEntities();
+  const [entityFactory, font] = await Promise.all([
+    loadEntities(),
+    loadFont(),
+  ]);
   const loadWorld = loadWorldLoader(entityFactory);
   const world = await loadWorld('1-1');
 
@@ -42,6 +48,8 @@ async function main(canvas) {
     );
     setupMouseControl(canvas, character, camera);
   }
+
+  world.comp.layers.push(createDashboardLayer(font, playerEnv));
 
   const timer = new Timer(1/60);
 

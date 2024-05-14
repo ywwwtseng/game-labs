@@ -17,7 +17,9 @@ export default class Attack extends Trait {
   }
 
   start() {
-    this.engageTime = this.duration;
+    if (this.engageTime === 0) {
+      this.engageTime = this.duration;
+    }
   }
 
   stop() {
