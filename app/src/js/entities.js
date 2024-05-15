@@ -1,7 +1,7 @@
-import { loadCharacter } from '@/js/entities/Character';
+import { loadPlayer } from '@/js/entities/Player';
 import { loadChicken } from '@/js/entities/Chicken';
 
-export function loadEntities() {
+export function loadEntities(audioContext) {
   const entityFactories = {};
 
   function addAs(name) {
@@ -9,8 +9,8 @@ export function loadEntities() {
   }
 
   return Promise.all([
-    loadCharacter().then(addAs('character')),
-    loadChicken().then(addAs('chicken')),
+    loadPlayer(audioContext).then(addAs('player')),
+    loadChicken(audioContext).then(addAs('chicken')),
   ])
   .then(() => entityFactories);
 }

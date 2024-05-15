@@ -3,7 +3,7 @@ import { Trait } from '@/js/Entity';
 export default class Attack extends Trait {
   constructor() {
     super('attack');
-
+    
     this.engageTime = 0;
     this.duration = 0.06666666666666667 * 7;
   }
@@ -19,6 +19,7 @@ export default class Attack extends Trait {
   start() {
     if (this.engageTime === 0) {
       this.engageTime = this.duration;
+      this.sounds.add('attack');
     }
   }
 
@@ -26,7 +27,13 @@ export default class Attack extends Trait {
     this.engageTime = 0;
   }
 
-  update(entity, deltaTime) {
+  collides(us, them) {
+    if (this.engageTime > 0) {
+      console.log(us, them);
+    }
+  }
+
+  update(entity, { deltaTime }, world) {
     if (this.engageTime > 0) {
       this.engageTime = Math.max(this.engageTime - deltaTime, 0);
     }

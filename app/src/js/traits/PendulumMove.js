@@ -10,7 +10,7 @@ export default class PendulumMove extends Trait {
     this.enable = true;
   }
 
-  update(entity, deltaTime) {
+  update(entity, { deltaTime }) {
     if (this.enable) {
       if (entity.vel.x === 0) {
         entity.vel.x = this.speed;

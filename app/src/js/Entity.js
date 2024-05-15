@@ -1,11 +1,13 @@
 import { Vec2 } from '@/js/math';
 import { Sides } from '@/js/constants';
 import BoundingBox from '@/js/BoundingBox';
+import AudioBoard from '@/js/AudioBoard';
 
 export class Trait {
   constructor(name) {
     this.NAME = name;
 
+    this.sounds = new Set();
     this.tasks = [];
   }
 
@@ -22,11 +24,20 @@ export class Trait {
 
   obstruct() {}
 
+  playSounds(audioBoard, audioContext) {
+    this.sounds.forEach((name) => {
+      audioBoard.playAudio(name, audioContext);
+    });
+
+    this.sounds.clear();
+  }
+
   update() {}
 }
 
 export default class Entity {
   constructor() {
+    this.audioBoard = new AudioBoard();
     this.pos = new Vec2(0, 0);
     this.vel = new Vec2(0, 0);
     this.size = new Vec2(0, 0);
@@ -62,11 +73,12 @@ export default class Entity {
     });
   }
 
-  update(deltaTime, world) {
+  update(gameContext, world) {
     this.traits.forEach((trait) => {
-      trait.update(this, deltaTime, world);
+      trait.update(this, gameContext, world);
+      trait.playSounds(this.audio, gameContext.audioContext);
     });
 
-    this.lifetime += deltaTime;
+    this.lifetime += gameContext.deltaTime;
   }
 }

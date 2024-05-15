@@ -15,7 +15,7 @@ export default class PlayerController extends Trait {
     this.player = entity;
   }
 
-  update(entity, deltaTime, world) {
+  update(entity, { deltaTime }, world) {
     if (!world.entities.has(this.player)) {
       this.player.killable.revive();
       this.player.attack.stop();

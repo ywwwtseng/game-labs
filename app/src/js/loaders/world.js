@@ -32,7 +32,7 @@ function setupEntities(worldSpec, world, entityFactory) {
   world.comp.layers.push(spriteLayer);
 }
 
-export function loadWorldLoader(entityFactory) {
+export function createWorldLoader(entityFactory) {
   return function loadWorld(name) {
     return loadJSON(`/world/${name}.json`)
       .then((worldSpec) => Promise.all([
