@@ -1,3 +1,5 @@
+export const FRAME_DURATION = 1/60;
+
 export const DIRECTION = {
   NONE: '.none',
   UP: '.up',

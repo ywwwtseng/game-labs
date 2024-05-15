@@ -17,15 +17,15 @@ class Behavior extends Trait {
   }
 
   collides(us, them) {
-    if (us.killable.dead) {
-      return;
-    }
+    // if (us.killable.dead) {
+    //   return;
+    // }
 
-    if (them.attack.engageTime) {
-      us.pendulumMove.enable = false;
-      us.killable.kill();
-      // them.killable.kill();
-    }
+    // if (them.attack.engageTime) {
+    //   us.pendulumMove.enable = false;
+    //   us.killable.kill();
+    //   // them.killable.kill();
+    // }
   }
 }
 

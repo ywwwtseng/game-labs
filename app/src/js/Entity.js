@@ -2,11 +2,13 @@ import { Vec2 } from '@/js/math';
 import { Sides } from '@/js/constants';
 import BoundingBox from '@/js/BoundingBox';
 import AudioBoard from '@/js/AudioBoard';
+import EventEmitter from '@/js/EventEmitter';
 
 export class Trait {
   constructor(name) {
     this.NAME = name;
 
+    this.events = new EventEmitter();
     this.sounds = new Set();
     this.tasks = [];
   }

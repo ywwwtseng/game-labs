@@ -10,6 +10,7 @@ import { createCollisionLayer } from '@/js/layers/collision';
 import { createCameraLayer } from '@/js/layers/camera';
 import { createDashboardLayer } from '@/js/layers/dashboard';
 import { setupMouseControl } from '@/js/debug';
+import { FRAME_DURATION } from '@/js/constants';
 
 function createPlayerEnv(playerEntity) {
   const playerEnv = new Entity();
@@ -60,7 +61,7 @@ async function main(canvas) {
     deltaTime: null,
   };
 
-  const timer = new Timer(1/60);
+  const timer = new Timer(FRAME_DURATION);
 
   timer.update = function update(deltaTime) {
     gameContext.deltaTime = deltaTime;

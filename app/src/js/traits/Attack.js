@@ -1,41 +1,49 @@
 import { Trait } from '@/js/Entity';
+import { FRAME_DURATION } from '@/js/constants';
 
 export default class Attack extends Trait {
   constructor() {
     super('attack');
     
-    this.engageTime = 0;
-    this.duration = 0.06666666666666667 * 7;
-  }
+    this.ready = false;
+    this.lifetime = 0;
+    this.duration = 20 * FRAME_DURATION;
 
-  get lifetime() {
-    if (this.engageTime === 0) {
-      return 0;
-    }
+    this.events.listen('attack', (us, them) => {
+      if (them.killable.dead) {
+        return;
+      }
 
-    return this.duration - this.engageTime;
+      them.pendulumMove.enable = false;
+      them.killable.kill();
+    });
   }
 
   start() {
-    if (this.engageTime === 0) {
-      this.engageTime = this.duration;
+    if (this.ready === false) {
+      this.ready = true;
       this.sounds.add('attack');
     }
   }
 
   stop() {
-    this.engageTime = 0;
+    this.ready = false;
+    this.lifetime = 0;
   }
 
   collides(us, them) {
-    if (this.engageTime > 0) {
-      console.log(us, them);
+    if (this.lifetime === this.duration / 2) {
+      this.events.emit('attack', us, them);
     }
   }
 
   update(entity, { deltaTime }, world) {
-    if (this.engageTime > 0) {
-      this.engageTime = Math.max(this.engageTime - deltaTime, 0);
+    if (this.ready) {
+      this.lifetime += deltaTime;
+
+      if (this.lifetime >= this.duration) {
+        this.stop();
+      }
     }
   }
 }
