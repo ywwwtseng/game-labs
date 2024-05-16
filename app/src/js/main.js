@@ -83,6 +83,8 @@ const canvas = document.getElementById('screen');
 const start = () => {
   main(canvas);
   window.removeEventListener('click', start);
+  window.removeEventListener('touchstart', start);
 };
 
 window.addEventListener('click', start);
+window.addEventListener('touchstart', start);
