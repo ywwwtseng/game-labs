@@ -1,5 +1,8 @@
 import AudioBoard from '@/js/AudioBoard';
 import { loadJSON } from '@/js/loaders';
+import { isSafari } from '@/js/device';
+
+console.log(isSafari);
 
 export function loadAudioBoard(name, audioContext) {
   const loadAudio = createAudioLoader(audioContext);
@@ -26,7 +29,13 @@ export function createAudioLoader(context) {
         return response.arrayBuffer();
       })
       .then(arrayBuffer => {
-        return context.decodeAudioData(arrayBuffer);
+        if (isSafari) {
+          return new Promise((resolve, reject) => {
+            context.decodeAudioData(arrayBuffer, resolve, reject);
+          });
+        } else {
+          return context.decodeAudioData(arrayBuffer);
+        }
       });
   }
 }
