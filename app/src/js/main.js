@@ -80,11 +80,15 @@ async function main(canvas) {
 const debugMode = window.location.search.includes('debug=1')
 const canvas = document.getElementById('screen');
 
-const start = () => {
+const start = (event) => {
   main(canvas);
-  window.removeEventListener('click', start);
-  window.removeEventListener('touchstart', start);
+  event.target.remove();
 };
 
-window.addEventListener('click', start);
-window.addEventListener('touchstart', start);
+const button = document.createElement('button');
+button.innerText = 'Start';
+button.style.position = 'fixed';
+document.body.appendChild(button);
+button.addEventListener('click', start);
+
+
