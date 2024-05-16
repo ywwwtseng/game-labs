@@ -1,3 +1,4 @@
+import Dimensions from '@/js/Dimensions';
 import Camera from '@/js/Camera';
 import Entity from '@/js/Entity';
 import PlayerController from '@/js/traits/PlayerController';
@@ -79,6 +80,8 @@ async function main(canvas) {
 
 const debugMode = window.location.search.includes('debug=1')
 const canvas = document.getElementById('screen');
+canvas.width = Dimensions.get('screen').width;
+canvas.height = Dimensions.get('screen').height;
 
 const start = (event) => {
   main(canvas);
@@ -86,9 +89,21 @@ const start = (event) => {
 };
 
 const button = document.createElement('button');
-button.innerText = 'Start';
+button.innerText = 'START';
 button.style.position = 'fixed';
+button.style.width = '100px';
+button.style.height = '40px';
+button.style.top = '0px';
+button.style.bottom = '0px';
+button.style.right = '0px';
+button.style.left = '0px';
+button.style.margin = 'auto';
+button.style.backgroundColor = 'black';
+button.style.color = 'white';
 document.body.appendChild(button);
 button.addEventListener('click', start);
 
-
+window.addEventListener('resize', (event) => {
+  canvas.width = Dimensions.get('screen').width;
+  canvas.height = Dimensions.get('screen').height;
+});

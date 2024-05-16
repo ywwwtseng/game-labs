@@ -1,3 +1,4 @@
+import Dimensions from '@/js/Dimensions';
 import TileResolver from '@/js/TileResolver';
 import { Vec2 } from '@/js/math';
 
@@ -5,8 +6,13 @@ export function createBackgroundLayer(world, tiles, sprites) {
   const resolver = new TileResolver(tiles);
 
   const buffer = document.createElement('canvas');
-  buffer.width = 256 + 16;
-  buffer.height = 240 + 16;
+  buffer.width = Dimensions.get('screen').width + 16;
+  buffer.height = Dimensions.get('screen').height + 16;
+
+  window.addEventListener('resize', (event) => {
+    buffer.width = Dimensions.get('screen').width + 16;
+    buffer.height = Dimensions.get('screen').height + 16;
+  });
 
   const context = buffer.getContext('2d');
 

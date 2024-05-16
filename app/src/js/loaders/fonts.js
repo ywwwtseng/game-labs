@@ -1,5 +1,6 @@
-import { loadImage } from '@/js/loaders.js';
 import SpriteSheet from '@/js/SpriteSheet';
+import Dimensions from '@/js/Dimensions';
+import { loadImage } from '@/js/loaders.js';
 
 const CHARS = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 
@@ -11,7 +12,13 @@ class Font {
 
   print(text, context, x, y) {
     [...text].forEach((char, pos) => {
-      this.sprites.draw(char, context, x + pos * this.size, y);
+
+      this.sprites.draw(
+        char,
+        context,
+        Dimensions.get('screen').left + x + pos * this.size,
+        Dimensions.get('screen').top + y
+      );
     });
   }
 }
