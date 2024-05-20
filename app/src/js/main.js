@@ -6,7 +6,7 @@ import Timer from '@/js/Timer';
 import { createWorldLoader } from '@/js/loaders/world';
 import { loadEntities } from '@/js/entities';
 import { loadFont } from '@/js/loaders/fonts';
-import { setupKeyboard } from '@/js/input';
+import { setupKeyboard, setupJoystick } from '@/js/input';
 import { createCollisionLayer } from '@/js/layers/collision';
 import { createCameraLayer } from '@/js/layers/camera';
 import { createDashboardLayer } from '@/js/layers/dashboard';
@@ -23,7 +23,7 @@ function createPlayerEnv(playerEntity) {
 }
 
 async function main(canvas) {
-  const context = canvas.getContext('2d');
+  const context = canvas.getContext('2d', { alpha: false });
   const audioContext = new AudioContext();
 
   const [entityFactory, font] = await Promise.all([
@@ -39,13 +39,24 @@ async function main(canvas) {
 
   const player = entityFactory.player();
   player.pos.set(151 * 16, 151 * 16);
-  world.entities.add(player);
+  world.entities.unshift(player);
 
   const playerEnv = createPlayerEnv(player);
-  world.entities.add(playerEnv);
+  world.entities.unshift(playerEnv);
 
-  const input = setupKeyboard(player);
-  input.listenTo(window);  
+  if ('ontouchstart' in window) {
+    setupJoystick(player);
+
+    if (debugMode) {
+      const input = setupKeyboard(player);
+      input.listenTo(window);
+    }
+  } else {
+    const input = setupKeyboard(player);
+    input.listenTo(window);
+  }
+
+  
 
   if (debugMode) {
     world.comp.layers.push(
@@ -55,7 +66,7 @@ async function main(canvas) {
     setupMouseControl(canvas, player, camera);
   }
 
-  world.comp.layers.push(createDashboardLayer(font, playerEnv));
+  // world.comp.layers.push(createDashboardLayer(font, playerEnv));
 
   const gameContext = {
     audioContext,
@@ -69,8 +80,8 @@ async function main(canvas) {
 
     world.update(gameContext);
 
-    camera.pos.x = player.pos.x - camera.size.x / 2 + player.size.x / 2;
-    camera.pos.y = player.pos.y - camera.size.y / 2 + player.size.y / 2;
+    camera.pos.x = Math.floor(player.pos.x - camera.size.x / 2 + player.size.x / 2);
+    camera.pos.y = Math.floor(player.pos.y - camera.size.y / 2 + player.size.y / 2);
 
     world.comp.draw(context, camera);
   }

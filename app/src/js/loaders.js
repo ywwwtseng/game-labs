@@ -60,9 +60,6 @@ export function loadSpriteSheet(name) {
             const animation = createAnim(animSpec.frames, animSpec.frameLen);
             sprites.defineAnim(animSpec.name, animation);
           }
-          
-
-          
         });
       }
 

@@ -16,13 +16,13 @@ export default class PlayerController extends Trait {
   }
 
   update(entity, { deltaTime }, world) {
-    if (!world.entities.has(this.player)) {
+    if (!world.entities.find(entity => entity === this.player)) {
       this.player.killable.revive();
       this.player.attack.stop();
       this.player.vel.set(0, 0);
       this.player.go.heading = DIRECTION.DOWN;
       this.player.pos.set(this.checkpoint.x, this.checkpoint.y);
-      world.entities.add(this.player);
+      world.entities.unshift(this.player);
     }
   }
 }

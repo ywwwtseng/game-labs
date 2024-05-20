@@ -1,5 +1,5 @@
 import { Vec2 } from '@/js/math';
-import { Sides } from '@/js/constants';
+import { SIDES } from '@/js/constants';
 import BoundingBox from '@/js/BoundingBox';
 import AudioBoard from '@/js/AudioBoard';
 import EventEmitter from '@/js/EventEmitter';

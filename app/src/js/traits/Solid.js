@@ -1,5 +1,5 @@
 import { Trait } from '@/js/Entity';
-import { Sides } from '@/js/constants';
+import { SIDES } from '@/js/constants';
 
 export default class Solid extends Trait {
   constructor() {
@@ -13,16 +13,16 @@ export default class Solid extends Trait {
       return;
     }
 
-    if (side === Sides.BOTTOM) {
+    if (side === SIDES.BOTTOM) {
       entity.bounds.bottom = match.y1; 
       entity.vel.y = 0;
-    } else if (side === Sides.TOP) {
+    } else if (side === SIDES.TOP) {
       entity.bounds.top = match.y2;
       entity.vel.y = 0;
-    } else if (side === Sides.LEFT) {
+    } else if (side === SIDES.LEFT) {
       entity.bounds.left = match.x2;
       entity.vel.x = 0;
-    } else if (side === Sides.RIGHT) {
+    } else if (side === SIDES.RIGHT) {
       entity.bounds.right = match.x1;
       entity.vel.x = 0;
     }

@@ -1,4 +1,5 @@
 import Keyboard from '@/js/KeyboardState';
+import Joystick from '@/js/Joystick';
 import { DIRECTION } from '@/js/constants';
 
 export function setupKeyboard(entity) {
@@ -25,6 +26,21 @@ export function setupKeyboard(entity) {
       entity.attack.start();
     }
   });
+
+  return input;
+}
+
+export function setupJoystick(entity) {
+  const input = new Joystick();
+
+  input.onMove = ({x, y}) => {
+    entity.go.dir.x = x;
+    entity.go.dir.y = y;
+  };
+
+  input.onTouch = () => {
+    entity.attack.start();
+  };
 
   return input;
 }

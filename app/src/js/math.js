@@ -56,6 +56,39 @@ export class Vec2 {
     return this;
   }
 
+  scale(f) {
+    this.x *= f;
+    this.y *= f;
+    return this;
+  }
+
+  length() {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+  }
+
+  lengthSquared() {
+    return this.x * this.x + this.y * this.y;
+  }
+
+  normalize() {
+    var len = this.length();
+    if (len > 0) {
+      this.scale(1 / len);
+    }
+
+    return this;
+  }
+
+  limit(s) {
+    var len = this.length();
+
+    if (len > s && len > 0) {
+      this.scale(s / len);
+    }
+  
+    return this;
+  }
+
   dir() {
     return Math.atan2(this.y, this.x);
   }

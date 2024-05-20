@@ -26,7 +26,7 @@ function setupEntities(worldSpec, world, entityFactory) {
     const createEntity = entityFactory[name];
     const entity = createEntity();
     entity.pos.set(x, y);
-    world.entities.add(entity);
+    world.entities.push(entity);
   });
   const spriteLayer = createSpriteLayer(world.entities);
   world.comp.layers.push(spriteLayer);
@@ -45,8 +45,6 @@ export function createWorldLoader(entityFactory) {
       setupCollision(worldSpec, world);
       setupBackgrounds(worldSpec, world, backgroundSprites);
       setupEntities(worldSpec, world, entityFactory);
-
-      
 
       return world;
     }));

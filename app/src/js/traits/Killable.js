@@ -23,7 +23,7 @@ export default class Killable extends Trait {
       this.deadTime += deltaTime;
       if (this.deadTime > this.removeAfter) {
         this.queue(() => {
-          world.entities.delete(entity);
+         world.entities.splice(world.entities.findIndex(e => e === entity), 1);
         });
       }
     }

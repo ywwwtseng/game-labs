@@ -1,5 +1,6 @@
 import { loadPlayer } from '@/js/entities/Player';
 import { loadChicken } from '@/js/entities/Chicken';
+import { loadTree } from '@/js/entities/Tree';
 
 export function loadEntities(audioContext) {
   const entityFactories = {};
@@ -11,6 +12,7 @@ export function loadEntities(audioContext) {
   return Promise.all([
     loadPlayer(audioContext).then(addAs('player')),
     loadChicken(audioContext).then(addAs('chicken')),
+    loadTree(audioContext).then(addAs('tree')),
   ])
   .then(() => entityFactories);
 }

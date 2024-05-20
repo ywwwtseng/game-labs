@@ -1,0 +1,12 @@
+{
+  "imageURL": "/img/game-tiles.png",
+  "tileW": 64,
+  "tileH": 64,
+
+  "tiles": [
+    {
+      "name": "default",
+      "index": [1, 0]
+    }
+  ]
+}

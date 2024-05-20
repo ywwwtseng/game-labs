@@ -7,7 +7,7 @@ export default class World {
     this.totalTime = 0;
 
     this.comp = new Compositor();
-    this.entities = new Set();
+    this.entities = [];
 
     this.entityCollider = new EntityCollider(this.entities);
     this.tileCollider = null;

@@ -1,6 +1,6 @@
 import { Trait } from '@/js/Entity';
 import { Vec2 } from '@/js/math';
-import { DIRECTION } from '@/js/constants';
+import { DIRECTION, DEGREE } from '@/js/constants';
 
 export default class Go extends Trait {
   constructor() {
@@ -17,11 +17,11 @@ export default class Go extends Trait {
   collides(us, them) {
     const dir = them.bounds.center.clone().sub(us.bounds.center).dir();
 
-    if (dir >= Math.atan2(1, 1) && dir < Math.atan2(1, -1)) {
+    if (dir >= DEGREE[45] && dir < DEGREE[135]) {
       us.bounds.bottom = them.bounds.top;
-    } else if (dir >= Math.atan2(-1, 1) && dir < Math.atan2(1, 1)) {
+    } else if (dir >= DEGREE[315] && dir < DEGREE[45]) {
       us.bounds.right = them.bounds.left;
-    } else if (dir >= Math.atan2(-1, -1) && dir < Math.atan2(-1, 1)) {
+    } else if (dir >= DEGREE[225] && dir < DEGREE[315]) {
       us.bounds.top = them.bounds.bottom;
     } else {
       us.bounds.left = them.bounds.right;
@@ -32,13 +32,19 @@ export default class Go extends Trait {
     entity.vel.x = this.speed * this.dir.x * deltaTime;
     entity.vel.y = this.speed * this.dir.y * deltaTime;
 
-    if (this.dir.y) {
-      this.heading = this.dir.y > 0 ? DIRECTION.DOWN : DIRECTION.UP;
-    } else if (this.dir.x) {
-      this.heading = this.dir.x > 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
-    }
+    if (this.dir.length() > 0) {
+      const dir = this.dir.dir();
 
-    
+      if (dir >= DEGREE[67.5] && dir < DEGREE[112.5]) {
+        this.heading = DIRECTION.DOWN;
+      } else if (dir >= DEGREE[292.5] && dir < DEGREE[67.5]) {
+        this.heading = DIRECTION.RIGHT;
+      } else if (dir >= DEGREE[247.5] && dir < DEGREE[292.5]) {
+        this.heading = DIRECTION.UP;
+      } else {
+        this.heading = DIRECTION.LEFT;
+      }
+    }
 
     if (this.dir.x) {
       this.distance.x += Math.abs(entity.vel.x) * deltaTime;

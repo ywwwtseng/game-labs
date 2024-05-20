@@ -26,24 +26,12 @@ export function createPlayerFactory(sprite, audio) {
     if (player.attack.lifetime) {
       return attackAnim[player.go.heading](player.attack.lifetime);
     }
-    
-    if (player.vel.x > 0) {
-      return runAnim[DIRECTION.RIGHT](player.go.distance.x);
+
+    if (player.vel.x === 0 && player.vel.y === 0) {
+      return `idle${player.go.heading}`;
     }
 
-    if (player.vel.x < 0) {
-      return runAnim[DIRECTION.LEFT](player.go.distance.x);
-    }
-
-    if (player.vel.y > 0) {
-      return runAnim[DIRECTION.DOWN](player.go.distance.y);
-    }
-
-    if (player.vel.y < 0) {
-      return runAnim[DIRECTION.UP](player.go.distance.y);
-    }
-
-    return `idle${player.go.heading}`;
+    return runAnim[player.go.heading](player.go.distance.length());
   }
 
   function drawPlayer(context) {
@@ -52,6 +40,7 @@ export function createPlayerFactory(sprite, audio) {
 
   return function createPlayer() {
     const player = new Entity();
+    player.type = 'player';
     player.audio = audio;
     player.size.set(14, 14);
     player.offset.set(1, 1);
