@@ -11,6 +11,9 @@
   "alias": {
     "@/*": "./src/$1"
   },
+  "staticFiles": {
+    "staticPath": "src/public"
+  },
   "devDependencies": {
     "@parcel/packager-raw-url": "2.12.0",
     "@parcel/transformer-webmanifest": "2.12.0",
