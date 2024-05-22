@@ -104,11 +104,16 @@ function* expandRanges(ranges) {
 function* expandTiles(tiles, patterns) {
   function* walkTiles(tiles, offsetX = 0, offsetY = 0) {
     for (const tile of tiles) {
+
       for (const {x, y} of expandRanges(tile.ranges)) {
         const derivedX = x + offsetX;
         const derivedY = y + offsetY;
+
+
   
         if (tile.pattern) {
+          console.log(tile.pattern, 'pattern')
+
           const tiles = patterns[tile.pattern].tiles;
           yield* walkTiles(tiles, derivedX, derivedY);
         } else {

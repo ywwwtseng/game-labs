@@ -13,7 +13,188 @@
               0, 301
             ]
           ]
+        },
+        {
+          "name": "grass",
+          "type": "ground",
+          "ranges": [
+            [
+              150, 4,
+              150, 4
+            ] ,
+            [
+              153,
+              154
+            ],
+            [
+              150, 2,
+              154
+            ],
+            [
+              150, 5,
+              155
+            ],
+            [
+              154, 1,
+              150, 4
+            ],
+            [
+              145, 8,
+              150, 10
+            ]
+          ]
+        },
+        {
+          "name": "grass-1",
+          "type": "ground",
+          "ranges": [
+            [
+              154,
+              154
+            ],
+            [
+              153,
+              156
+            ],
+            [
+              147,
+              153
+            ]
+          ]
+        },
+        {
+          "name": "grass-2",
+          "type": "ground",
+          "ranges": [
+            [
+              152,
+              154
+            ]
+          ]
+        },
+        {
+          "name": "grass-land",
+          "type": "ground",
+          "ranges": [
+            [
+              155, 1,
+              150, 5
+            ],
+            [
+              154,
+              156
+            ],
+            [
+              153, 1,
+              157, 3
+            ]
+          ]
+        },
+        {
+          "name": "land-grass",
+          "type": "ground",
+          "ranges": [
+            [
+              157, 1,
+              150, 7
+            ],
+            [
+              156, 1,
+              158, 2
+            ]
+          ]
+        },
+        {
+          "name": "grass-land-right-bottom",
+          "type": "ground",
+          "ranges": [
+            [
+              153,
+              160
+            ]
+          ]
+        },
+        {
+          "pattern": "grass-land-right-bottom",
+          "ranges": [
+            [
+              154,
+              155
+            ],
+            [
+              153,
+              157
+            ]
+          ]
+        },
+        {
+          "pattern": "grass-land-left-top",
+          "ranges": [
+            [
+              156,
+              157
+            ]
+          ]
+        },
+        {
+          "name": "grass-land-left-bottom",
+          "type": "ground",
+          "ranges": [
+            [
+              156,
+              160
+            ]
+          ]
+        },
+        {
+          "name": "grass-land-right-top",
+          "type": "ground",
+          "ranges": [
+            [
+              155,
+              149
+            ]
+          ]
+        },
+        {
+          "name": "grass-land-left-top",
+          "type": "ground",
+          "ranges": [
+            [
+              157,
+              149
+            ]
+          ]
+        },
+        {
+          "name": "land-grass-v",
+          "type": "ground",
+          "ranges": [
+            [
+              145, 10,
+              149
+            ],
+            [
+              158, 5,
+              149
+            ]
+          ]
+        },
+        {
+          "name": "grass-land-v",
+          "type": "ground",
+          "ranges": [
+            [
+              145, 8,
+              160
+            ],
+            [
+              157, 5,
+              160
+            ]
+          ]
         }
+        
       ]
       
     },
@@ -43,44 +224,43 @@
               147
             ]
           ]
-        },
-        {
-          "pattern": "castle",
-          "ranges": [
-            [
-              147,
-              152
-            ]
-          ]
         }
       ]
     }
   ],
   "patterns": {
-    "castle": {
+    "grass-land-right-bottom": {
       "tiles": [
         {
-          "name": "castle-top-left",
+          "name": "grass-land-right-bottom-1",
+          "type": "ground",
           "ranges": [
             [0, 0]
           ]
         },
         {
-          "name": "castle-top-right",
+          "name": "grass-land-right-bottom-2",
+          "type": "ground",
           "ranges": [
             [1, 0]
           ]
-        },
+        }
+      ]
+    },
+    "grass-land-left-top": {
+      "tiles": [
         {
-          "name": "castle-bottom-left",
+          "name": "grass-land-left-top-1",
+          "type": "ground",
           "ranges": [
-            [0, 1]
+            [0, 0]
           ]
         },
         {
-          "name": "castle-bottom-right",
+          "name": "grass-land-left-top-2",
+          "type": "ground",
           "ranges": [
-            [1, 1]
+            [1, 0]
           ]
         }
       ]
