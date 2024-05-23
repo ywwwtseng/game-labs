@@ -6,7 +6,7 @@ export function createDashboardLayer(font, playerEnv) {
   const coins = playerEnv.playerController.coins;
 
   return function drawDashboard(context) {
-    font.print('INFINITE LAND', context, 16, LINE1);
+    font.print('PROJECT WEB3RPG', context, 16, LINE1);
     font.print(score.toString().padStart(6, '0'), context, 16, LINE2);
 
     font.print('@x' + coins, context, 88, LINE2);
