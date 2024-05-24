@@ -55,6 +55,7 @@ export default class Joystick {
     event.preventDefault();
     event = event || window.event;
     this.origin = this.getMousePosition(event);
+    this.startTime = Date.now();
 
     document.addEventListener('touchmove', this.move, { passive: false });
     document.addEventListener('touchend', this.up, { passive: false });
@@ -92,14 +93,22 @@ export default class Joystick {
     if (this.dragging) {
       this.reset();
     } else {
-      if (this.onTouch !== undefined) {
-        this.onTouch();
+      if (Date.now() - this.startTime > 400) {
+        if (this.onPress !== undefined) {
+          this.onLongPress();
+        }
+      } else {
+        if (this.onPress !== undefined) {
+          this.onPress();
+        }
       }
-    }    
+    }
+
+    this.origin = null;
+    this.startTime = null;
   }
 
   reset() {
-    this.origin = null;
     this.domElement.style.top = '0px';
     this.domElement.style.left = '0px';
     this.circle.style.display = 'none';
@@ -113,7 +122,7 @@ export default class Joystick {
     document.removeEventListener('touchcancel', this.up, { passive: false });
   }
 
-  onTouch() {}
+  onPress() {}
 
   onMove() {}
 }

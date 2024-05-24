@@ -5,11 +5,11 @@ export default class Physics extends Trait {
     super('physics');
   }
 
-  update(entity, { deltaTime }, level) {
+  update(entity, { deltaTime }, world) {
     entity.pos.x += entity.vel.x * deltaTime;
-    level.tileCollider.checkX(entity);
+    world.tileCollider.checkX(entity);
 
     entity.pos.y += entity.vel.y * deltaTime;
-    level.tileCollider.checkY(entity);
+    world.tileCollider.checkY(entity);
   }
 }

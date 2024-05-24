@@ -38,8 +38,12 @@ export function setupJoystick(entity) {
     entity.go.dir.y = y;
   };
 
-  input.onTouch = () => {
+  input.onPress = () => {
     entity.attack.start();
+  };
+
+  input.onLongPress = () => {
+    console.log('onLongPress')
   };
 
   return input;

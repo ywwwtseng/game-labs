@@ -199,7 +199,7 @@
   "animations": [
     {
       "name": "run",
-      "directions": [".down", ".up", ".right", ".left"],
+      "status": [".down", ".up", ".right", ".left"],
       "frameLen": 10,
       "frames": [
         "run-1",
@@ -210,7 +210,7 @@
     },
     {
       "name": "attack",
-      "directions": [".down", ".up", ".right", ".left"],
+      "status": [".down", ".up", ".right", ".left"],
       "frameLen": 0.08333333333333333,
       "frames": [
         "attack-1",

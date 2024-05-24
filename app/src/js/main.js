@@ -1,8 +1,7 @@
 import Dimensions from '@/js/Dimensions';
 import Camera from '@/js/Camera';
-import Entity from '@/js/Entity';
-import PlayerController from '@/js/traits/PlayerController';
 import Timer from '@/js/Timer';
+import { createPlayerEnv, createPlayer } from '@/js/player';
 import { createWorldLoader } from '@/js/loaders/world';
 import { loadEntities } from '@/js/entities';
 import { loadFont } from '@/js/loaders/fonts';
@@ -12,15 +11,6 @@ import { createCameraLayer } from '@/js/layers/camera';
 import { createDashboardLayer } from '@/js/layers/dashboard';
 import { setupMouseControl } from '@/js/debug';
 import { FRAME_DURATION } from '@/js/constants';
-
-function createPlayerEnv(playerEntity) {
-  const playerEnv = new Entity();
-  const playerControl = new PlayerController();
-  playerControl.checkpoint.set(151 * 16, 151 * 16);
-  playerControl.setPlayer(playerEntity);
-  playerEnv.addTrait(playerControl);
-  return playerEnv;
-}
 
 async function main(canvas) {
   const context = canvas.getContext('2d', { alpha: false });
@@ -33,14 +23,11 @@ async function main(canvas) {
 
   const loadWorld = createWorldLoader(entityFactory);
 
-  const world = await loadWorld('1-1');
+  const world = await loadWorld();
 
   const camera = new Camera();
 
-  const player = entityFactory.player();
-  player.pos.set(151 * 16, 151 * 16);
-  world.entities.unshift(player);
-
+  const player = createPlayer(entityFactory.role());
   const playerEnv = createPlayerEnv(player);
   world.entities.unshift(playerEnv);
 

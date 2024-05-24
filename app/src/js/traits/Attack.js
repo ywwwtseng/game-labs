@@ -22,7 +22,7 @@ export default class Attack extends Trait {
   start() {
     if (this.ready === false) {
       this.ready = true;
-      this.sounds.add('attack');
+      
     }
   }
 
@@ -39,6 +39,10 @@ export default class Attack extends Trait {
 
   update(entity, { deltaTime }, world) {
     if (this.ready) {
+      if (this.lifetime === 0) {
+        entity.sounds.add('attack');
+      }
+
       this.lifetime += deltaTime;
 
       if (this.lifetime >= this.duration) {

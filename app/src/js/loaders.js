@@ -49,9 +49,10 @@ export function loadSpriteSheet(name) {
 
       if (sheetSpec.animations) {
         sheetSpec.animations.forEach((animSpec) => {
-          if (animSpec.directions) {
-            const animation = animSpec.directions.reduce((animation, direction) => {
-              animation[direction] = createAnim(animSpec.frames.map((frame) => `${frame}${direction}`), animSpec.frameLen);
+          if (animSpec.status) {
+            const animation = animSpec.status.reduce((animation, direction, index) => {
+              const frameLen = typeof animSpec.frameLen === 'number' ? animSpec.frameLen : animSpec.frameLen[index];
+              animation[direction] = createAnim(animSpec.frames.map((frame) => `${frame}${direction}`), frameLen);
               return animation;
             }, {});
 

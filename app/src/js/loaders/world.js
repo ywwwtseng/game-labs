@@ -13,10 +13,10 @@ function setupCollision(worldSpec, world) {
   world.setCollisionGird(collisionGrid);
 }
 
-function setupBackgrounds(worldSpec, world, backgroundSprites) {
+function setupBackgrounds(worldSpec, world, worldSprites) {
   worldSpec.layers.forEach((layer) => {
     const backgroundGrid = createBackgroundGrid(layer.tiles, worldSpec.patterns);
-    const backgroundLayer = createBackgroundLayer(world, backgroundGrid, backgroundSprites);
+    const backgroundLayer = createBackgroundLayer(world, backgroundGrid, worldSprites);
     world.comp.layers.push(backgroundLayer);
   });
 }
@@ -33,18 +33,17 @@ function setupEntities(worldSpec, world, entityFactory) {
 }
 
 export function createWorldLoader(entityFactory) {
-  return function loadWorld(name) {
-    return loadJSON(`/world/${name}.json`)
+  return function loadWorld() {
+    return loadJSON('/world/world.json')
       .then((worldSpec) => Promise.all([
         worldSpec,
         loadSpriteSheet(worldSpec.spriteSheet),
       ]))
-      .then((([worldSpec, backgroundSprites]) => {
+      .then((([worldSpec, worldSprites]) => {
       const world = new World();
-
       setupCollision(worldSpec, world);
-      setupBackgrounds(worldSpec, world, backgroundSprites);
-      setupEntities(worldSpec, world, entityFactory);
+      setupBackgrounds(worldSpec, world, worldSprites);
+      setupEntities(worldSpec, world, entityFactory, worldSprites);
 
       return world;
     }));
@@ -112,8 +111,6 @@ function* expandTiles(tiles, patterns) {
 
   
         if (tile.pattern) {
-          console.log(tile.pattern, 'pattern')
-
           const tiles = patterns[tile.pattern].tiles;
           yield* walkTiles(tiles, derivedX, derivedY);
         } else {

@@ -38,7 +38,6 @@ export function createTreeFactory(sprite) {
 
   return function createTree() {
     const tree = new Entity();
-    tree.foreground = true;
     tree.size.set(16, 8);
     tree.offset.set(24, 56);
 

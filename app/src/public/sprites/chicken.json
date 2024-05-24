@@ -71,7 +71,7 @@
   "animations": [
     {
       "name": "walk",
-      "directions": [".down", ".up", ".right", ".left"],
+      "status": [".down", ".up", ".right", ".left"],
       "frameLen": 0.15,
       "frames": [
         "walk-1",

@@ -1,0 +1,81 @@
+{
+  "imageURL": "/img/FireEffectBullet.png",
+
+  "frames": [
+    {
+      "name": "fireball-1",
+      "rect": [480, 0, 16, 16]
+    },
+    {
+      "name": "fireball-2",
+      "rect": [496, 0, 16, 16]
+    },
+    {
+      "name": "fireball-3",
+      "rect": [512, 0, 16, 16]
+    },
+    {
+      "name": "fireball-4",
+      "rect": [528, 0, 16, 16]
+    },
+    {
+      "name": "fireball-5",
+      "rect": [544, 0, 16, 16]
+    },
+    {
+      "name": "fireball-6",
+      "rect": [560, 0, 16, 16]
+    },
+    {
+      "name": "fireball-die-1",
+      "rect": [480, 16, 16, 16]
+    },
+    {
+      "name": "fireball-die-2",
+      "rect": [496, 16, 16, 16]
+    },
+    {
+      "name": "fireball-die-3",
+      "rect": [512, 16, 16, 16]
+    },
+    {
+      "name": "fireball-die-4",
+      "rect": [528, 16, 16, 16]
+    },
+    {
+      "name": "fireball-die-5",
+      "rect": [544, 16, 16, 16]
+    },
+    {
+      "name": "fireball-die-6",
+      "rect": [560, 16, 16, 16]
+    }
+
+  ],
+  "animations": [
+    {
+      "name": "fireball",
+      "frameLen": 0.2,
+      "frames": [
+        "fireball-1",
+        "fireball-2",
+        "fireball-3",
+        "fireball-4",
+        "fireball-5",
+        "fireball-6"
+      ]
+    },
+    {
+      "name": "fireball-die",
+      "frameLen": 0.2,
+      "frames": [
+        "fireball-die-1",
+        "fireball-die-2",
+        "fireball-die-3",
+        "fireball-die-4",
+        "fireball-die-5",
+        "fireball-die-6"
+      ]
+    }
+  ]
+}
