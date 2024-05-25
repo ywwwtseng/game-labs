@@ -4,20 +4,12 @@ import { createBackgroundLayer } from '@/js/layers/background';
 import { createSpriteLayer } from '@/js/layers/sprites';
 import { loadJSON, loadSpriteSheet } from '@/js/loaders';
 
-function setupCollision(worldSpec, world) {
-  const mergedTiles = worldSpec.layers.reduce((mergedTiles, layerSpec) => {
-    return mergedTiles.concat(layerSpec.tiles);
-  }, []);
-
-  const collisionGrid = createCollisionGrid(mergedTiles, worldSpec.patterns);
-  world.setCollisionGird(collisionGrid);
-}
-
 function setupBackgrounds(worldSpec, world, worldSprites) {
   worldSpec.layers.forEach((layer) => {
-    const backgroundGrid = createBackgroundGrid(layer.tiles, worldSpec.patterns);
-    const backgroundLayer = createBackgroundLayer(world, backgroundGrid, worldSprites);
+    const grid = createGrid(layer.tiles, worldSpec.patterns);
+    const backgroundLayer = createBackgroundLayer(world, grid, worldSprites);
     world.comp.layers.push(backgroundLayer);
+    world.tileCollider.addGrid(grid);
   });
 }
 
@@ -41,7 +33,7 @@ export function createWorldLoader(entityFactory) {
       ]))
       .then((([worldSpec, worldSprites]) => {
       const world = new World();
-      setupCollision(worldSpec, world);
+
       setupBackgrounds(worldSpec, world, worldSprites);
       setupEntities(worldSpec, world, entityFactory, worldSprites);
 
@@ -50,21 +42,11 @@ export function createWorldLoader(entityFactory) {
   }
 }
 
-function createCollisionGrid(tiles, patterns) {
+function createGrid(tiles, patterns) {
   const grid = new Matrix();
 
   for (const {tile, x, y} of expandTiles(tiles, patterns)) {
-    grid.set(x, y, {type: tile.type});
-  }
-
-  return grid;
-}
-
-function createBackgroundGrid(tiles, patterns) {
-  const grid = new Matrix();
-
-  for (const {tile, x, y} of expandTiles(tiles, patterns)) {
-    grid.set(x, y, {name: tile.name});
+    grid.set(x, y, tile);
   }
 
   return grid;

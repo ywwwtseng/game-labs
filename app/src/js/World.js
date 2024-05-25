@@ -10,11 +10,7 @@ export default class World {
     this.entities = [];
 
     this.entityCollider = new EntityCollider(this.entities);
-    this.tileCollider = null;
-  }
-
-  setCollisionGird(matrix) {
-    this.tileCollider = new TileCollider(matrix);
+    this.tileCollider = new TileCollider();
   }
 
   update(gameContext) {

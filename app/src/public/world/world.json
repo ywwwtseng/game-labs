@@ -59,13 +59,7 @@
             [
               147,
               153
-            ]
-          ]
-        },
-        {
-          "name": "grass-2",
-          "type": "obstructs",
-          "ranges": [
+            ],
             [
               152,
               154
@@ -204,8 +198,18 @@
           "type": "obstructs",
           "ranges": [
             [
-              156,
-              157
+              158,
+              150
+            ]
+          ]
+        },
+        {
+          "name": "grass-2",
+          "type": "flower",
+          "ranges": [
+            [
+              152,
+              154
             ]
           ]
         }

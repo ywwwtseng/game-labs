@@ -28,6 +28,14 @@ export class Matrix {
 
     this.grid[x][y] = value;
   }
+
+  delete(x, y) {
+    const col = this.grid[x];
+
+    if (col) {
+      delete col[y];
+    }
+  }
 }
 
 export class Vec2 {
