@@ -28,6 +28,7 @@ async function main(canvas) {
   const camera = new Camera();
 
   const player = createPlayer(entityFactory.role());
+  player.player.name = 'PLAYER';
   const playerEnv = createPlayerEnv(player);
   world.entities.unshift(playerEnv);
 
@@ -53,7 +54,7 @@ async function main(canvas) {
     setupMouseControl(canvas, player, camera);
   }
 
-  // world.comp.layers.push(createDashboardLayer(font, playerEnv));
+  world.comp.layers.push(createDashboardLayer(font, world));
 
   const gameContext = {
     audioContext,
@@ -75,7 +76,6 @@ async function main(canvas) {
   }
 
   timer.start();
-  world.music.player.playTrack('main');
 }
 
 const debugMode = window.location.search.includes('debug=1')

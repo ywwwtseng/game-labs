@@ -1,10 +1,32 @@
 import { Matrix } from '@/js/math';
+import Entity from '@/js/Entity';
+import WorldTimer from '@/js/traits/WorldTimer';
 import World from '@/js/World';
 import { createBackgroundLayer } from '@/js/layers/background';
 import { createSpriteLayer } from '@/js/layers/sprites';
 import { loadMusicSheet } from '@/js/loaders/music';
 import { loadSpriteSheet } from '@/js/loaders/sprite';
 import { loadJSON } from '@/js/loaders';
+
+function createTimer() {
+  const timer = new Entity();
+  timer.addTrait(new WorldTimer());
+  return timer;
+}
+
+function setupBehavior(world) {
+  const timer = createTimer();
+  world.entities.push(timer);
+
+  world.events.listen(WorldTimer.EVENT_TIMER_OK, () => {
+    world.music.playTheme();
+  });
+
+  world.events.listen(WorldTimer.EVENT_TIMER_IDLE, () => {
+    world.music.playIdleTheme();
+  });
+
+}
 
 function setupBackgrounds(worldSpec, world, worldSprites) {
   worldSpec.layers.forEach((layer) => {
@@ -41,6 +63,7 @@ export function createWorldLoader(entityFactory) {
 
       setupBackgrounds(worldSpec, world, worldSprites);
       setupEntities(worldSpec, world, entityFactory, worldSprites);
+      setupBehavior(world);
 
       return world;
     }));

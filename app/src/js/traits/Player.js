@@ -1,13 +1,14 @@
 import { Trait } from '@/js/Entity';
+import Attack from '@/js/traits/Attack';
 
 export default class Player extends Trait {
   constructor() {
     super('player');
-    // this.score = 0;
-  }
+    this.name = 'UNNAMED';
+    this.coins = 0;
 
-  update(entity, { deltaTime }) {
-    entity.pos.x += entity.vel.x * deltaTime;
-    entity.pos.y += entity.vel.y * deltaTime;
+    this.listen(Attack.EVENT_ATTACK, () => {
+      this.coins++;
+    });
   }
 }

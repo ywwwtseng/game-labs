@@ -1,5 +1,8 @@
 {
   "main": {
     "url": "/audio/music/world.mp3"
+  },
+  "idle": {
+    "url": "/audio/music/idle.mp3"
   }
 }
