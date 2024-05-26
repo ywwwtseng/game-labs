@@ -25,7 +25,7 @@ export default class Attack extends Trait {
 
   collides(us, them) {
     if (this.lifetime === this.duration / 2) {
-      us.events.emit(Attack.EVENT_ATTACK, us, them);
+      us.player.addCoins(1);
       them.events.emit(Attack.EVENT_ATTACK, them, us);
     }
   }

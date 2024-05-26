@@ -27,6 +27,7 @@ export function createDashboardLayer(font, world) {
     font.print(playerTrait.name, context, 16, LINE1);
     font.print(score.toString().padStart(6, '0'), context, 16, LINE2);
 
+    font.print('.x' + playerTrait.diamond.toString().padStart(2, '0'), context, 88, LINE1);
     font.print('@x' + playerTrait.coins.toString().padStart(2, '0'), context, 88, LINE2);
 
     font.print('WORLD', context, 144, LINE1);

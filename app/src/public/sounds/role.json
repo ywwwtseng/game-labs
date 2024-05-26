@@ -2,6 +2,9 @@
   "fx": {
       "attack": {
           "url": "/audio/fx/attack.mp3"
+      },
+      "footstep": {
+        "url": "/audio/fx/footstep.mp3"
       }
   }
 }

@@ -2,9 +2,11 @@
 import TileResolver from '@/js/TileResolver';
 import { obstructs } from '@/js/tiles/obstructs';
 import { flower } from '@/js/tiles/flower';
+import { grass } from '@/js/tiles/grass';
 
 const handlers = {
   flower,
+  grass,
   obstructs,
 };
 
