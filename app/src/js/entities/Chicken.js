@@ -3,6 +3,7 @@ import Physics from '@/js/traits/Physics';
 import Solid from '@/js/traits/Solid';
 import PendulumMove from '@/js/traits/PendulumMove';
 import Killable from '@/js/traits/Killable';
+import Attack from '@/js/traits/Attack';
 import { loadSpriteSheet } from '@/js/loaders/sprite';
 import { DIRECTION } from '@/js/constants';
 
@@ -14,6 +15,15 @@ export function loadChicken() {
 class Behavior extends Trait {
   constructor() {
     super('behavior');
+
+    this.listen(Attack.EVENT_ATTACK, (us, them) => {
+      if (us.killable.dead) {
+        return;
+      }
+
+      us.pendulumMove.enable = false;
+      us.killable.kill();
+    });
   }
 
   collides(us, them) {

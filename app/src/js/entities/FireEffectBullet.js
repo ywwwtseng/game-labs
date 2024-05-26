@@ -49,7 +49,7 @@ export function createFireEffectBulletFactory(sprite) {
     sprite.draw(routeFrame(this), context, 0, 0);
   }
 
-  return function createFireEffectBullet() {
+  return function createFireEffectBullet(dir) {
     const bullet = new Entity();
     bullet.size.set(16, 16);
 
