@@ -43,7 +43,7 @@ export function setupJoystick(entity) {
   };
 
   input.onLongPress = () => {
-    console.log('onLongPress')
+    entity.skillController.doSkill('bullet');
   };
 
   return input;

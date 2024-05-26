@@ -4,27 +4,27 @@ import Solid from '@/js/traits/Solid';
 import Go from '@/js/traits/Go';
 import Attack from '@/js/traits/Attack';
 import Killable from '@/js/traits/Killable';
-import Emitter from '@/js/traits/Emitter';
+import SkillController from '@/js/traits/SkillController';
 import { loadSpriteSheet } from '@/js/loaders/sprite';
 import { DIRECTION } from '@/js/constants';
 import { loadAudioBoard } from '@/js/loaders/audio';
 
-export function loadRole(audioContext, entityFactories) {
+export function loadRole(audioContext) {
   return Promise.all([
     loadSpriteSheet('role'),
     loadAudioBoard('role', audioContext),
   ])
   .then(([sprite, audio]) => {
-    return createRoleFactory(sprite, audio, entityFactories);
+    return createRoleFactory(sprite, audio);
   });
 }
 
-export function createRoleFactory(sprite, audio, entityFactories) {
+export function createRoleFactory(sprite, audio) {
   const runAnim = sprite.animations.get('run');
   const attackAnim = sprite.animations.get('attack');
 
-  function emitBullet(role, world) {
-    const bullet = entityFactories.bullet();
+  function emitBullet(role, gameContext, world) {
+    const bullet = gameContext.entityFactory.bullet();
 
     if (role.go.heading === DIRECTION.DOWN) {
       bullet.vel.set(0, 200);
@@ -40,7 +40,7 @@ export function createRoleFactory(sprite, audio, entityFactories) {
       bullet.pos.copy(role.pos).add({x: 16, y: 0});
     }
 
-    world.entities.push(bullet);
+    world.entities.unshift(bullet);
   }
 
   function routeFrame(role) {
@@ -69,12 +69,10 @@ export function createRoleFactory(sprite, audio, entityFactories) {
     role.addTrait(new Go());
     role.addTrait(new Attack());
     role.addTrait(new Killable());
-
-    const emitter = new Emitter();
-    emitter.emitters.push(emitBullet);
-    role.addTrait(emitter);
-    
     role.killable.removeAfter = 0;
+    role.addTrait(new SkillController(emitBullet));
+    role.skillController.setSkill('bullet', emitBullet);
+    
     
     role.draw = drawRole;
     return role;

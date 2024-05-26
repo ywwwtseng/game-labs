@@ -1,23 +1,25 @@
 import { Trait } from '@/js/Entity';
 
-export default class Emitter extends Trait {
+export default class IntervalEmitter extends Trait {
   constructor() {
-    super('emitter');
+    super('intervalEmitter');
     this.interval = 2;
     this.coolDown = this.interval;
     this.emitters = [];
   }
 
-  emit(entity, world) {
+  emit(entity, gameContext, world) {
     for (const emitter of this.emitters) {
-      emitter(entity, world);
+      emitter(entity, gameContext, world);
     }
   }
 
-  update(entity, { deltaTime }, world) {
+  update(entity, gameContext, world) {
+    const { deltaTime } = gameContext;
+
     this.coolDown -= deltaTime;
     if (this.coolDown <= 0) {
-      this.emit(entity, world);
+      this.emit(entity, gameContext, world);
       this.coolDown = this.interval;
     }
   }

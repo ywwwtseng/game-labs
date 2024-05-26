@@ -1,6 +1,7 @@
 import Entity, { Trait } from '@/js/Entity';
 import Velocity from '@/js/traits/Velocity';
 import Killable from '@/js/traits/Killable';
+import SkillController from '@/js/traits/SkillController';
 import { loadSpriteSheet } from '@/js/loaders/sprite';
 
 export function loadFireEffectBullet() {
@@ -14,15 +15,9 @@ class Behavior extends Trait {
   }
 
   collides(us, them) {
-    // if (us.killable.dead) {
-    //   return;
-    // }
-
-    // if (them.attack.engageTime) {
-    //   us.pendulumMove.enable = false;
-    //   us.killable.kill();
-    //   // them.killable.kill();
-    // }
+    them.events.emit(SkillController.EVENT_SKILL, them, us);
+    us.killable.kill();
+    us.vel.set(0, 0);
   }
 
   update(entity) {

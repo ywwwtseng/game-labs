@@ -11,7 +11,7 @@ export function loadEntities(audioContext) {
   }
 
   return Promise.all([
-    loadRole(audioContext, entityFactories).then(addAs('role')),
+    loadRole(audioContext).then(addAs('role')),
     loadChicken(audioContext).then(addAs('chicken')),
     loadTree(audioContext).then(addAs('tree')),
     loadFireEffectBullet(audioContext).then(addAs('bullet')),
