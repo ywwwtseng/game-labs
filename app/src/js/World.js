@@ -1,10 +1,13 @@
 import Compositor from '@/js/Compositor';
+import MusicController from '@/js/MusicController';
 import TileCollider from '@/js/TileCollider';
 import EntityCollider from '@/js/EntityCollider';
 
 export default class World {
   constructor() {
     this.totalTime = 0;
+
+    this.music = new MusicController();
 
     this.comp = new Compositor();
     this.entities = [];

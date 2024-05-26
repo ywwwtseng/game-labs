@@ -3,7 +3,7 @@ import Physics from '@/js/traits/Physics';
 import Solid from '@/js/traits/Solid';
 import PendulumMove from '@/js/traits/PendulumMove';
 import Killable from '@/js/traits/Killable';
-import { loadSpriteSheet } from '@/js/loaders';
+import { loadSpriteSheet } from '@/js/loaders/sprite';
 import { DIRECTION } from '@/js/constants';
 
 export function loadChicken() {

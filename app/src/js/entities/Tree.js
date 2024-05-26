@@ -1,7 +1,7 @@
 import Entity, { Trait } from '@/js/Entity';
 import Physics from '@/js/traits/Physics';
 import Solid from '@/js/traits/Solid';
-import { loadSpriteSheet } from '@/js/loaders';
+import { loadSpriteSheet } from '@/js/loaders/sprite';
 import { DIRECTION } from '@/js/constants';
 
 export function loadTree() {

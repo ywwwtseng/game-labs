@@ -75,6 +75,7 @@ async function main(canvas) {
   }
 
   timer.start();
+  world.music.player.playTrack('main');
 }
 
 const debugMode = window.location.search.includes('debug=1')

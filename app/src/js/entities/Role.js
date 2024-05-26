@@ -5,7 +5,7 @@ import Go from '@/js/traits/Go';
 import Attack from '@/js/traits/Attack';
 import Killable from '@/js/traits/Killable';
 import Emitter from '@/js/traits/Emitter';
-import { loadSpriteSheet } from '@/js/loaders';
+import { loadSpriteSheet } from '@/js/loaders/sprite';
 import { DIRECTION } from '@/js/constants';
 import { loadAudioBoard } from '@/js/loaders/audio';
 

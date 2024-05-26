@@ -1,5 +1,7 @@
 {
   "spriteSheet": "world",
+  
+  "musicSheet": "world",
 
   "layers": [
     {

@@ -2,7 +2,9 @@ import { Matrix } from '@/js/math';
 import World from '@/js/World';
 import { createBackgroundLayer } from '@/js/layers/background';
 import { createSpriteLayer } from '@/js/layers/sprites';
-import { loadJSON, loadSpriteSheet } from '@/js/loaders';
+import { loadMusicSheet } from '@/js/loaders/music';
+import { loadSpriteSheet } from '@/js/loaders/sprite';
+import { loadJSON } from '@/js/loaders';
 
 function setupBackgrounds(worldSpec, world, worldSprites) {
   worldSpec.layers.forEach((layer) => {
@@ -30,9 +32,12 @@ export function createWorldLoader(entityFactory) {
       .then((worldSpec) => Promise.all([
         worldSpec,
         loadSpriteSheet(worldSpec.spriteSheet),
+        loadMusicSheet(worldSpec.spriteSheet),
       ]))
-      .then((([worldSpec, worldSprites]) => {
+      .then((([worldSpec, worldSprites, musicPlayer]) => {
       const world = new World();
+
+      world.music.setPlayer(musicPlayer);
 
       setupBackgrounds(worldSpec, world, worldSprites);
       setupEntities(worldSpec, world, entityFactory, worldSprites);
