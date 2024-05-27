@@ -16,8 +16,8 @@ class Font {
       this.sprites.draw(
         char,
         context,
-        Dimensions.get('screen').left + x + pos * this.size,
-        Dimensions.get('screen').top + y
+        Dimensions.get('canvas').offset.x + x + pos * this.size,
+        Dimensions.get('canvas').offset.y + y
       );
     });
   }

@@ -23,7 +23,7 @@ export function createRoleFactory(sprite, audio) {
   const runAnim = sprite.animations.get('run');
   const attackAnim = sprite.animations.get('attack');
 
-  function emitBullet(role, gameContext, world) {
+  function emitBullet(role, gameContext, scene) {
     const bullet = gameContext.entityFactory.bullet();
 
     if (role.go.heading === DIRECTION.DOWN) {
@@ -40,7 +40,7 @@ export function createRoleFactory(sprite, audio) {
       bullet.pos.copy(role.pos).add({x: 16, y: 0});
     }
 
-    world.entities.unshift(bullet);
+    scene.entities.unshift(bullet);
   }
 
   function routeFrame(role) {

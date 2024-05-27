@@ -15,6 +15,10 @@ export default class Go extends Trait {
   }
   
   collides(us, them) {
+    if (!(us.solid && us.solid.obstructs) || !(them.solid && them.solid.obstructs) ) {
+      return;
+    }
+
     const dir = them.bounds.center.clone().sub(us.bounds.center).dir();
 
     if (dir >= DEGREE[45] && dir < DEGREE[135]) {

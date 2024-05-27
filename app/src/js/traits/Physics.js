@@ -5,12 +5,12 @@ export default class Physics extends Trait {
     super('physics');
   }
 
-  update(entity, gameContext, world) {
+  update(entity, gameContext, scene) {
     const { deltaTime } = gameContext;
     entity.pos.x += entity.vel.x * deltaTime;
-    world.tileCollider.checkX(entity, gameContext, world);
+    scene.tileCollider.checkX(entity, gameContext, scene);
 
     entity.pos.y += entity.vel.y * deltaTime;
-    world.tileCollider.checkY(entity, gameContext, world);
+    scene.tileCollider.checkY(entity, gameContext, scene);
   }
 }

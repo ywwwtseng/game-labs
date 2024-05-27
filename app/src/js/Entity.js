@@ -87,9 +87,9 @@ export default class Entity {
     this.sounds.clear();
   }
 
-  update(gameContext, world) {
+  update(gameContext, scene) {
     this.traits.forEach((trait) => {
-      trait.update(this, gameContext, world);
+      trait.update(this, gameContext, scene);
     });
 
     this.playSounds(this.audio, gameContext.audioContext);

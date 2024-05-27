@@ -18,12 +18,12 @@ export default class Killable extends Trait {
     this.deadTime = 0;
   }
 
-  update(entity, { deltaTime }, world) {
+  update(entity, { deltaTime }, scene) {
     if (this.dead) {
       this.deadTime += deltaTime;
       if (this.deadTime > this.removeAfter) {
         this.queue(() => {
-         world.entities.splice(world.entities.findIndex(e => e === entity), 1);
+         scene.entities.splice(scene.entities.findIndex(e => e === entity), 1);
         });
       }
     }

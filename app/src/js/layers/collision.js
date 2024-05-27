@@ -1,7 +1,7 @@
 function createEntityLayer(entities) {
   return function drawBoundingBoxs(context, camera) {
     context.strokeStyle = 'red';
-    entities.forEach(entity => {
+    entities.forEach((entity) => {
       context.beginPath();
       context.rect(
         entity.bounds.left - camera.pos.x,
@@ -41,9 +41,9 @@ function createTileCandidateLayer(tileResolver) {
   };
 }
 
-export function createCollisionLayer(world) {
-  const drawTileCandidates = world.tileCollider.resolvers.map(createTileCandidateLayer);
-  const drawBoundingBoxs = createEntityLayer(world.entities);
+export function createCollisionLayer(scene) {
+  const drawTileCandidates = scene.tileCollider.resolvers.map(createTileCandidateLayer);
+  const drawBoundingBoxs = createEntityLayer(scene.entities);
 
   return function drawCollision(context, camera) {
     drawTileCandidates.forEach((draw) => draw(context, camera));

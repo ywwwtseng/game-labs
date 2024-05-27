@@ -2,16 +2,16 @@ import Dimensions from '@/js/Dimensions';
 import TileResolver from '@/js/TileResolver';
 import { Vec2 } from '@/js/math';
 
-export function createBackgroundLayer(world, tiles, sprites) {
+export function createBackgroundLayer(scene, tiles, sprites) {
   const resolver = new TileResolver(tiles);
 
   const buffer = document.createElement('canvas');
-  buffer.width = Dimensions.get('screen').width + 16;
-  buffer.height = Dimensions.get('screen').height + 16;
+  buffer.width = Dimensions.get('canvas').width + 16;
+  buffer.height = Dimensions.get('canvas').height + 16;
 
   window.addEventListener('resize', (event) => {
-    buffer.width = Dimensions.get('screen').width + 16;
-    buffer.height = Dimensions.get('screen').height + 16;
+    buffer.width = Dimensions.get('canvas').width + 16;
+    buffer.height = Dimensions.get('canvas').height + 16;
   });
 
   const context = buffer.getContext('2d');
@@ -28,7 +28,7 @@ export function createBackgroundLayer(world, tiles, sprites) {
 
           if (tile) {
             if (sprites.animations.has(tile.name)) {
-              sprites.drawAnim(tile.name, context, x - startIndex.x, y - startIndex.y, world.totalTime);
+              sprites.drawAnim(tile.name, context, x - startIndex.x, y - startIndex.y, scene.totalTime);
             } else {
               sprites.drawTile(tile.name, context, x - startIndex.x, y - startIndex.y);
             }

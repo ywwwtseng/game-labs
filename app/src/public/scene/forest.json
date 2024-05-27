@@ -1,0 +1,79 @@
+{
+  "spriteSheet": "world",
+  "musicSheet": "world",
+  "patternSheet": "world-pattern",
+
+  "layers": [
+    {
+      "tiles": [
+        {
+          "name": "grass",
+          "type": "ground",
+          "ranges": [
+            [
+              0, 500,
+              0, 500
+            ]
+          ]
+        }
+      ]
+      
+    },
+    {
+      "tiles": [
+        {
+          "name": "grass-1",
+          "type": "grass",
+          "ranges": [
+            [
+              154,
+              154
+            ],
+            [
+              153,
+              156
+            ],
+            [
+              147,
+              153
+            ],
+            [
+              152,
+              154
+            ]
+          ]
+        },
+        {
+          "name": "grass-2",
+          "type": "flower",
+          "ranges": [
+            [
+              152,
+              154
+            ]
+          ]
+        },
+        {
+          "name": "indicator",
+          "type": "obstructs",
+          "ranges": [
+            [
+              152,
+              159
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "name": "chicken",
+      "pos": [2416, 2496]
+    },
+    {
+      "name": "tree",
+      "pos": [2400, 2400]
+    }
+  ]
+}

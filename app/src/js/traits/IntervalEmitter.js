@@ -8,18 +8,18 @@ export default class IntervalEmitter extends Trait {
     this.emitters = [];
   }
 
-  emit(entity, gameContext, world) {
+  emit(entity, gameContext, scene) {
     for (const emitter of this.emitters) {
-      emitter(entity, gameContext, world);
+      emitter(entity, gameContext, scene);
     }
   }
 
-  update(entity, gameContext, world) {
+  update(entity, gameContext, scene) {
     const { deltaTime } = gameContext;
 
     this.coolDown -= deltaTime;
     if (this.coolDown <= 0) {
-      this.emit(entity, gameContext, world);
+      this.emit(entity, gameContext, scene);
       this.coolDown = this.interval;
     }
   }

@@ -12,7 +12,7 @@ function handlerX({ entity, match }) {
   }
 }
 
-function handlerY({ entity, match, resolver, gameContext, world }) {
+function handlerY({ entity, match, resolver, gameContext, scene }) {
   if (entity.vel.y > 0) {
 
     if (entity.bounds.bottom > match.y1) {
@@ -24,7 +24,7 @@ function handlerY({ entity, match, resolver, gameContext, world }) {
       grid.delete(match.indexX, match.indexY);
       const chicken = gameContext.entityFactory.chicken();
       chicken.pos.set(entity.pos.x, match.y1);
-      world.entities.push(chicken);
+      scene.entities.push(chicken);
     }
 
     if (entity.bounds.top < match.y2) {

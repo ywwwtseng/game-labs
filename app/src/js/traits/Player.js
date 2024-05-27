@@ -14,10 +14,9 @@ export default class Player extends Trait {
   addCoins(count) {
     this.coins += count;
     this.queue((entity) => entity.sounds.add('footstep'));
-    if (this.coins >= COIN_DIAMOND_THRESHOLD) {
-      const diamondCount = Math.floor(this.coins / COIN_DIAMOND_THRESHOLD);
-      this.addDiamond(diamondCount);
-      this.coins = this.coins % COIN_DIAMOND_THRESHOLD;
+    while (this.coins >= COIN_DIAMOND_THRESHOLD) {
+      this.addDiamond(1);
+      this.coins -= COIN_DIAMOND_THRESHOLD;
     }
   }
 

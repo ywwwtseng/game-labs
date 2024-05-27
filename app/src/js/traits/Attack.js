@@ -30,7 +30,7 @@ export default class Attack extends Trait {
     }
   }
 
-  update(entity, { deltaTime }, world) {
+  update(entity, { deltaTime }, scene) {
     if (this.ready) {
       if (this.lifetime === 0) {
         entity.sounds.add('attack');

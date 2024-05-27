@@ -18,15 +18,15 @@ export default class SkillController extends Trait {
     this.emitters.push(this[name]);
   }
 
-  process(entity, gameContext, world) {
+  process(entity, gameContext, scene) {
     for (const emitter of this.emitters) {
-      emitter(entity, gameContext, world);
+      emitter(entity, gameContext, scene);
     }
   }
 
-  update(entity, gameContext, world) {
+  update(entity, gameContext, scene) {
     if (this.emitters.length > 0) {
-      this.process(entity, gameContext, world);
+      this.process(entity, gameContext, scene);
       this.emitters.length = 0;
     }
   }

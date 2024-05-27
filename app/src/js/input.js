@@ -1,50 +1,57 @@
 import Keyboard from '@/js/KeyboardState';
 import Joystick from '@/js/Joystick';
+import InputRouter from '@/js/InputRouter';
 import { DIRECTION } from '@/js/constants';
 
-export function setupKeyboard(entity) {
+export function setupKeyboard(window) {
   const input = new Keyboard();
+  const router = new InputRouter();
+
+  input.listenTo(window);
 
   input.addMapping('ArrowUp', (keyState) => {
-    entity.go.dir.y += keyState ? -1 : 1;
+    router.route((entity) => entity.go.dir.y += keyState ? -1 : 1);
   });
 
   input.addMapping('ArrowDown', (keyState) => {
-    entity.go.dir.y += keyState ? 1 : -1;
+    router.route((entity) => entity.go.dir.y += keyState ? 1 : -1);
   });
 
   input.addMapping('ArrowLeft', (keyState) => {
-    entity.go.dir.x += keyState ? -1 : 1;
+    router.route((entity) => entity.go.dir.x += keyState ? -1 : 1);
   });
 
   input.addMapping('ArrowRight', (keyState) => {
-    entity.go.dir.x += keyState ? 1 : -1;
+    router.route((entity) => entity.go.dir.x += keyState ? 1 : -1);
   });
 
   input.addMapping('Space', (keyState) => {
     if (keyState) {
-      entity.attack.start();
+      router.route((entity) => entity.attack.start());
     }
   });
 
-  return input;
+  return router;
 }
 
 export function setupJoystick(entity) {
   const input = new Joystick();
+  const router = new InputRouter();
 
   input.onMove = ({x, y}) => {
-    entity.go.dir.x = x;
-    entity.go.dir.y = y;
+    router.route((entity) => {
+      entity.go.dir.x = x;
+      entity.go.dir.y = y;
+    });
   };
 
   input.onPress = () => {
-    entity.attack.start();
+    router.route((entity) => entity.attack.start());
   };
 
   input.onLongPress = () => {
-    entity.skillController.doSkill('bullet');
+    router.route((entity) => entity.skillController.doSkill('bullet'));
   };
 
-  return input;
+  return router;
 }
