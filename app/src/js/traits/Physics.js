@@ -1,10 +1,6 @@
-import { Trait } from '@/js/Entity';
+import Trait from '@/js/Trait';
 
 export default class Physics extends Trait {
-  constructor() {
-    super('physics');
-  }
-
   update(entity, gameContext, scene) {
     const { deltaTime } = gameContext;
     entity.pos.x += entity.vel.x * deltaTime;

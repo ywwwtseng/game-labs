@@ -1,4 +1,5 @@
-import Entity, { Trait } from '@/js/Entity';
+import Entity from '@/js/Entity';
+import Trait from '@/js/Trait';
 import Physics from '@/js/traits/Physics';
 import Solid from '@/js/traits/Solid';
 import { loadSpriteSheet } from '@/js/loaders/sprite';
@@ -9,23 +10,7 @@ export function loadTree() {
     .then(createTreeFactory);
 }
 
-class Behavior extends Trait {
-  constructor() {
-    super('behavior');
-  }
-
-  collides(us, them) {
-    // if (us.killable.dead) {
-    //   return;
-    // }
-
-    // if (them.attack.engageTime) {
-    //   us.pendulumMove.enable = false;
-    //   us.killable.kill();
-    //   // them.killable.kill();
-    // }
-  }
-}
+class Behavior extends Trait {}
 
 export function createTreeFactory(sprite) {
   function routeFrame(tree) {

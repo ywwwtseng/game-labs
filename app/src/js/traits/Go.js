@@ -1,11 +1,11 @@
-import { Trait } from '@/js/Entity';
+import Trait from '@/js/Trait';
+import Solid from '@/js/traits/Solid';
 import { Vec2 } from '@/js/math';
 import { DIRECTION, DEGREE } from '@/js/constants';
 
 export default class Go extends Trait {
   constructor() {
-    super('go');
-
+    super();
     this.dir = new Vec2(0, 0);
     this.speed = 6000;
 
@@ -15,7 +15,10 @@ export default class Go extends Trait {
   }
   
   collides(us, them) {
-    if (!(us.solid && us.solid.obstructs) || !(them.solid && them.solid.obstructs) ) {
+    if (
+      !(us.traits.has(Solid) && us.traits.get(Solid).obstructs)
+      || !(them.traits.has(Solid) && them.traits.get(Solid).obstructs)
+    ) {
       return;
     }
 

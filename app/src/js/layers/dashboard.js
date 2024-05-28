@@ -1,15 +1,17 @@
 import { findPlayers } from '@/js/player';
+import Player from '@/js/traits/Player';
+// import SceneTimer from '@/js/traits/SceneTimer';
 
-function getPlayerTrait(scene) {
-  for (const entity of findPlayers(scene)) {
-    return entity.player;
+function getPlayerTrait(entities) {
+  for (const entity of findPlayers(entities)) {
+    return entity.traits.get(Player);
   }
 }
 
 // function getTimerTrait(scene) {
 //   for (const entity of scene.entities) {
-//     if (entity.sceneTimer) {
-//       return entity.sceneTimer;
+//     if (entity.traits.has(SceneTimer)) {
+//       return entity.traits.get(SceneTimer);
 //     }
 //   }
 // }
@@ -21,7 +23,7 @@ export function createDashboardLayer(font, scene) {
   const score = 24500;
 
   return function drawDashboard(context) {
-    const playerTrait = getPlayerTrait(scene);
+    const playerTrait = getPlayerTrait(scene.entities);
     // const timerTrait = getTimerTrait(scene);
 
     font.print(playerTrait.name, context, 16, LINE1);

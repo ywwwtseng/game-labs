@@ -1,3 +1,4 @@
+import Player from '@/js/traits/Player';
 import { SIDES } from '@/js/constants';
 
 function handlerX({ entity, match }) {
@@ -19,7 +20,7 @@ function handlerY({ entity, match, resolver, gameContext, scene }) {
       entity.obstruct(SIDES.BOTTOM, match);
     }
   } else if (entity.vel.y < 0) {
-    if (entity.player) {
+    if (entity.traits.get(Player)) {
       const grid = resolver.matrix;
       grid.delete(match.indexX, match.indexY);
       const chicken = gameContext.entityFactory.chicken();

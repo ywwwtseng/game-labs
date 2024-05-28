@@ -1,4 +1,5 @@
-import Entity, { Trait } from '@/js/Entity';
+import Entity from '@/js/Entity';
+import Trait from '@/js/Trait';
 import Velocity from '@/js/traits/Velocity';
 import Killable from '@/js/traits/Killable';
 import SkillController from '@/js/traits/SkillController';
@@ -10,20 +11,20 @@ export function loadFireEffectBullet() {
 }
 
 class Behavior extends Trait {
-  constructor() {
-    super('behavior');
-  }
-
   collides(us, them) {
     them.events.emit(SkillController.EVENT_SKILL, them, us);
-    us.killable.kill();
-    us.vel.set(0, 0);
+    if (us.traits.has(Killable)) {
+      us.traits.get(Killable).kill();
+      us.vel.set(0, 0);
+    }
   }
 
   update(entity) {
-    if (entity.lifetime > 0.6 && !entity.killable.dead) {
-      entity.killable.kill();
-      entity.vel.set(0, 0);
+    if (entity.traits.has(Killable)) {
+      if (entity.lifetime > 0.6 && !entity.traits.get(Killable).dead) {
+        entity.traits.get(Killable).kill();
+        entity.vel.set(0, 0);
+      }
     }
   }
 }
@@ -33,7 +34,7 @@ export function createFireEffectBulletFactory(sprite) {
   const fireballDieAnim = sprite.animations.get('fireball-die');
 
   function routeFrame(bullet) {
-    if (bullet.killable.dead) {
+    if (bullet.traits.get(Killable).dead) {
       return fireballDieAnim(bullet.lifetime);
     }
 

@@ -1,9 +1,8 @@
-import { Trait } from '@/js/Entity';
+import Trait from '@/js/Trait';
 
 export default class PendulumMove extends Trait {
   constructor() {
-    super('pendulumMove');
-
+    super();
     this.speed = 10;
     this.distance = 0;
     this.lifetime = 0;

@@ -26,13 +26,13 @@ export function createRoleFactory(sprite, audio) {
   function emitBullet(role, gameContext, scene) {
     const bullet = gameContext.entityFactory.bullet();
 
-    if (role.go.heading === DIRECTION.DOWN) {
+    if (role.traits.get(Go).heading === DIRECTION.DOWN) {
       bullet.vel.set(0, 200);
       bullet.pos.copy(role.pos).add({x: 0, y: 16});
-    } else if (role.go.heading === DIRECTION.UP) {
+    } else if (role.traits.get(Go).heading === DIRECTION.UP) {
       bullet.vel.set(0, -200);
       bullet.pos.copy(role.pos).add({x: 0, y: -16});
-    } else if (role.go.heading === DIRECTION.LEFT) {
+    } else if (role.traits.get(Go).heading === DIRECTION.LEFT) {
       bullet.vel.set(-200, 0);
       bullet.pos.copy(role.pos).add({x: -16, y: 0});
     } else {
@@ -44,15 +44,15 @@ export function createRoleFactory(sprite, audio) {
   }
 
   function routeFrame(role) {
-    if (role.attack.lifetime) {
-      return attackAnim[role.go.heading](role.attack.lifetime);
+    if (role.traits.get(Attack).lifetime) {
+      return attackAnim[role.traits.get(Go).heading](role.traits.get(Attack).lifetime);
     }
 
     if (role.vel.x === 0 && role.vel.y === 0) {
-      return `idle${role.go.heading}`;
+      return `idle${role.traits.get(Go).heading}`;
     }
 
-    return runAnim[role.go.heading](role.go.distance.length());
+    return runAnim[role.traits.get(Go).heading](role.traits.get(Go).distance.length());
   }
 
   function drawRole(context) {
@@ -69,9 +69,9 @@ export function createRoleFactory(sprite, audio) {
     role.addTrait(new Go());
     role.addTrait(new Attack());
     role.addTrait(new Killable());
-    role.killable.removeAfter = 0;
+    role.traits.get(Killable).removeAfter = 0;
     role.addTrait(new SkillController(emitBullet));
-    role.skillController.setSkill('bullet', emitBullet);
+    role.traits.get(SkillController).setSkill('bullet', emitBullet);
     
     
     role.draw = drawRole;

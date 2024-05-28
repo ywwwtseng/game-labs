@@ -1,4 +1,5 @@
-import Entity, { Trait } from '@/js/Entity';
+import Entity from '@/js/Entity';
+import Trait from '@/js/Trait';
 import Physics from '@/js/traits/Physics';
 import Solid from '@/js/traits/Solid';
 import PendulumMove from '@/js/traits/PendulumMove';
@@ -15,36 +16,42 @@ export function loadChicken() {
 
 class Behavior extends Trait {
   constructor() {
-    super('behavior');
+    super();
 
     this.listen(Attack.EVENT_ATTACK, (us, them) => {
-      if (us.killable.dead) {
+      if (!us.traits.has(Killable) || us.traits.get(Killable).dead) {
         return;
       }
 
-      us.pendulumMove.enable = false;
-      us.killable.kill();
+      us.traits.get(Killable).kill();
+
+      if (us.traits.has(PendulumMove)) {
+        us.traits.get(PendulumMove).enable = false;
+      }
     });
 
     this.listen(SkillController.EVENT_SKILL, (us, them) => {
-      if (us.killable.dead) {
+      if (!us.traits.has(Killable) || us.traits.get(Killable).dead) {
         return;
       }
 
-      us.pendulumMove.enable = false;
-      us.killable.kill();
+      us.traits.get(Killable).kill();
+
+      if (us.traits.has(PendulumMove)) {
+        us.traits.get(PendulumMove).enable = false;
+      }
     });
   }
 
   collides(us, them) {
-    // if (us.killable.dead) {
+    // if (us.traits.get(Killable).dead) {
     //   return;
     // }
 
-    // if (them.attack.engageTime) {
-    //   us.pendulumMove.enable = false;
-    //   us.killable.kill();
-    //   // them.killable.kill();
+    // if (them.traits.get(Attack).engageTime) {
+    //   us.traits.get(PendulumMove).enable = false;
+    //   us.traits.get(Killable).kill();
+    //   // them.traits.get(Killable).kill();
     // }
   }
 }
@@ -53,11 +60,11 @@ export function createChickenFactory(sprite) {
   const walkAnim = sprite.animations.get('walk');
 
   function routeFrame(chicken) {
-    if (chicken.pendulumMove.speed > 0) {
-      return walkAnim[DIRECTION.RIGHT](chicken.pendulumMove.lifetime);
+    if (chicken.traits.get(PendulumMove).speed > 0) {
+      return walkAnim[DIRECTION.RIGHT](chicken.traits.get(PendulumMove).lifetime);
     }
 
-    return walkAnim[DIRECTION.LEFT](chicken.pendulumMove.lifetime);
+    return walkAnim[DIRECTION.LEFT](chicken.traits.get(PendulumMove).lifetime);
   }
 
   function drawChicken(context) {

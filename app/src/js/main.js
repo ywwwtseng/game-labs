@@ -1,6 +1,6 @@
 import Dimensions from '@/js/Dimensions';
 import Timer from '@/js/Timer';
-import { createPlayerEnv, createPlayer } from '@/js/player';
+import { createPlayerEnv, makePlayer, findPlayers } from '@/js/player';
 import { createSceneLoader } from '@/js/loaders/scene';
 import { loadEntities } from '@/js/entities';
 import { loadFont } from '@/js/loaders/fonts';
@@ -17,6 +17,7 @@ import SceneRunner from '@/js/SceneRunner';
 import Scene from '@/js/Scene';
 import BaseScene from '@/js/BaseScene';
 import TimedScene from '@/js/TimedScene';
+import Player from '@/js/traits/Player';
 
 
 async function main(canvas) {
@@ -32,8 +33,7 @@ async function main(canvas) {
 
   const sceneRunner = new SceneRunner();
 
-  const player = createPlayer(entityFactory.role());
-  player.player.name = 'PLAYER';
+  const player = makePlayer(entityFactory.role(), 'PLAYER');
 
   let inputRouter;
 
@@ -59,11 +59,9 @@ async function main(canvas) {
 
     scene.events.listen(Scene.EVENT_TRIGGER, (spec, trigger, touches) => {
       if (spec.type === 'goto') {
-        for (const entity of touches) {
-          if (entity.player) {
-            runScene('forest');
-            return;
-          }
+        for (const _ of findPlayers(touches)) {
+          runScene(spec.name);
+          return;
         }
       }
       

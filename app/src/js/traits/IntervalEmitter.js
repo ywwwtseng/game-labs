@@ -1,8 +1,8 @@
-import { Trait } from '@/js/Entity';
+import Trait from '@/js/Trait';
 
 export default class IntervalEmitter extends Trait {
   constructor() {
-    super('intervalEmitter');
+    super();
     this.interval = 2;
     this.coolDown = this.interval;
     this.emitters = [];

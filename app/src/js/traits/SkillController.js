@@ -1,11 +1,10 @@
-import { Trait } from '@/js/Entity';
+import Trait from '@/js/Trait';
 
 export default class SkillController extends Trait {
   static EVENT_SKILL = Symbol('skill');
 
   constructor(emitter) {
-    super('skillController');
-
+    super();
     this.emitter = emitter;
     this.emitters = [];
   }

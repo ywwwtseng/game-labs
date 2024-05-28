@@ -1,12 +1,12 @@
-import { Trait } from '@/js/Entity';
+import Trait from '@/js/Trait';
+import Player from '@/js/traits/Player';
 import { FRAME_DURATION } from '@/js/constants';
 
 export default class Attack extends Trait {
   static EVENT_ATTACK = Symbol('attack');
 
   constructor() {
-    super('attack');
-    
+    super();
     this.ready = false;
     this.lifetime = 0;
     this.duration = 20 * FRAME_DURATION;
@@ -25,7 +25,7 @@ export default class Attack extends Trait {
 
   collides(us, them) {
     if (this.lifetime === this.duration / 2) {
-      us.player.addCoins(1);
+      us.traits.get(Player).addCoins(1);
       them.events.emit(Attack.EVENT_ATTACK, them, us);
     }
   }

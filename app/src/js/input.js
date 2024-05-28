@@ -1,6 +1,9 @@
 import Keyboard from '@/js/KeyboardState';
 import Joystick from '@/js/Joystick';
 import InputRouter from '@/js/InputRouter';
+import Attack from '@/js/traits/Attack';
+import Go from '@/js/traits/Go';
+import SkillController from '@/js/traits/SkillController';
 import { DIRECTION } from '@/js/constants';
 
 export function setupKeyboard(window) {
@@ -10,24 +13,24 @@ export function setupKeyboard(window) {
   input.listenTo(window);
 
   input.addMapping('ArrowUp', (keyState) => {
-    router.route((entity) => entity.go.dir.y += keyState ? -1 : 1);
+    router.route((entity) => entity.traits.get(Go).dir.y += keyState ? -1 : 1);
   });
 
   input.addMapping('ArrowDown', (keyState) => {
-    router.route((entity) => entity.go.dir.y += keyState ? 1 : -1);
+    router.route((entity) => entity.traits.get(Go).dir.y += keyState ? 1 : -1);
   });
 
   input.addMapping('ArrowLeft', (keyState) => {
-    router.route((entity) => entity.go.dir.x += keyState ? -1 : 1);
+    router.route((entity) => entity.traits.get(Go).dir.x += keyState ? -1 : 1);
   });
 
   input.addMapping('ArrowRight', (keyState) => {
-    router.route((entity) => entity.go.dir.x += keyState ? 1 : -1);
+    router.route((entity) => entity.traits.get(Go).dir.x += keyState ? 1 : -1);
   });
 
   input.addMapping('Space', (keyState) => {
     if (keyState) {
-      router.route((entity) => entity.attack.start());
+      router.route((entity) => entity.traits.get(Attack).start());
     }
   });
 
@@ -40,17 +43,17 @@ export function setupJoystick(entity) {
 
   input.onMove = ({x, y}) => {
     router.route((entity) => {
-      entity.go.dir.x = x;
-      entity.go.dir.y = y;
+      entity.traits.get(Go).dir.x = x;
+      entity.traits.get(Go).dir.y = y;
     });
   };
 
   input.onPress = () => {
-    router.route((entity) => entity.attack.start());
+    router.route((entity) => entity.traits.get(Attack).start());
   };
 
   input.onLongPress = () => {
-    router.route((entity) => entity.skillController.doSkill('bullet'));
+    router.route((entity) => entity.traits.get(SkillController).doSkill('bullet'));
   };
 
   return router;

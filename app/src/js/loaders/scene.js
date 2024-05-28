@@ -65,12 +65,14 @@ function setupTriggers(sceneSpec, scene) {
   }
 
   for (const triggerSpec of sceneSpec.triggers) {
-    const entity = createTrigger();
+    const trigger = new Trigger();
     if (triggerSpec.type === 'goto') {
-      entity.trigger.conditions.push((entity, touches, gameContext, scene) => {
+      trigger.conditions.push((entity, touches, gameContext, scene) => {
         scene.events.emit(Scene.EVENT_TRIGGER, triggerSpec, entity, touches);
       });
     }
+    const entity = new Entity();
+    entity.addTrait(trigger);
     entity.pos.set(triggerSpec.pos[0], triggerSpec.pos[1]);
     entity.size.set(triggerSpec.size[0], triggerSpec.size[1]);
     scene.entities.push(entity);

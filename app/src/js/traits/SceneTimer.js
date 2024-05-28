@@ -1,11 +1,11 @@
-import { Trait } from '@/js/Entity';
+import Trait from '@/js/Trait';
 
 export default class SceneTimer extends Trait {
   static EVENT_TIMER_OK = Symbol('timer ok');
   static EVENT_TIMER_IDLE = Symbol('timer idle');
 
   constructor() {
-    super('sceneTimer');
+    super();
     this.emitted = null;
   }
 

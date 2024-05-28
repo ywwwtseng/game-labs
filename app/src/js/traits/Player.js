@@ -1,11 +1,11 @@
-import { Trait } from '@/js/Entity';
+import Trait from '@/js/Trait';
 import Attack from '@/js/traits/Attack';
 
 const COIN_DIAMOND_THRESHOLD = 100;
 
 export default class Player extends Trait {
   constructor() {
-    super('player');
+    super();
     this.name = 'UNNAMED';
     this.coins = 0;
     this.diamond = 0;

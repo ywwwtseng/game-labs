@@ -8,7 +8,7 @@ import EntityCollider from '@/js/EntityCollider';
 import { findPlayers } from '@/js/player';
 
 function focusPlyer(scene) {
-  for (const player of findPlayers(scene)) {
+  for (const player of findPlayers(scene.entities)) {
     scene.camera.pos.x = Math.floor(player.pos.x - scene.camera.size.x / 2 + player.size.x / 2);
     scene.camera.pos.y = Math.floor(player.pos.y - scene.camera.size.y / 2 + player.size.y / 2);
   }

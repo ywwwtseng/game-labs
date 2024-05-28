@@ -1,8 +1,8 @@
-import { Trait } from '@/js/Entity';
+import Trait from '@/js/Trait';
 
 export default class Trigger extends Trait {
   constructor() {
-    super('trigger');
+    super();
     this.touches = new Set();
     this.conditions = [];
   }
