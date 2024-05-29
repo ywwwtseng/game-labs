@@ -1,4 +1,4 @@
-import Trait from '@/js/Trait';
+import Trait from '@/engine/Trait';
 
 export default class Physics extends Trait {
   update(entity, gameContext, scene) {

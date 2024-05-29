@@ -1,6 +1,6 @@
-import Dimensions from '@/js/Dimensions';
-import TileResolver from '@/js/TileResolver';
-import { Vec2 } from '@/js/math';
+import Dimensions from '@/engine/Dimensions';
+import TileResolver from '@/engine/TileResolver';
+ import { Vec2 } from '@/engine/math';
 
 export function createBackgroundLayer(scene, tiles, sprites) {
   const resolver = new TileResolver(tiles);

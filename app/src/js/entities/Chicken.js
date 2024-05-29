@@ -1,13 +1,15 @@
-import Entity from '@/js/Entity';
-import Trait from '@/js/Trait';
+import Entity from '@/engine/Entity';
+import Trait from '@/engine/Trait';
+import { loadSpriteSheet } from '@/engine/loaders/sprite';
+import { DIRECTION } from '@/engine/constants';
+
 import Physics from '@/js/traits/Physics';
 import Solid from '@/js/traits/Solid';
 import PendulumMove from '@/js/traits/PendulumMove';
 import Killable from '@/js/traits/Killable';
 import Attack from '@/js/traits/Attack';
 import SkillController from '@/js/traits/SkillController';
-import { loadSpriteSheet } from '@/js/loaders/sprite';
-import { DIRECTION } from '@/js/constants';
+
 
 export function loadChicken() {
   return loadSpriteSheet('chicken')

@@ -1,4 +1,4 @@
-import BaseScene from "@/js/BaseScene";
+import Scene from "@/engine/Scene";
 
 export default class SceneRunner {
   constructor() {
@@ -7,7 +7,7 @@ export default class SceneRunner {
   }
 
   addScene(scene) {
-    scene.events.listen(BaseScene.EVENT_COMPLETE, () => {
+    scene.events.listen(Scene.EVENT_COMPLETE, () => {
       this.runNext();
     });
     this.scenes.push(scene);

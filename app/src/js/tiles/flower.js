@@ -1,5 +1,6 @@
+import { SIDES } from '@/engine/constants';
+
 import Player from '@/js/traits/Player';
-import { SIDES } from '@/js/constants';
 
 function handlerX({ entity, match }) {
   if (entity.vel.x > 0) {

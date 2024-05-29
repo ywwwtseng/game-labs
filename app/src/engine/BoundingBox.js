@@ -1,5 +1,5 @@
-import { SIDES } from '@/js/constants';
-import { Vec2 } from '@/js/math';
+import { SIDES } from '@/engine/constants';
+ import { Vec2 } from '@/engine/math';
 
 export default class BoundingBox {
   constructor(pos, size, offset) {

@@ -1,4 +1,4 @@
-import Dimensions from '@/js/Dimensions';
+import Dimensions from '@/engine/Dimensions';
 
 export function createTextLayer(font, text) {
   const size = font.size;

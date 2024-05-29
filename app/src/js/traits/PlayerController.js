@@ -1,9 +1,11 @@
-import Trait from '@/js/Trait';
+import Trait from '@/engine/Trait';
+import { Vec2 } from '@/engine/math';
+import { DIRECTION } from '@/engine/constants';
+
 import Attack from '@/js/traits/Attack';
 import Go from '@/js/traits/Go';
 import Killable from '@/js/traits/Killable';
-import { Vec2 } from '@/js/math';
-import { DIRECTION } from '@/js/constants';
+
 
 export default class PlayerController extends Trait {
   constructor() {

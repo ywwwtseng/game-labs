@@ -1,4 +1,4 @@
-import Entity from '@/js/Entity';
+import Entity from '@/engine/Entity';
 import Player from '@/js/traits/Player';
 import PlayerController from '@/js/traits/PlayerController';
 

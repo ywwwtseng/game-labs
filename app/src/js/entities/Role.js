@@ -1,13 +1,15 @@
-import Entity from '@/js/Entity';
+import Entity from '@/engine/Entity';
+import { loadSpriteSheet } from '@/engine/loaders/sprite';
+import { DIRECTION } from '@/engine/constants';
+import { loadAudioBoard } from '@/engine/loaders/audio';
+
 import Physics from '@/js/traits/Physics';
 import Solid from '@/js/traits/Solid';
 import Go from '@/js/traits/Go';
 import Attack from '@/js/traits/Attack';
 import Killable from '@/js/traits/Killable';
 import SkillController from '@/js/traits/SkillController';
-import { loadSpriteSheet } from '@/js/loaders/sprite';
-import { DIRECTION } from '@/js/constants';
-import { loadAudioBoard } from '@/js/loaders/audio';
+
 
 export function loadRole(audioContext) {
   return Promise.all([

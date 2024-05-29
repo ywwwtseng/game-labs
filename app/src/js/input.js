@@ -1,10 +1,10 @@
-import Keyboard from '@/js/KeyboardState';
-import Joystick from '@/js/Joystick';
-import InputRouter from '@/js/InputRouter';
+import Keyboard from '@/engine/KeyboardState';
+import Joystick from '@/engine/Joystick';
+import InputRouter from '@/engine/InputRouter';
 import Attack from '@/js/traits/Attack';
 import Go from '@/js/traits/Go';
 import SkillController from '@/js/traits/SkillController';
-import { DIRECTION } from '@/js/constants';
+import { DIRECTION } from '@/engine/constants';
 
 export function setupKeyboard(window) {
   const input = new Keyboard();

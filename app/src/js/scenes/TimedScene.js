@@ -1,6 +1,6 @@
-import BaseScene from '@/js/BaseScene';
+import Scene from '@/engine/Scene';
 
-export default class TimedScene extends BaseScene {
+export default class TimedScene extends Scene {
   constructor() {
     super();
 
@@ -10,7 +10,7 @@ export default class TimedScene extends BaseScene {
   update(gameContext) {
     this.countDown -= gameContext.deltaTime;
     if (this.countDown <= 0) {
-      this.events.emit(BaseScene.EVENT_COMPLETE);
+      this.events.emit(Scene.EVENT_COMPLETE);
     }
   }
 }

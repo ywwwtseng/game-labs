@@ -1,6 +1,6 @@
-import SpriteSheet from '@/js/SpriteSheet';
-import Dimensions from '@/js/Dimensions';
-import { loadImage } from '@/js/loaders.js';
+import SpriteSheet from '@/engine/SpriteSheet';
+import Dimensions from '@/engine/Dimensions';
+import { loadImage } from '@/engine/loaders';
 
 const CHARS = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 

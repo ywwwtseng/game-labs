@@ -1,11 +1,13 @@
-import BaseScene from '@/js/BaseScene';
-import Camera from '@/js/Camera';
-import Compositor from '@/js/Compositor';
-import EventEmitter from '@/js/EventEmitter';
-import MusicController from '@/js/MusicController';
-import TileCollider from '@/js/TileCollider';
-import EntityCollider from '@/js/EntityCollider';
-import { findPlayers } from '@/js/player';
+import Scene from '@/engine/Scene';
+import Camera from '@/engine/Camera';
+import Compositor from '@/engine/Compositor';
+import EventEmitter from '@/engine/EventEmitter';
+import MusicController from '@/engine/MusicController';
+import TileCollider from '@/engine/TileCollider';
+import EntityCollider from '@/engine/EntityCollider';
+
+import { findPlayers } from '@/js/helpers/player';
+import * as tileHandlers from '@/js/tiles';
 
 function focusPlyer(scene) {
   for (const player of findPlayers(scene.entities)) {
@@ -14,7 +16,7 @@ function focusPlyer(scene) {
   }
 }
 
-export default class Scene extends BaseScene {
+export default class WorldScene extends Scene {
   static EVENT_TRIGGER = Symbol('scene trigger');
 
   constructor() {
@@ -27,7 +29,7 @@ export default class Scene extends BaseScene {
     this.music = new MusicController();
     this.entities = [];
     this.entityCollider = new EntityCollider(this.entities);
-    this.tileCollider = new TileCollider();
+    this.tileCollider = new TileCollider({ handlers: tileHandlers });
   }
 
   draw(gameContext) {

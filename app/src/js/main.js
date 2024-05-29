@@ -1,22 +1,23 @@
-import Dimensions from '@/js/Dimensions';
-import Timer from '@/js/Timer';
-import { createPlayerEnv, makePlayer, findPlayers } from '@/js/player';
-import { createSceneLoader } from '@/js/loaders/scene';
-import { loadEntities } from '@/js/entities';
-import { loadFont } from '@/js/loaders/fonts';
-import { setupKeyboard, setupJoystick } from '@/js/input';
-import { createColorLayer } from '@/js/layers/color';
-import { createCollisionLayer } from '@/js/layers/collision';
-import { createCameraLayer } from '@/js/layers/camera';
+import Dimensions from '@/engine/Dimensions';
+import Timer from '@/engine/Timer';
+import { loadFont } from '@/engine/loaders/fonts';
+import { createColorLayer } from '@/engine/layers/color';
+import { createCollisionLayer } from '@/engine/layers/collision';
+import { createCameraLayer } from '@/engine/layers/camera';
+import { createTextLayer } from '@/engine/layers/text';
+import { FRAME_DURATION } from '@/engine/constants';
+import SceneRunner from '@/engine/SceneRunner';
+import Scene from '@/engine/Scene';
+
 import { createDashboardLayer } from '@/js/layers/dashboard';
 import { createPlayerProgressLayer } from '@/js/layers/player-progress';
-import { createTextLayer } from '@/js/layers/text';
+import { createSceneLoader } from '@/js/loaders/worldScene';
+import { createPlayerEnv, makePlayer, findPlayers } from '@/js/helpers/player';
+import { loadEntities } from '@/js/entities';
+import { setupKeyboard, setupJoystick } from '@/js/input';
 import { setupMouseControl } from '@/js/debug';
-import { FRAME_DURATION } from '@/js/constants';
-import SceneRunner from '@/js/SceneRunner';
-import Scene from '@/js/Scene';
-import BaseScene from '@/js/BaseScene';
-import TimedScene from '@/js/TimedScene';
+import WorldScene from '@/js/scenes/WorldScene';
+import TimedScene from '@/js/scenes/TimedScene';
 import Player from '@/js/traits/Player';
 
 
@@ -48,7 +49,7 @@ async function main(canvas) {
   inputRouter.addReceiver(player);
 
   async function runScene(name) {
-    const loadScreen = new BaseScene();
+    const loadScreen = new Scene();
     loadScreen.comp.layers.push(createColorLayer('#000'));
     loadScreen.comp.layers.push(createTextLayer(font, `Loading ${name}`));
 
@@ -57,7 +58,7 @@ async function main(canvas) {
     const scene = await loadScene(name);
     // await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    scene.events.listen(Scene.EVENT_TRIGGER, (spec, trigger, touches) => {
+    scene.events.listen(WorldScene.EVENT_TRIGGER, (spec, trigger, touches) => {
       if (spec.type === 'goto') {
         for (const _ of findPlayers(touches)) {
           runScene(spec.name);

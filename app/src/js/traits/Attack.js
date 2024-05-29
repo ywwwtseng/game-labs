@@ -1,6 +1,7 @@
-import Trait from '@/js/Trait';
+import Trait from '@/engine/Trait';
+import { FRAME_DURATION } from '@/engine/constants';
+
 import Player from '@/js/traits/Player';
-import { FRAME_DURATION } from '@/js/constants';
 
 export default class Attack extends Trait {
   static EVENT_ATTACK = Symbol('attack');

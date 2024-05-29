@@ -1,7 +1,8 @@
-import Trait from '@/js/Trait';
+import Trait from '@/engine/Trait';
+import { Vec2 } from '@/engine/math';
+import { DIRECTION, DEGREE } from '@/engine/constants';
+
 import Solid from '@/js/traits/Solid';
-import { Vec2 } from '@/js/math';
-import { DIRECTION, DEGREE } from '@/js/constants';
 
 export default class Go extends Trait {
   constructor() {

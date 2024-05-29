@@ -1,4 +1,4 @@
-import { findPlayers } from '@/js/player';
+import { findPlayers } from '@/js/helpers/player';
 import Player from '@/js/traits/Player';
 
 function getPlayer(entities) {

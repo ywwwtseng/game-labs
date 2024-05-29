@@ -1,6 +1,6 @@
-import AudioBoard from '@/js/AudioBoard';
-import { loadJSON } from '@/js/loaders';
-import { isSafari } from '@/js/device';
+import AudioBoard from '@/engine/AudioBoard';
+import { loadJSON } from '@/engine/loaders';
+import { isSafari } from '@/engine/device';
 
 export function loadAudioBoard(name, audioContext) {
   const loadAudio = createAudioLoader(audioContext);

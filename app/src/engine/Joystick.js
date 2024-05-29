@@ -1,4 +1,4 @@
-import { Vec2 } from '@/js/math';
+ import { Vec2 } from '@/engine/math';
 
 export default class Joystick {
   constructor() {

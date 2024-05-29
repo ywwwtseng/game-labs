@@ -1,8 +1,8 @@
-import Trait from '@/js/Trait';
-import { Vec2 } from '@/js/math';
-import BoundingBox from '@/js/BoundingBox';
-import AudioBoard from '@/js/AudioBoard';
-import EventBuffer from '@/js/EventBuffer';
+import AudioBoard from '@/engine/AudioBoard';
+import Trait from '@/engine/Trait';
+ import { Vec2 } from '@/engine/math';
+import BoundingBox from '@/engine/BoundingBox';
+import EventBuffer from '@/engine/EventBuffer';
 
 export default class Entity {
   constructor() {

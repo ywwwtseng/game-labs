@@ -1,6 +1,6 @@
-import SpriteSheet from '@/js/SpriteSheet';
-import { loadJSON, loadImage } from '@/js/loaders';
-import { createAnim } from '@/js/anim';
+import SpriteSheet from '@/engine/SpriteSheet';
+import { loadJSON, loadImage } from '@/engine/loaders';
+import { createAnim } from '@/engine/anim';
 
 export function loadSpriteSheet(name) {
   return loadJSON(`sprites/${name}.json`)

@@ -1,4 +1,4 @@
-import { SIDES } from '@/js/constants';
+import { SIDES } from '@/engine/constants';
 
 function handlerX({ entity, match }) {
   if (entity.vel.x > 0) {

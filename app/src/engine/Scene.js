@@ -1,8 +1,8 @@
-import Compositor from '@/js/Compositor';
-import EventEmitter from '@/js/EventEmitter';
+import Compositor from '@/engine/Compositor';
+import EventEmitter from '@/engine/EventEmitter';
 
 
-export default class BaseScene {
+export default class Scene {
   static EVENT_COMPLETE = Symbol('scene complete');
   constructor() {
     this.events = new EventEmitter();

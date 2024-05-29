@@ -1,5 +1,5 @@
-import Trait from '@/js/Trait';
-import { SIDES } from '@/js/constants';
+import Trait from '@/engine/Trait';
+import { SIDES } from '@/engine/constants';
 
 export default class Solid extends Trait {
   constructor() {

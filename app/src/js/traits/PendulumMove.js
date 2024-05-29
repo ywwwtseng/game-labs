@@ -1,4 +1,4 @@
-import Trait from '@/js/Trait';
+import Trait from '@/engine/Trait';
 
 export default class PendulumMove extends Trait {
   constructor() {

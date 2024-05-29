@@ -1,5 +1,5 @@
-import Dimensions from '@/js/Dimensions';
-import { Vec2 } from '@/js/math';
+import Dimensions from '@/engine/Dimensions';
+ import { Vec2 } from '@/engine/math';
 
 export default class Camera {
   constructor() {

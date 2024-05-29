@@ -1,5 +1,5 @@
-import { loadJSON } from '@/js/loaders';
-import MusicPlayer from '@/js/MusicPlayer';
+import { loadJSON } from '@/engine/loaders';
+import MusicPlayer from '@/engine/MusicPlayer';
 
 export function loadMusicSheet(name) {
   return loadJSON(`/music/${name}.json`)

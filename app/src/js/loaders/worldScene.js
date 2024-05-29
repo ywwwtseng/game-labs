@@ -1,13 +1,15 @@
-import { Matrix } from '@/js/math';
-import Entity from '@/js/Entity';
+import { Matrix } from '@/engine/math';
+import Entity from '@/engine/Entity';
+import { createBackgroundLayer } from '@/engine/layers/background';
+import { createSpriteLayer } from '@/engine/layers/sprites';
+import { loadMusicSheet } from '@/engine/loaders/music';
+import { loadSpriteSheet } from '@/engine/loaders/sprite';
+import { loadJSON } from '@/engine/loaders';
+
 import SceneTimer from '@/js/traits/SceneTimer';
 import Trigger from '@/js/traits/Trigger';
-import Scene from '@/js/Scene';
-import { createBackgroundLayer } from '@/js/layers/background';
-import { createSpriteLayer } from '@/js/layers/sprites';
-import { loadMusicSheet } from '@/js/loaders/music';
-import { loadSpriteSheet } from '@/js/loaders/sprite';
-import { loadJSON } from '@/js/loaders';
+import WorldScene from '@/js/scenes/WorldScene';
+
 
 function createTimer() {
   const timer = new Entity();
@@ -68,7 +70,7 @@ function setupTriggers(sceneSpec, scene) {
     const trigger = new Trigger();
     if (triggerSpec.type === 'goto') {
       trigger.conditions.push((entity, touches, gameContext, scene) => {
-        scene.events.emit(Scene.EVENT_TRIGGER, triggerSpec, entity, touches);
+        scene.events.emit(WorldScene.EVENT_TRIGGER, triggerSpec, entity, touches);
       });
     }
     const entity = new Entity();
@@ -89,7 +91,7 @@ export function createSceneLoader(entityFactory) {
         loadPatternSheet(sceneSpec.patternSheet),
       ]))
       .then((([sceneSpec, sceneSprites, musicPlayer, patterns]) => {
-      const scene = new Scene();
+      const scene = new WorldScene();
       scene.name = name;
       scene.music.setPlayer(musicPlayer);
 

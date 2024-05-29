@@ -1,4 +1,5 @@
-import Trait from '@/js/Trait';
+import Trait from '@/engine/Trait';
+
 import Attack from '@/js/traits/Attack';
 
 const COIN_DIAMOND_THRESHOLD = 100;

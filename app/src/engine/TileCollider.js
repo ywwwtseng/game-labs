@@ -1,17 +1,9 @@
 
-import TileResolver from '@/js/TileResolver';
-import { obstructs } from '@/js/tiles/obstructs';
-import { flower } from '@/js/tiles/flower';
-import { grass } from '@/js/tiles/grass';
-
-const handlers = {
-  flower,
-  grass,
-  obstructs,
-};
+import TileResolver from '@/engine/TileResolver';
 
 export default class TileCollider {
-  constructor() {
+  constructor({ handlers }) {
+    this.handlers = handlers;
     this.resolvers = [];
   }
 
@@ -72,7 +64,7 @@ export default class TileCollider {
       scene,
     };
 
-    const handler = handlers[match.tile.type];
+    const handler = this.handlers[match.tile.type];
     if (handler) {
       handler[index](tileCollisionContext);
     }
