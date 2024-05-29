@@ -6,7 +6,11 @@ import MusicController from '@/engine/MusicController';
 import TileCollider from '@/engine/TileCollider';
 import EntityCollider from '@/engine/EntityCollider';
 
-import { findPlayers } from '@/js/helpers/player';
+import { createDashboardLayer } from '@/js/layers/dashboard';
+import { createPlayerProgressLayer } from '@/js/layers/player-progress';
+import { createWorldSceneLoader } from '@/js/loaders/worldScene';
+import { createPlayerEnv, findPlayers } from '@/js/helpers/player';
+import { debugMode } from '@/js/env';
 import * as tileHandlers from '@/js/tiles';
 
 function focusPlyer(scene) {
@@ -19,17 +23,51 @@ function focusPlyer(scene) {
 export default class WorldScene extends Scene {
   static EVENT_TRIGGER = Symbol('scene trigger');
 
-  constructor() {
+  constructor(gameContext) {
     super();
 
-    this.name = '';
     this.totalTime = 0;
-
+    this.gameContext = gameContext;
     this.camera = new Camera();
     this.music = new MusicController();
     this.entities = [];
     this.entityCollider = new EntityCollider(this.entities);
     this.tileCollider = new TileCollider({ handlers: tileHandlers });
+  }
+
+  async load() {
+    const loadWorldScene = createWorldSceneLoader(this.gameContext.entityFactory);
+    const setupWorldScene = await loadWorldScene(this.name);
+    setupWorldScene(this);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    this.events.listen(WorldScene.EVENT_TRIGGER, (spec, trigger, touches) => {
+      if (spec.type === 'goto') {
+        for (const _ of findPlayers(touches)) {
+          runScene(spec.name);
+          return;
+        }
+      }
+    });
+
+    const playerProgressLayer = createPlayerProgressLayer(this.gameContext.font, this);
+    const dashboardLayer = createDashboardLayer(this.gameContext.font, this);
+
+    const playerEnv = createPlayerEnv(this.gameContext.player);
+    this.entities.unshift(playerEnv);
+
+    // wait scene need player trait data, so we need add player into scene.
+    this.entities.unshift(this.gameContext.player);
+
+    if (debugMode) {
+      this.comp.layers.push(
+        createCollisionLayer(this),
+        createCameraLayer(this.camera),
+      );
+      setupMouseControl(this.gameContext.canvas, this.gameContext.player, this.camera);
+    }
+
+    this.comp.layers.push(dashboardLayer);
   }
 
   draw(gameContext) {

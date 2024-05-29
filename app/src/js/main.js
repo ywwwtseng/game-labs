@@ -4,24 +4,21 @@ import { loadFont } from '@/engine/loaders/fonts';
 import { createColorLayer } from '@/engine/layers/color';
 import { createCollisionLayer } from '@/engine/layers/collision';
 import { createCameraLayer } from '@/engine/layers/camera';
-import { createTextLayer } from '@/engine/layers/text';
 import { FRAME_DURATION } from '@/engine/constants';
-import SceneRunner from '@/engine/SceneRunner';
+import SceneManager from '@/engine/SceneManager';
 import Scene from '@/engine/Scene';
 
-import { createDashboardLayer } from '@/js/layers/dashboard';
-import { createPlayerProgressLayer } from '@/js/layers/player-progress';
-import { createSceneLoader } from '@/js/loaders/worldScene';
 import { createPlayerEnv, makePlayer, findPlayers } from '@/js/helpers/player';
 import { loadEntities } from '@/js/entities';
 import { setupKeyboard, setupJoystick } from '@/js/input';
 import { setupMouseControl } from '@/js/debug';
 import WorldScene from '@/js/scenes/WorldScene';
-import TimedScene from '@/js/scenes/TimedScene';
+import LoadingScene from '@/js/scenes/LoadingScene';
 import Player from '@/js/traits/Player';
-
+import { debugMode } from '@/js/env';
 
 async function main(canvas) {
+  
   const videoContext = canvas.getContext('2d', { alpha: false });
   const audioContext = new AudioContext();
 
@@ -30,86 +27,38 @@ async function main(canvas) {
     loadFont(),
   ]);
 
-  const loadScene = createSceneLoader(entityFactory);
-
-  const sceneRunner = new SceneRunner();
-
   const player = makePlayer(entityFactory.role(), 'PLAYER');
 
-  let inputRouter;
-
-  if (debugMode) {
-    inputRouter = setupKeyboard(window);
-  } else if ('ontouchstart' in window) {
-    inputRouter = setupJoystick(window);
-  } else {
-    inputRouter = setupKeyboard(window);
-  }
+  const inputRouter = !debugMode && ('ontouchstart' in window)
+    ? setupJoystick(window)
+    : setupKeyboard(window);
 
   inputRouter.addReceiver(player);
 
-  async function runScene(name) {
-    const loadScreen = new Scene();
-    loadScreen.comp.layers.push(createColorLayer('#000'));
-    loadScreen.comp.layers.push(createTextLayer(font, `Loading ${name}`));
-
-    sceneRunner.addScene(loadScreen);
-    sceneRunner.runNext();
-    const scene = await loadScene(name);
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    scene.events.listen(WorldScene.EVENT_TRIGGER, (spec, trigger, touches) => {
-      if (spec.type === 'goto') {
-        for (const _ of findPlayers(touches)) {
-          runScene(spec.name);
-          return;
-        }
-      }
-      
-    });
-
-    const playerProgressLayer = createPlayerProgressLayer(font, scene);
-    const dashboardLayer = createDashboardLayer(font, scene);
-
-    const playerEnv = createPlayerEnv(player);
-    scene.entities.unshift(playerEnv);
-
-    // wait scene need player trait data, so we need add player into scene.
-    scene.entities.unshift(player);
-
-
-    const waitScene = new TimedScene();
-    waitScene.comp.layers.push(createColorLayer('#000'));
-    waitScene.comp.layers.push(dashboardLayer);
-    waitScene.comp.layers.push(playerProgressLayer);
-    sceneRunner.addScene(waitScene);
-
-    if (debugMode) {
-      scene.comp.layers.push(
-        createCollisionLayer(scene),
-        createCameraLayer(scene.camera),
-      );
-      setupMouseControl(canvas, player, scene.camera);
-    }
-
-    scene.comp.layers.push(dashboardLayer);
-    sceneRunner.addScene(scene);
-
-    sceneRunner.runNext();
-  }
-
   const gameContext = {
+    font,
+    canvas,
+    player,
     audioContext,
     videoContext,
     entityFactory,
     deltaTime: null,
   };
 
+  const sceneManager = new SceneManager(gameContext);
+
+  async function runScene(name) {
+    await sceneManager.loadScene('loading', LoadingScene, { text: `Loading ${name}` });
+    sceneManager.runScene('loading');
+    await sceneManager.loadScene(name, WorldScene);
+    sceneManager.runScene(name);
+  }
+
   const timer = new Timer(FRAME_DURATION);
 
   timer.update = function update(deltaTime) {
     gameContext.deltaTime = deltaTime;
-    sceneRunner.update(gameContext);
+    sceneManager.update(gameContext);
   }
 
   timer.start();
@@ -117,7 +66,6 @@ async function main(canvas) {
   window.runScene = runScene;
 }
 
-const debugMode = window.location.search.includes('debug=1')
 const canvas = document.getElementById('screen');
 canvas.width = Dimensions.get('canvas').width;
 canvas.height = Dimensions.get('canvas').height;

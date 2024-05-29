@@ -10,17 +10,10 @@ import SceneTimer from '@/js/traits/SceneTimer';
 import Trigger from '@/js/traits/Trigger';
 import WorldScene from '@/js/scenes/WorldScene';
 
-
 function createTimer() {
   const timer = new Entity();
   timer.addTrait(new SceneTimer());
   return timer;
-}
-
-function createTrigger() {
-  const entity = new Entity();
-  entity.addTrait(new Trigger());
-  return entity;
 }
 
 function loadPatternSheet(name) {
@@ -81,7 +74,7 @@ function setupTriggers(sceneSpec, scene) {
   }
 }
 
-export function createSceneLoader(entityFactory) {
+export function createWorldSceneLoader(entityFactory) {
   return function loadScene(name) {
     return loadJSON(`/scene/${name}.json`)
       .then((sceneSpec) => Promise.all([
@@ -91,16 +84,14 @@ export function createSceneLoader(entityFactory) {
         loadPatternSheet(sceneSpec.patternSheet),
       ]))
       .then((([sceneSpec, sceneSprites, musicPlayer, patterns]) => {
-      const scene = new WorldScene();
-      scene.name = name;
-      scene.music.setPlayer(musicPlayer);
-
-      setupBackgrounds(sceneSpec, scene, sceneSprites, patterns);
-      setupEntities(sceneSpec, scene, entityFactory, sceneSprites);
-      setupTriggers(sceneSpec, scene);
-      setupBehavior(scene);
-
-      return scene;
+        return (scene) => {
+          scene.music.setPlayer(musicPlayer);
+    
+          setupBackgrounds(sceneSpec, scene, sceneSprites, patterns);
+          setupEntities(sceneSpec, scene, entityFactory, sceneSprites);
+          setupTriggers(sceneSpec, scene);
+          setupBehavior(scene);
+        };
     }));
   }
 }
