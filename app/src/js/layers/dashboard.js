@@ -35,7 +35,7 @@ export function createDashboardLayer(font, scene) {
     font.print('WORLD', context, 144, LINE1);
     font.print(scene.name, context, 144, LINE2);
 
-    font.print('TIME', context, 200, LINE1);
-    font.print(new Number(scene.totalTime).toFixed().toString().padStart(3, '0'), context, 208, LINE2);
+    font.print('SERVER TIME', context, 200, LINE1);
+    font.print(new Number(scene.gameContext.timestamp).toFixed().toString().padStart(3, '0'), context, 200, LINE2);
   }
 }

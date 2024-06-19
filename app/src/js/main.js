@@ -15,6 +15,7 @@ import { setupMouseControl } from '@/js/debug';
 import WorldScene from '@/js/scenes/WorldScene';
 import LoadingScene from '@/js/scenes/LoadingScene';
 import Player from '@/js/traits/Player';
+import SocketClient from '@/js/SocketClient';
 import { debugMode } from '@/js/env';
 
 async function main(canvas) {
@@ -43,7 +44,14 @@ async function main(canvas) {
     videoContext,
     entityFactory,
     deltaTime: null,
+    timestamp: null,
   };
+
+  const ws = new SocketClient();
+
+  ws.listen('timestamp', (data) => {
+    gameContext.timestamp = data;
+  });
 
   const sceneManager = new SceneManager(gameContext);
 
