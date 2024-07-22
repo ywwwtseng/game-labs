@@ -3,12 +3,14 @@ import { AppContext } from '@/store/AppContext';
 import { Text } from '@/components/ui/Text';
 import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
 import { CreateSceneModal } from '@/components/common/CreateSceneModal';
+import { useExportPng } from '@/hooks/useExportPng';
 
 function Navigation() {
   const { state } = useContext(AppContext);
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);
   const [createSceneModal, setCreateSceneModal] = useState({ open: false });
+  const exportPng = useExportPng();
 
   const dropdowns = [
     {
@@ -24,7 +26,8 @@ function Navigation() {
         },
         {
           type: 'option',
-          label: 'Export PNG File'
+          label: 'Export PNG File',
+          onClick: exportPng,
         }
       ]
     },
