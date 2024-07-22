@@ -1,18 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { Draggable } from "@/components/common/Draggable";
 
 function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
   const ref = useRef(null);
 
-  const handleDragStart = (event) => {
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData(
-      "payload",
-      JSON.stringify({ ...spriteSheet, index })
-    );
-  };
+  const drawImage = useCallback((el) => {
+    if (el.tagName !== "CANVAS") {
+      return;
+    }
 
-  useEffect(() => {
-    const ctx = ref.current.getContext("2d");
+    const ctx = el.getContext("2d");
     ctx.drawImage(
       spriteSheet.image,
       index[0] * 16,
@@ -25,16 +22,27 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
       16
     );
   }, []);
+
+  useEffect(() => {
+    drawImage(ref.current);
+  }, []);
   
   return (
     <div className="px-1 py-0.5 odd:bg-[#2B2B2B]">
-      <canvas
-        draggable="true"
-        onDragStart={handleDragStart}
-        ref={ref}
-        width={width}
-        height={height}
-      ></canvas>
+      <Draggable
+        data={{ type: "tile", filename: spriteSheet.filename, index }}
+        cloneAfter={(el) => {
+          drawImage(el);
+          return el;
+        }}
+      >
+        <canvas
+          ref={ref}
+          width={width}
+          height={height}
+        />
+      </Draggable>
+      
     </div>
   );
 }

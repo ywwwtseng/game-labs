@@ -1,6 +1,21 @@
 import useSWR from "swr";
-import { createContext, useEffect, useReducer } from "react";
-import { loadImage, getIndex } from "../utils";
+import { createContext, useEffect, useReducer, useCallback } from "react";
+import { LoaderUtil } from "@/utils/LoaderUtil";
+import { CanvasUtil } from "@/utils/CanvasUtil";
+
+const INITIAL_STATE = {
+  mode: "select",
+  location: null,
+  selectedIndex: null,
+  spriteSheets: {},
+  // scene: undefined
+  scene: {
+    name: 'default',
+    width: 720,
+    height: 720,
+    tiles: [],
+  },
+};
 
 const ACTIONS = {
   UPDATE_MODE: "UPDATE_MODE",
@@ -8,14 +23,6 @@ const ACTIONS = {
   UPDATE_SELECTED_INDEX: "UPDATE_SELECTED_INDEX",
   UPDATE_SPRITESHEETS: "UPDATE_SPRITESHEETS",
   UPDATE_SCENE: "UPDATE_SCENE",
-};
-
-const INITIAL_STATE = {
-  mode: "select",
-  location: null,
-  selectedIndex: null,
-  spriteSheets: {},
-  scene: undefined
 };
 
 function reducer(state, action) {
@@ -47,32 +54,32 @@ export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const { data } = useSWR("/api/sprites");
 
-  const setLocation = (location) => {
+  const setLocation = useCallback((location) => {
     dispatch({ type: ACTIONS.UPDATE_LOCATION, payload: location });
-  };
+  }, []);
 
-  const setSelectedIndex = (index) => {
+  const setSelectedIndex = useCallback((index) => {
     dispatch({
       type: ACTIONS.UPDATE_SELECTED_INDEX,
       payload: index,
     });
-  };
+  }, []);
 
-  const setSpriteSheets = (spriteSheets) => {
+  const setSpriteSheets = useCallback((spriteSheets) => {
     dispatch({
       type: ACTIONS.UPDATE_SPRITESHEETS,
       payload: spriteSheets,
     });
-  }
+  }, []);
 
-  const setScene = ({ name, width, height }) => {
+  const setScene = useCallback(({ name, width, height }) => {
     dispatch({
       type: ACTIONS.UPDATE_SCENE,
       payload: { name, width, height, tiles: [] },
     });
-  }
+  }, []);
 
-  const setSceneTile = (x, y, tile) => {
+  const setSceneTile = useCallback((x, y, tile) => {
     if (!state.scene) {
       return;
     }
@@ -89,14 +96,14 @@ export const AppProvider = ({ children }) => {
       type: ACTIONS.UPDATE_SCENE,
       payload: { tiles },
     });
-  }
+  }, [state.scene]);
 
   useEffect(() => {
     if (data && data.filenames) {
       Promise.all(
         data.filenames
           .filter(filename => !Object.keys(state.spriteSheets).includes(filename))
-          .map((filename) => Promise.all([filename, loadImage(`${window.location.origin}/sprites/${filename}`)]))
+          .map((filename) => Promise.all([filename, LoaderUtil.loadImage(`${window.location.origin}/sprites/${filename}`)]))
       )
       .then((spriteSheets) => {
         return spriteSheets.reduce((acc, [filename, image]) => {
@@ -124,7 +131,7 @@ export const AppProvider = ({ children }) => {
       }
 
       if (event.key === 'ArrowRight') {
-        const index = getIndex({ x: state.scene.width, y: state.scene.height });
+        const index = CanvasUtil.positionToIndex({ x: state.scene.width, y: state.scene.height });
         setSelectedIndex([Math.min(index.x, state.selectedIndex[0] + 1), state.selectedIndex[1]])
       }
 
@@ -133,7 +140,7 @@ export const AppProvider = ({ children }) => {
       }
 
       if (event.key === 'ArrowDown') {
-        const index = getIndex({ x: state.scene.width, y: state.scene.height });
+        const index = CanvasUtil.positionToIndex({ x: state.scene.width, y: state.scene.height });
         setSelectedIndex([state.selectedIndex[0], Math.min(index.y, state.selectedIndex[1] + 1)])
       }
     }

@@ -1,7 +1,8 @@
 import { createRoot } from "react-dom/client";
 import { SWRConfig } from "swr";
-import { App } from "./App";
-import { AppProvider } from "./store/AppContext";
+import { App } from "@/App";
+import { AppProvider } from "@/store/AppContext";
+import { DragAndDropProvider } from "@/store/DragAndDropContext";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
@@ -13,7 +14,9 @@ root.render(
     }}
   >
     <AppProvider>
-      <App />
+      <DragAndDropProvider>
+        <App />
+      </DragAndDropProvider>
     </AppProvider>
   </SWRConfig>
 );

@@ -1,17 +1,20 @@
 import { useRef, useEffect, useContext } from "react";
 import { AppContext } from "@/store/AppContext";
-import { getPosition, getIndex } from '@/utils';
+import { DropZone } from "@/components/common/DropZone";
+import { CanvasUtil } from '@/utils/CanvasUtil';
 
 
 function EditArea() {
   const ref = useRef(null);
   const { state, action } = useContext(AppContext);
 
+  console.log('EditArea')
+
   const handleMouseMove = (event) => {
-    const pos = getPosition(event);
+    const pos = CanvasUtil.getPositionInCanvas(event);
 
     if (pos.x >= 0 && pos.y >= 0) {
-      const index = getIndex(pos);
+      const index = CanvasUtil.positionToIndex(pos);
 
       action.setLocation([
         index.x,
@@ -20,20 +23,12 @@ function EditArea() {
     }
   };
 
-  const allowDrop = (event) => {
+  const handleDrop = (event, item, pos) => {
     event.preventDefault();
-  };
+    if (!item) return;
 
-  const handleDrop = (event) => {
-    event.preventDefault();
-    const payload = event.dataTransfer.getData("payload");
-    if (!payload) return;
-
-    const pos = getPosition(event);
-    const index = getIndex(pos);
-    const data = JSON.parse(payload);
-
-    action.setSceneTile(index.x, index.y, data);
+    const index = CanvasUtil.positionToIndex(pos);
+    action.setSceneTile(index.x, index.y, item);
   };
 
   useEffect(() => {
@@ -54,8 +49,6 @@ function EditArea() {
       
       ctx.strokeStyle = "#424242";
       ctx.stroke();
-      
-      
       
       state.scene.tiles.forEach((column, x) => {
         column.forEach((value, y) => {
@@ -90,25 +83,24 @@ function EditArea() {
   }, [state.selectedIndex, state.scene]);
 
   return (
-    <div
-      className="rounded w-full h-full overflow-hidden flex items-center justify-center bg-[#353535]"
-      onDragOver={allowDrop}
-      onDrop={handleDrop}
-      onMouseDown={() => action.setSelectedIndex(state.location || null)}
-    >
-      {state.scene && (
-        <div className="bg-[#373737]">
-          <canvas
-            ref={ref}
-            width={state.scene.width + 1}
-            height={state.scene.height + 1}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={() => action.setLocation(null)}
-          />
-        </div>
-      )}
-      
-    </div>
+      <div
+        className="rounded w-full h-full overflow-hidden flex items-center justify-center bg-[#353535]"
+        onMouseDown={() => action.setSelectedIndex(state.location || null)}
+        >
+        {state.scene && (
+          <DropZone id="canvas" accept="tile" onDrop={handleDrop}>
+            <canvas
+              ref={ref}
+              className="bg-[#373737]"
+              width={state.scene.width + 1}
+              height={state.scene.height + 1}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={() => action.setLocation(null)}
+            />
+          </DropZone>
+        )}
+        
+      </div>
   );
 }
 
