@@ -15,11 +15,7 @@ const INITIAL_STATE = {
   location: null,
   selectedIndex: null,
   spriteSheets: {},
-  scene: {
-    width: 128,
-    height: 128,
-    tiles: []
-  }
+  scene: undefined
 };
 
 function reducer(state, action) {
@@ -69,7 +65,18 @@ export const AppProvider = ({ children }) => {
     });
   }
 
+  const setScene = ({ name, width, height }) => {
+    dispatch({
+      type: ACTIONS.UPDATE_SCENE,
+      payload: { name, width, height, tiles: [] },
+    });
+  }
+
   const setSceneTile = (x, y, tile) => {
+    if (!state.scene) {
+      return;
+    }
+
     const tiles = state.scene.tiles;
 
     if (!tiles[x]) {
@@ -110,7 +117,7 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     const handlePress = (event) => {
-      if (!state.selectedIndex) return
+      if (!state.selectedIndex || !state.scene) return
 
       if (event.key === 'ArrowLeft') {
         setSelectedIndex([Math.max(0, state.selectedIndex[0] - 1), state.selectedIndex[1]])
@@ -143,6 +150,7 @@ export const AppProvider = ({ children }) => {
       setLocation,
       setSelectedIndex,
       setSpriteSheets,
+      setScene,
       setSceneTile,
     }
     

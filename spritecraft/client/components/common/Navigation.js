@@ -1,10 +1,14 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { AppContext } from '@/store/AppContext';
 import { Text } from '@/components/ui/Text';
 import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
+import { CreateSceneModal } from '@/components/common/CreateSceneModal';
 
 function Navigation() {
+  const { state } = useContext(AppContext);
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);
+  const [createSceneModal, setCreateSceneModal] = useState({ open: false });
 
   const dropdowns = [
     {
@@ -15,12 +19,12 @@ function Navigation() {
           type: 'option',
           label: 'New Scene',
           onClick: (event) => {
-            console.log('onClik')
+            setCreateSceneModal({ open: true });
           },
         },
         {
           type: 'option',
-          label: 'Export PNG file'
+          label: 'Export PNG File'
         }
       ]
     },
@@ -70,6 +74,12 @@ function Navigation() {
       closeDropdown(event);
     }
   }, [opened]);
+
+  useEffect(() => {
+    if (state.scene === undefined) {
+      setCreateSceneModal({open: true})
+    }
+  }, [state.scene]);
 
   return (
     <nav className="bg-[#1D1D1D]">
@@ -121,6 +131,7 @@ function Navigation() {
           />
         ))}
       </div>
+      {createSceneModal.open && <CreateSceneModal onClose={() => setCreateSceneModal({open: false})} />}
     </nav>
   );
 }

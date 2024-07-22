@@ -18,7 +18,7 @@ function Dropdown({ label, icon, open, options, ...props }) {
       {open && (
         <div className="absolute left-0 z-10 mt-[1px] py-0.5 w-56 origin-top-right rounded-md bg-zinc-800 shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none flex flex-col items-center" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
           {options.map((option) => (
-            <DropdownItem option={option} />
+            <DropdownItem key={option.label} option={option} />
           ))}
         </div>
       )}
