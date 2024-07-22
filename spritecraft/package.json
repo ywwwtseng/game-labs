@@ -8,6 +8,9 @@
   "type": "module",
   "author": "",
   "license": "ISC",
+  "alias": {
+    "@/*": "./client/$1"
+  },
   "dependencies": {
     "classnames": "^2.5.1",
     "express": "^4.19.2",

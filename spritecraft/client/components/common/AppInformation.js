@@ -1,10 +1,10 @@
 import { useContext } from "react";
-import { AppContext } from "../store/AppContext";
-import { Text } from "./Text";
-import { SelectIcon } from "./icon/SelectIcon";
-import { CheckIcon } from "./icon/CheckIcon";
+import { AppContext } from "@/store/AppContext";
+import { Text } from "@/components/ui/Text";
+import { SelectIcon } from "@/components/icon/SelectIcon";
+import { CheckIcon } from "@/components/icon/CheckIcon";
 
-function Information() {
+function AppInformation() {
   const { state } = useContext(AppContext);
 
   return (
@@ -28,4 +28,4 @@ function Information() {
   );
 }
 
-export { Information };
+export { AppInformation };

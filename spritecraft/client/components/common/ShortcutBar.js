@@ -1,4 +1,4 @@
-import { Text } from './Text';
+import { Text } from '@/components/ui/Text';
 function ShortcutBar() {
   const shortcuts = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"];
   return (

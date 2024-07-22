@@ -1,7 +1,8 @@
 import { memo } from "react";
 import range from "lodash-es/range";
-import { SpriteSheetTile } from "./SpriteSheetTile";
-import { AreaHeader } from "./AreaHeader";
+
+import { SpriteSheetTile } from "@/components/common/SpriteSheetTile";
+import { AreaHeader } from "@/components/common/AreaHeader";
 
 const SpriteSheetSettings = memo(({ spriteSheet }) => {
   return (

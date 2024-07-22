@@ -25,6 +25,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
       16
     );
   }, []);
+  
   return (
     <div className="px-1 py-0.5 odd:bg-[#2B2B2B]">
       <canvas

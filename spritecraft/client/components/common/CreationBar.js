@@ -1,4 +1,4 @@
-import { SelectIcon } from "./icon/SelectIcon";
+import { SelectIcon } from "@/components/icon/SelectIcon";
 
 function CreationBar() {
   return (

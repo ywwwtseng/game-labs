@@ -16,8 +16,8 @@ const INITIAL_STATE = {
   selectedIndex: null,
   spriteSheets: {},
   scene: {
-    width: 800,
-    height: 720,
+    width: 128,
+    height: 128,
     tiles: []
   }
 };

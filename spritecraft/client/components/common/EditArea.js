@@ -1,6 +1,6 @@
 import { useRef, useEffect, useContext } from "react";
-import { AppContext } from "../store/AppContext";
-import { getPosition, getIndex } from '../utils';
+import { AppContext } from "@/store/AppContext";
+import { getPosition, getIndex } from '@/utils';
 
 
 function EditArea() {
@@ -90,7 +90,7 @@ function EditArea() {
 
   return (
     <div
-      className="rounded w-full h-full flex items-center justify-center bg-[#353535]"
+      className="rounded w-full h-full overflow-hidden flex items-center justify-center bg-[#353535]"
       onDragOver={allowDrop}
       onDrop={handleDrop}
       onMouseDown={() => action.setSelectedIndex(state.location || null)}

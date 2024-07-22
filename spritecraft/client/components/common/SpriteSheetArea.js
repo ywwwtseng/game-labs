@@ -1,11 +1,12 @@
 import { useContext, useState } from "react";
 import useSWR from "swr";
 import cx from "classnames";
-import { FileInput } from "./FileInput";
-import { SpriteSheetSettings } from "./SpriteSheetSettings";
-import { AppContext } from "../store/AppContext";
-import { AreaHeader } from "./AreaHeader";
-import { CheckIcon } from "./icon/CheckIcon";
+
+import { AppContext } from "@/store/AppContext";
+import { FileInput } from "@/components/ui/FileInput";
+import { SpriteSheetSettings } from "@/components/common/SpriteSheetSettings";
+import { AreaHeader } from "@/components/common/AreaHeader";
+import { CheckIcon } from "@/components/icon/CheckIcon";
 
 function SpriteSheetArea() {
   const { state } = useContext(AppContext);
