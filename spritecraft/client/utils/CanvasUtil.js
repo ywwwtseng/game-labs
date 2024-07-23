@@ -69,6 +69,18 @@ class CanvasUtil {
     
     return buffer;
   }
+
+  static rect(selectedIndex) {
+    const dx = selectedIndex[2];
+    const dy = selectedIndex[3];
+
+    return [
+      dx > 0 ? selectedIndex[0] : selectedIndex[0] + dx + 1,
+      dy > 0 ? selectedIndex[1] : selectedIndex[1] + dy + 1,
+      Math.abs(dx),
+      Math.abs(dy),
+    ];
+  }
 }
 
 export { CanvasUtil };

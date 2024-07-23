@@ -1,12 +1,12 @@
-import { useContext, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { DropZone } from "@/components/common/DropZone";
-import { AppContext } from "@/store/AppContext";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
 function Canvas2D({
   id = "canvas",
-  grid = true,
+  grid = false,
+  crop = false,
   accept = "tile",
   scale = 1,
   selected,
@@ -17,7 +17,6 @@ function Canvas2D({
   onMouseMove,
   onMouseLeave,
 }) {
-  const { state } = useContext(AppContext);
   const ref = useRef(null);
   const lastGridLineSpacing = grid ? 1 : 0;
 
@@ -46,6 +45,10 @@ function Canvas2D({
         16
       );
     });
+
+    if (crop) {
+      CanvasUtil.grid(ctx, { width: width * scale, height: height * scale, scale });
+    }
     
     
     if (selected) {
@@ -55,7 +58,7 @@ function Canvas2D({
   }, [grid, width, height, tiles, selected]);
 
   return (
-    <DropZone id="canvas" accept="tile" onDrop={onDrop}>
+    <DropZone id={id} accept={accept} onDrop={onDrop}>
       <canvas
         ref={ref}
         className="bg-[#373737]"

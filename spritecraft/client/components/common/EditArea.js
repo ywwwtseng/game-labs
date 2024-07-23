@@ -2,39 +2,20 @@ import { useContext } from "react";
 import { AppContext } from "@/store/AppContext";
 import { Canvas2D } from "@/components/common/Canvas2D";
 import { CanvasUtil } from '@/utils/CanvasUtil';
+import { useCanvasSelectorWoState } from '@/hooks/useCanvasSelector';
 
 
 function EditArea() {
   const { state, action } = useContext(AppContext);
-
-  const handleMouseMove = (event) => {
-
-    const pos = CanvasUtil.getPositionInCanvas(
-      event,
-      document.getElementById("canvas"),
-    );
-
-    const index = CanvasUtil.positionToIndex(pos);
-
-    if (pos.within) {
-      action.setLocation([
-        index.x,
-        index.y,
-      ]);
-    }
-
-    if (state.selected.progress) {
-      const dx = index.x - state.selected.index[0];
-      const dy = index.y - state.selected.index[1];
-      
-      action.select([
-        state.selected.index[0],
-        state.selected.index[1],
-        dx > 0 ? dx + 1 : dx === 0 ? 1 : dx - 1,
-        dy > 0 ? dy + 1 : dy === 0 ? 1 : dy - 1,
-      ]);
-    }
-  };
+  const { register, connect } = useCanvasSelectorWoState({
+    canvasId: 'canvas',
+    selected: state.selected,
+    location: state.location,
+    select: action.select,
+    selectStart: action.selectStart,
+    selectStop: action.selectStop,
+    setLocation: action.setLocation,
+  });
 
   const handleDrop = (event, item, pos) => {
     event.preventDefault();
@@ -47,9 +28,7 @@ function EditArea() {
   return (
       <div
         className="relative z-10 rounded w-full h-full overflow-hidden flex items-center justify-center bg-[#353535]"
-        onMouseDown={() => action.selectStart(state.location ? [...state.location, 1, 1] : null)}
-        onMouseUp={() => action.selectStop()}
-        onMouseMove={handleMouseMove}
+        {...register}
         >
         {state.scene && (
           <Canvas2D
@@ -60,7 +39,7 @@ function EditArea() {
             width={state.scene.width}
             height={state.scene.height}
             onDrop={handleDrop}
-            onMouseLeave={() => action.setLocation(null)}
+            {...connect}
           />
         )}
         

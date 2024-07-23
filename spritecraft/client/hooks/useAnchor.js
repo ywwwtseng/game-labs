@@ -18,7 +18,7 @@ function useAnchor() {
     const bounds = anchor.getBoundingClientRect();
 
     return {
-      left: `${bounds.right + 8}px`,
+      left: `${bounds.right + 4}px`,
       top: `${bounds.top}px`,
 
     };
