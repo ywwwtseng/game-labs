@@ -48,6 +48,27 @@ class CanvasUtil {
     ctx.strokeStyle = color;
     ctx.stroke();
   }
+  
+  static createBuffer(source, x, y, width, height) {
+    const buffer = document.createElement('canvas');
+    buffer.width = width; 
+    buffer.height = height;
+    buffer
+      .getContext('2d')
+      .drawImage(
+        source,
+        x,
+        y,
+        width,
+        height,
+        0,
+        0,
+        width,
+        height,
+      );
+    
+    return buffer;
+  }
 }
 
 export { CanvasUtil };

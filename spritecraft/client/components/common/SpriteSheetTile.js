@@ -11,15 +11,9 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
 
     const ctx = el.getContext("2d");
     ctx.drawImage(
-      spriteSheet.image,
-      index[0] * 16,
-      index[1] * 16,
-      16,
-      16,
+      spriteSheet.tiles[index[0]][index[1]].buffer,
       0,
       0,
-      16,
-      16
     );
   }, []);
 
@@ -30,7 +24,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
   return (
     <div className="px-1 py-0.5 odd:bg-[#2B2B2B]">
       <Draggable
-        data={{ type: "tile", filename: spriteSheet.filename, index }}
+        data={{ type: "tile", buffer: spriteSheet.tiles[index[0]][index[1]] }}
         cloneAfter={(el) => {
           drawImage(el);
           return el;

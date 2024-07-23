@@ -35,9 +35,9 @@ function Canvas2D({
 
     MatrixUtil.forEach(tiles, (tile, x, y) => {
       ctx.drawImage(
-        state.spriteSheets[tile.filename].image,
-        tile.index[0] * 16,
-        tile.index[1] * 16,
+        tile.buffer,
+        0,
+        0,
         16,
         16,
         x * 16,
@@ -47,11 +47,12 @@ function Canvas2D({
       );
     });
     
+    
     if (selected) {
       CanvasUtil.selected(ctx, selected);
     }
 
-  }, [grid, width, height, tiles, selected, state.spriteSheets]);
+  }, [grid, width, height, tiles, selected]);
 
   return (
     <DropZone id="canvas" accept="tile" onDrop={onDrop}>

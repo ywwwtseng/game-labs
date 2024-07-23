@@ -41,7 +41,7 @@ function EditArea() {
     if (!item) return;
 
     const index = CanvasUtil.positionToIndex(pos);
-    action.setSceneTile(index.x, index.y, item);
+    action.setSceneTile(index.x, index.y, item.buffer);
   };
 
   return (

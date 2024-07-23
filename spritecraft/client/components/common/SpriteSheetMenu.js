@@ -7,8 +7,8 @@ import { CloseIcon } from "@/components/icon/CloseIcon";
 
 function SpriteSheetMenu({ origin, onClose }) {
   const { state } = useContext(AppContext);
-  const [selected, setSelected] = useState(Object.keys(state.spriteSheets)[0]);
-  const spriteSheet = state.spriteSheets[selected];
+  const [selectedFilename, setSelectedFilename] = useState(Object.keys(state.spriteSheets)[0]);
+  const spriteSheet = state.spriteSheets[selectedFilename];
 
   return (
     <Menu style={origin}>
@@ -24,6 +24,7 @@ function SpriteSheetMenu({ origin, onClose }) {
           scale={1}
           width={spriteSheet.image.naturalWidth}
           height={spriteSheet.image.naturalHeight}
+          tiles={spriteSheet.tiles}
         />
       </div>
       

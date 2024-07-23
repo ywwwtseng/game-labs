@@ -3,6 +3,7 @@ import useSWR from "swr";
 import { produce } from "immer";
 import { LoaderUtil } from "@/utils/LoaderUtil";
 import { CanvasUtil } from "@/utils/CanvasUtil";
+import { MatrixUtil } from "@/utils/MatrixUtil";
 
 const INITIAL_STATE = {
   mode: "select",
@@ -127,13 +128,23 @@ export const AppProvider = ({ children }) => {
       )
       .then((spriteSheets) => {
         return spriteSheets.reduce((acc, [filename, image]) => {
+          const index = [
+            Math.ceil(image.naturalWidth / 16 - 1),
+            Math.ceil(image.naturalHeight / 16 - 1),
+          ];
+
+          const tiles = MatrixUtil.createByIndex(index, (x, y) => {
+            return {
+              type: "tile",
+              buffer: CanvasUtil.createBuffer(image, x * 16, y * 16, 16, 16)
+            };
+          });
+
           acc[filename] = {
-            image: image,
-            filename: filename,
-            index: [
-              Math.ceil(image.naturalWidth / 16 - 1),
-              Math.ceil(image.naturalHeight / 16 - 1),
-            ]
+            image,
+            filename,
+            index,
+            tiles,
           };
           return acc;
         }, {})
