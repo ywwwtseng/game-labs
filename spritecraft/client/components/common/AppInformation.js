@@ -12,10 +12,10 @@ function AppInformation() {
       <SelectIcon className="mr-0.5" size="4" />
       <Text className="ml-1">Select Mode</Text>
       <div className="flex items-center ml-4">
-        {state.selectedIndex && (
+        {state.selected.index && (
           <>
             <CheckIcon  />
-            <Text className="ml-1">{`Selected: ${state.selectedIndex[0]},${state.selectedIndex[1]}`}</Text>
+            <Text className="ml-1">{`Selected: ${state.selected.index[0]},${state.selected.index[1]},${state.selected.index[2]},${state.selected.index[3]}`}</Text>
           </>
         )}
       </div>

@@ -1,9 +1,13 @@
 class CanvasUtil {
-  static getPositionInCanvas(event) {
-    const offset = event.target.getBoundingClientRect();
+  static getPositionInCanvas(event, canvas) {
+    const bounds = canvas.getBoundingClientRect();
+    const originX = event.pageX - bounds.x;
+    const originY = event.pageY - bounds.y;
+
     return {
-      x: event.pageX - offset.x,
-      y: event.pageY - offset.y,
+      x: Math.min(Math.max(1, originX), bounds.width - 1),
+      y: Math.min(Math.max(1, originY), bounds.height - 1),
+      within: originX >= 1 && originX <= bounds.width - 1 && originY >= 1 && originY <= bounds.height - 1
     };
   }
   
@@ -36,10 +40,10 @@ class CanvasUtil {
   static selected(ctx, selected, color = "white") {
     ctx.beginPath();
     ctx.rect(
-      selected[0] * 16 + 0.5,
-      selected[1] * 16 + 0.5,
-      16,
-      16
+      (selected[0] + (selected[2] > 0 ? 0 : + 1)) * 16 + 0.5,
+      (selected[1] + (selected[3] > 0 ? 0 : + 1)) * 16 + 0.5,
+      selected[2] * 16,
+      selected[3] * 16,
     );
     ctx.strokeStyle = color;
     ctx.stroke();

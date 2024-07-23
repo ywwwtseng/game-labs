@@ -7,7 +7,10 @@ import { CanvasUtil } from "@/utils/CanvasUtil";
 const INITIAL_STATE = {
   mode: "select",
   location: null,
-  selectedIndex: null,
+  selected: {
+    progress: false,
+    index: null,
+  },
   spriteSheets: {},
   // scene: undefined
   scene: {
@@ -21,7 +24,9 @@ const INITIAL_STATE = {
 const ACTIONS = {
   UPDATE_MODE: "UPDATE_MODE",
   UPDATE_LOCATION: "UPDATE_LOCATION",
-  UPDATE_SELECTED_INDEX: "UPDATE_SELECTED_INDEX",
+  SELECT_START: "SELECT_START",
+  SELECT: "SELECT",
+  SELECT_STOP: "SELECT_STOP",
   UPDATE_SPRITESHEETS: "UPDATE_SPRITESHEETS",
   UPDATE_SCENE: "UPDATE_SCENE",
   UPDATE_SCENE_TILE: "UPDATE_SCENE_TILE",
@@ -35,9 +40,16 @@ const reducer = produce((draft, action) => {
     case ACTIONS.UPDATE_LOCATION:
       draft.location = action.payload;
       break;
-    case ACTIONS.UPDATE_SELECTED_INDEX:
-      draft.selectedIndex = action.payload;
+    case ACTIONS.SELECT_START:
+      draft.selected.progress = !!action.payload;
+      draft.selected.index = action.payload;
       break;
+    case ACTIONS.SELECT:
+      draft.selected.index = action.payload;
+      break;
+    case ACTIONS.SELECT_STOP:
+        draft.selected.progress = false;
+        break;
     case ACTIONS.UPDATE_SPRITESHEETS:
       draft.spriteSheets = { ...draft.spriteSheets, ...action.payload };
       break;
@@ -65,10 +77,23 @@ export const AppProvider = ({ children }) => {
     dispatch({ type: ACTIONS.UPDATE_LOCATION, payload: location });
   }, []);
 
-  const setSelectedIndex = useCallback((index) => {
+  const selectStart = useCallback((index) => {
     dispatch({
-      type: ACTIONS.UPDATE_SELECTED_INDEX,
+      type: ACTIONS.SELECT_START,
       payload: index,
+    });
+  }, []);
+
+  const select = useCallback((index) => {
+    dispatch({
+      type: ACTIONS.SELECT,
+      payload: index,
+    });
+  }, []);
+
+  const selectStop = useCallback((index) => {
+    dispatch({
+      type: ACTIONS.SELECT_STOP,
     });
   }, []);
 
@@ -119,24 +144,24 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     const handlePress = (event) => {
-      if (!state.selectedIndex || !state.scene) return
+      if (!state.selected || !state.scene) return
 
       if (event.key === 'ArrowLeft') {
-        setSelectedIndex([Math.max(0, state.selectedIndex[0] - 1), state.selectedIndex[1]])
+        selectStart([Math.max(0, state.selected[0] - 1), state.selected[1]])
       }
 
       if (event.key === 'ArrowRight') {
         const index = CanvasUtil.positionToIndex({ x: state.scene.width, y: state.scene.height });
-        setSelectedIndex([Math.min(index.x, state.selectedIndex[0] + 1), state.selectedIndex[1]])
+        selectStart([Math.min(index.x, state.selected[0] + 1), state.selected[1]])
       }
 
       if (event.key === 'ArrowUp') {
-        setSelectedIndex([state.selectedIndex[0], Math.max(0, state.selectedIndex[1] - 1)])
+        selectStart([state.selected[0], Math.max(0, state.selected[1] - 1)])
       }
 
       if (event.key === 'ArrowDown') {
         const index = CanvasUtil.positionToIndex({ x: state.scene.width, y: state.scene.height });
-        setSelectedIndex([state.selectedIndex[0], Math.min(index.y, state.selectedIndex[1] + 1)])
+        selectStart([state.selected[0], Math.min(index.y, state.selected[1] + 1)])
       }
     }
     window.addEventListener("keydown", handlePress);
@@ -144,13 +169,15 @@ export const AppProvider = ({ children }) => {
     return () => {
       window.removeEventListener("keydown", handlePress);
     };
-  }, [state.selectedIndex]);
+  }, [state.selected]);
 
   const value = {
     state,
     action: useMemo(() => ({
       setLocation,
-      setSelectedIndex,
+      selectStart,
+      select,
+      selectStop,
       setSpriteSheets,
       setScene,
       setSceneTile,

@@ -6,13 +6,13 @@ function CreationBar() {
       id="creation-bar"
       className="absolute my-auto top-0 bottom-0 left-2 flex flex-col items-center justify-center"
     >
-      <div className="rounded bg-black/30 p-2 cursor-pointer mb-1">
-        <SelectIcon size="6" />
+      <div className="relative z-20 rounded bg-black/30 p-2 cursor-pointer mb-1">
+        <SelectIcon size="4" />
       </div>
 
-      <div className="rounded bg-black/30 p-2 cursor-pointer">
+      <div className="relative z-20 rounded bg-black/30 p-2 cursor-pointer">
         <svg
-          className="w-6 h-6 text-gray-800 dark:text-white"
+          className="w-4 h-4 text-gray-800 dark:text-white"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="24"

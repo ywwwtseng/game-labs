@@ -33,7 +33,7 @@ function SpriteSheetArea() {
   };
 
   return (
-    <div className="relative rounded w-64 h-full max-h-full flex flex-col ml-1 zIndex-10">
+    <div className="relative rounded w-64 h-full max-h-full flex flex-col ml-1 z-10">
       <div className="flex flex-col rounded w-full h-[245px] bg-[#282828]">
         <AreaHeader
           icon={
