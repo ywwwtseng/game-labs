@@ -1,34 +1,33 @@
+import { useContext, useState } from "react";
+import { AppContext } from "@/store/AppContext";
 import { SelectIcon } from "@/components/icon/SelectIcon";
+import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
+import { SpriteSheetMenu } from "@/components/common/SpriteSheetMenu";
+import { useAnchor } from "@/hooks/useAnchor";
 
 function CreationBar() {
+  const { state } = useContext(AppContext);
+  const { open, origin, close, toggle } = useAnchor();
+
   return (
     <div
       id="creation-bar"
       className="absolute my-auto top-0 bottom-0 left-2 flex flex-col items-center justify-center"
     >
-      <div className="relative z-20 rounded bg-black/30 p-2 cursor-pointer mb-1">
+      <div className="relative z-20 rounded bg-black/30 p-2 cursor-pointer my-0.5">
         <SelectIcon size="4" />
       </div>
 
-      <div className="relative z-20 rounded bg-black/30 p-2 cursor-pointer">
-        <svg
-          className="w-4 h-4 text-gray-800 dark:text-white"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M14 17h6m-3 3v-6M4.857 4h4.286c.473 0 .857.384.857.857v4.286a.857.857 0 0 1-.857.857H4.857A.857.857 0 0 1 4 9.143V4.857C4 4.384 4.384 4 4.857 4Zm10 0h4.286c.473 0 .857.384.857.857v4.286a.857.857 0 0 1-.857.857h-4.286A.857.857 0 0 1 14 9.143V4.857c0-.473.384-.857.857-.857Zm-10 10h4.286c.473 0 .857.384.857.857v4.286a.857.857 0 0 1-.857.857H4.857A.857.857 0 0 1 4 19.143v-4.286c0-.473.384-.857.857-.857Z"
-          />
-        </svg>
+      <div
+        data-toggle="true"
+        onClick={toggle}
+        className="relative z-20 rounded bg-black/30 p-2 cursor-pointer my-0.5">
+        <SpriteSheetIcon size="4" />
       </div>
+
+      {Object.keys(state.spriteSheets)[0] && open && (
+        <SpriteSheetMenu origin={origin} onClose={close} />
+      )}
     </div>
   );
 }

@@ -8,8 +8,9 @@ function Canvas2D({
   id = "canvas",
   grid = true,
   accept = "tile",
+  scale = 1,
   selected,
-  tiles,
+  tiles = [],
   width,
   height,
   onDrop,
@@ -24,12 +25,12 @@ function Canvas2D({
     const ctx = ref.current.getContext("2d");
     
     CanvasUtil.clear(ctx, {
-      width: width + lastGridLineSpacing,
-      height: height + lastGridLineSpacing,
+      width: width * scale + lastGridLineSpacing,
+      height: height * scale + lastGridLineSpacing,
     });
     
     if (grid) {
-      CanvasUtil.grid(ctx, { width, height });
+      CanvasUtil.grid(ctx, { width: width * scale, height: height * scale, scale });
     }
 
     MatrixUtil.forEach(tiles, (tile, x, y) => {
@@ -57,8 +58,8 @@ function Canvas2D({
       <canvas
         ref={ref}
         className="bg-[#373737]"
-        width={width + lastGridLineSpacing}
-        height={height + lastGridLineSpacing}
+        width={width * scale + lastGridLineSpacing}
+        height={height * scale + lastGridLineSpacing}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
       />

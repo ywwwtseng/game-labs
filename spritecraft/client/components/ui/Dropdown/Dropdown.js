@@ -3,7 +3,7 @@ import { DropdownItem } from "./DropdownItem"
 
 function Dropdown({ label, icon, open, options, ...props }) {
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative z-40 inline-block text-left">
       <button 
         {...props}
         type="button"

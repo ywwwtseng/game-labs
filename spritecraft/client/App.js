@@ -10,7 +10,7 @@ export function App() {
     <div className="select-none h-screen min-w-[1024px] flex flex-col bg-[#1D1D1D]">
       <Navigation />
       <div className="relative flex items-center flex-1 rounded">
-        <div className="rounded flex-1 h-full flex flex-col">
+        <div className="rounded flex-1 max-h-screen h-full flex flex-col">
           <CreationBar />
           <ShortcutBar />
           <EditArea />

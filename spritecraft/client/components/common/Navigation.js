@@ -50,7 +50,6 @@ function Navigation() {
 
     if (event.type === 'click') {
       setFocus(false);
-      console.log('closeDropdown')
       window.removeEventListener('click', closeDropdown);
     }
   }, []);

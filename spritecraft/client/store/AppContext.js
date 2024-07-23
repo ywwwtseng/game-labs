@@ -15,8 +15,8 @@ const INITIAL_STATE = {
   // scene: undefined
   scene: {
     name: 'default',
-    width: 720,
-    height: 720,
+    width: 560,
+    height: 560,
     tiles: [],
   },
 };

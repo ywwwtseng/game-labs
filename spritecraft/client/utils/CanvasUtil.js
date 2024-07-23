@@ -22,13 +22,13 @@ class CanvasUtil {
     ctx.clearRect(0, 0, width, height);
   }
 
-  static grid(ctx, { width, height, color = "#424242" }) {
-    for (var x = 0; x <= width; x += 16) {
+  static grid(ctx, { width, height, scale, color = "#424242" }) {
+    for (var x = 0; x <= width; x += (16 * scale)) {
       ctx.moveTo(0.5 + x, 0);
       ctx.lineTo(0.5 + x, height);
     }
     
-    for (var x = 0; x <= height; x += 16) {
+    for (var x = 0; x <= height; x += (16 * scale)) {
       ctx.moveTo(0, 0.5 + x);
       ctx.lineTo(width, 0.5 + x);
     }
