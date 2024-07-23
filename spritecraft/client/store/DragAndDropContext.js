@@ -1,4 +1,5 @@
 import { createContext, useCallback, useReducer, useRef } from "react";
+import { produce } from "immer";
 
 const INITIAL_STATE = {
   draggable: false,
@@ -12,20 +13,24 @@ const ACTIONS = {
   REMOVE_DROPZONE: "SET_DROPZONE",
 };
 
-function reducer(state, action) {
+const reducer = produce((draft, action) => {
   switch (action.type) {
     case ACTIONS.DRAG_START:
-      return { ...state, draggable: true };
+      draft.draggable = true;
+      break;
     case ACTIONS.DRAG_STOP:
-      return { ...state, draggable: false };
+      draft.draggable = false;
+      break;
     case ACTIONS.ADD_DROPZONE:
-      return { ...state, dropzones: [ ...state.dropzones, action.payload ] };
+      draft.dropzones.push(action.payload);
+      break;
     case ACTIONS.REMOVE_DROPZONE:
-      return { ...state, dropzones: [ ...state.dropzones.filter(dropzone => dropzone.id !== action.payload) ] };
+      draft.dropzones = [ ...state.dropzones.filter(dropzone => dropzone.id !== action.payload) ];
+      break;
     default:
-      return state;
+      break;
   }
-}
+});
 
 export const DragAndDropContext = createContext(INITIAL_STATE);
 

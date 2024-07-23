@@ -1,5 +1,6 @@
+import { createContext, useEffect, useReducer, useCallback, useMemo } from "react";
 import useSWR from "swr";
-import { createContext, useEffect, useReducer, useCallback } from "react";
+import { produce } from "immer";
 import { LoaderUtil } from "@/utils/LoaderUtil";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 
@@ -23,30 +24,36 @@ const ACTIONS = {
   UPDATE_SELECTED_INDEX: "UPDATE_SELECTED_INDEX",
   UPDATE_SPRITESHEETS: "UPDATE_SPRITESHEETS",
   UPDATE_SCENE: "UPDATE_SCENE",
+  UPDATE_SCENE_TILE: "UPDATE_SCENE_TILE",
 };
 
-function reducer(state, action) {
+const reducer = produce((draft, action) => {
   switch (action.type) {
     case ACTIONS.UPDATE_MODE:
-      return { ...state, mode: action.payload };
+      draft.mode = action.payload;
+      break;
     case ACTIONS.UPDATE_LOCATION:
-      return { ...state, location: action.payload };
+      draft.location = action.payload;
+      break;
     case ACTIONS.UPDATE_SELECTED_INDEX:
-      return { ...state, selectedIndex: action.payload };
+      draft.selectedIndex = action.payload;
+      break;
     case ACTIONS.UPDATE_SPRITESHEETS:
-      return {
-        ...state,
-        spriteSheets: { ...state.spriteSheets, ...action.payload },
-      };
+      draft.spriteSheets = { ...draft.spriteSheets, ...action.payload };
+      break;
     case ACTIONS.UPDATE_SCENE:
-      return {
-        ...state,
-        scene: { ...state.scene, ...action.payload },
-      };
+      draft.scene = { ...draft.scene, ...action.payload };
+      break;
+    case ACTIONS.UPDATE_SCENE_TILE:
+       if (!draft.scene.tiles[action.payload.x]) {
+        draft.scene.tiles[action.payload.x] = [];
+      }
+      draft.scene.tiles[action.payload.x][action.payload.y] = action.payload.tile;
+      break;
     default:
-      return state;
+      break;
   }
-}
+});
 
 export const AppContext = createContext(INITIAL_STATE);
 
@@ -80,23 +87,11 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   const setSceneTile = useCallback((x, y, tile) => {
-    if (!state.scene) {
-      return;
-    }
-
-    const tiles = state.scene.tiles;
-
-    if (!tiles[x]) {
-      tiles[x] = [];
-    }
-
-    tiles[x][y] = tile;
-
     dispatch({
-      type: ACTIONS.UPDATE_SCENE,
-      payload: { tiles },
+      type: ACTIONS.UPDATE_SCENE_TILE,
+      payload: { x, y, tile },
     });
-  }, [state.scene]);
+  }, []);
 
   useEffect(() => {
     if (data && data.filenames) {
@@ -153,13 +148,13 @@ export const AppProvider = ({ children }) => {
 
   const value = {
     state,
-    action: {
+    action: useMemo(() => ({
       setLocation,
       setSelectedIndex,
       setSpriteSheets,
       setScene,
       setSceneTile,
-    }
+    }), [])
     
   };
 

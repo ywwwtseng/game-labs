@@ -1,8 +1,8 @@
 import { memo } from "react";
-import range from "lodash-es/range";
 
 import { SpriteSheetTile } from "@/components/common/SpriteSheetTile";
 import { AreaHeader } from "@/components/common/AreaHeader";
+import { MatrixUtil } from "@/utils/MatrixUtil";
 
 const SpriteSheetSettings = memo(({ spriteSheet }) => {
   return (
@@ -36,15 +36,13 @@ const SpriteSheetSettings = memo(({ spriteSheet }) => {
         />
       </div>
       <div className="flex-1 grow basis-0 overflow-y-scroll no-scrollbar">
-        {range(spriteSheet.index[1] + 1).map((y) =>
-          range(spriteSheet.index[0] + 1).map((x) => (
-            <SpriteSheetTile
-              key={`${spriteSheet}-[${x},${y}]`}
-              spriteSheet={spriteSheet}
-              index={[x, y]}
-            />
-          ))
-        )}
+        {MatrixUtil.range(spriteSheet.index, (x, y) => (
+          <SpriteSheetTile
+            key={`${spriteSheet}-[${x},${y}]`}
+            spriteSheet={spriteSheet}
+            index={[x, y]}
+          />
+        ))}
       </div>
     </div>
   );
