@@ -7,7 +7,7 @@ function Canvas2D({
   id = "canvas",
   grid = false,
   crop = false,
-  accept = "tile",
+  accept = null,
   scale = 1,
   selected,
   tiles = [],
@@ -18,7 +18,7 @@ function Canvas2D({
   onMouseLeave,
 }) {
   const ref = useRef(null);
-  const lastGridLineSpacing = grid ? 1 : 0;
+  const lastGridLineSpacing = grid || crop ? 1 : 0;
 
   useEffect(() => {
     const ctx = ref.current.getContext("2d");

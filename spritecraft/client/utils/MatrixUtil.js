@@ -11,21 +11,37 @@ class MatrixUtil {
     });
   }
 
-  static range(maxIndex, callback) {
+  static map(matrix, callback) {
+    return matrix.map((column, x) => {
+      return column.map((value, y) => {
+        if (value) {
+          return callback(value, x,  y);
+        }
+      });
+    });
+  }
+
+  static rangeByIndex(maxIndex, callback) {
     return range(maxIndex[1] + 1).map((y) =>
       range(maxIndex[0] + 1).map((x) => callback(x, y))
     );
   }
 
-  static traverse(maxIndex, callback) {
+  static traverse(size, callback) {
+    return range(size[1]).forEach((y) =>
+      range(size[0]).forEach((x) => callback(x, y))
+    );
+  }
+
+  static traverseByIndex(maxIndex, callback) {
     return range(maxIndex[1] + 1).forEach((y) =>
       range(maxIndex[0] + 1).forEach((x) => callback(x, y))
     );
   }
 
-  static createByIndex(index, callback) {
+  static createByIndex(maxIndex, callback) {
     const matrix = [];
-    MatrixUtil.traverse(index, (x, y) => {
+    MatrixUtil.traverseByIndex(maxIndex, (x, y) => {
       if (!matrix[x]) {
         matrix[x] = [];
       }

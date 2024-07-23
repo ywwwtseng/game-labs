@@ -1,7 +1,7 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { AppContext } from "@/store/AppContext";
 import { Canvas2D } from "@/components/common/Canvas2D";
-import { CanvasUtil } from '@/utils/CanvasUtil';
+import { MatrixUtil } from '@/utils/MatrixUtil';
 import { useCanvasSelectorWoState } from '@/hooks/useCanvasSelector';
 
 
@@ -17,16 +17,31 @@ function EditArea() {
     setLocation: action.setLocation,
   });
 
-  const handleDrop = (event, item, pos) => {
-    event.preventDefault();
-    if (!item) return;
+  const tiles = useMemo(() => {
+    return MatrixUtil.map(state.scene.tiles, ({ filename, index: [indexX, indexY] }) => ({
+      buffer: state.spriteSheets[filename].tiles[indexX][indexY].buffer,
+    }));
+  }, [state.spriteSheets, state.scene.tiles]);
 
-    const index = CanvasUtil.positionToIndex(pos);
-    action.setSceneTile(index.x, index.y, item.buffer);
+  const handleDrop = (event, data, index) => {
+    event.preventDefault();
+    if (!data) return;
+    const [originX, originY, sizeX, sizeY] = data.selected;
+
+    MatrixUtil.traverse([sizeX, sizeY], (x, y) => {
+      action.setSceneTile(
+        [index[0] + x, index[1] + y],
+        {
+          filename: data.filename,
+          index: [originX + x, originY + y]
+        }
+      );
+    });
   };
 
   return (
       <div
+        id="edit-area"
         className="relative z-10 rounded w-full h-full overflow-hidden flex items-center justify-center bg-[#353535]"
         {...register}
         >
@@ -34,7 +49,8 @@ function EditArea() {
           <Canvas2D
             grid
             id="canvas"
-            tiles={state.scene.tiles}
+            accept="tiles"
+            tiles={tiles}
             selected={state.selected.index}
             width={state.scene.width}
             height={state.scene.height}

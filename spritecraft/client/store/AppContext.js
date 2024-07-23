@@ -1,4 +1,10 @@
-import { createContext, useEffect, useReducer, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useEffect,
+  useReducer,
+  useCallback,
+  useMemo,
+} from "react";
 import useSWR from "swr";
 import { produce } from "immer";
 import { LoaderUtil } from "@/utils/LoaderUtil";
@@ -15,7 +21,7 @@ const INITIAL_STATE = {
   spriteSheets: {},
   // scene: undefined
   scene: {
-    name: 'default',
+    name: "default",
     width: 560,
     height: 560,
     tiles: [],
@@ -49,8 +55,8 @@ const reducer = produce((draft, action) => {
       draft.selected.index = action.payload;
       break;
     case ACTIONS.SELECT_STOP:
-        draft.selected.progress = false;
-        break;
+      draft.selected.progress = false;
+      break;
     case ACTIONS.UPDATE_SPRITESHEETS:
       draft.spriteSheets = { ...draft.spriteSheets, ...action.payload };
       break;
@@ -58,10 +64,11 @@ const reducer = produce((draft, action) => {
       draft.scene = { ...draft.scene, ...action.payload };
       break;
     case ACTIONS.UPDATE_SCENE_TILE:
-       if (!draft.scene.tiles[action.payload.x]) {
-        draft.scene.tiles[action.payload.x] = [];
+      if (!draft.scene.tiles[action.payload.index[0]]) {
+        draft.scene.tiles[action.payload.index[0]] = [];
       }
-      draft.scene.tiles[action.payload.x][action.payload.y] = action.payload.tile;
+      draft.scene.tiles[action.payload.index[0]][action.payload.index[1]] =
+        action.payload.tile;
       break;
     default:
       break;
@@ -112,10 +119,10 @@ export const AppProvider = ({ children }) => {
     });
   }, []);
 
-  const setSceneTile = useCallback((x, y, tile) => {
+  const setSceneTile = useCallback((index, tile) => {
     dispatch({
       type: ACTIONS.UPDATE_SCENE_TILE,
-      payload: { x, y, tile },
+      payload: { index, tile },
     });
   }, []);
 
@@ -123,58 +130,105 @@ export const AppProvider = ({ children }) => {
     if (data && data.filenames) {
       Promise.all(
         data.filenames
-          .filter(filename => !Object.keys(state.spriteSheets).includes(filename))
-          .map((filename) => Promise.all([filename, LoaderUtil.loadImage(`${window.location.origin}/sprites/${filename}`)]))
+          .filter(
+            (filename) => !Object.keys(state.spriteSheets).includes(filename)
+          )
+          .map((filename) =>
+            Promise.all([
+              filename,
+              LoaderUtil.loadImage(
+                `${window.location.origin}/sprites/${filename}`
+              ),
+            ])
+          )
       )
-      .then((spriteSheets) => {
-        return spriteSheets.reduce((acc, [filename, image]) => {
-          const index = [
-            Math.ceil(image.naturalWidth / 16 - 1),
-            Math.ceil(image.naturalHeight / 16 - 1),
-          ];
+        .then((spriteSheets) => {
+          return spriteSheets.reduce((acc, [filename, image]) => {
+            const index = [
+              Math.ceil(image.naturalWidth / 16 - 1),
+              Math.ceil(image.naturalHeight / 16 - 1),
+            ];
 
-          const tiles = MatrixUtil.createByIndex(index, (x, y) => {
-            return {
-              type: "tile",
-              buffer: CanvasUtil.createBuffer(image, x * 16, y * 16, 16, 16)
+            const tiles = MatrixUtil.createByIndex(index, (x, y) => {
+              return {
+                type: "tile",
+                buffer: CanvasUtil.createBuffer(image, x * 16, y * 16, 16, 16),
+              };
+            });
+
+            acc[filename] = {
+              image,
+              filename,
+              index,
+              tiles,
             };
-          });
-
-          acc[filename] = {
-            image,
-            filename,
-            index,
-            tiles,
-          };
-          return acc;
-        }, {})
-      })
-      .then(setSpriteSheets);
+            return acc;
+          }, {});
+        })
+        .then(setSpriteSheets);
     }
   }, [data?.filenames]);
 
   useEffect(() => {
     const handlePress = (event) => {
-      if (!state.selected || !state.scene) return
+      if (!state.selected || !state.scene) return;
+      const index = CanvasUtil.rect(state.selected.index);
+      const sizeX = index[2];
+      const sizeY = index[3];
 
-      if (event.key === 'ArrowLeft') {
-        selectStart([Math.max(0, state.selected[0] - 1), state.selected[1]])
+      if (event.key === "ArrowLeft") {
+        select([
+          Math.max(0, index[0] - 1),
+          index[1],
+          sizeX,
+          sizeY,
+        ]);
       }
 
-      if (event.key === 'ArrowRight') {
-        const index = CanvasUtil.positionToIndex({ x: state.scene.width, y: state.scene.height });
-        selectStart([Math.min(index.x, state.selected[0] + 1), state.selected[1]])
+      if (event.key === "ArrowRight") {
+        const maxIndex = CanvasUtil.positionToIndex({
+          x: state.scene.width,
+          y: state.scene.height,
+        });
+        select([
+          Math.min(maxIndex[0] - sizeX + 1, index[0] + 1),
+          index[1],
+          sizeX,
+          sizeY,
+        ]);
       }
 
-      if (event.key === 'ArrowUp') {
-        selectStart([state.selected[0], Math.max(0, state.selected[1] - 1)])
+      if (event.key === "ArrowUp") {
+        select([
+          index[0],
+          Math.max(0, index[1] - 1),
+          sizeX,
+          sizeY,
+        ]);
       }
 
-      if (event.key === 'ArrowDown') {
-        const index = CanvasUtil.positionToIndex({ x: state.scene.width, y: state.scene.height });
-        selectStart([state.selected[0], Math.min(index.y, state.selected[1] + 1)])
+      if (event.key === "ArrowDown") {
+        const maxIndex = CanvasUtil.positionToIndex({
+          x: state.scene.width,
+          y: state.scene.height,
+        });
+        select([
+          index[0],
+          Math.min(maxIndex[1] - sizeY + 1, index[1] + 1),
+          sizeX,
+          sizeY,
+        ]);
       }
-    }
+
+      if (event.key === "Backspace") {
+        MatrixUtil.traverse([sizeX, sizeY], (x, y) => {
+          setSceneTile(
+            [index[0] + x, index[1] + y],
+            undefined
+          );
+        });
+      }
+    };
     window.addEventListener("keydown", handlePress);
 
     return () => {
@@ -184,16 +238,18 @@ export const AppProvider = ({ children }) => {
 
   const value = {
     state,
-    action: useMemo(() => ({
-      setLocation,
-      selectStart,
-      select,
-      selectStop,
-      setSpriteSheets,
-      setScene,
-      setSceneTile,
-    }), [])
-    
+    action: useMemo(
+      () => ({
+        setLocation,
+        selectStart,
+        select,
+        selectStop,
+        setSpriteSheets,
+        setScene,
+        setSceneTile,
+      }),
+      []
+    ),
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

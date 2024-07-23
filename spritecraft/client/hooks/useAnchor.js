@@ -1,32 +1,31 @@
-import {  useState, useMemo } from "react";
+import { useState, useMemo } from "react";
+import { BoundingBox } from "@/helpers/BoundingBox";
 
 function useAnchor() {
   const [anchor, setAnchor] = useState(null);
   const close = () => setAnchor(null);
   const toggle = (event) => {
-    setAnchor(anchor ? null : event.target.getAttribute("data-toggle") ? event.target : event.target.closest("div"))
+    setAnchor(
+      anchor
+        ? null
+        : event.target.getAttribute("data-toggle")
+        ? event.target
+        : event.target.closest("div")
+    );
   };
-  const open = Boolean(anchor);
-  const origin = useMemo(() => {
+  const bounds = useMemo(() => {
     if (!anchor) {
-      return {
-        left: 0,
-        top: 0
-      };
+      return null;
     }
 
-    const bounds = anchor.getBoundingClientRect();
-
-    return {
-      left: `${bounds.right + 4}px`,
-      top: `${bounds.top}px`,
-
-    };
+    return new BoundingBox(anchor);
   }, [anchor]);
+
+  const open = Boolean(anchor || bounds);
 
   return {
     open,
-    origin,
+    bounds,
     toggle,
     close,
   };

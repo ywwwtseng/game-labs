@@ -2,12 +2,12 @@ import { useContext, useState } from "react";
 import { AppContext } from "@/store/AppContext";
 import { SelectIcon } from "@/components/icon/SelectIcon";
 import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
-import { SpriteSheetMenu } from "@/components/common/SpriteSheetMenu";
+import { SpriteSheetPaletteTool } from "@/components/common/SpriteSheetPaletteTool/SpriteSheetPaletteTool";
 import { useAnchor } from "@/hooks/useAnchor";
 
 function CreationBar() {
   const { state } = useContext(AppContext);
-  const { open, origin, close, toggle } = useAnchor();
+  const { open, bounds, close, toggle } = useAnchor();
 
   return (
     <div
@@ -26,7 +26,13 @@ function CreationBar() {
       </div>
 
       {Object.keys(state.spriteSheets)[0] && open && (
-        <SpriteSheetMenu origin={origin} onClose={close} />
+        <SpriteSheetPaletteTool
+          origin={{
+            x: bounds.right + 4,
+            y: bounds.top
+          }}
+          onClose={close}
+        />
       )}
     </div>
   );

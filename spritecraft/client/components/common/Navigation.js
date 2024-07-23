@@ -1,9 +1,10 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { AppContext } from '@/store/AppContext';
-import { Text } from '@/components/ui/Text';
-import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
-import { CreateSceneModal } from '@/components/common/CreateSceneModal';
-import { useExportPng } from '@/hooks/useExportPng';
+import { useCallback, useContext, useEffect, useState } from "react";
+import { AppContext } from "@/store/AppContext";
+import { Text } from "@/components/ui/Text";
+import { Dropdown } from "@/components/ui/Dropdown/Dropdown";
+import { CreateSceneModal } from "@/components/common/CreateSceneModal";
+import { useExportPng } from "@/hooks/useExportPng";
+import { BoundingBox } from "@/helpers/BoundingBox";
 
 function Navigation() {
   const { state } = useContext(AppContext);
@@ -14,72 +15,75 @@ function Navigation() {
 
   const dropdowns = [
     {
-      id: 'file',
-      label: 'File',
+      id: "file",
+      label: "File",
       options: [
         {
-          type: 'option',
-          label: 'New Scene',
-          onClick: (event) => {
+          type: "option",
+          label: "New Scene",
+          onClick: () => {
             setCreateSceneModal({ open: true });
           },
         },
         {
-          type: 'option',
-          label: 'Export PNG File',
+          type: "option",
+          label: "Export PNG File",
           onClick: exportPng,
-        }
-      ]
+        },
+      ],
     },
     {
-      id: 'help',
-      label: 'Help',
+      id: "help",
+      label: "Help",
       options: [
         {
-          type: 'option',
-          label: 'Spritecraft Help'
-        }
-      ]
-    }
-  ]; 
+          type: "option",
+          label: "Spritecraft Help",
+        },
+      ],
+    },
+  ];
 
   const closeDropdown = useCallback((event) => {
     event.preventDefault();
     event.stopPropagation();
     setOpened(null);
 
-    if (event.type === 'click') {
+    if (event.type === "click") {
       setFocus(false);
-      window.removeEventListener('click', closeDropdown);
+      window.removeEventListener("click", closeDropdown);
     }
   }, []);
 
   const openDropdown = useCallback((event) => {
     event.preventDefault();
     event.stopPropagation();
-    
+
     setOpened(event.target.id);
 
-    if (event.type === 'click') {
+    if (event.type === "click") {
       setFocus(true);
-      window.addEventListener('click', closeDropdown);
+      window.addEventListener("click", closeDropdown);
     }
   }, []);
 
-  const toggleDropdown = useCallback((event) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const toggleDropdown = useCallback(
+    (event) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-    if (!opened) {
-      openDropdown(event);
-    } else {
-      closeDropdown(event);
-    }
-  }, [opened]);
+      if (!opened) {
+        openDropdown(event);
+      } else {
+        closeDropdown(event);
+      }
+    },
+    [opened]
+  );
 
   useEffect(() => {
     if (state.scene === undefined) {
-      setCreateSceneModal({open: true})
+      setCreateSceneModal({ open: true });
     }
   }, [state.scene]);
 
@@ -118,22 +122,30 @@ function Navigation() {
             options={dropdown.options}
             open={opened === dropdown.id}
             onClick={toggleDropdown}
-            onMouseEnter={(event) => { 
+            onMouseEnter={(event) => {
               if (focus) {
                 openDropdown(event);
-              } 
+              }
             }}
-            onMouseLeave={(event) => { 
-              if (event.pageY && event.pageY > event.target.getBoundingClientRect().height) {
+            onMouseLeave={(event) => {
+              const bounds = new BoundingBox(event.target);
+              if (
+                event.pageY &&
+                event.pageY > bounds.size.y
+              ) {
                 return;
               }
 
-              closeDropdown(event); 
+              closeDropdown(event);
             }}
           />
         ))}
       </div>
-      {createSceneModal.open && <CreateSceneModal onClose={() => setCreateSceneModal({open: false})} />}
+      {createSceneModal.open && (
+        <CreateSceneModal
+          onClose={() => setCreateSceneModal({ open: false })}
+        />
+      )}
     </nav>
   );
 }

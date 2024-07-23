@@ -1,15 +1,14 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect } from "react";
 import { DragAndDropContext } from "@/store/DragAndDropContext";
 
 function DropZone({ id, accept, onDrop, children }) {
-  const ref = useRef();
   const { addDropzone, removeDropzone } = useContext(DragAndDropContext);
 
   useEffect(() => {
-    addDropzone({ 
+    addDropzone({
       id,
       accept,
-      bounds: document.getElementById(id).getBoundingClientRect(),
+      el: document.getElementById(id),
       onDrop,
     });
 
@@ -17,10 +16,8 @@ function DropZone({ id, accept, onDrop, children }) {
       removeDropzone(id);
     };
   }, []);
-  
-  return (
-    React.cloneElement(children, { id })
-  );
+
+  return React.cloneElement(children, { id });
 }
 
 export { DropZone };

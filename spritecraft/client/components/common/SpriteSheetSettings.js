@@ -36,7 +36,7 @@ const SpriteSheetSettings = memo(({ spriteSheet }) => {
         />
       </div>
       <div className="flex-1 grow basis-0 overflow-y-scroll no-scrollbar">
-        {MatrixUtil.range(spriteSheet.index, (x, y) => (
+        {MatrixUtil.rangeByIndex(spriteSheet.index, (x, y) => (
           <SpriteSheetTile
             key={`${spriteSheet}-[${x},${y}]`}
             spriteSheet={spriteSheet}

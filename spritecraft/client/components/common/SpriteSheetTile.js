@@ -24,10 +24,17 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
   return (
     <div className="px-1 py-0.5 odd:bg-[#2B2B2B]">
       <Draggable
-        data={{ type: "tile", buffer: spriteSheet.tiles[index[0]][index[1]] }}
-        cloneAfter={(el) => {
-          drawImage(el);
-          return el;
+        data={{ type: "tiles", filename: spriteSheet.filename, selected: [...index, 1, 1] }}
+        draggedItem={{
+          display: () => {
+            const el = ref.current.cloneNode();
+            drawImage(el);
+            return el;
+          },
+          pos: (event, bounds) => ({
+            x: event.pageX - bounds.size.x / 2,
+            y: event.pageY - bounds.size.y / 2,
+          })
         }}
       >
         <canvas

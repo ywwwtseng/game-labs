@@ -1,5 +1,7 @@
-import { createContext, useCallback, useReducer, useRef } from "react";
+import { createContext, useReducer, useRef } from "react";
 import { produce } from "immer";
+import { CanvasUtil } from "@/utils/CanvasUtil";
+import { BoundingBox } from "@/helpers/BoundingBox";
 
 const INITIAL_STATE = {
   draggable: false,
@@ -25,7 +27,9 @@ const reducer = produce((draft, action) => {
       draft.dropzones.push(action.payload);
       break;
     case ACTIONS.REMOVE_DROPZONE:
-      draft.dropzones = [ ...state.dropzones.filter(dropzone => dropzone.id !== action.payload) ];
+      draft.dropzones = [
+        ...state.dropzones.filter((dropzone) => dropzone.id !== action.payload),
+      ];
       break;
     default:
       break;
@@ -43,26 +47,33 @@ export const DragAndDropProvider = ({ children }) => {
     dispatch({ type: ACTIONS.DRAG_START });
   };
 
-  const setDragStop = (event) => {
-    state.dropzones.forEach(({ accept, bounds, onDrop }) => {
-      if (accept === ref.current.type) {
-        if (event.pageX >= bounds.left && event.pageX <= bounds.right) {
-          if (event.pageY >= bounds.top && event.pageY <= bounds.bottom) {
+  const onDrop = (event) => {
+    state.dropzones.forEach(({ accept, el, onDrop }) => {
+      if (ref.current && accept === ref.current.type) {
+        const bounds = new BoundingBox(el);
+        const pos = {
+          x: event.pageX - bounds.pos.x - ref.current.selected[2] * (16 / 2) + 8,
+          y: event.pageY - bounds.pos.y - ref.current.selected[3] * (16 / 2) + 8,
+        };
+
+        if (
+          pos.x >= 0 &&
+          pos.x + ref.current.selected[2] * 16 <= bounds.size.x + 8
+        ) {
+          if (
+            pos.y >= 0 &&
+            pos.y + ref.current.selected[3] * 16 <= bounds.size.y + 8
+          ) {
             if (onDrop) {
-              onDrop(
-                event,
-                ref.current,
-                {
-                  x: event.pageX - bounds.x,
-                  y: event.pageY - bounds.y
-                }
-              );
+              onDrop(event, ref.current, CanvasUtil.positionToIndex(pos));
             }
           }
-        }  
+        }
       }
     });
-    
+  };
+
+  const setDragStop = () => {
     dispatch({ type: ACTIONS.DRAG_STOP });
     ref.current = null;
   };
@@ -79,9 +90,14 @@ export const DragAndDropProvider = ({ children }) => {
     draggable: state.draggable,
     setDragStart,
     setDragStop,
+    onDrop,
     addDropzone,
     removeDropzone,
   };
 
-  return <DragAndDropContext.Provider value={value}>{children}</DragAndDropContext.Provider>;
+  return (
+    <DragAndDropContext.Provider value={value}>
+      {children}
+    </DragAndDropContext.Provider>
+  );
 };

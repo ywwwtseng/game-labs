@@ -1,21 +1,20 @@
+import { BoundingBox } from "@/helpers/BoundingBox";
+
 class CanvasUtil {
   static getPositionInCanvas(event, canvas) {
-    const bounds = canvas.getBoundingClientRect();
-    const originX = event.pageX - bounds.x;
-    const originY = event.pageY - bounds.y;
+    const bounds = new BoundingBox(canvas);
+    const originX = event.pageX - bounds.pos.x;
+    const originY = event.pageY - bounds.pos.y;
 
     return {
-      x: Math.min(Math.max(1, originX), bounds.width - 1),
-      y: Math.min(Math.max(1, originY), bounds.height - 1),
-      within: originX >= 1 && originX <= bounds.width - 1 && originY >= 1 && originY <= bounds.height - 1
+      x: Math.min(Math.max(1, originX), bounds.size.x - 1),
+      y: Math.min(Math.max(1, originY), bounds.size.y - 1),
+      within: originX >= 1 && originX <= bounds.size.x - 1 && originY >= 1 && originY <= bounds.size.y - 1
     };
   }
   
   static positionToIndex(pos) {
-    return {
-      x: Math.ceil((pos.x) / 16) - 1,
-      y: Math.ceil((pos.y) / 16) - 1,
-    };
+    return [Math.ceil((pos.x) / 16) - 1, Math.ceil((pos.y) / 16) - 1];
   }
 
   static clear(ctx, { width, height }) {
