@@ -100,6 +100,14 @@ function useCanvasSelectorWoState({
     setLocation(null);
   };
 
+  const onClick = (event) => {
+    if (event.detail === 2) {
+      if (selected.index) {
+        selectStart(null);
+      }
+    }
+  };
+
   return {
     selected,
     location,
@@ -108,6 +116,7 @@ function useCanvasSelectorWoState({
       onMouseMove,
       onMouseDown,
       onMouseUp,
+      onClick,
     },
     connect: {
       onMouseLeave,
