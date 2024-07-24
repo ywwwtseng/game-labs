@@ -6,7 +6,6 @@ import { MatrixUtil } from "@/utils/MatrixUtil";
 function Canvas2D({
   id = "canvas",
   grid = false,
-  crop = false,
   accept = null,
   scale = 1,
   selected,
@@ -27,10 +26,6 @@ function Canvas2D({
       width: width * scale + lastGridLineSpacing,
       height: height * scale + lastGridLineSpacing,
     });
-    
-    if (grid) {
-      CanvasUtil.grid(ctx, { width: width * scale, height: height * scale, scale });
-    }
 
     layers.forEach((layer) => {
       MatrixUtil.forEach(layer.tiles, (tile, x, y) => {
@@ -50,7 +45,7 @@ function Canvas2D({
 
     
 
-    if (crop) {
+    if (grid) {
       CanvasUtil.grid(ctx, { width: width * scale, height: height * scale, scale });
     }
     

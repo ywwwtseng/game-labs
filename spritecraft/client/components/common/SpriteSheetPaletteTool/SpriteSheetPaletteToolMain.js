@@ -15,8 +15,8 @@ function SpriteSheetPaletteToolMain({ spriteSheet }) {
         canvas.width = data.selected[2] * 16;
         canvas.height = data.selected[3] * 16;
         const ctx = canvas.getContext("2d");
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        // ctx.fillRect(0, 0, canvas.width, canvas.height);
         const [originX, originY, sizeX, sizeY] = data.selected;
 
         MatrixUtil.traverse([sizeX, sizeY], (x, y) => {
@@ -45,7 +45,7 @@ function SpriteSheetPaletteToolMain({ spriteSheet }) {
   return (
     <div className="px-2 pt-0.5 pb-2" {...register}>
       <Canvas2D
-        crop
+        grid
         id={`spriteSheet-${spriteSheet.filename}`}
         scale={1}
         selected={selected.index}

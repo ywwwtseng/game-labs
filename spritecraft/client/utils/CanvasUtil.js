@@ -1,15 +1,18 @@
 import { BoundingBox } from "@/helpers/BoundingBox";
 
 class CanvasUtil {
-  static getPositionInCanvas(event, canvas) {
+  static get transparent() {
+    return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAB9JREFUOE9jZKAQMFKon2HUAIbRMGAYDQNQPhr4vAAAJpgAEX/anFwAAAAASUVORK5CYII=';
+  }
+  static getPosition(event, canvas, offset = {x: 0, y: 0}) {
     const bounds = new BoundingBox(canvas);
-    const originX = event.pageX - bounds.pos.x;
-    const originY = event.pageY - bounds.pos.y;
+    const originX = event.pageX - bounds.pos.x + offset.x;
+    const originY = event.pageY - bounds.pos.y + offset.y;
 
     return {
       x: Math.min(Math.max(1, originX), bounds.size.x - 1),
       y: Math.min(Math.max(1, originY), bounds.size.y - 1),
-      within: originX >= 1 && originX <= bounds.size.x - 1 && originY >= 1 && originY <= bounds.size.y - 1
+      within: originX >= 0 && originX <= bounds.size.x - 1 && originY >= 0 && originY <= bounds.size.y - 1
     };
   }
   

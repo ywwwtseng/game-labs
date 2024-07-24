@@ -50,24 +50,21 @@ export const DragAndDropProvider = ({ children }) => {
   const onDrop = (event) => {
     state.dropzones.forEach(({ accept, el, onDrop }) => {
       if (ref.current && accept === ref.current.type) {
-        const bounds = new BoundingBox(el);
-        const pos = {
-          x: event.pageX - bounds.pos.x - ref.current.selected[2] * (16 / 2) + 8,
-          y: event.pageY - bounds.pos.y - ref.current.selected[3] * (16 / 2) + 8,
-        };
+        const sizeX = ref.current.selected[2] * 16;
+        const sizeY = ref.current.selected[3] * 16;
 
-        if (
-          pos.x >= 0 &&
-          pos.x + ref.current.selected[2] * 16 <= bounds.size.x + 8
-        ) {
-          if (
-            pos.y >= 0 &&
-            pos.y + ref.current.selected[3] * 16 <= bounds.size.y + 8
-          ) {
-            if (onDrop) {
-              onDrop(event, ref.current, CanvasUtil.positionToIndex(pos));
-            }
-          }
+        const leftTopPos = CanvasUtil.getPosition(event, el, {
+          x: -(sizeX / 2),
+          y: -(sizeY / 2),
+        });
+
+        const rightBottomPos = CanvasUtil.getPosition(event, el, {
+          x: (sizeX / 2) - 8,
+          y: (sizeY / 2) - 8,
+        });
+
+        if (leftTopPos.within && rightBottomPos.within && onDrop) {
+          onDrop(event, ref.current, CanvasUtil.positionToIndex(leftTopPos));
         }
       }
     });

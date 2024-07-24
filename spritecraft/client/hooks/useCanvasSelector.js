@@ -33,7 +33,7 @@ function useCanvasSelectorWoState({
   });
   const onMouseMove = (event) => {
     event.target.style.cursor = "default";
-    const pos = CanvasUtil.getPositionInCanvas(
+    const pos = CanvasUtil.getPosition(
       event,
       document.getElementById(canvasId)
     );
@@ -68,7 +68,7 @@ function useCanvasSelectorWoState({
 
   const onMouseDown = (event) => {
     if (draggable && selected.index) {
-      const pos = CanvasUtil.getPositionInCanvas(
+      const pos = CanvasUtil.getPosition(
         event,
         document.getElementById(canvasId)
       );

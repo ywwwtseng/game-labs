@@ -6,6 +6,7 @@ import { PenNibIcon } from "@/components/icon/PenNibIcon";
 
 function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onFill }) {
   const ref = useRef(null);
+  const tile = spriteSheet.tiles[index[0]][index[1]];
 
   const drawImage = useCallback((el) => {
     if (el.tagName !== "CANVAS") {
@@ -13,12 +14,18 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onFill }
     }
 
     const ctx = el.getContext("2d");
-    ctx.drawImage(spriteSheet.tiles[index[0]][index[1]].buffer, 0, 0);
+    ctx.drawImage(tile.buffer, 0, 0);
   }, []);
 
   useEffect(() => {
-    drawImage(ref.current);
+    if (!tile.transparent) {
+      drawImage(ref.current);
+    }
   }, []);
+
+  if (tile.transparent) {
+    return null;
+  }
 
   return (
     <OperablItem
