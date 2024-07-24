@@ -95,7 +95,7 @@ function useCanvasSelectorWoState({
     selectStop();
   };
 
-  const onMouseLeave = () => {
+  const onMouseLeave = (event) => {
     event.target.style.cursor = "default";
     setLocation(null);
   };

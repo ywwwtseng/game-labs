@@ -3,11 +3,11 @@ import { DropdownItem } from "./DropdownItem"
 
 function Dropdown({ label, icon, open, options, ...props }) {
   return (
-    <div className="relative z-40 inline-block text-left">
+    <div className="relative z-40 flex text-left">
       <button 
         {...props}
         type="button"
-        className={cx("inline-flex w-full items-center justify-center rounded bg-[#1D1D1D] px-2 py-1 text-xs text-white", {'bg-zinc-700': open})} aria-expanded="true" aria-haspopup="true">
+        className={cx("flex w-full h-full items-center justify-center rounded bg-[#1D1D1D] px-2 py-1 my-auto text-xs text-white", {'bg-zinc-700': open})} aria-expanded="true" aria-haspopup="true">
         {label}
         {icon && (
           <svg className="-mr-1 h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">2222
@@ -16,7 +16,7 @@ function Dropdown({ label, icon, open, options, ...props }) {
         )}
       </button>
       {open && (
-        <div className="absolute left-0 z-10 mt-[1px] py-0.5 w-56 origin-top-right rounded-md bg-zinc-800 shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none flex flex-col items-center" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
+        <div className="absolute left-0 top-[100%] z-10 mt-[1px] py-0.5 w-56 origin-top-right rounded-md bg-zinc-800 shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none flex flex-col items-center" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
           {options.map((option) => (
             <DropdownItem key={option.label} option={option} />
           ))}

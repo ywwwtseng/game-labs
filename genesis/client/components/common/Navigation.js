@@ -7,7 +7,6 @@ import { useExportPng } from "@/hooks/useExportPng";
 import { BoundingBox } from "@/helpers/BoundingBox";
 import logo from "@/icon.png";
 
-console.log(logo);
 function Navigation() {
   const { state } = useContext(AppContext);
   const [focus, setFocus] = useState(false);
@@ -40,7 +39,7 @@ function Navigation() {
       options: [
         {
           type: "option",
-          label: "Spritecraft Help",
+          label: "Genesis Help",
         },
       ],
     },
@@ -90,13 +89,12 @@ function Navigation() {
   }, [state.scene]);
 
   return (
-    <nav className="bg-[#1D1D1D]">
-      <div className="flex flex-wrap items-center mx-auto px-2">
-        <div className="flex items-center space-x-3 mr-4 rtl:space-x-reverse">
+    <>
+      <nav className="flex w-full items-center mx-auto px-2 bg-[#1D1D1D]">
+        <div className="flex items-center h-full space-x-3 mr-4 rtl:space-x-reverse">
           <img src={logo} alt="logo" />
-
           <Text weight="medium" size="xs" color="white">
-            Spritecraft
+            Genesis
           </Text>
         </div>
 
@@ -123,13 +121,13 @@ function Navigation() {
             }}
           />
         ))}
-      </div>
+      </nav>
       {createSceneModal.open && (
         <CreateSceneModal
           onClose={() => setCreateSceneModal({ open: false })}
         />
       )}
-    </nav>
+    </>
   );
 }
 

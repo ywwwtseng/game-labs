@@ -1,10 +1,9 @@
 import { createContext, useReducer, useRef } from "react";
 import { produce } from "immer";
 import { CanvasUtil } from "@/utils/CanvasUtil";
-import { BoundingBox } from "@/helpers/BoundingBox";
 
 const INITIAL_STATE = {
-  draggable: false,
+  dragging: false,
   dropzones: [],
 };
 
@@ -18,10 +17,10 @@ const ACTIONS = {
 const reducer = produce((draft, action) => {
   switch (action.type) {
     case ACTIONS.DRAG_START:
-      draft.draggable = true;
+      draft.dragging = true;
       break;
     case ACTIONS.DRAG_STOP:
-      draft.draggable = false;
+      draft.dragging = false;
       break;
     case ACTIONS.ADD_DROPZONE:
       draft.dropzones.push(action.payload);
@@ -84,7 +83,7 @@ export const DragAndDropProvider = ({ children }) => {
   };
 
   const value = {
-    draggable: state.draggable,
+    dragging: state.dragging,
     setDragStart,
     setDragStop,
     onDrop,

@@ -1,6 +1,6 @@
 {
-  "name": "spritecraft",
-  "version": "1.0.0",
+  "name": "genesis",
+  "version": "0.1.0",
   "description": "",
   "scripts": {
     "dev": "concurrently \"nodemon index.js\" \"parcel watch client/index.html\""

@@ -194,8 +194,6 @@ export const AppProvider = ({ children }) => {
               Math.ceil(image.naturalHeight / 16 - 1),
             ];
 
-            
-
             const tiles = MatrixUtil.createByIndex(index, (x, y) => {
               const buffer = CanvasUtil.createBuffer(image, x * 16, y * 16, 16, 16);
               return {
@@ -210,6 +208,9 @@ export const AppProvider = ({ children }) => {
               filename,
               index,
               tiles,
+              // TODO:
+              patterns: [],
+              animations: [],
             };
             return acc;
           }, {});
