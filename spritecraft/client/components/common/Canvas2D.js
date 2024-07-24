@@ -10,7 +10,7 @@ function Canvas2D({
   accept = null,
   scale = 1,
   selected,
-  tiles = [],
+  layers = [],
   width,
   height,
   onDrop,
@@ -32,19 +32,23 @@ function Canvas2D({
       CanvasUtil.grid(ctx, { width: width * scale, height: height * scale, scale });
     }
 
-    MatrixUtil.forEach(tiles, (tile, x, y) => {
-      ctx.drawImage(
-        tile.buffer,
-        0,
-        0,
-        16,
-        16,
-        x * 16,
-        y * 16,
-        16,
-        16
-      );
+    layers.forEach((layer) => {
+      MatrixUtil.forEach(layer.tiles, (tile, x, y) => {
+        ctx.drawImage(
+          tile.buffer,
+          0,
+          0,
+          16,
+          16,
+          x * 16,
+          y * 16,
+          16,
+          16
+        );
+      });
     });
+
+    
 
     if (crop) {
       CanvasUtil.grid(ctx, { width: width * scale, height: height * scale, scale });
@@ -55,7 +59,7 @@ function Canvas2D({
       CanvasUtil.selected(ctx, selected);
     }
 
-  }, [grid, width, height, tiles, selected]);
+  }, [grid, width, height, layers, selected]);
 
   return (
     <DropZone id={id} accept={accept} onDrop={onDrop}>

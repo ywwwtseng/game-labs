@@ -17,10 +17,14 @@ function EditArea() {
     setLocation: action.setLocation,
   });
 
-  const tiles = useMemo(() => {
-    return MatrixUtil.map(state.scene.layers[0].tiles, ({ filename, index: [indexX, indexY] }) => ({
-      buffer: state.spriteSheets[filename].tiles[indexX][indexY].buffer,
-    }));
+  const layers = useMemo(() => {
+    return state.scene.layers.map(layer => {
+      return {
+        tiles: MatrixUtil.map(layer.tiles, ({ filename, index: [indexX, indexY] }) => ({
+          buffer: state.spriteSheets[filename].tiles[indexX][indexY].buffer,
+        })) 
+      };
+    })
   }, [state.spriteSheets, state.scene.layers]);
 
   const handleDrop = (event, data, index) => {
@@ -50,7 +54,7 @@ function EditArea() {
             grid
             id="canvas"
             accept="tiles"
-            tiles={tiles}
+            layers={layers}
             selected={state.selected.index}
             width={state.scene.width}
             height={state.scene.height}

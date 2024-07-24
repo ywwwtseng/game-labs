@@ -24,6 +24,7 @@ const INITIAL_STATE = {
     name: "default",
     width: 560,
     height: 560,
+    selected: 0,
     layers: [
       {
         tiles: [],
@@ -42,6 +43,7 @@ const ACTIONS = {
   UPDATE_SCENE: "UPDATE_SCENE",
   UPDATE_SCENE_TILE: "UPDATE_SCENE_TILE",
   ADD_LAYER: "ADD_LAYER",
+  SELECT_LAYER: "SELECT_LAYER",
 };
 
 const reducer = produce((draft, action) => {
@@ -69,13 +71,16 @@ const reducer = produce((draft, action) => {
       draft.scene = { ...draft.scene, ...action.payload };
       break;
     case ACTIONS.ADD_LAYER:
-      draft.scene.layers.push([{ tiles: [] }]);
+      draft.scene.layers.push({ tiles: [] });
+      break;
+    case ACTIONS.SELECT_LAYER:
+      draft.scene.selected = action.payload;
       break;
     case ACTIONS.UPDATE_SCENE_TILE:
-      if (!draft.scene.layers[0].tiles[action.payload.index[0]]) {
-        draft.scene.layers[0].tiles[action.payload.index[0]] = [];
+      if (!draft.scene.layers[draft.scene.selected].tiles[action.payload.index[0]]) {
+        draft.scene.layers[draft.scene.selected].tiles[action.payload.index[0]] = [];
       }
-      draft.scene.layers[0].tiles[action.payload.index[0]][action.payload.index[1]] =
+      draft.scene.layers[draft.scene.selected].tiles[action.payload.index[0]][action.payload.index[1]] =
         action.payload.tile;
       break;
     default:
@@ -140,6 +145,15 @@ export const AppProvider = ({ children }) => {
       payload: { index, tile },
     });
   }, []);
+
+  const selectLayer = useCallback((index) => {
+    dispatch({
+      type: ACTIONS.SELECT_LAYER,
+      payload: index,
+    });
+  }, []);
+
+  
 
   useEffect(() => {
     if (data && data.filenames) {
@@ -263,6 +277,7 @@ export const AppProvider = ({ children }) => {
         setScene,
         setSceneTile,
         addLayer,
+        selectLayer,
       }),
       []
     ),

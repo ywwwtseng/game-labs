@@ -11,7 +11,6 @@ function SceneSettings() {
   const { state, action } = useContext(AppContext);
   const scenes = [state.scene];
   const [selectedScene, selectScene] = useState(scenes[0].name);
-  const [selectedLayerIndex, selectLayerIndex] = useState(0);
 
   return (
     <div className="flex flex-col rounded w-full h-[245px] bg-[#282828]">
@@ -54,11 +53,17 @@ function SceneSettings() {
                 className="pl-6"
                 name={
                   <div className="flex items-center">
-                    <AngleRightIcon style={{width: '12px'}} />
+                    <AngleRightIcon
+                      style={{
+                        width: "12px",
+                        opacity: state.scene.selected === index ? 1 : 0,
+                      }}
+                    />
                     <span className="ml-1">{`Layer${index + 1}`}</span>
                   </div>
                 }
-                selected={selectedLayerIndex === index}
+                selected={state.scene.selected === index}
+                onClick={() => action.selectLayer(index)}
               />
             ))}
           </React.Fragment>
