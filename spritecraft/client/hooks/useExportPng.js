@@ -12,7 +12,7 @@ function useExportPng() {
     canvas.height = state.scene.height;
     const ctx = canvas.getContext("2d");
 
-    state.scene.tiles.forEach((column, x) => {
+    state.scene.tiles.layers[0].forEach((column, x) => {
       column.forEach((value, y) => {
         if (value) {
           ctx.drawImage(

@@ -24,7 +24,11 @@ const INITIAL_STATE = {
     name: "default",
     width: 560,
     height: 560,
-    tiles: [],
+    layers: [
+      {
+        tiles: [],
+      }
+    ],
   },
 };
 
@@ -37,6 +41,7 @@ const ACTIONS = {
   UPDATE_SPRITESHEETS: "UPDATE_SPRITESHEETS",
   UPDATE_SCENE: "UPDATE_SCENE",
   UPDATE_SCENE_TILE: "UPDATE_SCENE_TILE",
+  ADD_LAYER: "ADD_LAYER",
 };
 
 const reducer = produce((draft, action) => {
@@ -63,11 +68,14 @@ const reducer = produce((draft, action) => {
     case ACTIONS.UPDATE_SCENE:
       draft.scene = { ...draft.scene, ...action.payload };
       break;
+    case ACTIONS.ADD_LAYER:
+      draft.scene.layers.push([{ tiles: [] }]);
+      break;
     case ACTIONS.UPDATE_SCENE_TILE:
-      if (!draft.scene.tiles[action.payload.index[0]]) {
-        draft.scene.tiles[action.payload.index[0]] = [];
+      if (!draft.scene.layers[0].tiles[action.payload.index[0]]) {
+        draft.scene.layers[0].tiles[action.payload.index[0]] = [];
       }
-      draft.scene.tiles[action.payload.index[0]][action.payload.index[1]] =
+      draft.scene.layers[0].tiles[action.payload.index[0]][action.payload.index[1]] =
         action.payload.tile;
       break;
     default:
@@ -99,7 +107,7 @@ export const AppProvider = ({ children }) => {
     });
   }, []);
 
-  const selectStop = useCallback((index) => {
+  const selectStop = useCallback(() => {
     dispatch({
       type: ACTIONS.SELECT_STOP,
     });
@@ -116,6 +124,13 @@ export const AppProvider = ({ children }) => {
     dispatch({
       type: ACTIONS.UPDATE_SCENE,
       payload: { name, width, height, tiles: [] },
+    });
+  }, []);
+
+  const addLayer = useCallback((scene) => {
+    dispatch({
+      type: ACTIONS.ADD_LAYER,
+      payload: {},
     });
   }, []);
 
@@ -171,7 +186,7 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     const handlePress = (event) => {
-      if (!state.selected || !state.scene) return;
+      if (!state.selected.index || !state.scene) return;
       const index = CanvasUtil.rect(state.selected.index);
       const sizeX = index[2];
       const sizeY = index[3];
@@ -247,6 +262,7 @@ export const AppProvider = ({ children }) => {
         setSpriteSheets,
         setScene,
         setSceneTile,
+        addLayer,
       }),
       []
     ),

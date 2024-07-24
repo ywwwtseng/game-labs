@@ -1,7 +1,7 @@
 import { memo } from "react";
 
-import { SpriteSheetTile } from "@/components/common/SpriteSheetTile";
 import { AreaHeader } from "@/components/common/AreaHeader";
+import { SpriteSheetTile } from "@/components/common/EditSettingsArea/SpriteSheetTile";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
 const SpriteSheetSettings = memo(({ spriteSheet }) => {

@@ -1,14 +1,15 @@
 import { useContext, useState } from "react";
 import useSWR from "swr";
-import cx from "classnames";
 
 import { AppContext } from "@/store/AppContext";
 import { FileInput } from "@/components/ui/FileInput";
-import { SpriteSheetSettings } from "@/components/common/SpriteSheetSettings";
+import { SpriteSheetSettings } from "@/components/common/EditSettingsArea/SpriteSheetSettings";
 import { AreaHeader } from "@/components/common/AreaHeader";
-import { CheckIcon } from "@/components/icon/CheckIcon";
+import { PlusIcon } from "@/components/icon/PlusIcon";
+import { SceneSettings } from '@/components/common/EditSettingsArea/SceneSettings';
+import { OperablItem } from '@/components/common/OperablItem';
 
-function SpriteSheetArea() {
+function EditSettingsArea() {
   const { state } = useContext(AppContext);
   const [selectedSpriteSheet, selectSpriteSheet] = useState(null);
   const { mutate } = useSWR("/api/sprites");
@@ -34,7 +35,8 @@ function SpriteSheetArea() {
 
   return (
     <div className="relative rounded w-64 h-full max-h-full flex flex-col ml-1 z-10">
-      <div className="flex flex-col rounded w-full h-[245px] bg-[#282828]">
+      <SceneSettings />
+      <div className="flex flex-col rounded w-full h-[245px] bg-[#282828] mt-1">
         <AreaHeader
           icon={
             <svg
@@ -57,47 +59,24 @@ function SpriteSheetArea() {
           title="SpriteSheets"
           actions={[
             <FileInput key="create-spritesheet" onChange={upload}>
-              <svg
-                className="w-4 h-4 text-white cursor-pointer"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <PlusIcon />
             </FileInput>,
           ]}
         />
 
         <div className="flex-1 overflow-y-scroll no-scrollbar">
           {Object.keys(state.spriteSheets).map((filename) => (
-            <div
+            <OperablItem
               key={filename}
-              className={cx(
-                "flex items-center cursor-pointer text-xs whitespace-nowrap px-1 py-0.5 odd:bg-[#2B2B2B] hover:text-white",
-                {
-                  "text-zinc-400": selectedSpriteSheet !== filename,
-                  "text-white": selectedSpriteSheet === filename,
-                }
-              )}
+              checkIcon
+              selected={selectedSpriteSheet === filename}
               onClick={() =>
                 selectSpriteSheet(
                   selectedSpriteSheet === filename ? null : filename
                 )
               }
-            >
-              <div className="w-4 h-4 mr-1">
-                {selectedSpriteSheet === filename && <CheckIcon />}
-              </div>
-              {filename}
-            </div>
+              name={filename}
+            />
           ))}
         </div>
       </div>
@@ -114,4 +93,4 @@ function SpriteSheetArea() {
   );
 }
 
-export { SpriteSheetArea };
+export { EditSettingsArea };

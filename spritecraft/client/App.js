@@ -1,7 +1,7 @@
 import { Navigation } from "./components/common/Navigation";
 import { CreationBar } from "./components/common/CreationBar";
 import { ShortcutBar } from "./components/common/ShortcutBar";
-import { SpriteSheetArea } from "./components/common/SpriteSheetArea";
+import { EditSettingsArea } from "./components/common/EditSettingsArea/EditSettingsArea";
 import { EditArea } from "./components/common/EditArea";
 import { AppInformation } from "./components/common/AppInformation";
 
@@ -16,7 +16,7 @@ export function App() {
           <EditArea />
           <AppInformation />
         </div>
-        <SpriteSheetArea />
+        <EditSettingsArea />
       </div>
     </div>
   );

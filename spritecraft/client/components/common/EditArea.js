@@ -18,10 +18,10 @@ function EditArea() {
   });
 
   const tiles = useMemo(() => {
-    return MatrixUtil.map(state.scene.tiles, ({ filename, index: [indexX, indexY] }) => ({
+    return MatrixUtil.map(state.scene.layers[0].tiles, ({ filename, index: [indexX, indexY] }) => ({
       buffer: state.spriteSheets[filename].tiles[indexX][indexY].buffer,
     }));
-  }, [state.spriteSheets, state.scene.tiles]);
+  }, [state.spriteSheets, state.scene.layers]);
 
   const handleDrop = (event, data, index) => {
     event.preventDefault();
