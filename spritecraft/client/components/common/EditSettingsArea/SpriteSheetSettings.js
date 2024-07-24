@@ -1,10 +1,13 @@
-import { memo } from "react";
+import { memo, useContext } from "react";
 
 import { AreaHeader } from "@/components/common/AreaHeader";
 import { SpriteSheetTile } from "@/components/common/EditSettingsArea/SpriteSheetTile";
 import { MatrixUtil } from "@/utils/MatrixUtil";
+import { AppContext } from "@/store/AppContext";
 
 const SpriteSheetSettings = memo(({ spriteSheet }) => {
+  const { action } = useContext(AppContext);
+
   return (
     <div className="flex-1 flex flex-col">
       <AreaHeader
@@ -41,6 +44,7 @@ const SpriteSheetSettings = memo(({ spriteSheet }) => {
             key={`${spriteSheet}-[${x},${y}]`}
             spriteSheet={spriteSheet}
             index={[x, y]}
+            onFill={action.fill}
           />
         ))}
       </div>

@@ -12,21 +12,23 @@ function useExportPng() {
     canvas.height = state.scene.height;
     const ctx = canvas.getContext("2d");
 
-    state.scene.tiles.layers[0].forEach((column, x) => {
-      column.forEach((value, y) => {
-        if (value) {
-          ctx.drawImage(
-            state.spriteSheets[value.filename].image,
-            value.index[0] * 16,
-            value.index[1] * 16,
-            16,
-            16,
-            x * 16,
-            y * 16,
-            16,
-            16
-          );
-        }
+    state.scene.layers.forEach((layer) => {
+      layer.tiles.forEach((column, x) => {
+        column.forEach((value, y) => {
+          if (value) {
+            ctx.drawImage(
+              state.spriteSheets[value.filename].image,
+              value.index[0] * 16,
+              value.index[1] * 16,
+              16,
+              16,
+              x * 16,
+              y * 16,
+              16,
+              16
+            );
+          }
+        });
       });
     });
 

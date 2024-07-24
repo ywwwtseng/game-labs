@@ -33,7 +33,7 @@ function SceneSettings() {
               onClick={() =>
                 selectScene(selectedScene === scene.name ? null : scene.name)
               }
-              name={scene.name.toLocaleUpperCase()}
+              label={scene.name.toLocaleUpperCase()}
               actions={[
                 <BaseButton
                   key="new-layer"
@@ -51,7 +51,7 @@ function SceneSettings() {
               <OperablItem
                 key={`${scene.name}-layer-${index}`}
                 className="pl-6"
-                name={
+                label={
                   <div className="flex items-center">
                     <AngleRightIcon
                       style={{

@@ -1,9 +1,9 @@
 import cx from "classnames";
 
-function AngleRightIcon({ size = "4", ...props }) {
+function AngleRightIcon({ size = "4", className, ...props }) {
   return (
     <svg
-      className={cx("text-white", `w-${size} h-${size}`)}
+      className={cx("text-white", `w-${size} h-${size}`, className)}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"

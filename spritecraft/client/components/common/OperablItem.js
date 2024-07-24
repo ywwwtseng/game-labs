@@ -2,7 +2,7 @@ import { useState } from 'react';
 import cx from "classnames";
 import { CheckIcon } from "@/components/icon/CheckIcon";
 
-function OperablItem({ checkIcon, selected, name, className, actions, onClick }) {
+function OperablItem({ checkIcon, selected, label, className, actions, onClick }) {
   const [showActions, setShowActions] = useState(false);
 
   return (
@@ -22,7 +22,7 @@ function OperablItem({ checkIcon, selected, name, className, actions, onClick })
       {checkIcon && (
         <div className="w-4 h-4 mr-1">{selected && <CheckIcon />}</div>
       )}
-      {name}
+      {label}
       {showActions && (
         <div className="flex items-center ml-auto">
           {actions}

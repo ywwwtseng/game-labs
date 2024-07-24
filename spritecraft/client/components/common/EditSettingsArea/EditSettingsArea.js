@@ -75,7 +75,7 @@ function EditSettingsArea() {
                   selectedSpriteSheet === filename ? null : filename
                 )
               }
-              name={filename}
+              label={filename}
             />
           ))}
         </div>

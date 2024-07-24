@@ -153,6 +153,22 @@ export const AppProvider = ({ children }) => {
     });
   }, []);
 
+  const fill = useCallback((tile) => {
+    if (state.selected.index) {
+      const [originX, originY, sizeX, sizeY] = state.selected.index;
+
+      MatrixUtil.traverse([sizeX, sizeY], (x, y) => {
+        setSceneTile(
+          [originX + x, originY + y],
+          {
+            filename: tile.filename,
+            index: tile.index,
+          }
+        );
+      });
+    }
+  }, [state.selected.index]);
+
   
 
   useEffect(() => {
@@ -278,8 +294,20 @@ export const AppProvider = ({ children }) => {
         setSceneTile,
         addLayer,
         selectLayer,
+        fill,
       }),
-      []
+      [
+        setLocation,
+        selectStart,
+        select,
+        selectStop,
+        setSpriteSheets,
+        setScene,
+        setSceneTile,
+        addLayer,
+        selectLayer,
+        fill,
+      ]
     ),
   };
 
