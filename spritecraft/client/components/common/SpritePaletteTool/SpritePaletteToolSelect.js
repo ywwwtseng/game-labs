@@ -1,4 +1,4 @@
-function SpriteSheetPaletteToolSelect({ spriteSheets, onClick }) {
+function SpritePaletteToolSelect({ spriteSheets, onClick }) {
   return (
     <div
       className="p-2 max-h-[224px] h-[224px] overflow-y-scroll no-scrollbar"
@@ -21,4 +21,4 @@ function SpriteSheetPaletteToolSelect({ spriteSheets, onClick }) {
   );
 }
 
-export { SpriteSheetPaletteToolSelect };
+export { SpritePaletteToolSelect };

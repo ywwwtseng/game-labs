@@ -3,7 +3,7 @@ import { Canvas2D } from "@/components/common/Canvas2D";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { useCanvasSelector } from "@/hooks/useCanvasSelector";
 
-function SpriteSheetPaletteToolMain({ spriteSheet }) {
+function SpritePaletteToolMain({ spriteSheet }) {
   const layers = useMemo(() => [{ tiles: spriteSheet.tiles }], [spriteSheet.tiles]);
   const { selected, register, connect } = useCanvasSelector({
     canvasId: `spriteSheet-${spriteSheet.filename}`,
@@ -58,4 +58,4 @@ function SpriteSheetPaletteToolMain({ spriteSheet }) {
   );
 }
 
-export { SpriteSheetPaletteToolMain };
+export { SpritePaletteToolMain };

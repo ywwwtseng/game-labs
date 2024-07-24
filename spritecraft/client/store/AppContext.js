@@ -22,8 +22,8 @@ const INITIAL_STATE = {
   // scene: undefined
   scene: {
     name: "default",
-    width: 560,
-    height: 560,
+    width: 512,
+    height: 512,
     selected: 0,
     layers: [
       {

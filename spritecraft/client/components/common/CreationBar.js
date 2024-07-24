@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { AppContext } from "@/store/AppContext";
 import { SelectIcon } from "@/components/icon/SelectIcon";
 import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
-import { SpriteSheetPaletteTool } from "@/components/common/SpriteSheetPaletteTool/SpriteSheetPaletteTool";
+import { SpritePaletteTool } from "@/components/common/SpritePaletteTool/SpritePaletteTool";
 import { useAnchor } from "@/hooks/useAnchor";
 
 function CreationBar() {
@@ -26,7 +26,7 @@ function CreationBar() {
       </div>
 
       {Object.keys(state.spriteSheets)[0] && open && (
-        <SpriteSheetPaletteTool
+        <SpritePaletteTool
           origin={{
             x: bounds.right + 4,
             y: bounds.top

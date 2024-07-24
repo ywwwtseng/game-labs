@@ -4,13 +4,12 @@ import { Menu } from "@/components/ui/Menu";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { CloseIcon } from "@/components/icon/CloseIcon";
 import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
-import { SpriteSheetPaletteToolSelect } from "@/components/common/SpriteSheetPaletteTool/SpriteSheetPaletteToolSelect";
-import { SpriteSheetPaletteToolMain } from "@/components/common/SpriteSheetPaletteTool/SpriteSheetPaletteToolMain";
+import { SpritePaletteToolSelect } from "@/components/common/SpritePaletteTool/SpritePaletteToolSelect";
+import { SpritePaletteToolMain } from "@/components/common/SpritePaletteTool/SpritePaletteToolMain";
 
-function SpriteSheetPaletteTool({ origin, onClose }) {
+function SpritePaletteTool({ origin, onClose }) {
   const menuRef = useRef();
   const { state } = useContext(AppContext);
-  // const [selectedFilename, setSelectedFilename] = useState(Object.keys(state.spriteSheets)[0]);
   const [selectedFilename, setSelectedFilename] = useState(null);
   const spriteSheet = state.spriteSheets[selectedFilename];
 
@@ -26,11 +25,11 @@ function SpriteSheetPaletteTool({ origin, onClose }) {
           <div className="ml-0.5">
             {selectedFilename ? (
               <div>
-                <span onClick={() => setSelectedFilename(null)}>Palette</span> |{" "}
+                <span onClick={() => setSelectedFilename(null)}>Sprite Palette</span> |{" "}
                 <span>{selectedFilename}</span>
               </div>
             ) : (
-              "Palette"
+              "Sprite Palette"
             )}
           </div>
         </div>
@@ -39,9 +38,9 @@ function SpriteSheetPaletteTool({ origin, onClose }) {
         </BaseButton>
       </Menu.Header>
       {selectedFilename ? (
-        <SpriteSheetPaletteToolMain spriteSheet={spriteSheet} />
+        <SpritePaletteToolMain spriteSheet={spriteSheet} />
       ) : (
-        <SpriteSheetPaletteToolSelect
+        <SpritePaletteToolSelect
           spriteSheets={state.spriteSheets}
           onClick={setSelectedFilename}
         />
@@ -50,4 +49,4 @@ function SpriteSheetPaletteTool({ origin, onClose }) {
   );
 }
 
-export { SpriteSheetPaletteTool };
+export { SpritePaletteTool };
