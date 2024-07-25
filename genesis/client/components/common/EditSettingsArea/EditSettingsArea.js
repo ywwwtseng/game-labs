@@ -1,18 +1,18 @@
-import { useContext, useState } from "react";
-import useSWR from "swr";
+import { useState } from "react";
 
-import { AppContext } from "@/store/AppContext";
 import { FileInput } from "@/components/ui/FileInput";
 import { SpriteSheetSettings } from "@/components/common/EditSettingsArea/SpriteSheetSettings";
 import { AreaHeader } from "@/components/common/AreaHeader";
 import { PlusIcon } from "@/components/icon/PlusIcon";
-import { SceneSettings } from '@/components/common/EditSettingsArea/SceneSettings';
-import { OperablItem } from '@/components/common/OperablItem';
+import { SceneSettings } from "@/components/common/EditSettingsArea/SceneSettings";
+import { OperablItem } from "@/components/common/OperablItem";
+import { useSpriteSheets, useUpdateSpriteSheets } from '@/context/SpriteSheetContext';
 
 function EditSettingsArea() {
-  const { state } = useContext(AppContext);
+  const spriteSheets = useSpriteSheets();
+  const updateSpriteSheets = useUpdateSpriteSheets();
   const [selectedSpriteSheet, selectSpriteSheet] = useState(null);
-  const { mutate } = useSWR("/api/sprites");
+  
 
   const upload = async (file) => {
     const formData = new FormData();
@@ -26,7 +26,7 @@ function EditSettingsArea() {
 
       const result = await response.json();
       if (result.ok) {
-        mutate();
+        updateSpriteSheets();
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -65,7 +65,7 @@ function EditSettingsArea() {
         />
 
         <div className="flex-1 overflow-y-scroll no-scrollbar">
-          {Object.keys(state.spriteSheets).map((filename) => (
+          {Object.keys(spriteSheets).map((filename) => (
             <OperablItem
               key={filename}
               checkIcon
@@ -85,7 +85,7 @@ function EditSettingsArea() {
         {selectedSpriteSheet && (
           <SpriteSheetSettings
             key={selectedSpriteSheet}
-            spriteSheet={state.spriteSheets[selectedSpriteSheet]}
+            spriteSheet={spriteSheets[selectedSpriteSheet]}
           />
         )}
       </div>

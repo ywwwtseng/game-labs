@@ -1,15 +1,17 @@
-import React, { useContext, useState } from "react";
-import { AppContext } from "@/store/AppContext";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { AreaHeader } from "@/components/common/AreaHeader";
 import { OperablItem } from "@/components/common/OperablItem";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { LayersIcon } from "@/components/icon/LayersIcon";
 import { PlusIcon } from "@/components/icon/PlusIcon";
 import { AngleRightIcon } from "@/components/icon/AngleRightIcon";
+import { addLayer, selectLayer } from "@/features/appState/appStateSlice";
 
 function SceneSettings() {
-  const { state, action } = useContext(AppContext);
-  const scenes = [state.scene];
+  const scene = useSelector((state) => state.appState.scene);
+  const dispatch = useDispatch();
+  const scenes = [scene];
   const [selectedScene, selectScene] = useState(scenes[0].name);
 
   return (
@@ -40,7 +42,7 @@ function SceneSettings() {
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    action.addLayer(scene);
+                    dispatch(addLayer());
                   }}
                 >
                   <PlusIcon />
@@ -56,14 +58,14 @@ function SceneSettings() {
                     <AngleRightIcon
                       style={{
                         width: "12px",
-                        opacity: state.scene.selected === index ? 1 : 0,
+                        opacity: scene.selectedLayerIndex === index ? 1 : 0,
                       }}
                     />
                     <span className="ml-1">{`Layer${index + 1}`}</span>
                   </div>
                 }
-                selected={state.scene.selected === index}
-                onClick={() => action.selectLayer(index)}
+                selected={scene.selectedLayerIndex === index}
+                onClick={() => dispatch(selectLayer(index))}
               />
             ))}
           </React.Fragment>

@@ -1,21 +1,22 @@
-import { useContext, useRef, useState, useEffect } from "react";
-import { AppContext } from "@/store/AppContext";
+import { useRef, useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Menu } from "@/components/ui/Menu";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { CloseIcon } from "@/components/icon/CloseIcon";
 import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
 import { SpritePaletteToolSelect } from "@/components/common/SpritePaletteTool/SpritePaletteToolSelect";
 import { SpritePaletteToolMain } from "@/components/common/SpritePaletteTool/SpritePaletteToolMain";
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 
 function SpritePaletteTool({ origin, onClose }) {
   const menuRef = useRef();
-  const { state } = useContext(AppContext);
+  const spriteSheets = useSpriteSheets();
   const [selectedFilename, setSelectedFilename] = useState(null);
-  const spriteSheet = state.spriteSheets[selectedFilename];
+  const spriteSheet = spriteSheets[selectedFilename];
 
   useEffect(() => {
     menuRef.current.checkPos();
-  }, [selectedFilename])
+  }, [selectedFilename]);
 
   return (
     <Menu ref={menuRef} origin={origin}>
@@ -25,8 +26,10 @@ function SpritePaletteTool({ origin, onClose }) {
           <div className="ml-0.5">
             {selectedFilename ? (
               <div>
-                <span onClick={() => setSelectedFilename(null)}>Sprite Palette</span> |{" "}
-                <span>{selectedFilename}</span>
+                <span onClick={() => setSelectedFilename(null)}>
+                  Sprite Palette
+                </span>{" "}
+                | <span>{selectedFilename}</span>
               </div>
             ) : (
               "Sprite Palette"
@@ -41,7 +44,7 @@ function SpritePaletteTool({ origin, onClose }) {
         <SpritePaletteToolMain spriteSheet={spriteSheet} />
       ) : (
         <SpritePaletteToolSelect
-          spriteSheets={state.spriteSheets}
+          spriteSheets={spriteSheets}
           onClick={setSelectedFilename}
         />
       )}

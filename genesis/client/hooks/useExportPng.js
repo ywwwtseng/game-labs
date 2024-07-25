@@ -1,23 +1,24 @@
-import { useCallback, useContext } from "react";
-import { AppContext } from "@/store/AppContext";
+import { useCallback } from "react";
+import { useSelector } from 'react-redux';
 
 function useExportPng() {
-  const { state } = useContext(AppContext);
+  const scene = useSelector(state => state.appState.scene);
+  const spriteSheets = useSelector(state => state.appState.spriteSheets);
 
   const exportPng = useCallback(() => {
-    if (!state.scene) return;
+    if (!scene) return;
 
     const canvas = document.createElement("canvas");
-    canvas.width = state.scene.width;
-    canvas.height = state.scene.height;
+    canvas.width = scene.width;
+    canvas.height = scene.height;
     const ctx = canvas.getContext("2d");
 
-    state.scene.layers.forEach((layer) => {
+    scene.layers.forEach((layer) => {
       layer.tiles.forEach((column, x) => {
         column.forEach((value, y) => {
           if (value) {
             ctx.drawImage(
-              state.spriteSheets[value.filename].image,
+              spriteSheets[value.filename].image,
               value.index[0] * 16,
               value.index[1] * 16,
               16,
@@ -35,9 +36,9 @@ function useExportPng() {
     const image = canvas.toDataURL('image/png');
     const link = document.createElement('a');
     link.href = image;
-    link.download = `${state.scene.name}.png`;
+    link.download = `${scene.name}.png`;
     link.click();
-  }, [state.scene]);
+  }, [scene, spriteSheets]);
 
   return exportPng;
 }

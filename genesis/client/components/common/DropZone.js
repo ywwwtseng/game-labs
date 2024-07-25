@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { DragAndDropContext } from "@/store/DragAndDropContext";
+import { DragAndDropContext } from "@/context/DragAndDropContext";
 
 function DropZone({ id, accept, onDrop, children }) {
   const { addDropzone, removeDropzone } = useContext(DragAndDropContext);

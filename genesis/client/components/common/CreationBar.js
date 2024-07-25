@@ -1,12 +1,12 @@
-import { useContext, useState } from "react";
-import { AppContext } from "@/store/AppContext";
+import { useSelector } from "react-redux";
 import { SelectIcon } from "@/components/icon/SelectIcon";
 import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
 import { SpritePaletteTool } from "@/components/common/SpritePaletteTool/SpritePaletteTool";
 import { useAnchor } from "@/hooks/useAnchor";
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 
 function CreationBar() {
-  const { state } = useContext(AppContext);
+  const spriteSheets = useSpriteSheets();
   const { open, bounds, close, toggle } = useAnchor();
 
   return (
@@ -21,15 +21,16 @@ function CreationBar() {
       <div
         data-toggle="true"
         onClick={toggle}
-        className="relative z-20 rounded bg-black/30 p-2 cursor-pointer my-0.5">
+        className="relative z-20 rounded bg-black/30 p-2 cursor-pointer my-0.5"
+      >
         <SpriteSheetIcon size="4" />
       </div>
 
-      {Object.keys(state.spriteSheets)[0] && open && (
+      {Object.keys(spriteSheets)[0] && open && (
         <SpritePaletteTool
           origin={{
             x: bounds.right + 4,
-            y: bounds.top
+            y: bounds.top,
           }}
           onClose={close}
         />

@@ -1,5 +1,5 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { AppContext } from "@/store/AppContext";
+import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Text } from "@/components/ui/Text";
 import { Dropdown } from "@/components/ui/Dropdown/Dropdown";
 import { CreateSceneModal } from "@/components/common/CreateSceneModal";
@@ -8,7 +8,7 @@ import { BoundingBox } from "@/helpers/BoundingBox";
 import logo from "@/icon.png";
 
 function Navigation() {
-  const { state } = useContext(AppContext);
+  const scene = useSelector((state) => state.appState.scene);
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);
   const [createSceneModal, setCreateSceneModal] = useState({ open: false });
@@ -83,10 +83,10 @@ function Navigation() {
   );
 
   useEffect(() => {
-    if (state.scene === undefined) {
+    if (scene === undefined) {
       setCreateSceneModal({ open: true });
     }
-  }, [state.scene]);
+  }, [scene]);
 
   return (
     <>

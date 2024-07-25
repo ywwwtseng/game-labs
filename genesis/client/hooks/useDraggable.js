@@ -1,5 +1,5 @@
 import { useRef, useCallback, useContext } from "react";
-import { DragAndDropContext } from "@/store/DragAndDropContext";
+import { DragAndDropContext } from "@/context/DragAndDropContext";
 import { BoundingBox } from "@/helpers/BoundingBox";
 
 function useDraggable({
@@ -29,9 +29,9 @@ function useDraggable({
       draggedItemRef.current.style.userSelect = "none";
       draggedItemRef.current.style.position = "fixed";
       draggedItemRef.current.style.zIndex = 9999;
-      const location = draggedItem.pos(event, bounds);
-      draggedItemRef.current.style.left = `${location.x}px`;
-      draggedItemRef.current.style.top = `${location.y}px`;
+      const poistion = draggedItem.pos(event, bounds);
+      draggedItemRef.current.style.left = `${poistion.x}px`;
+      draggedItemRef.current.style.top = `${poistion.y}px`;
     }
 
     if (originRef.current) {

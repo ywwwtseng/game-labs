@@ -55,7 +55,7 @@ export const DragAndDropProvider = ({ children }) => {
         const leftTopPos = CanvasUtil.getPosition(event, el, {
           x: -(sizeX / 2),
           y: -(sizeY / 2),
-        });
+        }, 16);
 
         const rightBottomPos = CanvasUtil.getPosition(event, el, {
           x: (sizeX / 2) - 8,

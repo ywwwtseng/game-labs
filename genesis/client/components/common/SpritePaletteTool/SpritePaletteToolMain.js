@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { Canvas2D } from "@/components/common/Canvas2D";
 import { MatrixUtil } from "@/utils/MatrixUtil";
-import { useCanvasSelector } from "@/hooks/useCanvasSelector";
+import { useCanvasSelectArea } from "@/hooks/useCanvasSelectArea";
 
 function SpritePaletteToolMain({ spriteSheet }) {
   const layers = useMemo(() => [{ tiles: spriteSheet.tiles }], [spriteSheet.tiles]);
-  const { selected, register, connect } = useCanvasSelector({
+  const { selected, register, connect } = useCanvasSelectArea({
     canvasId: `spriteSheet-${spriteSheet.filename}`,
     filename: spriteSheet.filename,
     draggable: true,

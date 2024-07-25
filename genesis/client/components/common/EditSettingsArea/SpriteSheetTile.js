@@ -4,7 +4,7 @@ import { OperablItem } from "@/components/common/OperablItem";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { PenNibIcon } from "@/components/icon/PenNibIcon";
 
-function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onFill }) {
+function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFill }) {
   const ref = useRef(null);
   const tile = spriteSheet.tiles[index[0]][index[1]];
 
@@ -57,7 +57,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onFill }
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            onFill({ type: "tile", filename: spriteSheet.filename, index });
+            onTileFill({ type: "tile", filename: spriteSheet.filename, index });
           }}
         >
           <PenNibIcon size="4" />

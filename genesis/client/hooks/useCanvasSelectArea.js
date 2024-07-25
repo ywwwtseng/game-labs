@@ -4,17 +4,17 @@ import { CanvasUtil } from "@/utils/CanvasUtil";
 import { useDraggable } from "@/hooks/useDraggable";
 import { BoundingBox } from "@/helpers/BoundingBox";
 
-function useCanvasSelectorWoState({
+function useICanvasSelectArea({
   canvasId,
   draggable = false,
   draggedItem = {},
   filename,
   selected,
-  select,
-  location,
-  selectStart,
-  selectStop,
-  setLocation,
+  poistion,
+  selectAreaStart,
+  selectArea,
+  selectAreaStop,
+  setCursorPosition,
 }) {
   const ref = useRef();
   const { setData, handleMouseDown } = useDraggable({
@@ -41,14 +41,14 @@ function useCanvasSelectorWoState({
     const index = CanvasUtil.positionToIndex(pos);
 
     if (pos.within) {
-      setLocation(index);
+      setCursorPosition(index);
     }
 
     if (selected.progress) {
       const dx = index[0] - selected.index[0];
       const dy = index[1] - selected.index[1];
 
-      select([
+      selectArea([
         selected.index[0],
         selected.index[1],
         dx > 0 ? dx + 1 : dx === 0 ? 1 : dx - 1,
@@ -88,29 +88,29 @@ function useCanvasSelectorWoState({
       }
     }
 
-    selectStart(location ? [...location, 1, 1] : null);
+    selectAreaStart(poistion ? [...poistion, 1, 1] : null);
   };
 
   const onMouseUp = () => {
-    selectStop();
+    selectAreaStop();
   };
 
   const onMouseLeave = (event) => {
     event.target.style.cursor = "default";
-    setLocation(null);
+    setCursorPosition(null);
   };
 
   const onClick = (event) => {
     if (event.detail === 2) {
       if (selected.index) {
-        selectStart(null);
+        selectAreaStart(null);
       }
     }
   };
 
   return {
     selected,
-    location,
+    poistion,
     register: {
       ref,
       onMouseMove,
@@ -124,21 +124,23 @@ function useCanvasSelectorWoState({
   };
 }
 
-function useCanvasSelector({
+function useCanvasSelectArea({
   canvasId,
   filename,
   draggable,
   draggedItem = {},
 }) {
   const [state, setState] = useState({
-    location: null,
+    cursor: {
+      poistion: null,
+    },
     selected: {
       progress: false,
       index: null,
     },
   });
 
-  const select = useCallback((index) => {
+  const selectArea = useCallback((index) => {
     setState(
       produce((draft) => {
         draft.selected.index = index;
@@ -146,7 +148,7 @@ function useCanvasSelector({
     );
   }, []);
 
-  const selectStart = useCallback((index) => {
+  const selectAreaStart = useCallback((index) => {
     setState(
       produce((draft) => {
         draft.selected.progress = !!index;
@@ -155,7 +157,7 @@ function useCanvasSelector({
     );
   }, []);
 
-  const selectStop = useCallback(() => {
+  const selectAreaStop = useCallback(() => {
     setState(
       produce((draft) => {
         draft.selected.progress = false;
@@ -163,26 +165,26 @@ function useCanvasSelector({
     );
   }, []);
 
-  const setLocation = useCallback((location) => {
+  const setCursorPosition = useCallback((poistion) => {
     setState(
       produce((draft) => {
-        draft.location = location;
+        draft.cursor.poistion = poistion;
       })
     );
   }, []);
 
-  return useCanvasSelectorWoState({
+  return useICanvasSelectArea({
     canvasId,
     filename,
     draggable,
     draggedItem,
     selected: state.selected,
-    location: state.location,
-    select: select,
-    selectStart: selectStart,
-    selectStop: selectStop,
-    setLocation: setLocation,
+    poistion: state.cursor.poistion,
+    selectArea,
+    selectAreaStart,
+    selectAreaStop,
+    setCursorPosition,
   });
 }
 
-export { useCanvasSelector, useCanvasSelectorWoState };
+export { useCanvasSelectArea, useICanvasSelectArea };
