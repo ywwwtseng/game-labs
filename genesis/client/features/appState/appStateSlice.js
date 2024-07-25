@@ -24,6 +24,9 @@ export const appStateSlice = createSlice({
   name: "appState",
   initialState,
   reducers: {
+    setMode: (state, action) => {
+      state.mode = action.payload;
+    },
     setCursorPosition: (state, action) => {
       state.cursor.poistion = action.payload;
     },
@@ -50,6 +53,7 @@ export const appStateSlice = createSlice({
 });
 
 export const {
+  setMode,
   setCursorPosition,
   addScene,
   addSceneTile,

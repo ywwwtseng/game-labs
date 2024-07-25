@@ -1,14 +1,30 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectArea } from "@/features/sceneSelectArea/sceneSelectAreaSlice";
-import { addSceneTile } from "@/features/appState/appStateSlice";
+import { setCursorPosition, addSceneTile } from "@/features/appState/appStateSlice";
+import {
+  selectAreaStart,
+  selectArea,
+  selectAreaStop,
+} from "@/features/selectMode/selectModeSlice";
+import { useICanvasSelectArea } from "@/hooks/useCanvasSelectArea";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
-function useKeyboard() {
-  const selected = useSelector((state) => state.sceneSelectArea.selected);
+function SelectModeBridge({ children }) {
+  const poistion = useSelector((state) => state.appState.cursor.poistion);
   const scene = useSelector((state) => state.appState.scene);
+  const selected = useSelector((state) => state.selectMode.selected);
   const dispatch = useDispatch();
+
+  const { register, connect } = useICanvasSelectArea({
+    canvasId: "canvas",
+    selected,
+    poistion,
+    selectAreaStart: (index) => dispatch(selectAreaStart(index)),
+    selectArea: (index) => dispatch(selectArea(index)),
+    selectAreaStop: () => dispatch(selectAreaStop()),
+    setCursorPosition: (poistion) => dispatch(setCursorPosition(poistion)),
+  });
 
   useEffect(() => {
     const handlePress = (event) => {
@@ -76,6 +92,14 @@ function useKeyboard() {
       window.removeEventListener("keydown", handlePress);
     };
   }, [selected]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(selectAreaStart(null));
+    };
+  }, []);
+
+  return children({ register, connect });
 }
 
-export { useKeyboard };
+export { SelectModeBridge };

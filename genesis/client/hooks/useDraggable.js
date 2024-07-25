@@ -12,7 +12,7 @@ function useDraggable({
   const dataRef = useRef(data || null);
   const draggedItemRef = useRef(null);
   const originRef = useRef(null);
-  const { dragging, setDragStart, onDrop, setDragStop } = useContext(DragAndDropContext);
+  const { setDragStart, onDrop, setDragStop } = useContext(DragAndDropContext);
 
   const handleMouseMove = useCallback((event) => {
     event.preventDefault();
@@ -83,7 +83,6 @@ function useDraggable({
   }, []);
 
   return {
-    dragging,
     setData: (data) => (dataRef.current = data),
     handleMouseDown,
   };

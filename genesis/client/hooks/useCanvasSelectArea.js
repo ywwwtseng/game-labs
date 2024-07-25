@@ -119,6 +119,7 @@ function useICanvasSelectArea({
       onClick,
     },
     connect: {
+      selected: selected.index,
       onMouseLeave,
     },
   };

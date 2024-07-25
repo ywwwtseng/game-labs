@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { Draggable } from "@/components/common/Draggable";
+import { Draggable } from "@/containers/Draggable";
 import { OperablItem } from "@/components/common/OperablItem";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { PenNibIcon } from "@/components/icon/PenNibIcon";

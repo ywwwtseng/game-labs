@@ -4,7 +4,7 @@ import { MatrixUtil } from "@/utils/MatrixUtil";
 import { addSceneTile } from "@/features/appState/appStateSlice";
 
 function useTileFill() {
-  const selected = useSelector((state) => state.sceneSelectArea.selected);
+  const selected = useSelector((state) => state.selectMode.selected);
   const dispatch = useDispatch();
 
   return useCallback(

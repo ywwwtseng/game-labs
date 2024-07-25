@@ -13,7 +13,6 @@ function EditSettingsArea() {
   const updateSpriteSheets = useUpdateSpriteSheets();
   const [selectedSpriteSheet, selectSpriteSheet] = useState(null);
   
-
   const upload = async (file) => {
     const formData = new FormData();
     formData.append("image", file);

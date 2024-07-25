@@ -6,7 +6,7 @@ import {
   useImperativeHandle,
 } from "react";
 import { createPortal } from "react-dom";
-import { Draggable } from "@/components/common/Draggable";
+import { Draggable } from "@/containers/Draggable";
 import { BoundingBox } from "@/helpers/BoundingBox";
 
 const Menu = forwardRef(({ children, origin, limit = "edit-area", ...props }, ref) => {

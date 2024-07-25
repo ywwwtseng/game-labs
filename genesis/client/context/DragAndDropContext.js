@@ -1,53 +1,26 @@
-import { createContext, useReducer, useRef } from "react";
-import { produce } from "immer";
+import { createContext, useCallback, useRef } from "react";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 
-const INITIAL_STATE = {
-  dragging: false,
-  dropzones: [],
-};
-
-const ACTIONS = {
-  DRAG_START: "DRAG_START",
-  DRAG_STOP: "DRAG_STOP",
-  ADD_DROPZONE: "SET_DROPZONE",
-  REMOVE_DROPZONE: "SET_DROPZONE",
-};
-
-const reducer = produce((draft, action) => {
-  switch (action.type) {
-    case ACTIONS.DRAG_START:
-      draft.dragging = true;
-      break;
-    case ACTIONS.DRAG_STOP:
-      draft.dragging = false;
-      break;
-    case ACTIONS.ADD_DROPZONE:
-      draft.dropzones.push(action.payload);
-      break;
-    case ACTIONS.REMOVE_DROPZONE:
-      draft.dropzones = [
-        ...state.dropzones.filter((dropzone) => dropzone.id !== action.payload),
-      ];
-      break;
-    default:
-      break;
-  }
+export const DragAndDropContext = createContext({
+  setDragStart: () => {},
+  setDragStop: () => {},
+  onDrop: () => {},
+  addDropzone: () => {},
+  removeDropzone: () => {},
 });
-
-export const DragAndDropContext = createContext(INITIAL_STATE);
 
 export const DragAndDropProvider = ({ children }) => {
   const ref = useRef(null);
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const dropzonesRef = useRef([]);
 
   const setDragStart = (item) => {
     ref.current = item;
-    dispatch({ type: ACTIONS.DRAG_START });
   };
 
-  const onDrop = (event) => {
-    state.dropzones.forEach(({ accept, el, onDrop }) => {
+  const onDrop = useCallback((event) => {
+    dropzonesRef.current.forEach(({ accept, el, onDrop }) => {
+      el = el();
+
       if (ref.current && accept === ref.current.type) {
         const sizeX = ref.current.selected[2] * 16;
         const sizeY = ref.current.selected[3] * 16;
@@ -67,23 +40,24 @@ export const DragAndDropProvider = ({ children }) => {
         }
       }
     });
-  };
+  }, []);
+
+
+  
 
   const setDragStop = () => {
-    dispatch({ type: ACTIONS.DRAG_STOP });
     ref.current = null;
   };
 
   const addDropzone = (dropzone) => {
-    dispatch({ type: ACTIONS.ADD_DROPZONE, payload: dropzone });
+    dropzonesRef.current = [...dropzonesRef.current, dropzone];
   };
 
   const removeDropzone = (id) => {
-    dispatch({ type: ACTIONS.REMOVE_DROPZONE, payload: id });
+    dropzonesRef.current = [...dropzonesRef.current].filter((dropzone) => dropzone.id !== id);
   };
 
   const value = {
-    dragging: state.dragging,
     setDragStart,
     setDragStop,
     onDrop,

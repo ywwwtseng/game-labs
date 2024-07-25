@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { MODE } from "@/constants";
 
 const initialState = {
   selected: {
@@ -8,8 +7,8 @@ const initialState = {
   },
 };
 
-export const sceneSelectAreaSlice = createSlice({
-  name: "sceneSelectArea",
+export const selectModeSlice = createSlice({
+  name: "selectMode",
   initialState,
   reducers: {
     selectAreaStart: (state, action) => {
@@ -29,6 +28,6 @@ export const {
   selectAreaStart,
   selectArea,
   selectAreaStop,
-} = sceneSelectAreaSlice.actions;
+} = selectModeSlice.actions;
 
-export default sceneSelectAreaSlice.reducer;
+export default selectModeSlice.reducer;
