@@ -3,7 +3,7 @@ import { CreationBar } from "@/components/common/CreationBar";
 import { ShortcutBar } from "@/components/common/ShortcutBar";
 import { EditSettingsArea } from "@/components/common/EditSettingsArea/EditSettingsArea";
 import { SceneCanvas } from "@/components/common/SceneCanvas";
-import { AppInformation } from "@/components/common/AppInformation";
+import { AppInfo } from "@/components/common/AppInfo/AppInfo";
 
 function Main() {
   return (
@@ -14,7 +14,7 @@ function Main() {
           <CreationBar />
           <ShortcutBar />
           <SceneCanvas />
-          <AppInformation />
+          <AppInfo />
         </div>
         <EditSettingsArea />
       </div>
