@@ -6,7 +6,7 @@ import { MODE } from "@/constants";
 
 function AppInformation() {
   const selected = useSelector((state) => state.selectMode.selected);
-  const poistion = useSelector((state) => state.appState.cursor.poistion);
+  const position = useSelector((state) => state.appState.cursor.position);
   const mode = useSelector((state) => state.appState.mode);
 
   return (
@@ -27,7 +27,7 @@ function AppInformation() {
       )}
       
       <div className="flex items-center ml-auto">
-        {poistion && <Text>{`Location: ${poistion[0]},${poistion[1]}`}</Text>}
+        {position && <Text>{`Location: ${position[0]},${position[1]}`}</Text>}
       </div>
     </div>
   );

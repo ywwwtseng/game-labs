@@ -10,7 +10,7 @@ function useICanvasSelectArea({
   draggedItem = {},
   filename,
   selected,
-  poistion,
+  position,
   selectAreaStart,
   selectArea,
   selectAreaStop,
@@ -88,7 +88,7 @@ function useICanvasSelectArea({
       }
     }
 
-    selectAreaStart(poistion ? [...poistion, 1, 1] : null);
+    selectAreaStart(position ? [...position, 1, 1] : null);
   };
 
   const onMouseUp = () => {
@@ -110,7 +110,7 @@ function useICanvasSelectArea({
 
   return {
     selected,
-    poistion,
+    position,
     register: {
       ref,
       onMouseMove,
@@ -133,7 +133,7 @@ function useCanvasSelectArea({
 }) {
   const [state, setState] = useState({
     cursor: {
-      poistion: null,
+      position: null,
     },
     selected: {
       progress: false,
@@ -166,10 +166,10 @@ function useCanvasSelectArea({
     );
   }, []);
 
-  const setCursorPosition = useCallback((poistion) => {
+  const setCursorPosition = useCallback((position) => {
     setState(
       produce((draft) => {
-        draft.cursor.poistion = poistion;
+        draft.cursor.position = position;
       })
     );
   }, []);
@@ -180,7 +180,7 @@ function useCanvasSelectArea({
     draggable,
     draggedItem,
     selected: state.selected,
-    poistion: state.cursor.poistion,
+    position: state.cursor.position,
     selectArea,
     selectAreaStart,
     selectAreaStop,

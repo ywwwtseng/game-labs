@@ -5,7 +5,7 @@ import { SpriteSheetSettings } from "@/components/common/EditSettingsArea/Sprite
 import { AreaHeader } from "@/components/common/AreaHeader";
 import { PlusIcon } from "@/components/icon/PlusIcon";
 import { SceneSettings } from "@/components/common/EditSettingsArea/SceneSettings";
-import { OperablItem } from "@/components/common/OperablItem";
+import { OperableItem } from "@/components/common/OperableItem";
 import { useSpriteSheets, useUpdateSpriteSheets } from '@/context/SpriteSheetContext';
 
 function EditSettingsArea() {
@@ -35,7 +35,7 @@ function EditSettingsArea() {
   return (
     <div className="relative rounded w-64 h-full max-h-full flex flex-col ml-1 z-10">
       <SceneSettings />
-      <div className="flex flex-col rounded w-full h-[245px] bg-[#282828] mt-1">
+      <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828] mt-1">
         <AreaHeader
           icon={
             <svg
@@ -65,7 +65,7 @@ function EditSettingsArea() {
 
         <div className="flex-1 overflow-y-scroll no-scrollbar">
           {Object.keys(spriteSheets).map((filename) => (
-            <OperablItem
+            <OperableItem
               key={filename}
               checkIcon
               selected={selectedSpriteSheet === filename}

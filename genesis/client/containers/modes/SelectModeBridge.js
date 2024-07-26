@@ -11,7 +11,7 @@ import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
 function SelectModeBridge({ children }) {
-  const poistion = useSelector((state) => state.appState.cursor.poistion);
+  const position = useSelector((state) => state.appState.cursor.position);
   const scene = useSelector((state) => state.appState.scene);
   const selected = useSelector((state) => state.selectMode.selected);
   const dispatch = useDispatch();
@@ -19,11 +19,11 @@ function SelectModeBridge({ children }) {
   const { register, connect } = useICanvasSelectArea({
     canvasId: "canvas",
     selected,
-    poistion,
+    position,
     selectAreaStart: (index) => dispatch(selectAreaStart(index)),
     selectArea: (index) => dispatch(selectArea(index)),
     selectAreaStop: () => dispatch(selectAreaStop()),
-    setCursorPosition: (poistion) => dispatch(setCursorPosition(poistion)),
+    setCursorPosition: (position) => dispatch(setCursorPosition(position)),
   });
 
   useEffect(() => {

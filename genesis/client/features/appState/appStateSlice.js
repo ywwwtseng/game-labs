@@ -4,7 +4,7 @@ import { MODE } from "@/constants";
 const initialState = {
   mode: MODE.SELECT,
   cursor: {
-    poistion: null,
+    position: null,
   },
   // scene: undefined
   scene: {
@@ -28,7 +28,7 @@ export const appStateSlice = createSlice({
       state.mode = action.payload;
     },
     setCursorPosition: (state, action) => {
-      state.cursor.poistion = action.payload;
+      state.cursor.position = action.payload;
     },
     addScene: (state, action) => {
       state.scene = { ...state.scene, ...action.payload };

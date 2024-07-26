@@ -2,7 +2,7 @@ import { useState } from 'react';
 import cx from "classnames";
 import { CheckIcon } from "@/components/icon/CheckIcon";
 
-function OperablItem({ checkIcon, selected, label, className, actions, onClick }) {
+function OperableItem({ checkIcon, selected, label, className, actions, onClick }) {
   const [showActions, setShowActions] = useState(false);
 
   return (
@@ -33,4 +33,4 @@ function OperablItem({ checkIcon, selected, label, className, actions, onClick }
   );
 }
 
-export { OperablItem };
+export { OperableItem };

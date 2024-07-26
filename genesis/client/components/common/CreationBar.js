@@ -21,7 +21,7 @@ function CreationBar() {
       <div
         className="relative z-20 rounded bg-black/30 p-2 cursor-pointer my-0.5"
         onClick={() =>
-          dispatch(setMode(mode === MODE.SELECT ? MODE.VIEW : MODE.SELECT))
+          dispatch(setMode(mode === MODE.SELECT ? MODE.EDIT : MODE.SELECT))
         }
       >
         <SelectIcon size="4" />

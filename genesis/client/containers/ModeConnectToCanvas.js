@@ -1,12 +1,12 @@
 import { useSelector } from "react-redux";
 import { SelectModeBridge } from "@/containers/modes/SelectModeBridge";
-import { ViewModeBridge } from "@/containers/modes/ViewModeBridge";
+import { EditModeBridge } from "@/containers/modes/EditModeBridge";
 import { EmptyModeBridge } from "@/containers/modes/EmptyModeBridge";
 import { MODE } from "@/constants";
 
 const Bridge = {
   [MODE.SELECT]: SelectModeBridge,
-  [MODE.VIEW]: ViewModeBridge,
+  [MODE.EDIT]: EditModeBridge,
 };
 
 function ModeConnectToCanvas({ children }) {

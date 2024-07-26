@@ -29,9 +29,9 @@ function useDraggable({
       draggedItemRef.current.style.userSelect = "none";
       draggedItemRef.current.style.position = "fixed";
       draggedItemRef.current.style.zIndex = 9999;
-      const poistion = draggedItem.pos(event, bounds);
-      draggedItemRef.current.style.left = `${poistion.x}px`;
-      draggedItemRef.current.style.top = `${poistion.y}px`;
+      const position = draggedItem.pos(event, bounds);
+      draggedItemRef.current.style.left = `${position.x}px`;
+      draggedItemRef.current.style.top = `${position.y}px`;
     }
 
     if (originRef.current) {

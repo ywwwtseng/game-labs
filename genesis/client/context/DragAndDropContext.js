@@ -1,4 +1,4 @@
-import { createContext, useCallback, useRef } from "react";
+import { createContext, useContext, useCallback, useRef, useEffect } from "react";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 
 export const DragAndDropContext = createContext({
@@ -71,3 +71,24 @@ export const DragAndDropProvider = ({ children }) => {
     </DragAndDropContext.Provider>
   );
 };
+
+export function setupDropzone({ id, accept = "tiles", onDrop }) {
+  const { addDropzone, removeDropzone } = useContext(DragAndDropContext);
+
+  useEffect(() => {
+    addDropzone({
+      id,
+      accept,
+      el: () => document.getElementById(id),
+      onDrop,
+    });
+
+    return () => {
+      removeDropzone(id);
+    };
+
+    return {
+      id,
+    };
+  }, []);
+}

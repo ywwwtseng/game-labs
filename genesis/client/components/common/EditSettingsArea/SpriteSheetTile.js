@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Draggable } from "@/containers/Draggable";
-import { OperablItem } from "@/components/common/OperablItem";
+import { OperableItem } from "@/components/common/OperableItem";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { PenNibIcon } from "@/components/icon/PenNibIcon";
 
@@ -28,7 +28,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFi
   }
 
   return (
-    <OperablItem
+    <OperableItem
       label={
         <Draggable
           data={{

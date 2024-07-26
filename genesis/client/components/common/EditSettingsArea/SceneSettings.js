@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AreaHeader } from "@/components/common/AreaHeader";
-import { OperablItem } from "@/components/common/OperablItem";
+import { OperableItem } from "@/components/common/OperableItem";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { LayersIcon } from "@/components/icon/LayersIcon";
 import { PlusIcon } from "@/components/icon/PlusIcon";
@@ -15,7 +15,7 @@ function SceneSettings() {
   const [selectedScene, selectScene] = useState(scenes[0].name);
 
   return (
-    <div className="flex flex-col rounded w-full h-[245px] bg-[#282828]">
+    <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828]">
       <AreaHeader
         icon={<LayersIcon />}
         title="Scene"
@@ -25,11 +25,10 @@ function SceneSettings() {
           </BaseButton>,
         ]}
       />
-
       <div className="flex-1 overflow-y-scroll no-scrollbar">
         {scenes.map((scene) => (
           <React.Fragment key={scene.name}>
-            <OperablItem
+            <OperableItem
               checkIcon
               selected={selectedScene === scene.name}
               onClick={() =>
@@ -50,7 +49,7 @@ function SceneSettings() {
               ]}
             />
             {scene.layers.map((layer, index) => (
-              <OperablItem
+              <OperableItem
                 key={`${scene.name}-layer-${index}`}
                 className="pl-6"
                 label={
