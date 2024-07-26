@@ -10,7 +10,7 @@ import { useICanvasSelectArea } from "@/hooks/useCanvasSelectArea";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
-function SelectModeBridge({ children }) {
+function SelectModeBehavior({ children }) {
   const position = useSelector((state) => state.appState.cursor.position);
   const scene = useSelector((state) => state.appState.scene);
   const selected = useSelector((state) => state.selectMode.selected);
@@ -30,12 +30,12 @@ function SelectModeBridge({ children }) {
     const handlePress = (event) => {
       if (!selected.index || !scene) return;
       const index = CanvasUtil.rect(selected.index);
-      const sizeX = index[2];
-      const sizeY = index[3];
+      const sizeIndexX = index[2];
+      const sizeIndexY = index[3];
 
       if (event.key === "ArrowLeft") {
         dispatch(
-          selectArea([Math.max(0, index[0] - 1), index[1], sizeX, sizeY])
+          selectArea([Math.max(0, index[0] - 1), index[1], sizeIndexX, sizeIndexY])
         );
       }
 
@@ -46,17 +46,17 @@ function SelectModeBridge({ children }) {
         });
         dispatch(
           selectArea([
-            Math.min(maxIndex[0] - sizeX + 1, index[0] + 1),
+            Math.min(maxIndex[0] - sizeIndexX + 1, index[0] + 1),
             index[1],
-            sizeX,
-            sizeY,
+            sizeIndexX,
+            sizeIndexY,
           ])
         );
       }
 
       if (event.key === "ArrowUp") {
         dispatch(
-          selectArea([index[0], Math.max(0, index[1] - 1), sizeX, sizeY])
+          selectArea([index[0], Math.max(0, index[1] - 1), sizeIndexX, sizeIndexY])
         );
       }
 
@@ -68,15 +68,15 @@ function SelectModeBridge({ children }) {
         dispatch(
           selectArea([
             index[0],
-            Math.min(maxIndex[1] - sizeY + 1, index[1] + 1),
-            sizeX,
-            sizeY,
+            Math.min(maxIndex[1] - sizeIndexY + 1, index[1] + 1),
+            sizeIndexX,
+            sizeIndexY,
           ])
         );
       }
 
       if (event.key === "Backspace") {
-        MatrixUtil.traverse([sizeX, sizeY], (x, y) => {
+        MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
           dispatch(
             addSceneTile({
               index: [index[0] + x, index[1] + y],
@@ -93,13 +93,7 @@ function SelectModeBridge({ children }) {
     };
   }, [selected]);
 
-  useEffect(() => {
-    return () => {
-      dispatch(selectAreaStart(null));
-    };
-  }, []);
-
   return children({ register, connect });
 }
 
-export { SelectModeBridge };
+export { SelectModeBehavior };

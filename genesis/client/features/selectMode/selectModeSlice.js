@@ -21,6 +21,9 @@ export const selectModeSlice = createSlice({
     selectAreaStop: (state) => {
       state.selected.progress = false;
     },
+    destroy: (state) => {
+      state.selected.index = null;
+    },
   },
 });
 
@@ -28,6 +31,7 @@ export const {
   selectAreaStart,
   selectArea,
   selectAreaStop,
+  destroy,
 } = selectModeSlice.actions;
 
 export default selectModeSlice.reducer;

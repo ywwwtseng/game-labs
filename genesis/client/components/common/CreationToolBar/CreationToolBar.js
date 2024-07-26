@@ -15,6 +15,7 @@ function CreationToolBar() {
   const dispatch = useDispatch();
   const spriteSheets = useSpriteSheets();
 
+
   return (
     <div
       id="creation-bar"
@@ -24,7 +25,9 @@ function CreationToolBar() {
         icon={SelectIcon}
         onClick={() => {
           menuRef.current.close();
-          dispatch(setMode(mode === MODE.SELECT ? MODE.EDIT : MODE.SELECT));
+          dispatch(setMode({
+            mode: mode === MODE.SELECT ? MODE.EDIT : MODE.SELECT
+          }));
         }}
       />
       <CreationToolBarToggle

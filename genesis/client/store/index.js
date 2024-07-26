@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import appStateReducer from "@/features/appState/appStateSlice";
-import selectModeReucer from "@/features/selectMode/selectModeSlice";
+import selectModeReducer from "@/features/selectMode/selectModeSlice";
+import drawModeReducer from "@/features/drawMode/drawModeSlice";
 
 export const store = configureStore({
   reducer: {
     appState: appStateReducer,
-    selectMode: selectModeReucer,
+    selectMode: selectModeReducer,
+    drawMode: drawModeReducer,
   },
 });

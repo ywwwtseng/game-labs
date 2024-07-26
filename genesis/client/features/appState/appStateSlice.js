@@ -1,5 +1,38 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import * as selectModeActions from "@/features/selectMode/selectModeSlice";
+import * as drawModeActions from "@/features/drawMode/drawModeSlice";
 import { MODE } from "@/constants";
+
+export const setMode = createAsyncThunk(
+  "appState/setMode",
+  async (
+    { mode, payload },
+    { getState, dispatch }) => {
+      const lifecycle = {
+        [MODE.SELECT]: selectModeActions,
+        [MODE.DRAW]: drawModeActions,
+      };
+
+      const state = getState();
+      const prevMode = state.appState.mode;
+
+      if (prevMode !== mode) {
+        const destroy = lifecycle[prevMode]?.destroy;
+
+        if (destroy) {
+          dispatch(destroy());
+        }
+      }
+
+      const init = lifecycle[mode]?.init
+
+      if (init) {
+        dispatch(init(payload));
+      }
+
+      return mode;
+  }
+);
 
 const initialState = {
   mode: MODE.SELECT,
@@ -24,9 +57,6 @@ export const appStateSlice = createSlice({
   name: "appState",
   initialState,
   reducers: {
-    setMode: (state, action) => {
-      state.mode = action.payload;
-    },
     setCursorPosition: (state, action) => {
       state.cursor.position = action.payload;
     },
@@ -50,10 +80,14 @@ export const appStateSlice = createSlice({
       state.scene.selectedLayerIndex = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(setMode.fulfilled, (state, action) => {
+      state.mode = action.payload;
+    });
+  },
 });
 
 export const {
-  setMode,
   setCursorPosition,
   addScene,
   addSceneTile,

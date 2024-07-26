@@ -15,6 +15,7 @@ function useICanvasSelectArea({
   selectArea,
   selectAreaStop,
   setCursorPosition,
+  onSelected = () => {},
 }) {
   const ref = useRef();
   const { setData, handleMouseDown } = useDraggable({
@@ -93,6 +94,7 @@ function useICanvasSelectArea({
 
   const onMouseUp = () => {
     selectAreaStop();
+    onSelected(selected);
   };
 
   const onMouseLeave = (event) => {
@@ -130,6 +132,7 @@ function useCanvasSelectArea({
   filename,
   draggable,
   draggedItem = {},
+  onSelected = () => {},
 }) {
   const [state, setState] = useState({
     cursor: {
@@ -185,6 +188,7 @@ function useCanvasSelectArea({
     selectAreaStart,
     selectAreaStop,
     setCursorPosition,
+    onSelected,
   });
 }
 

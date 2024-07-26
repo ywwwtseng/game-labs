@@ -4,14 +4,14 @@ import { MatrixUtil } from "@/utils/MatrixUtil";
 import { addSceneTile } from "@/features/appState/appStateSlice";
 import { setupDropzone } from "@/context/DragAndDropContext";
 
-function EditModeBridge({ children }) {
+function EditModeBehavior({ children }) {
   const dispatch = useDispatch();
   const onDrop = useCallback((event, data, index) => {
     event.preventDefault();
     if (!data) return;
-    const [originX, originY, sizeX, sizeY] = data.selected;
+    const [originX, originY, sizeIndexX, sizeIndexY] = data.selected;
 
-    MatrixUtil.traverse([sizeX, sizeY], (x, y) => {
+    MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
       dispatch(
         addSceneTile({
           index: [index[0] + x, index[1] + y],
@@ -29,4 +29,4 @@ function EditModeBridge({ children }) {
   return children({ register: {}, connect: setup });
 }
 
-export { EditModeBridge };
+export { EditModeBehavior };

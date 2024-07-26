@@ -1,19 +1,24 @@
 import { useSelector } from "react-redux";
-import { SelectModeBridge } from "@/containers/modes/SelectModeBridge";
-import { EditModeBridge } from "@/containers/modes/EditModeBridge";
-import { EmptyModeBridge } from "@/containers/modes/EmptyModeBridge";
+import { SelectModeBehavior } from "@/containers/modes/SelectModeBehavior";
+import { EditModeBehavior } from "@/containers/modes/EditModeBehavior";
+import { DrawModeBehavior } from "@/containers/modes/DrawModeBehavior";
 import { MODE } from "@/constants";
 
-const Bridge = {
-  [MODE.SELECT]: SelectModeBridge,
-  [MODE.EDIT]: EditModeBridge,
+const Behavior = {
+  [MODE.SELECT]: SelectModeBehavior,
+  [MODE.EDIT]: EditModeBehavior,
+  [MODE.DRAW]: DrawModeBehavior,
 };
 
 function ModeConnectToCanvas({ children }) {
   const mode = useSelector((state) => state.appState.mode);
-  const ModeBridge = Bridge[mode] || EmptyModeBridge;
+  const ModeBehavior = Behavior[mode];
 
-  return <ModeBridge>{children}</ModeBridge>;
+  if (!ModeBehavior) {
+    return children;
+  }
+
+  return <ModeBehavior>{children}</ModeBehavior>;
 }
 
 export { ModeConnectToCanvas };

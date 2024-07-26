@@ -10,9 +10,9 @@ function useTileFill() {
   return useCallback(
     (tile) => {
       if (selected.index) {
-        const [originX, originY, sizeX, sizeY] = selected.index;
+        const [originX, originY, sizeIndexX, sizeIndexY] = selected.index;
 
-        MatrixUtil.traverse([sizeX, sizeY], (x, y) => {
+        MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
           dispatch(
             addSceneTile({
               index: [originX + x, originY + y],

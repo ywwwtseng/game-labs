@@ -26,7 +26,7 @@ function useDraggable({
       }
 
       const bounds = new BoundingBox(draggedItemRef.current);
-      draggedItemRef.current.style.userSelect = "none";
+      draggedItemRef.current.style.pointerEvents = "none";
       draggedItemRef.current.style.position = "fixed";
       draggedItemRef.current.style.zIndex = 9999;
       const position = draggedItem.pos(event, bounds);

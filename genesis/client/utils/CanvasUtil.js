@@ -1,11 +1,12 @@
 import { BoundingBox } from "@/helpers/BoundingBox";
+import { MatrixUtil } from "@/utils/MatrixUtil";
 
 class CanvasUtil {
   static get transparent() {
     return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAB9JREFUOE9jZKAQMFKon2HUAIbRMGAYDQNQPhr4vAAAJpgAEX/anFwAAAAASUVORK5CYII=";
   }
-  static getPosition(event, canvas, offset = { x: 0, y: 0 }, allowDiff = 0) {
-    const bounds = new BoundingBox(canvas);
+  static getPosition(event, box, offset = { x: 0, y: 0 }, allowDiff = 0) {
+    const bounds = new BoundingBox(box);
     const originX = event.pageX - bounds.pos.x + offset.x;
     const originY = event.pageY - bounds.pos.y + offset.y;
 
@@ -76,6 +77,31 @@ class CanvasUtil {
       Math.abs(dx),
       Math.abs(dy),
     ];
+  }
+
+  static drawSelected(selectedIndex, spriteSheet) {
+    const canvas = document.createElement("canvas");
+    canvas.id = "draw";
+    canvas.width = selectedIndex[2] * 16;
+    canvas.height = selectedIndex[3] * 16;
+    const ctx = canvas.getContext("2d");
+    const [originX, originY, sizeIndexX, sizeIndexY] = selectedIndex;
+
+    MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
+      ctx.drawImage(
+        spriteSheet.tiles[originX + x][originY + y].buffer,
+        0,
+        0,
+        16,
+        16,
+        x * 16,
+        y * 16,
+        16,
+        16
+      );
+    });
+
+    return canvas;
   }
 }
 
