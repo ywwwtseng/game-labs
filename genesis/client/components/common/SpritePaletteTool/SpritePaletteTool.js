@@ -22,7 +22,7 @@ function SpritePaletteTool({ origin, onClose }) {
     <Menu ref={menuRef} origin={origin}>
       <Menu.Header>
         <div className="flex items-center self-center text-xs whitespace-nowrap text-white mr-auto">
-          <SpriteSheetIcon size="4" />
+          <SpriteSheetIcon size={4} />
           <div className="ml-0.5">
             {selectedFilename ? (
               <div>

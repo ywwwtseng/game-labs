@@ -1,9 +1,8 @@
-import cx from "classnames";
+import { Svg } from "@/components/icon/Svg";
 
-function AngleRightIcon({ size = "4", className, ...props }) {
+function AngleRightIcon(props) {
   return (
-    <svg
-      className={cx("text-white", `w-${size} h-${size}`, className)}
+    <Svg
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -19,7 +18,7 @@ function AngleRightIcon({ size = "4", className, ...props }) {
         strokeWidth="2"
         d="m9 5 7 7-7 7"
       />
-    </svg>
+    </Svg>
   );
 }
 

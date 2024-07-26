@@ -1,9 +1,8 @@
-import cx from "classnames";
+import { Svg } from "@/components/icon/Svg";
 
-function LayersIcon({ size = "4", className, ...props }) {
+function LayersIcon(props) {
   return (
-    <svg
-      className={cx("text-white", `w-${size} h-${size}`, className)}
+    <Svg
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -18,7 +17,7 @@ function LayersIcon({ size = "4", className, ...props }) {
         clipRule="evenodd"
       />
       <path d="M12.503 2.134a1 1 0 0 0-1 0L4.501 6.17A1 1 0 0 0 4.5 7.902l7.002 4.047a1 1 0 0 0 1 0l6.998-4.04a1 1 0 0 0 0-1.732l-6.997-4.042Z" />
-    </svg>
+    </Svg>
   );
 }
 

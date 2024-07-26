@@ -13,7 +13,7 @@ function AppInformation() {
     <div className="flex items-center max-h-[24px] min-h-[24px] h-[24px] px-2 py-1 rounded w-full bg-[#282828] mt-1">
       {mode === MODE.SELECT && (
         <>
-          <SelectIcon className="mr-0.5" size="4" />
+          <SelectIcon className="mr-0.5" size={4} />
           <Text className="ml-1">Select Mode</Text>
           <div className="flex items-center ml-4">
             {selected.index && (

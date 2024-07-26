@@ -24,7 +24,7 @@ function CreationBar() {
           dispatch(setMode(mode === MODE.SELECT ? MODE.EDIT : MODE.SELECT))
         }
       >
-        <SelectIcon size="4" />
+        <SelectIcon size={4} />
       </div>
 
       <div
@@ -32,7 +32,7 @@ function CreationBar() {
         onClick={toggle}
         className="relative z-20 rounded bg-black/30 p-2 cursor-pointer my-0.5"
       >
-        <SpriteSheetIcon size="4" />
+        <SpriteSheetIcon size={4} />
       </div>
 
       {Object.keys(spriteSheets)[0] && open && (

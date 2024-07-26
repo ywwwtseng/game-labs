@@ -1,13 +1,12 @@
-import cx from "classnames";
+import { Svg } from "@/components/icon/Svg";
 
-function SelectIcon({ size = "4", className, ...props }) {
+function SelectIcon(props) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      className={cx("text-white", `w-${size} h-${size}`, className)}
+    <Svg
       aria-hidden="true"
       role="presentation"
       focusable="false"
+      viewBox="0 0 24 24"
       {...props}
     >
       <path
@@ -16,7 +15,7 @@ function SelectIcon({ size = "4", className, ...props }) {
         fillRule="evenodd"
         fill="currentColor"
       ></path>
-    </svg>
+    </Svg>
   );
 }
 

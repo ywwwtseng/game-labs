@@ -17,7 +17,7 @@ export const SpriteSheetProvider = ({ children }) => {
   const { data } = useSWR("/api/sprites");
   const [spriteSheets, setSpriteSheets] = useState({});
 
-  const updatSpriteSheets = useCallback((spriteSheets) => {
+  const updateSpriteSheets = useCallback((spriteSheets) => {
     setSpriteSheets(produce((draft) => {
       Object.assign(draft, spriteSheets);
     }));
@@ -74,7 +74,7 @@ export const SpriteSheetProvider = ({ children }) => {
             return acc;
           }, {});
         })
-        .then(updatSpriteSheets);
+        .then(updateSpriteSheets);
     }
   }, [data?.filenames]);
 

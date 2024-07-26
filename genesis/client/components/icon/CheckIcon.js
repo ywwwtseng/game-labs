@@ -1,9 +1,8 @@
-import cx from "classnames";
+import { Svg } from "@/components/icon/Svg";
 
-function CheckIcon({ size = "4", className, ...props }) {
+function CheckIcon(props) {
   return (
-    <svg
-      className={cx("text-white", `w-${size} h-${size}`, className)}
+    <Svg
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -19,7 +18,7 @@ function CheckIcon({ size = "4", className, ...props }) {
         strokeWidth="2"
         d="M5 11.917 9.724 16.5 19 7.5"
       />
-    </svg>
+    </Svg>
   );
 }
 

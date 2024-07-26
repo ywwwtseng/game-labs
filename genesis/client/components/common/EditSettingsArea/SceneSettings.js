@@ -55,10 +55,8 @@ function SceneSettings() {
                 label={
                   <div className="flex items-center">
                     <AngleRightIcon
-                      style={{
-                        width: "12px",
-                        opacity: scene.selectedLayerIndex === index ? 1 : 0,
-                      }}
+                      size={3}
+                      className={scene.selectedLayerIndex === index ? 'opacity-100': 'opacity-0'}
                     />
                     <span className="ml-1">{`Layer${index + 1}`}</span>
                   </div>

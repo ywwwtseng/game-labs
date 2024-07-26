@@ -60,7 +60,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFi
             onTileFill({ type: "tile", filename: spriteSheet.filename, index });
           }}
         >
-          <PenNibIcon size="4" />
+          <PenNibIcon size={4} />
         </BaseButton>,
       ]}
     />
