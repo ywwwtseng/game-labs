@@ -1,5 +1,5 @@
 import { Navigation } from "@/components/common/Navigation";
-import { CreationBar } from "@/components/common/CreationBar";
+import { CreationToolBar } from "@/components/common/CreationToolBar/CreationToolBar";
 import { ShortcutBar } from "@/components/common/ShortcutBar";
 import { EditSettingsArea } from "@/components/common/EditSettingsArea/EditSettingsArea";
 import { SceneCanvas } from "@/components/common/SceneCanvas";
@@ -11,7 +11,7 @@ function Main() {
       <Navigation />
       <div className="relative flex items-center flex-1 rounded">
         <div className="rounded flex-1 max-h-screen h-full flex flex-col">
-          <CreationBar />
+          <CreationToolBar />
           <ShortcutBar />
           <SceneCanvas />
           <AppInfo />

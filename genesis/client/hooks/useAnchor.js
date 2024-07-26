@@ -10,7 +10,7 @@ function useAnchor() {
         ? null
         : event.target.getAttribute("data-toggle")
         ? event.target
-        : event.target.closest("div")
+        : event.target.closest("[data-toggle]")
     );
   };
   const bounds = useMemo(() => {
