@@ -5,7 +5,7 @@ class MatrixUtil {
     matrix.forEach((column, x) => {
       column.forEach((value, y) => {
         if (value) {
-          callback(value, x,  y);
+          callback(value, x, y);
         }
       });
     });
@@ -15,7 +15,7 @@ class MatrixUtil {
     return matrix.map((column, x) => {
       return column.map((value, y) => {
         if (value) {
-          return callback(value, x,  y);
+          return callback(value, x, y);
         }
       });
     });

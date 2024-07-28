@@ -14,7 +14,8 @@ function SpritePaletteTool({ origin, onClose }) {
   const menuRef = useRef();
   const spriteSheets = useSpriteSheets();
   const dispatch = useDispatch();
-  const [selectedPath, setSelectedPath] = useState(null);
+  const drawMode = useSelector(state => state.drawMode);
+  const [selectedPath, setSelectedPath] = useState(drawMode.path);
   const spriteSheet = spriteSheets[selectedPath];
 
   useEffect(() => {
@@ -46,6 +47,7 @@ function SpritePaletteTool({ origin, onClose }) {
       {selectedPath ? (
         <SpritePaletteToolMain
           spriteSheet={spriteSheet}
+          defaultSelected={drawMode.index}
           onSelected={(selected) => {
             onClose();
             dispatch(setMode({ mode: MODE.DRAW, payload: selected }));

@@ -3,9 +3,10 @@ import { Canvas2D } from "@/components/common/Canvas2D";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { useCanvasSelectArea } from "@/hooks/useCanvasSelectArea";
 
-function SpritePaletteToolMain({ spriteSheet, onSelected }) {
+function SpritePaletteToolMain({ spriteSheet, defaultSelected, onSelected }) {
   const layers = useMemo(() => [{ tiles: spriteSheet.tiles }], [spriteSheet.tiles]);
   const { selected, register, connect } = useCanvasSelectArea({
+    defaultSelected,
     canvasId: `spriteSheet-${spriteSheet.path}`,
     path: spriteSheet.path,
     draggable: false,

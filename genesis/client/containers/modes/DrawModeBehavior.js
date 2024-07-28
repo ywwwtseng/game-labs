@@ -1,10 +1,9 @@
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CanvasUtil } from "@/utils/CanvasUtil";
-import { MatrixUtil } from "@/utils/MatrixUtil";
 import { BoundingBox } from "@/helpers/BoundingBox";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
-import { addSceneTile } from "@/features/appState/appStateSlice";
+import { draw } from '@/features/drawMode/drawModeSlice';
 
 function DrawModeBehavior({ children }) {
   const cursorRef = useRef(null);
@@ -12,32 +11,6 @@ function DrawModeBehavior({ children }) {
   const spriteSheets = useSpriteSheets();
   const drawMode = useSelector((state) => state.drawMode);
   const dispatch = useDispatch();
-
-  // TODO:
-  const draw = useCallback((event, selected) => {
-    const [originX, originY, sizeIndexX, sizeIndexY] = selected.index;
-
-    const sizeX = sizeIndexX * 16;
-    const sizeY = sizeIndexY * 16;
-
-    const pos = CanvasUtil.getPosition(event, event.target, {
-      x: -(sizeX / 2),
-      y: -(sizeY / 2),
-    });
-
-    MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
-      const index = CanvasUtil.positionToIndex(pos);
-      dispatch(
-        addSceneTile({
-          index: [index[0] + x, index[1] + y],
-          tile: {
-            path: selected.path,
-            index: [originX + x, originY + y],
-          },
-        })
-      );
-    });
-  }, []);
 
   const onMouseMove = useCallback((event) => {
     if (!cursorRef.current) {
@@ -57,7 +30,11 @@ function DrawModeBehavior({ children }) {
     cursorRef.current.style.zIndex = 9999;
 
     if (drawRef.current) {
-      draw(event, drawMode);
+      dispatch(draw({ 
+        event,
+        selected: drawMode,
+        transparent: spriteSheets[drawMode.path].transparent
+      }));
     }
   }, [drawMode]);
 
@@ -75,7 +52,11 @@ function DrawModeBehavior({ children }) {
 
   const onMouseDown = useCallback((event) => {
     drawRef.current = true;
-    draw(event, drawMode);
+    dispatch(draw({
+      event,
+      selected: drawMode,
+      transparent: spriteSheets[drawMode.path].transparent
+    }));
   }, [drawMode]);
 
   const onMouseUp = useCallback(() => {

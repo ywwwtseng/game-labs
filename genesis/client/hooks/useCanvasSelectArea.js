@@ -128,6 +128,7 @@ function useICanvasSelectArea({
 }
 
 function useCanvasSelectArea({
+  defaultSelected = null,
   canvasId,
   path,
   draggable,
@@ -140,7 +141,7 @@ function useCanvasSelectArea({
     },
     selected: {
       progress: false,
-      index: null,
+      index: defaultSelected,
     },
   });
 
