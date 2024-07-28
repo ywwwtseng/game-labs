@@ -17,7 +17,7 @@ function useTileFill() {
             addSceneTile({
               index: [originX + x, originY + y],
               tile: {
-                filename: tile.filename,
+                path: tile.path,
                 index: tile.index,
               },
             })

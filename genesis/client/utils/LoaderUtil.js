@@ -8,6 +8,16 @@ class LoaderUtil {
       image.src = url;
     });
   }
+
+  static readFile(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        resolve(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 }
 
 export { LoaderUtil };

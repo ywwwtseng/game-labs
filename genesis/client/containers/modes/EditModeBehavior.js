@@ -16,7 +16,7 @@ function EditModeBehavior({ children }) {
         addSceneTile({
           index: [index[0] + x, index[1] + y],
           tile: {
-            filename: data.filename,
+            path: data.path,
             index: [originX + x, originY + y],
           },
         })

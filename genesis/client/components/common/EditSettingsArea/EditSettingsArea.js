@@ -6,16 +6,36 @@ import { AreaHeader } from "@/components/common/AreaHeader";
 import { PlusIcon } from "@/components/icon/PlusIcon";
 import { SceneSettings } from "@/components/common/EditSettingsArea/SceneSettings";
 import { OperableItem } from "@/components/common/OperableItem";
-import { useSpriteSheets, useUpdateSpriteSheets } from '@/context/SpriteSheetContext';
+import {
+  useSpriteSheets,
+  useUpdateSpriteSheets,
+} from "@/context/SpriteSheetContext";
+import { LoaderUtil } from "@/utils/LoaderUtil";
+import { ImageUtil } from "@/utils/ImageUtil";
+import { MatrixUtil } from "@/utils/MatrixUtil";
+import { CanvasUtil } from "@/utils/CanvasUtil";
 
 function EditSettingsArea() {
   const spriteSheets = useSpriteSheets();
   const updateSpriteSheets = useUpdateSpriteSheets();
   const [selectedSpriteSheet, selectSpriteSheet] = useState(null);
-  
+
   const upload = async (file) => {
+    const image = await LoaderUtil.readFile(file).then(LoaderUtil.loadImage);
+    const index = ImageUtil.getIndex(image);
+
+    const transparent = [];
+
+    MatrixUtil.traverseByIndex(index, (x, y) => {
+      const buffer = CanvasUtil.createBuffer(image, x * 16, y * 16, 16, 16);
+      if (buffer.toDataURL() === CanvasUtil.transparent) {
+        transparent.push(`${x}.${y}`);
+      }
+    });
+
     const formData = new FormData();
     formData.append("image", file);
+    formData.append("transparent", transparent);
 
     try {
       const response = await fetch("/api/image/upload", {
@@ -64,17 +84,17 @@ function EditSettingsArea() {
         />
 
         <div className="flex-1 overflow-y-scroll no-scrollbar">
-          {Object.keys(spriteSheets).map((filename) => (
+          {Object.values(spriteSheets).map((spriteSheet) => (
             <OperableItem
-              key={filename}
+              key={spriteSheet.path}
               checkIcon
-              selected={selectedSpriteSheet === filename}
+              selected={selectedSpriteSheet === spriteSheet.path}
               onClick={() =>
                 selectSpriteSheet(
-                  selectedSpriteSheet === filename ? null : filename
+                  selectedSpriteSheet === spriteSheet.path ? null : spriteSheet.path
                 )
               }
-              label={filename}
+              label={spriteSheet.name}
             />
           ))}
         </div>

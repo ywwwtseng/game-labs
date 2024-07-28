@@ -8,7 +8,7 @@ function useICanvasSelectArea({
   canvasId,
   draggable = false,
   draggedItem = {},
-  filename,
+  path,
   selected,
   position,
   selectAreaStart,
@@ -32,7 +32,7 @@ function useICanvasSelectArea({
       return true;
     },
   });
-  const onMouseMove = (event) => {
+  const onMouseMove = useCallback((event) => {
     event.target.style.cursor = "default";
     const pos = CanvasUtil.getPosition(
       event,
@@ -65,9 +65,9 @@ function useICanvasSelectArea({
         }
       }
     }
-  };
+  }, [draggable, selected]);
 
-  const onMouseDown = (event) => {
+  const onMouseDown = useCallback((event) => {
     if (draggable && selected.index) {
       const pos = CanvasUtil.getPosition(
         event,
@@ -81,7 +81,7 @@ function useICanvasSelectArea({
       if (pos.within) {
         if (index[0] >= x && index[0] < x + dx) {
           if (index[1] >= y && index[1] < y + dy) {
-            setData({ type: "tiles", filename, selected: [x, y, dx, dy] });
+            setData({ type: "tiles", path, selected: [x, y, dx, dy] });
             handleMouseDown(event);
             return;
           }
@@ -90,25 +90,25 @@ function useICanvasSelectArea({
     }
 
     selectAreaStart(position ? [...position, 1, 1] : null);
-  };
+  }, [draggable,selected, position]);
 
-  const onMouseUp = () => {
+  const onMouseUp = useCallback(() => {
     selectAreaStop();
     onSelected(selected);
-  };
+  }, [selected]);
 
-  const onMouseLeave = (event) => {
+  const onMouseLeave = useCallback((event) => {
     event.target.style.cursor = "default";
     setCursorPosition(null);
-  };
+  }, []);
 
-  const onClick = (event) => {
+  const onClick = useCallback((event) => {
     if (event.detail === 2) {
       if (selected.index) {
         selectAreaStart(null);
       }
     }
-  };
+  }, [selected]);
 
   return {
     selected,
@@ -129,7 +129,7 @@ function useICanvasSelectArea({
 
 function useCanvasSelectArea({
   canvasId,
-  filename,
+  path,
   draggable,
   draggedItem = {},
   onSelected = () => {},
@@ -179,7 +179,7 @@ function useCanvasSelectArea({
 
   return useICanvasSelectArea({
     canvasId,
-    filename,
+    path,
     draggable,
     draggedItem,
     selected: state.selected,

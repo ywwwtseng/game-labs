@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  filename: null,
+  path: null,
   index: null,
 };
 
@@ -10,11 +10,11 @@ export const drawModeSlice = createSlice({
   initialState,
   reducers: {
     init: (state, action) => {
-      state.filename = action.payload.filename;
+      state.path = action.payload.path;
       state.index = action.payload.index;
     },
     destroy: (state) => {
-      state.filename = null;
+      state.path = null;
       state.index = null;
     },
   },

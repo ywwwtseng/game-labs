@@ -6,6 +6,7 @@ import { PenNibIcon } from "@/components/icon/PenNibIcon";
 
 function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFill }) {
   const ref = useRef(null);
+  const transparent = spriteSheet.transparent.includes(`${index[0]}.${index[1]}`);
   const tile = spriteSheet.tiles[index[0]][index[1]];
 
   const drawImage = useCallback((el) => {
@@ -18,12 +19,12 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFi
   }, []);
 
   useEffect(() => {
-    if (!tile.transparent) {
+    if (!transparent) {
       drawImage(ref.current);
     }
   }, []);
 
-  if (tile.transparent) {
+  if (transparent) {
     return null;
   }
 
@@ -33,7 +34,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFi
         <Draggable
           data={{
             type: "tiles",
-            filename: spriteSheet.filename,
+            path: spriteSheet.path,
             selected: [...index, 1, 1],
           }}
           draggedItem={{
@@ -57,7 +58,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFi
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            onTileFill({ type: "tile", filename: spriteSheet.filename, index });
+            onTileFill({ type: "tile", path: spriteSheet.path, index });
           }}
         >
           <PenNibIcon size={4} />

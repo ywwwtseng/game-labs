@@ -86,9 +86,9 @@ export function setupDropzone({ id, accept = "tiles", onDrop }) {
     return () => {
       removeDropzone(id);
     };
-
-    return {
-      id,
-    };
   }, []);
+
+  return {
+    id,
+  };
 }

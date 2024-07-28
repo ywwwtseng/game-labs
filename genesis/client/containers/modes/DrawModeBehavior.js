@@ -31,7 +31,7 @@ function DrawModeBehavior({ children }) {
         addSceneTile({
           index: [index[0] + x, index[1] + y],
           tile: {
-            filename: selected.filename,
+            path: selected.path,
             index: [originX + x, originY + y],
           },
         })
@@ -41,7 +41,7 @@ function DrawModeBehavior({ children }) {
 
   const onMouseMove = useCallback((event) => {
     if (!cursorRef.current) {
-      cursorRef.current = CanvasUtil.drawSelected(drawMode.index, spriteSheets[drawMode.filename]);  
+      cursorRef.current = CanvasUtil.drawSelected(drawMode.index, spriteSheets[drawMode.path]);  
       document.body.append(cursorRef.current);
     }
 

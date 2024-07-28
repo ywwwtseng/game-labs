@@ -18,7 +18,7 @@ function useExportPng() {
         column.forEach((value, y) => {
           if (value) {
             ctx.drawImage(
-              spriteSheets[value.filename].image,
+              spriteSheets[value.path].image,
               value.index[0] * 16,
               value.index[1] * 16,
               16,

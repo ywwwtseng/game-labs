@@ -10,6 +10,7 @@ import { produce } from "immer";
 import { LoaderUtil } from "@/utils/LoaderUtil";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
+import { ImageUtil } from "@/utils/ImageUtil";
 
 export const SpriteSheetContext = createContext({});
 
@@ -18,34 +19,30 @@ export const SpriteSheetProvider = ({ children }) => {
   const [spriteSheets, setSpriteSheets] = useState({});
 
   const updateSpriteSheets = useCallback((spriteSheets) => {
-    setSpriteSheets(produce((draft) => {
-      Object.assign(draft, spriteSheets);
-    }));
+    setSpriteSheets(
+      produce((draft) => {
+        Object.assign(draft, spriteSheets);
+      })
+    );
   }, []);
-  
 
   useEffect(() => {
-    if (data && data.filenames) {
+    if (data && data.list) {
       Promise.all(
-        data.filenames
-          .filter(
-            (filename) => !Object.keys(spriteSheets).includes(filename)
-          )
-          .map((filename) =>
+        data.list
+          .filter(({ path }) => !Object.keys(spriteSheets).includes(path))
+          .map((spriteSheet) =>
             Promise.all([
-              filename,
+              spriteSheet,
               LoaderUtil.loadImage(
-                `${window.location.origin}/sprites/${filename}`
+                `${window.location.origin}${spriteSheet.path}`
               ),
             ])
           )
       )
         .then((spriteSheets) => {
-          return spriteSheets.reduce((acc, [filename, image]) => {
-            const index = [
-              Math.ceil(image.naturalWidth / 16 - 1),
-              Math.ceil(image.naturalHeight / 16 - 1),
-            ];
+          return spriteSheets.reduce((acc, [spriteSheet, image]) => {
+            const index = ImageUtil.getIndex(image);
 
             const tiles = MatrixUtil.createByIndex(index, (x, y) => {
               const buffer = CanvasUtil.createBuffer(
@@ -58,15 +55,16 @@ export const SpriteSheetProvider = ({ children }) => {
               return {
                 type: "tile",
                 buffer,
-                transparent: buffer.toDataURL() === CanvasUtil.transparent,
               };
             });
 
-            acc[filename] = {
+            acc[spriteSheet.path] = {
               image,
-              filename,
+              name: spriteSheet.name,
+              path: spriteSheet.path,
               index,
               tiles,
+              transparent: spriteSheet.transparent.split(","),
               // TODO:
               patterns: [],
               animations: [],
@@ -76,9 +74,13 @@ export const SpriteSheetProvider = ({ children }) => {
         })
         .then(updateSpriteSheets);
     }
-  }, [data?.filenames]);
+  }, [data?.list]);
 
-  return <SpriteSheetContext.Provider value={spriteSheets}>{children}</SpriteSheetContext.Provider>;
+  return (
+    <SpriteSheetContext.Provider value={spriteSheets}>
+      {children}
+    </SpriteSheetContext.Provider>
+  );
 };
 
 export function useSpriteSheets() {

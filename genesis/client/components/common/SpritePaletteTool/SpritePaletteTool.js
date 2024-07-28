@@ -14,12 +14,12 @@ function SpritePaletteTool({ origin, onClose }) {
   const menuRef = useRef();
   const spriteSheets = useSpriteSheets();
   const dispatch = useDispatch();
-  const [selectedFilename, setSelectedFilename] = useState(null);
-  const spriteSheet = spriteSheets[selectedFilename];
+  const [selectedPath, setSelectedPath] = useState(null);
+  const spriteSheet = spriteSheets[selectedPath];
 
   useEffect(() => {
     menuRef.current.checkPos();
-  }, [selectedFilename]);
+  }, [selectedPath]);
 
   return (
     <Menu ref={menuRef} origin={origin}>
@@ -27,12 +27,12 @@ function SpritePaletteTool({ origin, onClose }) {
         <div className="flex items-center self-center text-xs whitespace-nowrap text-white mr-auto">
           <SpriteSheetIcon size={4} />
           <div className="ml-0.5">
-            {selectedFilename ? (
+            {selectedPath ? (
               <div>
-                <span onClick={() => setSelectedFilename(null)}>
+                <span onClick={() => setSelectedPath(null)}>
                   Sprite Palette
                 </span>{" "}
-                | <span>{selectedFilename}</span>
+                | <span>{spriteSheet.name}</span>
               </div>
             ) : (
               "Sprite Palette"
@@ -43,7 +43,7 @@ function SpritePaletteTool({ origin, onClose }) {
           <CloseIcon />
         </BaseButton>
       </Menu.Header>
-      {selectedFilename ? (
+      {selectedPath ? (
         <SpritePaletteToolMain
           spriteSheet={spriteSheet}
           onSelected={(selected) => {
@@ -54,7 +54,7 @@ function SpritePaletteTool({ origin, onClose }) {
       ) : (
         <SpritePaletteToolSelect
           spriteSheets={spriteSheets}
-          onClick={setSelectedFilename}
+          onClick={setSelectedPath}
         />
       )}
     </Menu>
