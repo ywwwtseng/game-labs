@@ -22,22 +22,7 @@ export const DragAndDropProvider = ({ children }) => {
       el = el();
 
       if (ref.current && accept === ref.current.type) {
-        const sizeX = ref.current.selected[2] * 16;
-        const sizeY = ref.current.selected[3] * 16;
-
-        const leftTopPos = CanvasUtil.getPosition(event, el, {
-          x: -(sizeX / 2),
-          y: -(sizeY / 2),
-        }, 16);
-
-        const rightBottomPos = CanvasUtil.getPosition(event, el, {
-          x: (sizeX / 2) - 8,
-          y: (sizeY / 2) - 8,
-        });
-
-        if (leftTopPos.within && rightBottomPos.within && onDrop) {
-          onDrop(event, ref.current, CanvasUtil.positionToIndex(leftTopPos));
-        }
+        onDrop(event, ref.current);
       }
     });
   }, []);
@@ -86,7 +71,7 @@ export function setupDropzone({ id, accept = "tiles", onDrop }) {
     return () => {
       removeDropzone(id);
     };
-  }, []);
+  }, [onDrop]);
 
   return {
     id,

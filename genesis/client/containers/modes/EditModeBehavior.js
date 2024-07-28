@@ -1,31 +1,7 @@
-import { useContext, useEffect, useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { MatrixUtil } from "@/utils/MatrixUtil";
-import { addSceneTile } from "@/features/appState/appStateSlice";
-import { setupDropzone } from "@/context/DragAndDropContext";
+import { setupDropToDraw } from "@/hooks/useDropToDraw";
 
 function EditModeBehavior({ children }) {
-  const dispatch = useDispatch();
-  const onDrop = useCallback((event, data, index) => {
-    event.preventDefault();
-    if (!data) return;
-    const [originX, originY, sizeIndexX, sizeIndexY] = data.selected;
-
-    MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
-      dispatch(
-        addSceneTile({
-          index: [index[0] + x, index[1] + y],
-          tile: {
-            path: data.path,
-            index: [originX + x, originY + y],
-          },
-        })
-      );
-    });
-  }, []);
-
-  const setup = setupDropzone({ id: "canvas", accept: "tiles", onDrop });
-
+  const setup = setupDropToDraw({ id: "canvas" });
   return children({ register: {}, connect: setup });
 }
 

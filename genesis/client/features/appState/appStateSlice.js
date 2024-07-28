@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as selectModeActions from "@/features/selectMode/selectModeSlice";
 import * as drawModeActions from "@/features/drawMode/drawModeSlice";
+import { CanvasUtil } from "@/utils/CanvasUtil";
+import { MatrixUtil } from "@/utils/MatrixUtil";
 import { MODE } from "@/constants";
 
 export const setMode = createAsyncThunk(
@@ -31,6 +33,68 @@ export const setMode = createAsyncThunk(
       }
 
       return mode;
+  }
+);
+
+export const draw = createAsyncThunk(
+  "appState/draw",
+  async ({ event, selected, transparent = [] }, { getState, dispatch }) => {
+    try {
+      const scene = getState().appState.scene;
+      const layer = scene.layers[scene.selectedLayerIndex];
+
+      const [originX, originY, sizeIndexX, sizeIndexY] = selected.index;
+
+      const sizeX = sizeIndexX * 16;
+      const sizeY = sizeIndexY * 16;
+
+      const pos = CanvasUtil.getPosition(event, event.target, {
+        x: -(sizeX / 2) + 8,
+        y: -(sizeY / 2) + 8,
+      });
+
+      const index = CanvasUtil.positionToIndex(pos);
+      const canvasMaxIndex = CanvasUtil.positionToIndex({
+        x: scene.width,
+        y: scene.height,
+      });
+
+      if (
+        index[0] + sizeIndexX - 1 > canvasMaxIndex[0] ||
+        index[1] + sizeIndexY - 1 > canvasMaxIndex[1]
+      ) {
+        console.log('dsfsd')
+        return;
+      }
+
+      for (let x = 0; x < sizeIndexX; x++) {
+        for (let y = 0; y < sizeIndexY; y++) {
+          if (
+            layer.tiles?.[index[0] + x]?.[index[1] + y] &&
+            !transparent.includes(`${originX + x}.${originY + y}`)
+          ) {
+            console.log('dsfsd')
+            return;
+          }
+        }
+      }
+
+      MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
+        if (!transparent.includes(`${originX + x}.${originY + y}`)) {
+          dispatch(
+            addSceneTile({
+              index: [index[0] + x, index[1] + y],
+              tile: {
+                path: selected.path,
+                index: [originX + x, originY + y],
+              },
+            })
+          );
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 );
 

@@ -9,6 +9,7 @@ import {
 import { useICanvasSelectArea } from "@/hooks/useCanvasSelectArea";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
+import { setupDropToDraw } from "@/hooks/useDropToDraw";
 
 function SelectModeBehavior({ children }) {
   const position = useSelector((state) => state.appState.cursor.position);
@@ -93,7 +94,9 @@ function SelectModeBehavior({ children }) {
     };
   }, [selected]);
 
-  return children({ register, connect });
+  const setup = setupDropToDraw({ id: "canvas" });
+
+  return children({ register, connect: { ...connect, ...setup } });
 }
 
 export { SelectModeBehavior };

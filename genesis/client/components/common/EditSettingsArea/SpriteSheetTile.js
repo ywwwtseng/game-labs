@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Draggable } from "@/containers/Draggable";
 import { OperableItem } from "@/components/common/OperableItem";
-import { BaseButton } from "@/components/ui/BaseButton";
-import { PenNibIcon } from "@/components/icon/PenNibIcon";
 
-function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFill }) {
+function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
   const ref = useRef(null);
   const transparent = spriteSheet.transparent.includes(`${index[0]}.${index[1]}`);
   const tile = spriteSheet.tiles[index[0]][index[1]];
@@ -35,7 +33,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFi
           data={{
             type: "tiles",
             path: spriteSheet.path,
-            selected: [...index, 1, 1],
+            index: [...index, 1, 1],
           }}
           draggedItem={{
             display: () => {
@@ -52,18 +50,6 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16, onTileFi
           <canvas ref={ref} width={width} height={height} />
         </Draggable>
       }
-      actions={[
-        <BaseButton
-          key="fill"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onTileFill({ type: "tile", path: spriteSheet.path, index });
-          }}
-        >
-          <PenNibIcon size={4} />
-        </BaseButton>,
-      ]}
     />
   );
 }
