@@ -1,7 +1,7 @@
-import { setupDropToDraw } from "@/hooks/useDropToDraw";
+import { useDropToDraw } from "@/hooks/useDropToDraw";
 
 function EditModeBehavior({ children }) {
-  const setup = setupDropToDraw({ id: "canvas" });
+  const { setup } = useDropToDraw({ id: "canvas" });
   return children({ register: {}, connect: setup });
 }
 

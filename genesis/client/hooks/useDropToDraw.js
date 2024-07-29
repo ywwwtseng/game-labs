@@ -7,7 +7,7 @@ import { addSceneTile } from "@/features/appState/appStateSlice";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
-function setupDropToDraw({ id }) {
+function useDropToDraw({ id }) {
   const selectedIndex = useSelector((state) => state.selectMode.selected.index);
 
   const dispatch = useDispatch();
@@ -58,7 +58,9 @@ function setupDropToDraw({ id }) {
 
   const setup = setupDropzone({ id, accept: "tiles", onDrop });
 
-  return setup;
+  return {
+    setup
+  };
 }
 
-export { setupDropToDraw };
+export { useDropToDraw };

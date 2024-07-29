@@ -63,7 +63,6 @@ export const draw = createAsyncThunk(
         index[0] + sizeIndexX - 1 > canvasMaxIndex[0] ||
         index[1] + sizeIndexY - 1 > canvasMaxIndex[1]
       ) {
-        console.log('dsfsd')
         return;
       }
 
@@ -73,7 +72,6 @@ export const draw = createAsyncThunk(
             layer.tiles?.[index[0] + x]?.[index[1] + y] &&
             !transparent.includes(`${originX + x}.${originY + y}`)
           ) {
-            console.log('dsfsd')
             return;
           }
         }

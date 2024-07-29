@@ -2,7 +2,7 @@ import { useRef, useCallback, useContext } from "react";
 import { DragAndDropContext } from "@/context/DragAndDropContext";
 import { BoundingBox } from "@/helpers/BoundingBox";
 
-function useDraggable({
+function useDragAndDrop({
   data,
   draggedItem,
   handle,
@@ -88,4 +88,4 @@ function useDraggable({
   };
 }
 
-export { useDraggable };
+export { useDragAndDrop };

@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { produce } from "immer";
 import { CanvasUtil } from "@/utils/CanvasUtil";
-import { useDraggable } from "@/hooks/useDraggable";
+import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { BoundingBox } from "@/helpers/BoundingBox";
 
 function useICanvasSelectArea({
@@ -18,7 +18,7 @@ function useICanvasSelectArea({
   onSelected = () => {},
 }) {
   const ref = useRef();
-  const { setData, handleMouseDown } = useDraggable({
+  const { setData, handleMouseDown } = useDragAndDrop({
     draggedItem,
     beforeDrop: (_, draggedEl) => {
       if (
