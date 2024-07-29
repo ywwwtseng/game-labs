@@ -30,12 +30,12 @@ export const SpriteSheetProvider = ({ children }) => {
     if (data && data.list) {
       Promise.all(
         data.list
-          .filter(({ path }) => !Object.keys(spriteSheets).includes(path))
+          .filter(({ source }) => !Object.keys(spriteSheets).includes(source))
           .map((spriteSheet) =>
             Promise.all([
               spriteSheet,
               LoaderUtil.loadImage(
-                `${window.location.origin}${spriteSheet.path}`
+                `${window.location.origin}${spriteSheet.source}`
               ),
             ])
           )
@@ -58,10 +58,10 @@ export const SpriteSheetProvider = ({ children }) => {
               };
             });
 
-            acc[spriteSheet.path] = {
+            acc[spriteSheet.source] = {
               image,
               name: spriteSheet.name,
-              path: spriteSheet.path,
+              source: spriteSheet.source,
               index,
               tiles,
               transparent: spriteSheet.transparent.split(","),

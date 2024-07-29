@@ -58,7 +58,7 @@ app.post("/api/image/upload", upload.single("image"), async (req, res) => {
   await db.update(({ sprites }) =>
     sprites.push({
       name: req.file.originalname.replace(".png", ""),
-      path: req.file.path.replace("public", ""),
+      source: req.file.path.replace("public", ""),
       transparent: req.body.transparent,
     })
   );

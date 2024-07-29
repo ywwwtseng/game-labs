@@ -35,7 +35,7 @@ function setupDropToDraw({ id }) {
               index: [originX + x, originY + y],
               tile: {
                 index: data.index,
-                path: data.path,
+                source: data.source,
               },
             })
           );
@@ -46,9 +46,9 @@ function setupDropToDraw({ id }) {
             event,
             selected: {
               index: data.index,
-              path: data.path,
+              source: data.source,
             },
-            transparent: spriteSheets[data.path].transparent,
+            transparent: spriteSheets[data.source].transparent,
           })
         );
       }

@@ -6,9 +6,9 @@ function SpritePaletteToolSelect({ spriteSheets, onClick }) {
       <div className="grid grid-cols-3 gap-2 grid-rows-3">
         {Object.values(spriteSheets).map((spriteSheet) => (
           <div
-            key={spriteSheet.path}
+            key={spriteSheet.source}
             className="cursor-pointer bg-[#353535]"
-            onClick={() => onClick(spriteSheet.path)}
+            onClick={() => onClick(spriteSheet.source)}
           >
             <img
               className="w-16 h-16 object-scale-down"

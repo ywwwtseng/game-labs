@@ -86,12 +86,12 @@ function EditSettingsArea() {
         <div className="flex-1 overflow-y-scroll no-scrollbar">
           {Object.values(spriteSheets).map((spriteSheet) => (
             <OperableItem
-              key={spriteSheet.path}
+              key={spriteSheet.source}
               checkIcon
-              selected={selectedSpriteSheet === spriteSheet.path}
+              selected={selectedSpriteSheet === spriteSheet.source}
               onClick={() =>
                 selectSpriteSheet(
-                  selectedSpriteSheet === spriteSheet.path ? null : spriteSheet.path
+                  selectedSpriteSheet === spriteSheet.source ? null : spriteSheet.source
                 )
               }
               label={spriteSheet.name}

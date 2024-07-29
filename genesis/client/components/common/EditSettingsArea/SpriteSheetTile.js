@@ -32,7 +32,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
         <Draggable
           data={{
             type: "tiles",
-            path: spriteSheet.path,
+            source: spriteSheet.source,
             index: [...index, 1, 1],
           }}
           draggedItem={{

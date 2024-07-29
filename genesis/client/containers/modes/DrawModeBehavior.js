@@ -17,7 +17,7 @@ function DrawModeBehavior({ children }) {
       if (!cursorRef.current) {
         cursorRef.current = CanvasUtil.drawSelected(
           drawMode.index,
-          spriteSheets[drawMode.path]
+          spriteSheets[drawMode.source]
         );
         document.body.append(cursorRef.current);
       }
@@ -38,7 +38,7 @@ function DrawModeBehavior({ children }) {
           draw({
             event,
             selected: drawMode,
-            transparent: spriteSheets[drawMode.path].transparent,
+            transparent: spriteSheets[drawMode.source].transparent,
           })
         );
       }
@@ -65,7 +65,7 @@ function DrawModeBehavior({ children }) {
         draw({
           event,
           selected: drawMode,
-          transparent: spriteSheets[drawMode.path].transparent,
+          transparent: spriteSheets[drawMode.source].transparent,
         })
       );
     },

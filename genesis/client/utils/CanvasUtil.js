@@ -103,6 +103,8 @@ class CanvasUtil {
 
     return canvas;
   }
+
+  static locCursor() {}
 }
 
 export { CanvasUtil };

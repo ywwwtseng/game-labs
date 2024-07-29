@@ -15,7 +15,7 @@ function SpritePaletteTool({ origin, onClose }) {
   const spriteSheets = useSpriteSheets();
   const dispatch = useDispatch();
   const drawMode = useSelector(state => state.drawMode);
-  const [selectedPath, setSelectedPath] = useState(drawMode.path);
+  const [selectedPath, setSelectedPath] = useState(drawMode.source);
   const spriteSheet = spriteSheets[selectedPath];
 
   useEffect(() => {

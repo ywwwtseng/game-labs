@@ -7,8 +7,8 @@ function SpritePaletteToolMain({ spriteSheet, defaultSelected, onSelected }) {
   const layers = useMemo(() => [{ tiles: spriteSheet.tiles }], [spriteSheet.tiles]);
   const { selected, register, connect } = useCanvasSelectArea({
     defaultSelected,
-    canvasId: `spriteSheet-${spriteSheet.path}`,
-    path: spriteSheet.path,
+    canvasId: `spriteSheet-${spriteSheet.source}`,
+    source: spriteSheet.source,
     draggable: false,
     draggedItem: {
       display: (_, data) => {
@@ -23,7 +23,7 @@ function SpritePaletteToolMain({ spriteSheet, defaultSelected, onSelected }) {
       if (onSelected && selected.index) {
         onSelected({
           index: selected.index,
-          path: spriteSheet.path,
+          source: spriteSheet.source,
         });
       }
     },
@@ -33,7 +33,7 @@ function SpritePaletteToolMain({ spriteSheet, defaultSelected, onSelected }) {
     <div className="px-2 pt-0.5 pb-2" {...register}>
       <Canvas2D
         grid
-        id={`spriteSheet-${spriteSheet.path}`}
+        id={`spriteSheet-${spriteSheet.source}`}
         scale={1}
         selected={selected.index}
         width={spriteSheet.image.naturalWidth}

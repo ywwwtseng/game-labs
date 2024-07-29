@@ -8,7 +8,7 @@ function useICanvasSelectArea({
   canvasId,
   draggable = false,
   draggedItem = {},
-  path,
+  source,
   selected,
   position,
   selectAreaStart,
@@ -81,7 +81,7 @@ function useICanvasSelectArea({
       if (pos.within) {
         if (index[0] >= x && index[0] < x + dx) {
           if (index[1] >= y && index[1] < y + dy) {
-            setData({ type: "tiles", path, selected: [x, y, dx, dy] });
+            setData({ type: "tiles", source, selected: [x, y, dx, dy] });
             handleMouseDown(event);
             return;
           }
@@ -130,7 +130,7 @@ function useICanvasSelectArea({
 function useCanvasSelectArea({
   defaultSelected = null,
   canvasId,
-  path,
+  source,
   draggable,
   draggedItem = {},
   onSelected = () => {},
@@ -180,7 +180,7 @@ function useCanvasSelectArea({
 
   return useICanvasSelectArea({
     canvasId,
-    path,
+    source,
     draggable,
     draggedItem,
     selected: state.selected,

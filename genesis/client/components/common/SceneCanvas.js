@@ -14,8 +14,8 @@ function SceneCanvas() {
       return {
         tiles: MatrixUtil.map(
           layer.tiles,
-          ({ path, index: [indexX, indexY] }) => ({
-            buffer: spriteSheets[path].tiles[indexX][indexY].buffer,
+          ({ source, index: [indexX, indexY] }) => ({
+            buffer: spriteSheets[source].tiles[indexX][indexY].buffer,
           })
         ),
       };

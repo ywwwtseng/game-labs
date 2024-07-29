@@ -85,7 +85,7 @@ export const draw = createAsyncThunk(
             addSceneTile({
               index: [index[0] + x, index[1] + y],
               tile: {
-                path: selected.path,
+                source: selected.source,
                 index: [originX + x, originY + y],
               },
             })
