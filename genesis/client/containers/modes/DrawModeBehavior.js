@@ -17,7 +17,7 @@ function DrawModeBehavior({ children }) {
       drawMode.index,
       spriteSheets[drawMode.source]
     ),
-    downmove: (event) => {
+    onDownMove: (event) => {
       dispatch(
         draw({
           event,

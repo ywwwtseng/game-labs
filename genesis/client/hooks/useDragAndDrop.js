@@ -1,6 +1,8 @@
-import { useRef, useCallback, useContext } from "react";
+import { useRef, useCallback, useContext, useMemo } from "react";
 import { DragAndDropContext } from "@/context/DragAndDropContext";
 import { BoundingBox } from "@/helpers/BoundingBox";
+import { useDataTransfer } from "@/hooks/useDataTransfer";
+import { useCursorDelta } from "@/hooks/useCursorDelta";
 
 function useDragAndDrop({
   data,
@@ -9,10 +11,11 @@ function useDragAndDrop({
   onMove,
   beforeDrop = () => true,
 }) {
-  const dataRef = useRef(data || null);
+  const cursorDelta = useCursorDelta();
+  const dataTransfer = useDataTransfer({ defaultData: data });
   const draggedItemRef = useRef(null);
-  const originRef = useRef(null);
   const { setDragStart, onDrop, setDragStop } = useContext(DragAndDropContext);
+
 
   const handleMouseMove = useCallback((event) => {
     event.preventDefault();
@@ -20,8 +23,8 @@ function useDragAndDrop({
 
     if (draggedItem) {
       if (!draggedItemRef.current) {
-        setDragStart(dataRef.current);
-        draggedItemRef.current = draggedItem.display(event, dataRef.current);
+        setDragStart(dataTransfer.getData());
+        draggedItemRef.current = draggedItem.display(event, dataTransfer.getData());
         document.body.append(draggedItemRef.current);
       }
 
@@ -34,18 +37,10 @@ function useDragAndDrop({
       draggedItemRef.current.style.top = `${position.y}px`;
     }
 
-    if (originRef.current) {
-      const dx = event.pageX - originRef.current.x;
-      const dy = event.pageY - originRef.current.y;
+    const { delta } = cursorDelta.move(event);
 
-      originRef.current = {
-        x: event.pageX,
-        y: event.pageY,
-      };
-
-      if (onMove) {
-        onMove({ x: dx, y: dy });
-      }
+    if (delta) {
+      onMove?.(delta);
     }
   }, []);
 
@@ -54,14 +49,15 @@ function useDragAndDrop({
       onDrop(event);
     }
 
+    
     setDragStop(event);
 
     if (draggedItemRef.current) {
       draggedItemRef.current.remove();
       draggedItemRef.current = null;
     }
-    originRef.current = null;
 
+    cursorDelta.end(event);
     window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("mouseup", handleMouseStop);
   }, []);
@@ -73,17 +69,13 @@ function useDragAndDrop({
       }
     }
 
-    originRef.current = {
-      x: event.pageX,
-      y: event.pageY,
-    };
-
+    cursorDelta.start(event);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseStop);
   }, []);
 
   return {
-    setData: (data) => (dataRef.current = data),
+    dataTransfer,
     handleMouseDown,
   };
 }

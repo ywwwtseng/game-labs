@@ -21,14 +21,18 @@ function SelectModeBehavior({ children }) {
   const { register, connect } = useICanvasSelectArea({
     canvasId: "canvas",
     selected,
+    draggable: true,
     position,
     selectAreaStart: (index) => dispatch(selectAreaStart(index)),
     selectArea: (index) => dispatch(selectArea(index)),
     selectAreaStop: () => dispatch(selectAreaStop()),
     setCursorPosition: (position) => dispatch(setCursorPosition(position)),
+    onMoveDown: (selected) => {
+      console.log(selected);
+    }
   });
 
-  const input = useMemo(() => ({
+  const inputMapping = useMemo(() => ({
     ArrowLeft: (event) => {
       if (!selected.index || !scene) return;
       const index = CanvasUtil.rect(selected.index);
@@ -104,13 +108,13 @@ function SelectModeBehavior({ children }) {
         );
       });
     },
-  }), [selected]);
+  }), [selected, scene]);
 
-  useKeyBoard(input);
+  useKeyBoard(inputMapping);
 
-  const { setup } = useDropToDraw({ id: "canvas" });
+  const { setup: setupDropToDraw } = useDropToDraw({ id: "canvas" });
 
-  return children({ register, connect: { ...connect, ...setup } });
+  return children({ register, connect: { ...connect, ...setupDropToDraw } });
 }
 
 export { SelectModeBehavior };

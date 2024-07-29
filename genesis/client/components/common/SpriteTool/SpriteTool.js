@@ -4,23 +4,23 @@ import { Menu } from "@/components/ui/Menu";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { CloseIcon } from "@/components/icon/CloseIcon";
 import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
-import { SpritePaletteToolSelect } from "@/components/common/SpritePaletteTool/SpritePaletteToolSelect";
-import { SpritePaletteToolMain } from "@/components/common/SpritePaletteTool/SpritePaletteToolMain";
+import { SpriteToolGallery } from "@/components/common/SpriteTool/SpriteToolGallery";
+import { SpriteToolPalette } from "@/components/common/SpriteTool/SpriteToolPalette";
 import { setMode } from "@/features/appState/appStateSlice";
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { MODE } from "@/constants";
 
-function SpritePaletteTool({ origin, onClose }) {
+function SpriteTool({ origin, onClose }) {
   const menuRef = useRef();
   const spriteSheets = useSpriteSheets();
   const dispatch = useDispatch();
   const drawMode = useSelector(state => state.drawMode);
-  const [selectedPath, setSelectedPath] = useState(drawMode.source);
-  const spriteSheet = spriteSheets[selectedPath];
+  const [selectedSource, setSelectedSource] = useState(drawMode.source);
+  const spriteSheet = spriteSheets[selectedSource];
 
   useEffect(() => {
     menuRef.current.checkPos();
-  }, [selectedPath]);
+  }, [selectedSource]);
 
   return (
     <Menu ref={menuRef} origin={origin}>
@@ -28,9 +28,9 @@ function SpritePaletteTool({ origin, onClose }) {
         <div className="flex items-center self-center text-xs whitespace-nowrap text-white mr-auto">
           <SpriteSheetIcon size={4} />
           <div className="ml-0.5">
-            {selectedPath ? (
+            {selectedSource ? (
               <div>
-                <span onClick={() => setSelectedPath(null)}>
+                <span onClick={() => setSelectedSource(null)}>
                   Sprite Palette
                 </span>{" "}
                 | <span>{spriteSheet.name}</span>
@@ -44,23 +44,22 @@ function SpritePaletteTool({ origin, onClose }) {
           <CloseIcon />
         </BaseButton>
       </Menu.Header>
-      {selectedPath ? (
-        <SpritePaletteToolMain
+      {selectedSource ? (
+        <SpriteToolPalette
           spriteSheet={spriteSheet}
           defaultSelected={drawMode.index}
           onSelected={(selected) => {
-            onClose();
             dispatch(setMode({ mode: MODE.DRAW, payload: selected }));
           }}
         />
       ) : (
-        <SpritePaletteToolSelect
+        <SpriteToolGallery
           spriteSheets={spriteSheets}
-          onClick={setSelectedPath}
+          onClick={setSelectedSource}
         />
       )}
     </Menu>
   );
 }
 
-export { SpritePaletteTool };
+export { SpriteTool };

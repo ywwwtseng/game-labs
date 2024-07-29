@@ -1,13 +1,14 @@
 import { useCallback, useRef, useState } from "react";
 import { produce } from "immer";
-import { CanvasUtil } from "@/utils/CanvasUtil";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { BoundingBox } from "@/helpers/BoundingBox";
+import { CanvasUtil } from "@/utils/CanvasUtil";
+import { Vec2Util } from "@/utils/Vec2Util";
 
 function useICanvasSelectArea({
   canvasId,
   draggable = false,
-  draggedItem = {},
+  draggedItem = null,
   source,
   selected,
   position,
@@ -15,10 +16,15 @@ function useICanvasSelectArea({
   selectArea,
   selectAreaStop,
   setCursorPosition,
+  onMoveDown = () => {},
+  onMoveDownEnd = () => {},
   onSelected = () => {},
 }) {
-  const ref = useRef();
-  const { setData, handleMouseDown } = useDragAndDrop({
+  const moveDownCache = useRef(null);
+  const isPressRef = useRef(false);
+  const hasMoveDownBehaviorRef = useRef(false);
+  const ref = useRef(null);
+  const { dataTransfer, handleMouseDown } = useDragAndDrop({
     draggedItem,
     beforeDrop: (_, draggedEl) => {
       if (
@@ -32,6 +38,7 @@ function useICanvasSelectArea({
       return true;
     },
   });
+
   const onMouseMove = useCallback((event) => {
     event.target.style.cursor = "default";
     const pos = CanvasUtil.getPosition(
@@ -56,7 +63,29 @@ function useICanvasSelectArea({
         dy > 0 ? dy + 1 : dy === 0 ? 1 : dy - 1,
       ]);
     } else {
-      if (draggable && pos.within && selected.index) {
+      if (isPressRef.current === true) {
+        event.target.style.cursor = "pointer";
+        hasMoveDownBehaviorRef.current = true;
+        const { vec } = dataTransfer.getData();
+        const pos = Vec2Util.sub(
+          CanvasUtil.getPosition(event, document.getElementById(canvasId)),
+          vec,
+        );
+
+        const [indexX, indexY] = CanvasUtil.positionToIndex(pos);
+
+        if (selected.index[0] !== indexX || selected.index[1] !== indexY) {
+          const newSelectedIndex = [
+            indexX,
+            indexY,
+            selected.index[2],
+            selected.index[3],
+          ]
+          selectArea(newSelectedIndex);
+          onMoveDown(newSelectedIndex);
+        }
+
+      } else if (draggable && pos.within && selected.index) {
         const [x, y, dx, dy] = CanvasUtil.rect(selected.index);
         if (index[0] >= x && index[0] < x + dx) {
           if (index[1] >= y && index[1] < y + dy) {
@@ -64,6 +93,8 @@ function useICanvasSelectArea({
           }
         }
       }
+
+      
     }
   }, [draggable, selected]);
 
@@ -81,7 +112,13 @@ function useICanvasSelectArea({
       if (pos.within) {
         if (index[0] >= x && index[0] < x + dx) {
           if (index[1] >= y && index[1] < y + dy) {
-            setData({ type: "tiles", source, selected: [x, y, dx, dy] });
+            isPressRef.current = true;
+
+            const vec = Vec2Util.sub(
+              CanvasUtil.getPosition(event, document.getElementById(canvasId)),
+              CanvasUtil.indexToPosition([x, y])
+            );
+            dataTransfer.setData({ type: "tiles", source, selected: [x, y, dx, dy], vec });
             handleMouseDown(event);
             return;
           }
@@ -90,11 +127,27 @@ function useICanvasSelectArea({
     }
 
     selectAreaStart(position ? [...position, 1, 1] : null);
-  }, [draggable,selected, position]);
+  }, [draggable, selected, position]);
 
-  const onMouseUp = useCallback(() => {
+  const onMouseUp = useCallback((event) => {
+    dataTransfer.setData(null);
+    if (isPressRef.current === true) {
+      isPressRef.current = false;
+
+      if (hasMoveDownBehaviorRef.current === true) {
+        hasMoveDownBehaviorRef.current = false;
+        onMoveDownEnd(event, selected);
+      }
+    }
+
+    const normalizedSelectedIndex = selected ? CanvasUtil.normalizeRect(selected.index) : selected
+
+    selectArea(normalizedSelectedIndex);
     selectAreaStop();
-    onSelected(selected);
+    onSelected({
+      ...selected,
+      index: normalizedSelectedIndex,
+    });
   }, [selected]);
 
   const onMouseLeave = useCallback((event) => {
@@ -131,8 +184,8 @@ function useCanvasSelectArea({
   defaultSelected = null,
   canvasId,
   source,
-  draggable,
-  draggedItem = {},
+  draggable = false,
+  draggedItem = null,
   onSelected = () => {},
 }) {
   const [state, setState] = useState({

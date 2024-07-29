@@ -5,6 +5,7 @@ class CanvasUtil {
   static get transparent() {
     return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAB9JREFUOE9jZKAQMFKon2HUAIbRMGAYDQNQPhr4vAAAJpgAEX/anFwAAAAASUVORK5CYII=";
   }
+
   static getPosition(event, box, offset = { x: 0, y: 0 }, allowDiff = 0) {
     const bounds = new BoundingBox(box);
     const originX = event.pageX - bounds.pos.x + offset.x;
@@ -22,7 +23,16 @@ class CanvasUtil {
   }
 
   static positionToIndex(pos) {
-    return [Math.ceil(pos.x / 16) - 1, Math.ceil(pos.y / 16) - 1];
+    const indexX = pos.x === 0 ? 0 : Math.ceil(pos.x / 16) - 1;
+    const indexY = pos.y === 0 ? 0 : Math.ceil(pos.y / 16) - 1;
+    return [indexX, indexY];
+  }
+  
+  static indexToPosition(index) {
+    return {
+      x: index[0] * 16,
+      y: index[1] * 16,
+    }
   }
 
   static clear(ctx, { width, height }) {
@@ -104,7 +114,16 @@ class CanvasUtil {
     return canvas;
   }
 
-  static locCursor() {}
+  static normalizeRect(rect) {
+    const [x, y, dx, dy] = rect;
+
+    return [
+      dx > 0 ? x : x + dx + 1,
+      dy > 0 ? y : y + dy + 1,
+      Math.abs(dx),
+      Math.abs(dy),
+    ];
+  }
 }
 
 export { CanvasUtil };

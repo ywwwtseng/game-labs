@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SelectIcon } from "@/components/icon/SelectIcon";
 import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
-import { SpritePaletteTool } from "@/components/common/SpritePaletteTool/SpritePaletteTool";
+import { SpriteTool } from "@/components/common/SpriteTool/SpriteTool";
 import { CreationToolBarButton } from "@/components/common/CreationToolBar/CreationToolBarButton";
 import { CreationToolBarToggle } from "@/components/common/CreationToolBar/CreationToolBarToggle";
 import { setMode } from "@/features/appState/appStateSlice";
@@ -34,7 +34,7 @@ function CreationToolBar() {
         ref={menuRef}
         icon={SpriteSheetIcon}
         disabled={Object.keys(spriteSheets).length == 0}
-        menu={SpritePaletteTool}
+        menu={SpriteTool}
       />
     </div>
   );

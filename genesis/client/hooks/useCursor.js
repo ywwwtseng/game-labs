@@ -1,36 +1,47 @@
 import { useRef } from "react";
 import { BoundingBox } from "@/helpers/BoundingBox";
+import { useCursorDelta } from "@/hooks/useCursorDelta";
 
-function useCursor({ display, start, end, move, downmove }) {
-  const downRef = useRef(false);
+function useCursor({
+  display,
+  onStart,
+  onEnd,
+  onMove,
+  onDownMove
+}) {
+  cursorDelta = useCursorDelta();
+  const isPressRef = useRef(false);
   const cursorRef = useRef(null);
   const upHandlerRef = useRef(null);
   const moveHandlerRef = useRef(null);
+  const originRef = useRef(null);
 
   const onMouseMove = (event) => {
-    if (!cursorRef.current && display) {
-      cursorRef.current = display(event);
-      document.body.append(cursorRef.current);
+    if (display) {
+      if (!cursorRef.current) {
+        cursorRef.current = display(event);
+        document.body.append(cursorRef.current);
+      }
+  
+      const bounds = new BoundingBox(cursorRef.current);
+      const position = {
+        x: event.pageX - bounds.size.x / 2,
+        y: event.pageY - bounds.size.y / 2,
+      };
+      cursorRef.current.style.left = `${position.x}px`;
+      cursorRef.current.style.top = `${position.y}px`;
+      cursorRef.current.style.pointerEvents = "none";
+      cursorRef.current.style.position = "fixed";
+      cursorRef.current.style.zIndex = 9999;
+    }
+    
+    const { delta } = cursorDelta.move(event);
+
+    if (isPressRef.current) {
+      onDownMove?.(event, delta);
     }
 
-    const bounds = new BoundingBox(cursorRef.current);
-    const position = {
-      x: event.pageX - bounds.size.x / 2,
-      y: event.pageY - bounds.size.y / 2,
-    };
-    cursorRef.current.style.left = `${position.x}px`;
-    cursorRef.current.style.top = `${position.y}px`;
-    cursorRef.current.style.pointerEvents = "none";
-    cursorRef.current.style.position = "fixed";
-    cursorRef.current.style.zIndex = 9999;
-
-    if (downRef.current && downmove) {
-      downmove(event);
-    }
-
-    if (move) {
-      move(event);
-    }
+      onMove?.(event, delta);
   };
 
   const onMouseEnter = () => {
@@ -51,11 +62,10 @@ function useCursor({ display, start, end, move, downmove }) {
   };
 
   const onMouseUp = () => {
-    if (end) {
-      end(event);
-    }
+    onEnd?.(event);
+    cursorDelta.end(event);
 
-    downRef.current = false;
+    isPressRef.current = false;
 
     if (cursorRef.current) {
       cursorRef.current.remove();
@@ -68,17 +78,17 @@ function useCursor({ display, start, end, move, downmove }) {
   };
 
   const onMouseDown = (event) => {
-    if (start) {
-      start(event);
+    onStart?.(event);
+
+    isPressRef.current = true;
+
+    cursorDelta.start(event);
+
+    if (isPressRef.current) {
+      onDownMove?.(event, null);
     }
 
-    downRef.current = true;
-
-    if (downRef.current) {
-      if (downmove) {
-        downmove(event);
-      }
-    }
+    onMove?.(event, null);
 
     upHandlerRef.current = onMouseUp;
     document.addEventListener("mouseup", upHandlerRef.current);
