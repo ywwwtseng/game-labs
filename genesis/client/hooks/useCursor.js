@@ -1,9 +1,9 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { BoundingBox } from "@/helpers/BoundingBox";
 import { useCursorDelta } from "@/hooks/useCursorDelta";
 
 function useCursor({
-  display,
+  icon,
   onStart,
   onEnd,
   onMove,
@@ -14,13 +14,21 @@ function useCursor({
   const cursorRef = useRef(null);
   const upHandlerRef = useRef(null);
   const moveHandlerRef = useRef(null);
+  const iconRef = useRef(icon);
 
   const onMouseMove = (event) => {
-    if (display) {
+    if (iconRef.current.display) {
       if (!cursorRef.current) {
-        cursorRef.current = display(event);
+        cursorRef.current = iconRef.current.display(event, iconRef.current.id);
         document.body.append(cursorRef.current);
       }
+
+      if (cursorRef.current.id !== iconRef.current.id) {
+        cursorRef.current.remove();
+        cursorRef.current = iconRef.current.display(event, displayIdRef.current);
+        document.body.append(cursorRef.current);
+      }
+
   
       const bounds = new BoundingBox(cursorRef.current);
       const position = {
@@ -93,7 +101,9 @@ function useCursor({
     document.addEventListener("mouseup", upHandlerRef.current);
   };
 
-  
+  useEffect(() => {
+    iconRef.current = icon;
+  }, [icon]);
 
   return {
     setup: {

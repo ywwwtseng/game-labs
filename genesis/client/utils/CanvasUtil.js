@@ -69,9 +69,9 @@ class CanvasUtil {
     ctx.stroke();
   }
 
-  static drawSelected(selectedRect, spriteSheet) {
+  static drawSelected(selectedRect, spriteSheet, displayId) {
     const canvas = document.createElement("canvas");
-    canvas.id = "draw";
+    canvas.id = displayId;
     canvas.width = selectedRect[2] * 16;
     canvas.height = selectedRect[3] * 16;
     const ctx = canvas.getContext("2d");
