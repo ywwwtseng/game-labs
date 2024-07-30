@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from "react";
 import { Canvas2D } from "@/components/common/Canvas2D";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { useCanvasSelectArea } from "@/hooks/useCanvasSelectArea";
+import { CanvasUtil } from "@/utils/CanvasUtil";
 
 function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
-  const layers = useMemo(() => [{ tiles: spriteSheet.tiles }], [spriteSheet.tiles]);
+  const tiles = useMemo(() => [{ tiles: spriteSheet.tiles }], [spriteSheet.tiles]);
   const { selected, register, connect } = useCanvasSelectArea({
     defaultSelected,
     canvasId: `spriteSheet-${spriteSheet.source}`,
@@ -29,16 +30,19 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
     },
   });
 
+  const cache = useCallback((ctx) => {
+    CanvasUtil.selected(ctx, selected.index);
+  }, [selected.index]);
+
   return (
     <div className="px-2 pt-0.5 pb-2" {...register}>
       <Canvas2D
         grid
         id={`spriteSheet-${spriteSheet.source}`}
-        scale={1}
-        selected={selected.index}
+        tiles={tiles}
+        cache={cache}
         width={spriteSheet.image.naturalWidth}
         height={spriteSheet.image.naturalHeight}
-        layers={layers}
         {...connect}
       />
     </div>

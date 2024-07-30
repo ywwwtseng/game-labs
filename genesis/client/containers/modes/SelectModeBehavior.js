@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCursorPosition, addSceneTile } from "@/features/appState/appStateSlice";
 import {
@@ -112,9 +112,13 @@ function SelectModeBehavior({ children }) {
 
   useKeyBoard(inputMapping);
 
+  const cache = useCallback((ctx) => {
+    CanvasUtil.selected(ctx, selected.index);
+  }, [selected.index]);
+
   const { setup: setupDropToDraw } = useDropToDraw({ id: "canvas" });
 
-  return children({ register, connect: { ...connect, ...setupDropToDraw } });
+  return children({ register, connect: { ...connect, ...setupDropToDraw, cache } });
 }
 
 export { SelectModeBehavior };

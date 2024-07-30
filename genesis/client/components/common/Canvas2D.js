@@ -1,61 +1,59 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
 function Canvas2D({
   id = "canvas",
   grid = false,
-  scale = 1,
-  selected,
-  layers = [],
+  tiles = [],
+  cache,
   width,
   height,
   ...props
 }) {
   const ref = useRef(null);
-  const lastGridLineSpacing = grid || crop ? 1 : 0;
+  const padding = grid ? 1 : 0;
+
+  const tileBuffer = useMemo(() => CanvasUtil.createTileBuffer(
+    tiles,
+    width + padding,
+    height + padding,
+  ), [tiles, width, height, padding]);
+
+  const gridBuffer = useMemo(() => {
+    if (!grid) {
+      return null;
+    }
+
+    return CanvasUtil.createGridBuffer(width + padding, height + padding);
+  }, [grid, width, height, padding]);
 
   useEffect(() => {
     const ctx = ref.current.getContext("2d");
-    
-    CanvasUtil.clear(ctx, {
-      width: width * scale + lastGridLineSpacing,
-      height: height * scale + lastGridLineSpacing,
-    });
+    CanvasUtil.clear(ctx);
 
-    layers.forEach((layer) => {
-      MatrixUtil.forEach(layer.tiles, (tile, x, y) => {
-        ctx.drawImage(
-          tile.buffer,
-          0,
-          0,
-          16,
-          16,
-          x * 16,
-          y * 16,
-          16,
-          16
-        );
-      });
-    });
-
-    if (grid) {
-      CanvasUtil.grid(ctx, { width: width * scale, height: height * scale, scale });
-    }
-    
-    if (selected) {
-      CanvasUtil.selected(ctx, selected);
+    if (tileBuffer) {
+      ctx.drawImage(tileBuffer, 0, 0);
     }
 
-  }, [grid, width, height, layers, selected]);
+    if (gridBuffer) {
+      ctx.drawImage(gridBuffer, 0, 0);
+    }
+    
+    if (cache) {
+      cache(ctx);
+    }
+
+
+  }, [gridBuffer, tileBuffer, cache]);
 
   return (
     <canvas
       ref={ref}
       id={id}
       className="bg-[#373737]"
-      width={width * scale + lastGridLineSpacing}
-      height={height * scale + lastGridLineSpacing}
+      width={width + padding}
+      height={height + padding}
       {...props}
     />
   );

@@ -27,7 +27,7 @@ function EditSettingsArea() {
     const transparent = [];
 
     MatrixUtil.traverseByIndex(index, (x, y) => {
-      const buffer = CanvasUtil.createBuffer(image, x * 16, y * 16, 16, 16);
+      const buffer = CanvasUtil.createBufferBySource(image, x * 16, y * 16, 16, 16);
       if (buffer.toDataURL() === CanvasUtil.transparent) {
         transparent.push(`${x}.${y}`);
       }

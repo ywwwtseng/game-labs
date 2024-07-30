@@ -45,7 +45,7 @@ export const SpriteSheetProvider = ({ children }) => {
             const index = ImageUtil.getIndex(image);
 
             const tiles = MatrixUtil.createByIndex(index, (x, y) => {
-              const buffer = CanvasUtil.createBuffer(
+              const buffer = CanvasUtil.createBufferBySource(
                 image,
                 x * 16,
                 y * 16,

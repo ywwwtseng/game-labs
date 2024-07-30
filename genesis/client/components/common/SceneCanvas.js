@@ -9,7 +9,7 @@ function SceneCanvas() {
   const scene = useSelector((state) => state.appState.scene);
   const spriteSheets = useSpriteSheets();
 
-  const layers = useMemo(() => {
+  const tiles = useMemo(() => {
     return scene.layers.map((layer) => {
       return {
         tiles: MatrixUtil.map(
@@ -35,7 +35,7 @@ function SceneCanvas() {
               grid
               id="canvas"
               accept="tiles"
-              layers={layers}
+              tiles={tiles}
               width={scene.width}
               height={scene.height}
               {...connect}

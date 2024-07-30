@@ -35,17 +35,17 @@ class CanvasUtil {
     }
   }
 
-  static clear(ctx, { width, height }) {
-    ctx.clearRect(0, 0, width, height);
+  static clear(ctx) {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   }
 
-  static grid(ctx, { width, height, scale, color = "#424242" }) {
-    for (var x = 0; x <= width; x += 16 * scale) {
+  static grid(ctx, { width, height, color = "#424242" }) {
+    for (var x = 0; x <= width; x += 16) {
       ctx.moveTo(0.5 + x, 0);
       ctx.lineTo(0.5 + x, height);
     }
 
-    for (var x = 0; x <= height; x += 16 * scale) {
+    for (var x = 0; x <= height; x += 16) {
       ctx.moveTo(0, 0.5 + x);
       ctx.lineTo(width, 0.5 + x);
     }
@@ -55,6 +55,9 @@ class CanvasUtil {
   }
 
   static selected(ctx, selected, color = "white") {
+    if (!selected) {
+      return;
+    }
     ctx.beginPath();
     ctx.rect(
       (selected[0] + (selected[2] > 0 ? 0 : +1)) * 16 + 0.5,
@@ -64,17 +67,6 @@ class CanvasUtil {
     );
     ctx.strokeStyle = color;
     ctx.stroke();
-  }
-
-  static createBuffer(source, x, y, width, height) {
-    const buffer = document.createElement("canvas");
-    buffer.width = width;
-    buffer.height = height;
-    buffer
-      .getContext("2d")
-      .drawImage(source, x, y, width, height, 0, 0, width, height);
-
-    return buffer;
   }
 
   static drawSelected(selectedIndex, spriteSheet) {
@@ -131,6 +123,59 @@ class CanvasUtil {
     }
 
     return false;
+  }
+
+  static createBuffer(width, height, render) {
+    const buffer = document.createElement("canvas");
+    buffer.width = width;
+    buffer.height = height;
+    if (render) {
+      render(buffer.getContext("2d"));
+    }
+    return buffer;
+  }
+
+  static createBufferBySource(source, x, y, width, height) {
+    const buffer = CanvasUtil.createBuffer(width, height);
+    buffer
+      .getContext("2d")
+      .drawImage(source, x, y, width, height, 0, 0, width, height);
+
+    return buffer;
+  }
+
+  static createTileBuffer(tiles, width, height) {
+    return CanvasUtil.createBuffer(
+      width,
+      height,
+      (ctx) => {
+        tiles.forEach((layer) => {
+          MatrixUtil.forEach(layer.tiles, (tile, x, y) => {
+            ctx.drawImage(
+              tile.buffer,
+              0,
+              0,
+              16,
+              16,
+              x * 16,
+              y * 16,
+              16,
+              16
+            );
+          });
+        });
+      }
+    );
+  }
+
+  static createGridBuffer(width, height) {
+    return CanvasUtil.createBuffer(
+      width,
+      height,
+      (ctx) => {
+        CanvasUtil.grid(ctx, { width, height });
+      }
+    );
   }
 }
 
