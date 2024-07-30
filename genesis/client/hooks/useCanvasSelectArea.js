@@ -67,26 +67,25 @@ function useICanvasSelectArea({
         event.target.style.cursor = "pointer";
         hasMoveDownBehaviorRef.current = true;
         const { vec } = dataTransfer.getData();
-        const pos = Vec2Util.sub(
-          CanvasUtil.getPosition(event, document.getElementById(canvasId)),
-          vec,
-        );
+        const pos0 = CanvasUtil.getPosition(event, document.getElementById(canvasId));
+        const pos = Vec2Util.calc(pos0, { sub: vec });
 
         const [indexX, indexY] = CanvasUtil.positionToIndex(pos);
 
         if (selected.index[0] !== indexX || selected.index[1] !== indexY) {
-          const newSelectedIndex = [
+          const newSelectedIndex = CanvasUtil.calc([
             indexX,
             indexY,
             selected.index[2],
             selected.index[3],
-          ]
+          ], { limit: document.getElementById(canvasId) })
+
           selectArea(newSelectedIndex);
           onMoveDown(newSelectedIndex);
         }
 
       } else if (draggable && pos.within && selected.index) {
-        const [x, y, dx, dy] = CanvasUtil.rect(selected.index);
+        const [x, y, dx, dy] = CanvasUtil.normalizeRect(selected.index);
         if (index[0] >= x && index[0] < x + dx) {
           if (index[1] >= y && index[1] < y + dy) {
             event.target.style.cursor = "pointer";
@@ -107,17 +106,16 @@ function useICanvasSelectArea({
 
       const index = CanvasUtil.positionToIndex(pos);
 
-      const [x, y, dx, dy] = CanvasUtil.rect(selected.index);
+      const [x, y, dx, dy] = CanvasUtil.normalizeRect(selected.index);
 
       if (pos.within) {
         if (index[0] >= x && index[0] < x + dx) {
           if (index[1] >= y && index[1] < y + dy) {
             isPressRef.current = true;
+            const pos1 = CanvasUtil.getPosition(event, document.getElementById(canvasId));
+            const pos0 = CanvasUtil.indexToPosition([x, y]);
 
-            const vec = Vec2Util.sub(
-              CanvasUtil.getPosition(event, document.getElementById(canvasId)),
-              CanvasUtil.indexToPosition([x, y])
-            );
+            const vec = Vec2Util.calc(pos1, { sub: pos0 });
             dataTransfer.setData({ type: "tiles", source, selected: [x, y, dx, dy], vec });
             handleMouseDown(event);
             return;
@@ -140,7 +138,7 @@ function useICanvasSelectArea({
       }
     }
 
-    const normalizedSelectedIndex = selected ? CanvasUtil.normalizeRect(selected.index) : selected
+    const normalizedSelectedIndex = selected.index ? CanvasUtil.normalizeRect(selected.index) : selected.index;
 
     selectArea(normalizedSelectedIndex);
     selectAreaStop();

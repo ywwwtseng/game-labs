@@ -35,7 +35,7 @@ function SelectModeBehavior({ children }) {
   const inputMapping = useMemo(() => ({
     ArrowLeft: (event) => {
       if (!selected.index || !scene) return;
-      const index = CanvasUtil.rect(selected.index);
+      const index = CanvasUtil.normalizeRect(selected.index);
       const sizeIndexX = index[2];
       const sizeIndexY = index[3];
 
@@ -45,7 +45,7 @@ function SelectModeBehavior({ children }) {
     },
     ArrowRight: (event) => {
       if (!selected.index || !scene) return;
-      const index = CanvasUtil.rect(selected.index);
+      const index = CanvasUtil.normalizeRect(selected.index);
       const sizeIndexX = index[2];
       const sizeIndexY = index[3];
 
@@ -65,7 +65,7 @@ function SelectModeBehavior({ children }) {
     },
     ArrowUp: (event) => {
       if (!selected.index || !scene) return;
-      const index = CanvasUtil.rect(selected.index);
+      const index = CanvasUtil.normalizeRect(selected.index);
       const sizeIndexX = index[2];
       const sizeIndexY = index[3];
 
@@ -75,7 +75,7 @@ function SelectModeBehavior({ children }) {
     },
     ArrowDown: (event) => {
       if (!selected.index || !scene) return;
-      const index = CanvasUtil.rect(selected.index);
+      const index = CanvasUtil.normalizeRect(selected.index);
       const sizeIndexX = index[2];
       const sizeIndexY = index[3];
 
@@ -95,7 +95,7 @@ function SelectModeBehavior({ children }) {
     },
     Backspace: (event) => {
       if (!selected.index || !scene) return;
-      const index = CanvasUtil.rect(selected.index);
+      const index = CanvasUtil.normalizeRect(selected.index);
       const sizeIndexX = index[2];
       const sizeIndexY = index[3];
 

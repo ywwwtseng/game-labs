@@ -77,18 +77,6 @@ class CanvasUtil {
     return buffer;
   }
 
-  static rect(selectedIndex) {
-    const dx = selectedIndex[2];
-    const dy = selectedIndex[3];
-
-    return [
-      dx > 0 ? selectedIndex[0] : selectedIndex[0] + dx + 1,
-      dy > 0 ? selectedIndex[1] : selectedIndex[1] + dy + 1,
-      Math.abs(dx),
-      Math.abs(dy),
-    ];
-  }
-
   static drawSelected(selectedIndex, spriteSheet) {
     const canvas = document.createElement("canvas");
     canvas.id = "draw";
@@ -123,6 +111,26 @@ class CanvasUtil {
       Math.abs(dx),
       Math.abs(dy),
     ];
+  }
+
+  static calc(rect, { limit }) {
+    if (limit) {
+      const [x, y, dx, dy] = CanvasUtil.normalizeRect(rect);
+      const bounds = new BoundingBox(limit);
+      const maxIndex = CanvasUtil.positionToIndex({
+        x: bounds.size.x,
+        y: bounds.size.y,
+      });
+
+      return [
+        x + dx >= maxIndex[0] ? maxIndex[0] - dx : Math.max(0, x),
+        y + dy >= maxIndex[1] ? maxIndex[1] - dy : Math.max(0, y),
+        dx,
+        dy,
+      ];
+    }
+
+    return false;
   }
 }
 
