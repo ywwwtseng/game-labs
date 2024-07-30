@@ -66,7 +66,7 @@ function useICanvasSelectArea({
       if (isPressRef.current === true) {
         event.target.style.cursor = "pointer";
         hasMoveDownBehaviorRef.current = true;
-        const { vec } = dataTransfer.getData();
+        const { vec, selected: selectedOrigin } = dataTransfer.getData();
         const pos0 = CanvasUtil.getPosition(event, document.getElementById(canvasId));
         const pos = Vec2Util.calc(pos0, { sub: vec });
 
@@ -81,7 +81,10 @@ function useICanvasSelectArea({
           ], { limit: document.getElementById(canvasId) })
 
           selectArea(newSelectedIndex);
-          onMoveDown(newSelectedIndex);
+          onMoveDown({
+            origin: selectedOrigin,
+            next: newSelectedIndex,
+          });
         }
 
       } else if (draggable && pos.within && selected.index) {

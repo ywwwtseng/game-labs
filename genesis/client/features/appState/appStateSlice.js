@@ -157,4 +157,6 @@ export const {
   selectLayer,
 } = appStateSlice.actions;
 
+export const selectedLayerSelector = (state) => state.appState.scene.layers[state.appState.scene.selectedLayerIndex]
+
 export default appStateSlice.reducer;

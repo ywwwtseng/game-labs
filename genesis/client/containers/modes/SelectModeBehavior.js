@@ -1,6 +1,6 @@
-import { useEffect, useCallback, useMemo } from "react";
+import { useEffect, useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCursorPosition, addSceneTile } from "@/features/appState/appStateSlice";
+import { setCursorPosition, addSceneTile, selectedLayerSelector } from "@/features/appState/appStateSlice";
 import {
   selectAreaStart,
   selectArea,
@@ -11,11 +11,15 @@ import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { useDropToDraw } from "@/hooks/useDropToDraw";
 import { useKeyBoard } from "@/hooks/useKeyBoard";
+import { useSpriteSheets } from "@/context/SpriteSheetContext";
 
 function SelectModeBehavior({ children }) {
+  const cacheSelectedTilesRef = useRef(null);
   const position = useSelector((state) => state.appState.cursor.position);
   const scene = useSelector((state) => state.appState.scene);
   const selected = useSelector((state) => state.selectMode.selected);
+  const spriteSheets = useSpriteSheets();
+  const selectedLayer = useSelector(selectedLayerSelector);
   const dispatch = useDispatch();
 
   const { register, connect } = useICanvasSelectArea({
@@ -28,7 +32,37 @@ function SelectModeBehavior({ children }) {
     selectAreaStop: () => dispatch(selectAreaStop()),
     setCursorPosition: (position) => dispatch(setCursorPosition(position)),
     onMoveDown: (selected) => {
-      console.log(selected);
+      const [originX, originY, ...sizeIndex] = selected.origin;
+
+      if (!cacheSelectedTilesRef.current) {
+        cacheSelectedTilesRef.current = MatrixUtil.createBySize(sizeIndex, (x, y) => {
+          const tile = selectedLayer.tiles?.[originX + x]?.[originY + y];
+ 
+          if (tile) {
+           dispatch(addSceneTile({
+             index: [originX + x, originY + y],
+             tile: undefined,
+           }));
+          }
+ 
+          return tile;
+       });
+      }
+    },
+    onMoveDownEnd: () => {
+      if (selected.index && cacheSelectedTilesRef.current) {
+        // TODO: cant put them on existed tile
+        MatrixUtil.traverse([selected.index[2], selected.index[3]], (x, y) => {
+          dispatch(
+            addSceneTile({
+              index: [selected.index[0] + x, selected.index[1] + y],
+              tile: cacheSelectedTilesRef.current[x][y],
+            })
+          );
+        });
+      }
+
+      cacheSelectedTilesRef.current = null;
     }
   });
 
@@ -113,6 +147,25 @@ function SelectModeBehavior({ children }) {
   useKeyBoard(inputMapping);
 
   const cache = useCallback((ctx) => {
+    if (selected.index && cacheSelectedTilesRef.current) {
+      MatrixUtil.traverse([selected.index[2], selected.index[3]], (x, y) => {
+        const tile = cacheSelectedTilesRef.current[x][y];
+
+        if (tile) {
+          ctx.drawImage(
+            spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
+            0,
+            0,
+            16,
+            16,
+            (selected.index[0] + x) * 16,
+            (selected.index[1] + y) * 16,
+            16,
+            16
+          );
+        }
+      });
+    }
     CanvasUtil.selected(ctx, selected.index);
   }, [selected.index]);
 

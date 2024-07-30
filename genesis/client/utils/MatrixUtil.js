@@ -51,6 +51,10 @@ class MatrixUtil {
 
     return matrix;
   }
+
+  static createBySize(size, callback) {
+    return MatrixUtil.createByIndex([size[0] - 1, size[1] - 1], callback);
+  }
 }
 
 export { MatrixUtil };
