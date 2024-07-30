@@ -7,6 +7,7 @@ import { Vec2Util } from "@/utils/Vec2Util";
 
 function useICanvasSelectArea({
   canvasId,
+  selectedWhenMouseLeave,
   draggable = false,
   draggedItem = null,
   source,
@@ -154,7 +155,20 @@ function useICanvasSelectArea({
   const onMouseLeave = useCallback((event) => {
     event.target.style.cursor = "default";
     setCursorPosition(null);
-  }, []);
+
+    if (selected.progress && selectedWhenMouseLeave) {
+      const normalizedSelectedIndex = selected.index ? CanvasUtil.normalizeRect(selected.index) : selected.index;
+
+      onSelected({
+        ...selected,
+        index: normalizedSelectedIndex,
+      });
+      selectArea(normalizedSelectedIndex);
+      selectAreaStop();
+    }
+
+    
+  }, [selected]);
 
   const onClick = useCallback((event) => {
     if (event.detail === 2) {
@@ -183,6 +197,7 @@ function useICanvasSelectArea({
 
 function useCanvasSelectArea({
   defaultSelected = null,
+  selectedWhenMouseLeave = false,
   canvasId,
   source,
   draggable = false,
@@ -234,6 +249,7 @@ function useCanvasSelectArea({
 
   return useICanvasSelectArea({
     canvasId,
+    selectedWhenMouseLeave,
     source,
     draggable,
     draggedItem,

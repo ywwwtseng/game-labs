@@ -49,7 +49,11 @@ function SpriteTool({ origin, onClose }) {
           spriteSheet={spriteSheet}
           defaultSelected={drawMode.index}
           onSelected={(selected) => {
-            dispatch(setMode({ mode: MODE.DRAW, payload: selected }));
+            if (selected) {
+              dispatch(setMode({ mode: MODE.DRAW, payload: selected }));
+            } else {
+              dispatch(setMode({ mode: MODE.SELECT }));
+            }
           }}
         />
       ) : (

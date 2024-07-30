@@ -6,14 +6,17 @@ import { CanvasUtil } from "@/utils/CanvasUtil";
 
 function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
   const tiles = useMemo(() => [{ tiles: spriteSheet.tiles }], [spriteSheet.tiles]);
-  // TODO: hide select when mouse over
   const { selected, register, connect } = useCanvasSelectArea({
     defaultSelected,
+    selectedWhenMouseLeave: true,
     canvasId: `spriteSheet-${spriteSheet.source}`,
     source: spriteSheet.source,
     draggable: false,
     draggedItem: {
       display: (_, data) => {
+        if (!data.selected) {
+          return
+        }
         return MatrixUtil.drawSelected(data.selected, spriteSheet);
       },
       pos: (event, bounds) => ({
