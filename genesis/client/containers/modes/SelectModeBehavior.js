@@ -164,7 +164,7 @@ function SelectModeBehavior({ children }) {
       MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
         dispatch(
           addSceneTile({
-            rect: [rect[0] + x, rect[1] + y],
+            index: [rect[0] + x, rect[1] + y],
             tile: undefined,
           })
         );

@@ -119,7 +119,7 @@ function useICanvasSelectArea({
             const pos1 = CanvasUtil.getPosition(event, document.getElementById(canvasId));
             const pos0 = CanvasUtil.indexToPosition([x, y]);
 
-            const vec = Vec2Util.calc(pos1, { sub: pos0 });
+            const vec = Vec2Util.calc(pos1, { sub: Vec2Util.calc(pos0, { add: { x: 1,y: 1 }})});
             dataTransfer.setData({ type: "tiles", source, selected: [x, y, dx, dy], vec });
             handleMouseDown(event);
             return;
