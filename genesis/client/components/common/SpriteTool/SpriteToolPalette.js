@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { Canvas2D } from "@/components/common/Canvas2D";
+import { Canvas2D, CANVAS_LAYER } from "@/components/common/Canvas2D";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { useCanvasSelectArea } from "@/hooks/useCanvasSelectArea";
 import { CanvasUtil } from "@/utils/CanvasUtil";
@@ -30,6 +30,18 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
     },
   });
 
+  const layers = useMemo(() => [
+    CANVAS_LAYER.TILES({
+      tiles,
+      width: spriteSheet.image.naturalWidth,
+      height: spriteSheet.image.naturalHeight,
+    }),
+    CANVAS_LAYER.GRID({
+      width: spriteSheet.image.naturalWidth,
+      height: spriteSheet.image.naturalHeight,
+    }),
+  ], [spriteSheet.image.naturalWidth, spriteSheet.image.naturalHeight, tiles]);
+
   const cache = useCallback((ctx) => {
     CanvasUtil.selected(ctx, selected.index);
   }, [selected.index]);
@@ -37,9 +49,8 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
   return (
     <div className="px-2 pt-0.5 pb-2" {...register}>
       <Canvas2D
-        grid
         id={`spriteSheet-${spriteSheet.source}`}
-        tiles={tiles}
+        layers={layers}
         cache={cache}
         width={spriteSheet.image.naturalWidth}
         height={spriteSheet.image.naturalHeight}

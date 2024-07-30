@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Canvas2D } from "@/components/common/Canvas2D";
+import { Canvas2D, CANVAS_LAYER } from "@/components/common/Canvas2D";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { ModeConnectToCanvas } from "@/containers/ModeConnectToCanvas";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
@@ -22,6 +22,18 @@ function SceneCanvas() {
     });
   }, [spriteSheets, scene.layers]);
 
+  const layers = useMemo(() => [
+    CANVAS_LAYER.TILES({
+      tiles,
+      width: scene.width,
+      height: scene.height,
+    }),
+    CANVAS_LAYER.GRID({
+      width: scene.width,
+      height: scene.height,
+    }),
+  ], [scene]);
+
   return (
     <ModeConnectToCanvas>
       {({ register, connect }) => (
@@ -32,12 +44,11 @@ function SceneCanvas() {
         >
           {scene && (
             <Canvas2D
-              grid
               id="canvas"
               accept="tiles"
-              tiles={tiles}
               width={scene.width}
               height={scene.height}
+              layers={layers}
               {...connect}
             />
           )}
