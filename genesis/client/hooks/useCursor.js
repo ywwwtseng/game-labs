@@ -9,12 +9,11 @@ function useCursor({
   onMove,
   onDownMove
 }) {
-  cursorDelta = useCursorDelta();
+  const cursorDelta = useCursorDelta();
   const isPressRef = useRef(false);
   const cursorRef = useRef(null);
   const upHandlerRef = useRef(null);
   const moveHandlerRef = useRef(null);
-  const originRef = useRef(null);
 
   const onMouseMove = (event) => {
     if (display) {
