@@ -25,11 +25,13 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
       }),
     },
     onSelected: (selected) => {
-      if (onSelected && selected.index) {
+      if (onSelected && selected.rect) {
         onSelected({
-          index: selected.index,
+          rect: selected.rect,
           source: spriteSheet.source,
         });
+      } else {
+        onSelected(null);
       }
     },
   });
@@ -47,8 +49,8 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
   ], [spriteSheet.image.naturalWidth, spriteSheet.image.naturalHeight, tiles]);
 
   const cache = useCallback((ctx) => {
-    CanvasUtil.selected(ctx, selected.index);
-  }, [selected.index]);
+    CanvasUtil.selected(ctx, selected.rect);
+  }, [selected.rect]);
 
   return (
     <div className="px-2 pt-0.5 pb-2" {...register}>

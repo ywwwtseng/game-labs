@@ -4,16 +4,16 @@ import { SelectIcon } from "@/components/icon/SelectIcon";
 import { CheckIcon } from "@/components/icon/CheckIcon";
 
 function SelectModeInfo() {
-  const selected = useSelector((state) => state.selectMode.selected);
+  const selectedRect = useSelector((state) => state.selectMode.selected.rect);
   return (
     <>
       <SelectIcon className="mr-0.5" size={4} />
       <Text className="ml-1">Select Mode</Text>
       <div className="flex items-center ml-4">
-        {selected.index && (
+        {selectedRect && (
           <>
             <CheckIcon />
-            <Text className="ml-1">{`Selected: ${selected.index[0]},${selected.index[1]},${selected.index[2]},${selected.index[3]}`}</Text>
+            <Text className="ml-1">{`Selected: ${selectedRect[0]},${selectedRect[1]},${selectedRect[2]},${selectedRect[3]}`}</Text>
           </>
         )}
       </div>

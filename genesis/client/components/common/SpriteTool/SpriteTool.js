@@ -47,7 +47,7 @@ function SpriteTool({ origin, onClose }) {
       {selectedSource ? (
         <SpriteToolPalette
           spriteSheet={spriteSheet}
-          defaultSelected={drawMode.index}
+          defaultSelected={drawMode.rect}
           onSelected={(selected) => {
             if (selected) {
               dispatch(setMode({ mode: MODE.DRAW, payload: selected }));

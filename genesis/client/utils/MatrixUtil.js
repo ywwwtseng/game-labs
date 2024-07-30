@@ -21,6 +21,21 @@ class MatrixUtil {
     });
   }
 
+  static find(matrix, callback) {
+    const array = [];
+
+    matrix.forEach((column, x) => {
+      column.forEach((value, y) => {
+        if (callback(value, x, y)) {
+          array.push([x, y]);
+        }
+      });
+    });
+
+    return array;
+
+  }
+
   static rangeByIndex(maxIndex, callback) {
     return range(maxIndex[1] + 1).map((y) =>
       range(maxIndex[0] + 1).map((x) => callback(x, y))

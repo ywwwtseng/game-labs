@@ -54,12 +54,12 @@ function useICanvasSelectArea({
     }
 
     if (selected.progress) {
-      const dx = index[0] - selected.index[0];
-      const dy = index[1] - selected.index[1];
+      const dx = index[0] - selected.rect[0];
+      const dy = index[1] - selected.rect[1];
 
       selectArea([
-        selected.index[0],
-        selected.index[1],
+        selected.rect[0],
+        selected.rect[1],
         dx > 0 ? dx + 1 : dx === 0 ? 1 : dx - 1,
         dy > 0 ? dy + 1 : dy === 0 ? 1 : dy - 1,
       ]);
@@ -73,23 +73,23 @@ function useICanvasSelectArea({
 
         const [indexX, indexY] = CanvasUtil.positionToIndex(pos);
 
-        if (selected.index[0] !== indexX || selected.index[1] !== indexY) {
-          const newSelectedIndex = CanvasUtil.calc([
+        if (selected.rect[0] !== indexX || selected.rect[1] !== indexY) {
+          const newSelectedRect = CanvasUtil.calc([
             indexX,
             indexY,
-            selected.index[2],
-            selected.index[3],
+            selected.rect[2],
+            selected.rect[3],
           ], { limit: document.getElementById(canvasId) })
 
-          selectArea(newSelectedIndex);
+          selectArea(newSelectedRect);
           onMoveDown({
             origin: selectedOrigin,
-            next: newSelectedIndex,
+            next: newSelectedRect,
           });
         }
 
-      } else if (draggable && pos.within && selected.index) {
-        const [x, y, dx, dy] = CanvasUtil.normalizeRect(selected.index);
+      } else if (draggable && pos.within && selected.rect) {
+        const [x, y, dx, dy] = CanvasUtil.normalizeRect(selected.rect);
         if (index[0] >= x && index[0] < x + dx) {
           if (index[1] >= y && index[1] < y + dy) {
             event.target.style.cursor = "pointer";
@@ -102,7 +102,7 @@ function useICanvasSelectArea({
   }, [draggable, selected]);
 
   const onMouseDown = useCallback((event) => {
-    if (draggable && selected.index) {
+    if (draggable && selected.rect) {
       const pos = CanvasUtil.getPosition(
         event,
         document.getElementById(canvasId)
@@ -110,7 +110,7 @@ function useICanvasSelectArea({
 
       const index = CanvasUtil.positionToIndex(pos);
 
-      const [x, y, dx, dy] = CanvasUtil.normalizeRect(selected.index);
+      const [x, y, dx, dy] = CanvasUtil.normalizeRect(selected.rect);
 
       if (pos.within) {
         if (index[0] >= x && index[0] < x + dx) {
@@ -133,6 +133,15 @@ function useICanvasSelectArea({
 
   const onMouseUp = useCallback((event) => {
     dataTransfer.setData(null);
+
+    const normalizedSelectedRect = selected.rect ? CanvasUtil.normalizeRect(selected.rect) : selected.rect;
+    selectArea(normalizedSelectedRect);
+    selectAreaStop();
+    onSelected({
+      rect: normalizedSelectedRect,
+    });
+
+
     if (isPressRef.current === true) {
       isPressRef.current = false;
 
@@ -140,16 +149,7 @@ function useICanvasSelectArea({
         hasMoveDownBehaviorRef.current = false;
         onMoveDownEnd(event, selected);
       }
-    }
-
-    const normalizedSelectedIndex = selected.index ? CanvasUtil.normalizeRect(selected.index) : selected.index;
-
-    selectArea(normalizedSelectedIndex);
-    selectAreaStop();
-    onSelected({
-      ...selected,
-      index: normalizedSelectedIndex,
-    });
+    }    
   }, [selected]);
 
   const onMouseLeave = useCallback((event) => {
@@ -157,13 +157,12 @@ function useICanvasSelectArea({
     setCursorPosition(null);
 
     if (selected.progress && selectedWhenMouseLeave) {
-      const normalizedSelectedIndex = selected.index ? CanvasUtil.normalizeRect(selected.index) : selected.index;
+      const normalizedSelectedRect = selected.rect ? CanvasUtil.normalizeRect(selected.rect) : selected.rect;
 
       onSelected({
-        ...selected,
-        index: normalizedSelectedIndex,
+        rect: normalizedSelectedRect,
       });
-      selectArea(normalizedSelectedIndex);
+      selectArea(normalizedSelectedRect);
       selectAreaStop();
     }
 
@@ -172,7 +171,10 @@ function useICanvasSelectArea({
 
   const onClick = useCallback((event) => {
     if (event.detail === 2) {
-      if (selected.index) {
+      if (selected.rect) {
+        onSelected({
+          rect: null,
+        })
         selectAreaStart(null);
       }
     }
@@ -189,7 +191,7 @@ function useICanvasSelectArea({
       onClick,
     },
     connect: {
-      selected: selected.index,
+      selected: selected.rect,
       onMouseLeave,
     },
   };
@@ -210,23 +212,23 @@ function useCanvasSelectArea({
     },
     selected: {
       progress: false,
-      index: defaultSelected,
+      rect: defaultSelected,
     },
   });
 
-  const selectArea = useCallback((index) => {
+  const selectArea = useCallback((rect) => {
     setState(
       produce((draft) => {
-        draft.selected.index = index;
+        draft.selected.rect = rect;
       })
     );
   }, []);
 
-  const selectAreaStart = useCallback((index) => {
+  const selectAreaStart = useCallback((rect) => {
     setState(
       produce((draft) => {
-        draft.selected.progress = !!index;
-        draft.selected.index = index;
+        draft.selected.progress = !!rect;
+        draft.selected.rect = rect;
       })
     );
   }, []);

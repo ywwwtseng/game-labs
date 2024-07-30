@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   source: null,
-  index: null,
+  rect: null,
 };
 
 export const drawModeSlice = createSlice({
@@ -11,11 +11,11 @@ export const drawModeSlice = createSlice({
   reducers: {
     init: (state, action) => {
       state.source = action.payload.source;
-      state.index = action.payload.index;
+      state.rect = action.payload.rect;
     },
     destroy: (state) => {
       state.source = null;
-      state.index = null;
+      state.rect = null;
     },
   },
 });

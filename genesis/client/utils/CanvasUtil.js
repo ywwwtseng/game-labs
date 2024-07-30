@@ -69,13 +69,13 @@ class CanvasUtil {
     ctx.stroke();
   }
 
-  static drawSelected(selectedIndex, spriteSheet) {
+  static drawSelected(selectedRect, spriteSheet) {
     const canvas = document.createElement("canvas");
     canvas.id = "draw";
-    canvas.width = selectedIndex[2] * 16;
-    canvas.height = selectedIndex[3] * 16;
+    canvas.width = selectedRect[2] * 16;
+    canvas.height = selectedRect[3] * 16;
     const ctx = canvas.getContext("2d");
-    const [originX, originY, sizeIndexX, sizeIndexY] = selectedIndex;
+    const [originX, originY, sizeIndexX, sizeIndexY] = selectedRect;
 
     MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
       ctx.drawImage(
@@ -176,6 +176,26 @@ class CanvasUtil {
         CanvasUtil.grid(ctx, { width, height });
       }
     );
+  }
+
+  static hasExistedTile({
+    selectedRect,
+    origin,
+    layer,
+    transparent,
+  }) {
+    for (let x = 0; x < selectedRect[2]; x++) {
+      for (let y = 0; y < selectedRect[3]; y++) {
+        if (
+          layer.tiles?.[selectedRect[0] + x]?.[selectedRect[1] + y] &&
+          !transparent.includes(`${origin[0] + x}.${origin[1] + y}`)
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }
 

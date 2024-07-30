@@ -43,7 +43,7 @@ export const draw = createAsyncThunk(
       const scene = getState().appState.scene;
       const layer = scene.layers[scene.selectedLayerIndex];
 
-      const [originX, originY, sizeIndexX, sizeIndexY] = selected.index;
+      const [originX, originY, sizeIndexX, sizeIndexY] = selected.rect;
 
       const sizeX = sizeIndexX * 16;
       const sizeY = sizeIndexY * 16;
@@ -66,15 +66,13 @@ export const draw = createAsyncThunk(
         return;
       }
 
-      for (let x = 0; x < sizeIndexX; x++) {
-        for (let y = 0; y < sizeIndexY; y++) {
-          if (
-            layer.tiles?.[index[0] + x]?.[index[1] + y] &&
-            !transparent.includes(`${originX + x}.${originY + y}`)
-          ) {
-            return;
-          }
-        }
+      if (CanvasUtil.hasExistedTile({
+        selectedRect: [index[0], index[1], sizeIndexX, sizeIndexY],
+        origin: [originX, originY],
+        layer,
+        transparent,
+      })) {
+        return;
       }
 
       MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {

@@ -14,7 +14,7 @@ function DrawModeBehavior({ children }) {
 
   const { setup } = useCursor({
     display: () => CanvasUtil.drawSelected(
-      drawMode.index,
+      drawMode.rect,
       spriteSheets[drawMode.source]
     ),
     onDownMove: (event) => {

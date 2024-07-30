@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   selected: {
     progress: false,
-    index: null,
+    rect: null,
   },
 };
 
@@ -13,16 +13,16 @@ export const selectModeSlice = createSlice({
   reducers: {
     selectAreaStart: (state, action) => {
       state.selected.progress = Boolean(action.payload);
-      state.selected.index = action.payload;
+      state.selected.rect = action.payload;
     },
     selectArea: (state, action) => {
-      state.selected.index = action.payload;
+      state.selected.rect = action.payload;
     },
     selectAreaStop: (state) => {
       state.selected.progress = false;
     },
     destroy: (state) => {
-      state.selected.index = null;
+      state.selected.rect = null;
     },
   },
 });

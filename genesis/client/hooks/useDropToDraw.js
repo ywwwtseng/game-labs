@@ -8,7 +8,7 @@ import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
 function useDropToDraw({ id }) {
-  const selectedIndex = useSelector((state) => state.selectMode.selected.index);
+  const selectedRect = useSelector((state) => state.selectMode.selected.rect);
 
   const dispatch = useDispatch();
   const spriteSheets = useSpriteSheets();
@@ -21,13 +21,13 @@ function useDropToDraw({ id }) {
       const index = CanvasUtil.positionToIndex(pos);
 
       if (
-        selectedIndex &&
-        index[0] >= selectedIndex[0] &&
-        index[0] < selectedIndex[0] + selectedIndex[2] &&
-        index[1] >= selectedIndex[1] &&
-        index[1] < selectedIndex[1] + selectedIndex[3]
+        selectedRect &&
+        index[0] >= selectedRect[0] &&
+        index[0] < selectedRect[0] + selectedRect[2] &&
+        index[1] >= selectedRect[1] &&
+        index[1] < selectedRect[1] + selectedRect[3]
       ) {
-        const [originX, originY, sizeIndexX, sizeIndexY] = selectedIndex;
+        const [originX, originY, sizeIndexX, sizeIndexY] = selectedRect;
 
         MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
           dispatch(
@@ -45,7 +45,7 @@ function useDropToDraw({ id }) {
           draw({
             event,
             selected: {
-              index: data.index,
+              rect: data.rect,
               source: data.source,
             },
             transparent: spriteSheets[data.source].transparent,
@@ -53,7 +53,7 @@ function useDropToDraw({ id }) {
         );
       }
     },
-    [spriteSheets, selectedIndex]
+    [spriteSheets, selectedRect]
   );
 
   const setup = setupDropzone({ id, accept: "tiles", onDrop });

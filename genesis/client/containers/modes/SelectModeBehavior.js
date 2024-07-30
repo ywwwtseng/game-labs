@@ -15,6 +15,7 @@ import { useSpriteSheets } from "@/context/SpriteSheetContext";
 
 function SelectModeBehavior({ children }) {
   const cacheSelectedTilesRef = useRef(null);
+  const originSelectedRectRef = useRef(null);
   const position = useSelector((state) => state.appState.cursor.position);
   const scene = useSelector((state) => state.appState.scene);
   const selected = useSelector((state) => state.selectMode.selected);
@@ -48,40 +49,67 @@ function SelectModeBehavior({ children }) {
           return tile;
        });
       }
+
+      if (!originSelectedRectRef.current) {
+        originSelectedRectRef.current = selected.origin;
+      }
     },
     onMoveDownEnd: () => {
-      if (selected.index && cacheSelectedTilesRef.current) {
-        // TODO: cant put them on existed tile
-        MatrixUtil.traverse([selected.index[2], selected.index[3]], (x, y) => {
-          dispatch(
-            addSceneTile({
-              index: [selected.index[0] + x, selected.index[1] + y],
-              tile: cacheSelectedTilesRef.current[x][y],
-            })
-          );
-        });
+      if (selected.rect && cacheSelectedTilesRef.current) {
+        if (CanvasUtil.hasExistedTile({
+          selectedRect: selected.rect,
+          origin: [selected.rect[0], selected.rect[1]],
+          layer: selectedLayer,
+          transparent: MatrixUtil.find(
+            cacheSelectedTilesRef.current,
+            (tile) => tile === undefined,
+          ).map(([x, y]) => `${x + selected.rect[0]}.${y + selected.rect[1]}`),
+        })) {
+          const originSelectedRect = originSelectedRectRef.current;
+          dispatch(selectArea(originSelectedRect));
+          MatrixUtil.traverse([originSelectedRect[2], originSelectedRect[3]], (x, y) => {
+            dispatch(
+              addSceneTile({
+                index: [originSelectedRect[0] + x, originSelectedRect[1] + y],
+                tile: cacheSelectedTilesRef.current[x][y],
+              })
+            );
+          });
+        } else {
+          MatrixUtil.traverse([selected.rect[2], selected.rect[3]], (x, y) => {
+            if (cacheSelectedTilesRef.current[x][y]) {
+              dispatch(
+                addSceneTile({
+                  index: [selected.rect[0] + x, selected.rect[1] + y],
+                  tile: cacheSelectedTilesRef.current[x][y],
+                })
+              );
+            }
+          });
+        }
       }
 
       cacheSelectedTilesRef.current = null;
+      originSelectedRectRef.current = null;
     }
   });
 
   const inputMapping = useMemo(() => ({
     ArrowLeft: (event) => {
-      if (!selected.index || !scene) return;
-      const index = CanvasUtil.normalizeRect(selected.index);
-      const sizeIndexX = index[2];
-      const sizeIndexY = index[3];
+      if (!selected.rect || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selected.rect);
+      const sizeIndexX = rect[2];
+      const sizeIndexY = rect[3];
 
       dispatch(
-        selectArea([Math.max(0, index[0] - 1), index[1], sizeIndexX, sizeIndexY])
+        selectArea([Math.max(0, rect[0] - 1), rect[1], sizeIndexX, sizeIndexY])
       );
     },
     ArrowRight: (event) => {
-      if (!selected.index || !scene) return;
-      const index = CanvasUtil.normalizeRect(selected.index);
-      const sizeIndexX = index[2];
-      const sizeIndexY = index[3];
+      if (!selected.rect || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selected.rect);
+      const sizeIndexX = rect[2];
+      const sizeIndexY = rect[3];
 
       const maxIndex = CanvasUtil.positionToIndex({
         x: scene.width,
@@ -90,28 +118,28 @@ function SelectModeBehavior({ children }) {
 
       dispatch(
         selectArea([
-          Math.min(maxIndex[0] - sizeIndexX + 1, index[0] + 1),
-          index[1],
+          Math.min(maxIndex[0] - sizeIndexX + 1, rect[0] + 1),
+          rect[1],
           sizeIndexX,
           sizeIndexY,
         ])
       );
     },
     ArrowUp: (event) => {
-      if (!selected.index || !scene) return;
-      const index = CanvasUtil.normalizeRect(selected.index);
-      const sizeIndexX = index[2];
-      const sizeIndexY = index[3];
+      if (!selected.rect || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selected.rect);
+      const sizeIndexX = rect[2];
+      const sizeIndexY = rect[3];
 
       dispatch(
-        selectArea([index[0], Math.max(0, index[1] - 1), sizeIndexX, sizeIndexY])
+        selectArea([rect[0], Math.max(0, rect[1] - 1), sizeIndexX, sizeIndexY])
       );
     },
     ArrowDown: (event) => {
-      if (!selected.index || !scene) return;
-      const index = CanvasUtil.normalizeRect(selected.index);
-      const sizeIndexX = index[2];
-      const sizeIndexY = index[3];
+      if (!selected.rect || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selected.rect);
+      const sizeIndexX = rect[2];
+      const sizeIndexY = rect[3];
 
       const maxIndex = CanvasUtil.positionToIndex({
         x: scene.width,
@@ -119,8 +147,8 @@ function SelectModeBehavior({ children }) {
       });
       dispatch(
         selectArea([
-          index[0],
-          Math.min(maxIndex[1] - sizeIndexY + 1, index[1] + 1),
+          rect[0],
+          Math.min(maxIndex[1] - sizeIndexY + 1, rect[1] + 1),
           sizeIndexX,
           sizeIndexY,
         ])
@@ -128,15 +156,15 @@ function SelectModeBehavior({ children }) {
 
     },
     Backspace: (event) => {
-      if (!selected.index || !scene) return;
-      const index = CanvasUtil.normalizeRect(selected.index);
-      const sizeIndexX = index[2];
-      const sizeIndexY = index[3];
+      if (!selected.rect || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selected.rect);
+      const sizeIndexX = rect[2];
+      const sizeIndexY = rect[3];
 
       MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
         dispatch(
           addSceneTile({
-            index: [index[0] + x, index[1] + y],
+            rect: [rect[0] + x, rect[1] + y],
             tile: undefined,
           })
         );
@@ -147,8 +175,8 @@ function SelectModeBehavior({ children }) {
   useKeyBoard(inputMapping);
 
   const cache = useCallback((ctx) => {
-    if (selected.index && cacheSelectedTilesRef.current) {
-      MatrixUtil.traverse([selected.index[2], selected.index[3]], (x, y) => {
+    if (selected.rect && cacheSelectedTilesRef.current) {
+      MatrixUtil.traverse([selected.rect[2], selected.rect[3]], (x, y) => {
         const tile = cacheSelectedTilesRef.current[x][y];
 
         if (tile) {
@@ -158,16 +186,17 @@ function SelectModeBehavior({ children }) {
             0,
             16,
             16,
-            (selected.index[0] + x) * 16,
-            (selected.index[1] + y) * 16,
+            (selected.rect[0] + x) * 16,
+            (selected.rect[1] + y) * 16,
             16,
             16
           );
         }
       });
     }
-    CanvasUtil.selected(ctx, selected.index);
-  }, [selected.index]);
+
+    CanvasUtil.selected(ctx, selected.rect);
+  }, [selected.rect]);
 
   const { setup: setupDropToDraw } = useDropToDraw({ id: "canvas" });
 
