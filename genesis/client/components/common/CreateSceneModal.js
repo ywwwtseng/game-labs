@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal } from "@/components/ui/Modal";
-import { Button } from "@/components/ui/Button";
 import { BaseInput } from "@/components/ui/BaseInput";
 import { addScene } from "@/features/appState/appStateSlice";
 
-function CreateSceneModal({ onClose }) {
+function CreateSceneModal() {
   const scene = useSelector((state) => state.appState.scene);
   const dispatch = useDispatch();
 
@@ -16,7 +15,7 @@ function CreateSceneModal({ onClose }) {
 
   return (
     <Modal width={172}>
-      <Modal.Header title="Create Scene" onClose={scene ? onClose : () => {}} />
+      <Modal.Header title="Create Scene" showCloseButton={Boolean(scene)} />
       <Modal.Body>
         <BaseInput
           label="Name"
@@ -49,7 +48,7 @@ function CreateSceneModal({ onClose }) {
         />
       </Modal.Body>
       <Modal.Footer>
-        <Button
+        <Modal.Action
           disabled={disabled}
           onClick={() => {
             dispatch(addScene({
@@ -57,11 +56,10 @@ function CreateSceneModal({ onClose }) {
               width: Number(width),
               height: Number(height),
             }));
-            onClose();
           }}
         >
           Create
-        </Button>
+        </Modal.Action>
       </Modal.Footer>
     </Modal>
   );

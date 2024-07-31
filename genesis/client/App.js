@@ -2,6 +2,7 @@ import { SWRConfig } from "swr";
 import { Provider } from "react-redux";
 import { SpriteSheetProvider } from "@/context/SpriteSheetContext";
 import { DragAndDropProvider } from "@/context/DragAndDropContext";
+import { ModalProvider } from "@/context/ModalContext";
 import { store } from "@/store";
 import { Main } from "@/Main";
 
@@ -16,7 +17,9 @@ export function App() {
       <SpriteSheetProvider>
         <Provider store={store}>
           <DragAndDropProvider>
-            <Main />
+            <ModalProvider>
+              <Main />
+            </ModalProvider>
           </DragAndDropProvider>
         </Provider>
       </SpriteSheetProvider>

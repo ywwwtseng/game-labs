@@ -49,6 +49,10 @@ app.get("/api/sprites", (req, res) => {
   res.send({ filenames, list: sprites });
 });
 
+app.post("/api/sprites/:source/patterns", (req, res) => {
+
+});
+
 // Route to handle file upload
 app.post("/api/image/upload", upload.single("image"), async (req, res) => {
   if (!req.file) {
@@ -60,6 +64,8 @@ app.post("/api/image/upload", upload.single("image"), async (req, res) => {
       name: req.file.originalname.replace(".png", ""),
       source: req.file.path.replace("public", ""),
       transparent: req.body.transparent,
+      patterns: [],
+      animations: [],
     })
   );
 

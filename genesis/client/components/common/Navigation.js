@@ -5,14 +5,17 @@ import { Dropdown } from "@/components/ui/Dropdown/Dropdown";
 import { CreateSceneModal } from "@/components/common/CreateSceneModal";
 import { useExportPng } from "@/hooks/useExportPng";
 import { BoundingBox } from "@/helpers/BoundingBox";
+import { useModal } from "@/context/ModalContext";
 import logo from "@/icon.png";
 
 function Navigation() {
   const scene = useSelector((state) => state.appState.scene);
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);
-  const [createSceneModal, setCreateSceneModal] = useState({ open: false });
   const exportPng = useExportPng();
+  const { open } = useModal(() => (
+    <CreateSceneModal />
+  ));
 
   const dropdowns = [
     {
@@ -22,9 +25,7 @@ function Navigation() {
         {
           type: "option",
           label: "New Scene",
-          onClick: () => {
-            setCreateSceneModal({ open: true });
-          },
+          onClick: open,
         },
         {
           type: "option",
@@ -84,7 +85,7 @@ function Navigation() {
 
   useEffect(() => {
     if (scene === undefined) {
-      setCreateSceneModal({ open: true });
+      openCreateSceneModal();
     }
   }, [scene]);
 
@@ -123,11 +124,6 @@ function Navigation() {
           />
         ))}
       </nav>
-      {createSceneModal.open && (
-        <CreateSceneModal
-          onClose={() => setCreateSceneModal({ open: false })}
-        />
-      )}
     </>
   );
 }
