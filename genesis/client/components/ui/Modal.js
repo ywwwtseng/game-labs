@@ -5,7 +5,7 @@ import { BaseButton } from "@/components/ui/BaseButton";
 function Modal({ width, children }) {
   return (
     createPortal(
-      <div className="select-none absolute top-0 left-0 inset-0 z-10 h-full w-full overflow-y-auto">
+      <div className="select-none absolute top-0 left-0 inset-0 z-50 h-full w-full overflow-y-auto">
         <div className="flex h-full min-h-full justify-center text-center items-center">
           <div className="relative transform overflow-hidden rounded text-left shadow-xl transition-all bg-[#282828]" style={{width: `${width}px`}}>
             <div className="flex flex-col">

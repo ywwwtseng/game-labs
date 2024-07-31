@@ -69,7 +69,7 @@ function useCursor({
     }
   };
 
-  const onMouseUp = () => {
+  const onMouseUp = (event) => {
     onEnd?.(event);
     cursorDelta.end(event);
 

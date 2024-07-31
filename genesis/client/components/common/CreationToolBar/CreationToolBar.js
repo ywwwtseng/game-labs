@@ -23,8 +23,8 @@ function CreationToolBar() {
     >
       <CreationToolBarButton
         icon={SelectIcon}
-        onClick={() => {
-          menuRef.current.close();
+        onClick={(event) => {
+          menuRef.current.close(event);
           dispatch(setMode({
             mode: mode === MODE.SELECT ? MODE.EDIT : MODE.SELECT
           }));

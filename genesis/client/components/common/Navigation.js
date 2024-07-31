@@ -105,6 +105,7 @@ function Navigation() {
             label={dropdown.label}
             options={dropdown.options}
             open={opened === dropdown.id}
+            menuProps={{className: 'w-56'}}
             onClick={toggleDropdown}
             onMouseEnter={(event) => {
               if (focus) {
@@ -113,7 +114,7 @@ function Navigation() {
             }}
             onMouseLeave={(event) => {
               const bounds = new BoundingBox(event.target);
-              if (event.pageY && event.pageY > bounds.size.y) {
+              if (event.pageY && event.pageY >= bounds.size.y) {
                 return;
               }
 

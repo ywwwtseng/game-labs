@@ -1,10 +1,33 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 
 import { AreaHeader } from "@/components/common/AreaHeader";
-import { SpriteSheetTile } from "@/components/common/EditSettingsArea/SpriteSheetTile";
 import { MatrixUtil } from "@/utils/MatrixUtil";
+import { Dropdown } from "@/components/ui/Dropdown/Dropdown";
+import { useAnchor } from "@/hooks/useAnchor";
+import { SpriteSheetTileList } from "@/components/common/EditSettingsArea/SpriteSheetTileList/SpriteSheetTileList";
 
 const SpriteSheetSettings = memo(({ spriteSheet }) => {
+  const { open, toggle } = useAnchor({ clickAwayListener: true });
+  const options = [
+    {
+      type: "option",
+      id: "tiles",
+      label: "Tiles",
+      onClick: () => {
+        setOpened("tiles");
+      },
+    },
+    {
+      type: "option",
+      id: "patterns",
+      label: "Patterns",
+      onClick: () => {
+        setOpened('patterns');
+      },
+    },
+  ];
+  const [opened, setOpened] = useState(options[0].id);
+
   return (
     <div className="flex-1 flex flex-col">
       <AreaHeader
@@ -33,17 +56,19 @@ const SpriteSheetSettings = memo(({ spriteSheet }) => {
           draggable="false"
           className="object-scale-down w-full h-40"
           src={spriteSheet.image.src}
+          alt="spritesheet-preview"
         />
       </div>
-      <div className="flex-1 grow basis-0 overflow-y-scroll no-scrollbar">
-        {MatrixUtil.rangeByIndex(spriteSheet.index, (x, y) => (
-          <SpriteSheetTile
-            key={`${spriteSheet}-[${x},${y}]`}
-            spriteSheet={spriteSheet}
-            index={[x, y]}
-          />
-        ))}
+      <div>
+        <Dropdown
+          icon
+          open={open}
+          label={options.find((option) => option.id === opened).label}
+          options={options}
+          onClick={toggle}
+        />
       </div>
+      <SpriteSheetTileList spriteSheet={spriteSheet} />
     </div>
   );
 });
