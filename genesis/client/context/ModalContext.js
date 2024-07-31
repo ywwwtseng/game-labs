@@ -40,11 +40,11 @@ export const ModalProvider = ({ children }) => {
   );
 };
 
-export const useModal = (renderModal) => {
+export const useModal = (Modal, modalProps = {}) => {
   const { openModal } = useContext(ModalContext);
 
   const open = useCallback(() => {
-    openModal(renderModal());
+    openModal(<Modal {...modalProps} />);
   }, []);
 
   return {

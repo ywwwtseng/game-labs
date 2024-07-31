@@ -1,6 +1,5 @@
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect } from "react";
 import { CanvasUtil } from "@/utils/CanvasUtil";
-import { MatrixUtil } from "@/utils/MatrixUtil";
 
 export const CANVAS_LAYER = {
   GRID: ({ width, height }) => ({

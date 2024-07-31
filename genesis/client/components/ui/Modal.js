@@ -1,9 +1,10 @@
+import cx from "classnames";
 import { CloseIcon } from "@/components/icon/CloseIcon";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { Button } from "@/components/ui/Button";
 import { useCloseModal } from "@/context/ModalContext";
 
-function Modal({ width, children }) {
+function Modal({ width = 'auto', children }) {
   return (
     <div
       className="select-none absolute top-0 left-0 inset-0 z-50 h-full w-full overflow-y-auto"
@@ -12,7 +13,7 @@ function Modal({ width, children }) {
       <div className="flex h-full min-h-full justify-center text-center items-center">
         <div
           className="relative transform overflow-hidden rounded text-left shadow-xl transition-all bg-[#282828]"
-          style={{ width: `${width}px` }}
+          style={{ width }}
         >
           <div className="flex flex-col">{children}</div>
         </div>
@@ -38,8 +39,8 @@ Modal.Header = ({ title, showCloseButton = true }) => {
   );
 };
 
-Modal.Body = ({ children }) => {
-  return <div className="px-2 py-1">{children}</div>;
+Modal.Body = ({ className, children }) => {
+  return <div className={cx("px-2 py-1", className)}>{children}</div>;
 };
 
 Modal.Footer = ({ children }) => {

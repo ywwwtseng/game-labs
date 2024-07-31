@@ -54,6 +54,10 @@ class MatrixUtil {
     );
   }
 
+  static traverseRect(rect, callback) {
+    MatrixUtil.traverse([rect[2], rect[3]], callback);
+  }
+
   static createByIndex(maxIndex, callback) {
     const matrix = [];
     MatrixUtil.traverseByIndex(maxIndex, (x, y) => {
@@ -69,6 +73,10 @@ class MatrixUtil {
 
   static createBySize(size, callback) {
     return MatrixUtil.createByIndex([size[0] - 1, size[1] - 1], callback);
+  }
+
+  static createByRect(rect, callback) {
+    return MatrixUtil.createBySize([rect[2], rect[3]], callback);
   }
 }
 

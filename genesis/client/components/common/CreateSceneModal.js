@@ -14,7 +14,7 @@ function CreateSceneModal() {
   const disabled = !name.trim() || isNaN(width) || isNaN(height);
 
   return (
-    <Modal width={172}>
+    <Modal width="172px">
       <Modal.Header title="Create Scene" showCloseButton={Boolean(scene)} />
       <Modal.Body>
         <BaseInput

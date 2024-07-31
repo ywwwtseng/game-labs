@@ -13,9 +13,7 @@ function Navigation() {
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);
   const exportPng = useExportPng();
-  const { open } = useModal(() => (
-    <CreateSceneModal />
-  ));
+  const { open } = useModal(CreateSceneModal);
 
   const dropdowns = [
     {

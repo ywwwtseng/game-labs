@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setCursorPosition,
@@ -25,22 +25,38 @@ import {
   ARROW_RIGHT_KEY,
   ARROW_DOWN_KEY,
   D_KEY,
+  P_KEY,
   S_KEY,
 } from "@/hooks/useKeyBoard";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
+import { useModal } from '@/context/ModalContext';
+import { CreatePatternModal } from '@/components/common/CreatePatternModal';
 
 function SelectModeBehavior({ children }) {
   const cacheSelectedTilesRef = useRef(null);
   const originSelectedRectRef = useRef(null);
+  const spriteSheets = useSpriteSheets();
+  const selectedLayer = useSelector(selectedLayerSelector);
+  const dispatch = useDispatch();
   const position = useSelector((state) => state.appState.cursor.position);
   const scene = useSelector((state) => state.appState.scene);
   const selected = useSelector((state) => state.selectMode.selected);
   const selectedArea = selected.rect;
-  const spriteSheets = useSpriteSheets();
-  const selectedLayer = useSelector(selectedLayerSelector);
-  const dispatch = useDispatch();
+
+  const { open: openCreatePatternModal } = useModal(CreatePatternModal);
 
   const inputMapping = useMemo(() => ({
+    [P_KEY]: () => {
+      if (cacheSelectedTilesRef.current || originSelectedRectRef.current) {
+        return;
+      }
+
+      if (!selectedArea) {
+        return;
+      }
+
+      openCreatePatternModal();
+    },
     [ARROW_LEFT_KEY]: (event) => {
       if (!selectedArea || !scene) return;
       const rect = CanvasUtil.normalizeRect(selectedArea);
