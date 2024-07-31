@@ -66,31 +66,50 @@ export const draw = createAsyncThunk(
         return;
       }
 
-      if (CanvasUtil.hasExistedTile({
-        selectedRect: [index[0], index[1], sizeIndexX, sizeIndexY],
-        origin: [originX, originY],
-        layer,
+      dispatch(addTilesToScene({
+        selectedArea: [index[0], index[1], sizeIndexX, sizeIndexY],
+        firstTileOriginInSprite: [originX, originY],
         transparent,
-      })) {
-        return;
-      }
-
-      MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
-        if (!transparent.includes(`${originX + x}.${originY + y}`)) {
-          dispatch(
-            addSceneTile({
-              index: [index[0] + x, index[1] + y],
-              tile: {
-                source: selected.source,
-                index: [originX + x, originY + y],
-              },
-            })
-          );
-        }
-      });
+        source: selected.source,
+      }));
     } catch (error) {
       console.log(error);
     }
+  }
+);
+
+export const moveSceneTiles = createAsyncThunk(
+  "appState/moveSceneTiles",
+  async ({ selectedArea, firstTileOriginInSprite, tiles, transparent, restoreArea }, { getState, dispatch }) => {
+    const [originX, originY] = firstTileOriginInSprite;
+    const state = getState();
+    const scene = state.appState.scene;
+    const layer = scene.layers[scene.selectedLayerIndex];
+
+    if (CanvasUtil.hasExistedTile({
+      selectedArea,
+      firstTileOriginInSprite: [originX, originY],
+      layer,
+      transparent,
+    })) {
+      dispatch(selectModeActions.selectArea(restoreArea));
+      dispatch(addTilesToScene({
+        selectedArea: restoreArea,
+        firstTileOriginInSprite,
+        tiles,
+        transparent,
+        disableCheckExistedTile: true,
+      }));
+    } else {
+      dispatch(addTilesToScene({
+        selectedArea,
+        firstTileOriginInSprite,
+        tiles,
+        transparent,
+      }));
+    }
+
+    
   }
 );
 
@@ -123,7 +142,7 @@ export const appStateSlice = createSlice({
     addScene: (state, action) => {
       state.scene = { ...state.scene, ...action.payload };
     },
-    addSceneTile: (state, action) => {
+    addTileToScene: (state, action) => {
       const layerIndex = state.scene.selectedLayerIndex;
       const [indexX, indexY] = action.payload.index;
       const tile = action.payload.tile;
@@ -132,6 +151,75 @@ export const appStateSlice = createSlice({
         state.scene.layers[layerIndex].tiles[indexX] = [];
       }
       state.scene.layers[layerIndex].tiles[indexX][indexY] = tile;
+    },
+    addTilesToScene: (state, action) => {
+      const selectedArea = action.payload.selectedArea;
+      const [originX, originY] = action.payload.firstTileOriginInSprite;
+      const transparent = action.payload.transparent || [];
+
+      const layerIndex = state.scene.selectedLayerIndex;
+
+      const addTiles = (area) => {
+        const [indexX, indexY, sizeIndexX, sizeIndexY] = area;
+
+        MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
+          if (!transparent.includes(`${originX + x}.${originY + y}`)) {
+            if (!state.scene.layers[layerIndex].tiles[indexX + x]) {
+              state.scene.layers[layerIndex].tiles[indexX + x] = [];
+            }
+  
+            const source = action.payload.source;
+            const tiles = action.payload.tiles;
+            const tile = tiles?.[x]?.[y] || {
+              source: action.payload.source,
+              index: [originX + x, originY + y],
+            }
+  
+            state.scene.layers[layerIndex].tiles[indexX + x][indexY + y] = tile;
+          }
+        });
+      }
+
+      if (!action.payload.disableCheckExistedTile && CanvasUtil.hasExistedTile({
+        selectedArea,
+        firstTileOriginInSprite: [originX, originY],
+        layer: state.scene.layers[layerIndex],
+        transparent,
+      })) {
+        return;
+      }
+
+      const [indexX, indexY, sizeIndexX, sizeIndexY] = selectedArea;
+
+      MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
+        if (!transparent.includes(`${originX + x}.${originY + y}`)) {
+          if (!state.scene.layers[layerIndex].tiles[indexX + x]) {
+            state.scene.layers[layerIndex].tiles[indexX + x] = [];
+          }
+
+          const source = action.payload.source;
+          const tiles = action.payload.tiles;
+          const tile = tiles?.[x]?.[y] || {
+            source: action.payload.source,
+            index: [originX + x, originY + y],
+          }
+
+          state.scene.layers[layerIndex].tiles[indexX + x][indexY + y] = tile;
+        }
+      });      
+    },
+    deleteSceneTiles: (state, action) => {
+      const selectedArea = CanvasUtil.normalizeRect(action.payload.selectedArea);
+      const [indexX, indexY, sizeIndexX, sizeIndexY] = selectedArea;
+
+      const layerIndex = state.scene.selectedLayerIndex;
+
+      MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
+        if (!state.scene.layers[layerIndex].tiles[indexX + x]) {
+          state.scene.layers[layerIndex].tiles[indexX + x] = [];
+        }
+        state.scene.layers[layerIndex].tiles[indexX + x][indexY + y] = undefined;
+      });
     },
     addLayer: (state) => {
       state.scene.layers.push({ tiles: [] });
@@ -150,7 +238,9 @@ export const appStateSlice = createSlice({
 export const {
   setCursorPosition,
   addScene,
-  addSceneTile,
+  addTileToScene,
+  addTilesToScene,
+  deleteSceneTiles,
   addLayer,
   selectLayer,
 } = appStateSlice.actions;

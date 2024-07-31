@@ -1,6 +1,13 @@
 import { useEffect, useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCursorPosition, addSceneTile, selectedLayerSelector } from "@/features/appState/appStateSlice";
+import {
+  setCursorPosition,
+  addTileToScene,
+  addTilesToScene,
+  moveSceneTiles,
+  deleteSceneTiles,
+  selectedLayerSelector
+} from "@/features/appState/appStateSlice";
 import {
   selectAreaStart,
   selectArea,
@@ -10,7 +17,16 @@ import { useICanvasSelectArea } from "@/hooks/useCanvasSelectArea";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { useDropToDraw } from "@/hooks/useDropToDraw";
-import { useKeyBoard } from "@/hooks/useKeyBoard";
+import { 
+  useKeyBoard,
+  BACKSPACE_KEY,
+  ARROW_LEFT_KEY,
+  ARROW_UP_KEY,
+  ARROW_RIGHT_KEY,
+  ARROW_DOWN_KEY,
+  D_KEY,
+  S_KEY,
+} from "@/hooks/useKeyBoard";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
 
 function SelectModeBehavior({ children }) {
@@ -19,85 +35,15 @@ function SelectModeBehavior({ children }) {
   const position = useSelector((state) => state.appState.cursor.position);
   const scene = useSelector((state) => state.appState.scene);
   const selected = useSelector((state) => state.selectMode.selected);
+  const selectedArea = selected.rect;
   const spriteSheets = useSpriteSheets();
   const selectedLayer = useSelector(selectedLayerSelector);
   const dispatch = useDispatch();
 
-  const { register, connect } = useICanvasSelectArea({
-    canvasId: "canvas",
-    selected,
-    draggable: true,
-    position,
-    selectAreaStart: (index) => dispatch(selectAreaStart(index)),
-    selectArea: (index) => dispatch(selectArea(index)),
-    selectAreaStop: () => dispatch(selectAreaStop()),
-    setCursorPosition: (position) => dispatch(setCursorPosition(position)),
-    onMoveDown: (selected) => {
-      const [originX, originY, ...sizeIndex] = selected.origin;
-
-      if (!cacheSelectedTilesRef.current) {
-        cacheSelectedTilesRef.current = MatrixUtil.createBySize(sizeIndex, (x, y) => {
-          const tile = selectedLayer.tiles?.[originX + x]?.[originY + y];
- 
-          if (tile) {
-           dispatch(addSceneTile({
-             index: [originX + x, originY + y],
-             tile: undefined,
-           }));
-          }
- 
-          return tile;
-       });
-      }
-
-      if (!originSelectedRectRef.current) {
-        originSelectedRectRef.current = selected.origin;
-      }
-    },
-    onMoveDownEnd: () => {
-      if (selected.rect && cacheSelectedTilesRef.current) {
-        if (CanvasUtil.hasExistedTile({
-          selectedRect: selected.rect,
-          origin: [selected.rect[0], selected.rect[1]],
-          layer: selectedLayer,
-          transparent: MatrixUtil.find(
-            cacheSelectedTilesRef.current,
-            (tile) => tile === undefined,
-          ).map(([x, y]) => `${x + selected.rect[0]}.${y + selected.rect[1]}`),
-        })) {
-          const originSelectedRect = originSelectedRectRef.current;
-          dispatch(selectArea(originSelectedRect));
-          MatrixUtil.traverse([originSelectedRect[2], originSelectedRect[3]], (x, y) => {
-            dispatch(
-              addSceneTile({
-                index: [originSelectedRect[0] + x, originSelectedRect[1] + y],
-                tile: cacheSelectedTilesRef.current[x][y],
-              })
-            );
-          });
-        } else {
-          MatrixUtil.traverse([selected.rect[2], selected.rect[3]], (x, y) => {
-            if (cacheSelectedTilesRef.current[x][y]) {
-              dispatch(
-                addSceneTile({
-                  index: [selected.rect[0] + x, selected.rect[1] + y],
-                  tile: cacheSelectedTilesRef.current[x][y],
-                })
-              );
-            }
-          });
-        }
-      }
-
-      cacheSelectedTilesRef.current = null;
-      originSelectedRectRef.current = null;
-    }
-  });
-
   const inputMapping = useMemo(() => ({
-    ArrowLeft: (event) => {
-      if (!selected.rect || !scene) return;
-      const rect = CanvasUtil.normalizeRect(selected.rect);
+    [ARROW_LEFT_KEY]: (event) => {
+      if (!selectedArea || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selectedArea);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -105,9 +51,9 @@ function SelectModeBehavior({ children }) {
         selectArea([Math.max(0, rect[0] - 1), rect[1], sizeIndexX, sizeIndexY])
       );
     },
-    ArrowRight: (event) => {
-      if (!selected.rect || !scene) return;
-      const rect = CanvasUtil.normalizeRect(selected.rect);
+    [ARROW_RIGHT_KEY]: (event) => {
+      if (!selectedArea || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selectedArea);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -125,9 +71,9 @@ function SelectModeBehavior({ children }) {
         ])
       );
     },
-    ArrowUp: (event) => {
-      if (!selected.rect || !scene) return;
-      const rect = CanvasUtil.normalizeRect(selected.rect);
+    [ARROW_UP_KEY]: (event) => {
+      if (!selectedArea || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selectedArea);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -135,9 +81,9 @@ function SelectModeBehavior({ children }) {
         selectArea([rect[0], Math.max(0, rect[1] - 1), sizeIndexX, sizeIndexY])
       );
     },
-    ArrowDown: (event) => {
-      if (!selected.rect || !scene) return;
-      const rect = CanvasUtil.normalizeRect(selected.rect);
+    [ARROW_DOWN_KEY]: (event) => {
+      if (!selectedArea || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selectedArea);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -155,28 +101,82 @@ function SelectModeBehavior({ children }) {
       );
 
     },
-    Backspace: (event) => {
-      if (!selected.rect || !scene) return;
-      const rect = CanvasUtil.normalizeRect(selected.rect);
-      const sizeIndexX = rect[2];
-      const sizeIndexY = rect[3];
+    [BACKSPACE_KEY]: (event) => {
+      if (!selectedArea || !scene) return;
 
-      MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
-        dispatch(
-          addSceneTile({
-            index: [rect[0] + x, rect[1] + y],
-            tile: undefined,
-          })
-        );
-      });
+      dispatch(deleteSceneTiles({
+        selectedArea: selectedArea
+      }));
     },
-  }), [selected, scene]);
+  }), [selectedArea, scene]);
 
-  useKeyBoard(inputMapping);
+  const { isHolding } = useKeyBoard(inputMapping);
+
+  const isMoveAddTilesMode = () => isHolding(S_KEY) && isHolding(D_KEY);
+
+  const { register, connect } = useICanvasSelectArea({
+    canvasId: "canvas",
+    selected,
+    draggable: true,
+    position,
+    selectAreaStart: (index) => dispatch(selectAreaStart(index)),
+    selectArea: (index) => dispatch(selectArea(index)),
+    selectAreaStop: () => dispatch(selectAreaStop()),
+    setCursorPosition: (position) => dispatch(setCursorPosition(position)),
+    onMoveDown: (area) => {
+      const [originX, originY, ...sizeIndex] = area.origin;
+
+      if (!cacheSelectedTilesRef.current) {
+        cacheSelectedTilesRef.current = MatrixUtil.createBySize(sizeIndex, (x, y) => {
+          const tile = selectedLayer.tiles?.[originX + x]?.[originY + y];
+ 
+          if (tile && !isHolding(S_KEY)) {
+           dispatch(addTileToScene({
+             index: [originX + x, originY + y],
+             tile: undefined,
+           }));
+          }
+ 
+          return tile;
+       });
+      }
+
+      if (isMoveAddTilesMode()) {
+        if (area.next && originSelectedRectRef.current) {
+          dispatch(addTilesToScene({
+            selectedArea,
+            firstTileOriginInSprite: [area.next[0], area.next[1]],
+            tiles: cacheSelectedTilesRef.current,
+            transparent: MatrixUtil.find(cacheSelectedTilesRef.current, (tile) => tile === undefined)
+              .map(([x, y]) => `${x + area.next[0]}.${y + area.next[1]}`),
+          }));
+        }
+      }
+
+      if (!originSelectedRectRef.current) {
+        originSelectedRectRef.current = area.origin;
+      }
+    },
+    onMoveDownEnd: () => {
+      if (selectedArea && cacheSelectedTilesRef.current) {
+        dispatch(moveSceneTiles({
+          selectedArea,
+          firstTileOriginInSprite: [selectedArea[0], selectedArea[1]],
+          tiles: cacheSelectedTilesRef.current,
+          transparent: MatrixUtil.find(cacheSelectedTilesRef.current, (tile) => tile === undefined)
+            .map(([x, y]) => `${x + selectedArea[0]}.${y + selectedArea[1]}`),
+          restoreArea: isMoveAddTilesMode() ? null : originSelectedRectRef.current,
+        }));
+      }
+
+      cacheSelectedTilesRef.current = null;
+      originSelectedRectRef.current = null;
+    }
+  });
 
   const cache = useCallback((ctx) => {
-    if (selected.rect && cacheSelectedTilesRef.current) {
-      MatrixUtil.traverse([selected.rect[2], selected.rect[3]], (x, y) => {
+    if (selectedArea && cacheSelectedTilesRef.current) {
+      MatrixUtil.traverse([selectedArea[2], selectedArea[3]], (x, y) => {
         const tile = cacheSelectedTilesRef.current[x][y];
 
         if (tile) {
@@ -186,8 +186,8 @@ function SelectModeBehavior({ children }) {
             0,
             16,
             16,
-            (selected.rect[0] + x) * 16,
-            (selected.rect[1] + y) * 16,
+            (selectedArea[0] + x) * 16,
+            (selectedArea[1] + y) * 16,
             16,
             16
           );
@@ -195,8 +195,8 @@ function SelectModeBehavior({ children }) {
       });
     }
 
-    CanvasUtil.selected(ctx, selected.rect);
-  }, [selected.rect]);
+    CanvasUtil.selected(ctx, selectedArea);
+  }, [selectedArea]);
 
   const { setup: setupDropToDraw } = useDropToDraw({ id: "canvas" });
 

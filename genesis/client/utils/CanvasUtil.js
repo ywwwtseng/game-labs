@@ -179,16 +179,16 @@ class CanvasUtil {
   }
 
   static hasExistedTile({
-    selectedRect,
-    origin,
+    selectedArea,
+    firstTileOriginInSprite,
     layer,
     transparent,
   }) {
-    for (let x = 0; x < selectedRect[2]; x++) {
-      for (let y = 0; y < selectedRect[3]; y++) {
+    for (let x = 0; x < selectedArea[2]; x++) {
+      for (let y = 0; y < selectedArea[3]; y++) {
         if (
-          layer.tiles?.[selectedRect[0] + x]?.[selectedRect[1] + y] &&
-          !transparent.includes(`${origin[0] + x}.${origin[1] + y}`)
+          layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y] &&
+          !transparent.includes(`${firstTileOriginInSprite[0] + x}.${firstTileOriginInSprite[1] + y}`)
         ) {
           return true;
         }

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setupDropzone } from "@/context/DragAndDropContext";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
 import { draw } from "@/features/appState/appStateSlice";
-import { addSceneTile } from "@/features/appState/appStateSlice";
+import { addTileToScene } from "@/features/appState/appStateSlice";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
@@ -31,7 +31,7 @@ function useDropToDraw({ id }) {
 
         MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
           dispatch(
-            addSceneTile({
+            addTileToScene({
               index: [originX + x, originY + y],
               tile: {
                 index: data.index,
