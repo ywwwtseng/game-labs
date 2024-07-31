@@ -45,7 +45,7 @@ function useDropToDraw({ id }) {
           draw({
             event,
             selected: {
-              rect: data.rect,
+              rect: [...data.index, 1, 1],
               source: data.source,
             },
             transparent: spriteSheets[data.source].transparent,
