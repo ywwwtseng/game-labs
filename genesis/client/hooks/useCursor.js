@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useObservableRef } from "@/hooks/useObservableRef";
 import { BoundingBox } from "@/helpers/BoundingBox";
 import { useCursorDelta } from "@/hooks/useCursorDelta";
 
@@ -14,7 +15,7 @@ function useCursor({
   const cursorRef = useRef(null);
   const upHandlerRef = useRef(null);
   const moveHandlerRef = useRef(null);
-  const iconRef = useRef(icon);
+  const iconRef = useObservableRef(icon);
 
   const onMouseMove = (event) => {
     if (iconRef.current.display) {
@@ -100,10 +101,6 @@ function useCursor({
     upHandlerRef.current = onMouseUp;
     document.addEventListener("mouseup", upHandlerRef.current);
   };
-
-  useEffect(() => {
-    iconRef.current = icon;
-  }, [icon]);
 
   return {
     setup: {

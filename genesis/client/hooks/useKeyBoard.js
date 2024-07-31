@@ -1,11 +1,8 @@
 import { useEffect, useRef } from "react";
+import { useObservableRef } from "@/hooks/useObservableRef";
 
 function useKeyBoard(inputMapping) {
-  const inputRef = useRef({});
-
-  useEffect(() => {
-    inputRef.current = inputMapping;
-  }, [inputMapping]);
+  const inputRef = useObservableRef(inputMapping);
 
   useEffect(() => {
     const handlePress = (event) => {
