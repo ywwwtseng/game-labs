@@ -5,9 +5,32 @@ class MatrixUtil {
     return Array.isArray(matrix) && Array.isArray(matrix[0]);
   }
 
-  static size(matrix) {
-    return [matrix.length, matrix[0].length];
+  static sizeIndex(any) {
+    if (MatrixUtil.isMatrix(any)) {
+      const matrix = any;
+      return [matrix.length, matrix[0].length];
+    } else {
+      const rect = any;
+      return [rect[2], rect[3]];
+    }
   }
+
+  static size(any) {
+    if (MatrixUtil.isMatrix(any)) {
+      const matrix = any;
+      return {
+        x: matrix.length * 16,
+        y: matrix[0].length * 16
+      };
+    } else {
+      const rect = any;
+      return {
+        x: rect[2] * 16,
+        y: rect[3] * 16
+      };
+    }
+  }
+
 
   static forEach(matrix, callback) {
     matrix.forEach((column, x) => {

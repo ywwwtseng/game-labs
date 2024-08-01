@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useObservableRef } from "@/hooks/useObservableRef";
-import { BoundingBox } from "@/helpers/BoundingBox";
+import { getBoundingBox } from "@/helpers/BoundingBox";
 import { useCursorDelta } from "@/hooks/useCursorDelta";
 
 function useCursor({
@@ -31,7 +31,7 @@ function useCursor({
       }
 
   
-      const bounds = new BoundingBox(cursorRef.current);
+      const bounds = getBoundingBox(cursorRef.current);
       const position = {
         x: event.pageX - bounds.size.x / 2,
         y: event.pageY - bounds.size.y / 2,
@@ -46,10 +46,10 @@ function useCursor({
     const { delta } = cursorDelta.move(event);
 
     if (isPressRef.current) {
-      onDownMove?.(event, delta);
+      onDownMove?.(event, delta, cursorRef.current);
     }
 
-      onMove?.(event, delta);
+      onMove?.(event, delta, cursorRef.current);
   };
 
   const onMouseEnter = () => {
@@ -75,10 +75,10 @@ function useCursor({
 
     isPressRef.current = false;
 
-    if (cursorRef.current) {
-      cursorRef.current.remove();
-      cursorRef.current = null;
-    }
+    // if (cursorRef.current) {
+    //   cursorRef.current.remove();
+    //   cursorRef.current = null;
+    // }
 
     if (upHandlerRef.current) {
       document.removeEventListener("mouseup", upHandlerRef.current);
@@ -93,10 +93,10 @@ function useCursor({
     cursorDelta.start(event);
 
     if (isPressRef.current) {
-      onDownMove?.(event, null);
+      onDownMove?.(event, null, cursorRef.current);
     }
 
-    onMove?.(event, null);
+    onMove?.(event, null, cursorRef.current);
 
     upHandlerRef.current = onMouseUp;
     document.addEventListener("mouseup", upHandlerRef.current);

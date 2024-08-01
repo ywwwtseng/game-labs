@@ -74,7 +74,7 @@ function CreatePatternModal() {
           {!source && (
             <div className="flex items-center mt-1">
               <AlertIcon className="mr-2" color="fill-red-600" />
-              <Text size="xs" color="red-600">Need the same source</Text>
+              <Text size="xs" color="white">Need the same source</Text>
             </div>
           )}
           

@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { BoundingBox } from "@/helpers/BoundingBox";
+import { getBoundingBox } from "@/helpers/BoundingBox";
 
 const defaultProps = {
   clickAwayListener: false,
@@ -42,7 +42,7 @@ function useAnchor({ clickAwayListener = false } = defaultProps) {
       return null;
     }
 
-    return new BoundingBox(anchor);
+    return getBoundingBox(anchor);
   }, [anchor]);
 
   return {

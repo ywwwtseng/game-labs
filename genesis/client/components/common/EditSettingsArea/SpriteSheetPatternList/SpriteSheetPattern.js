@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Draggable } from "@/containers/Draggable";
 import { OperableItem } from "@/components/common/OperableItem";
-import { Canvas2D, CANVAS_LAYER } from "@/components/common/Canvas2D";
+import { CANVAS_LAYER } from "@/components/common/Canvas2D";
 import { Text } from "@/components/ui/Text";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
 function SpriteSheetPattern({ spriteSheet, pattern }) {
   const ref = useRef(null);
-  const { source } = spriteSheet;
-  const sizeIndex = useMemo(() => MatrixUtil.size(pattern.tiles), [pattern.tiles]);
+  const sizeIndex = useMemo(() => {
+    const size = MatrixUtil.sizeIndex(pattern.tiles);
+    return [size.x, size.y];
+  }, [pattern.tiles]);
   const size = {
     x: sizeIndex[0] > sizeIndex[1] ? 64 : 64 * sizeIndex[0] / sizeIndex[1],
     y: sizeIndex[1] > sizeIndex[0] ? 64 : 64 * sizeIndex[1] / sizeIndex[0]

@@ -4,35 +4,34 @@ import * as drawModeActions from "@/features/drawMode/drawModeSlice";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { MODE } from "@/constants";
+import { Vec2Util } from "@/utils/Vec2Util";
 
 export const setMode = createAsyncThunk(
   "appState/setMode",
-  async (
-    { mode, payload },
-    { getState, dispatch }) => {
-      const lifecycle = {
-        [MODE.SELECT]: selectModeActions,
-        [MODE.DRAW]: drawModeActions,
-      };
+  async ({ mode, payload }, { getState, dispatch }) => {
+    const lifecycle = {
+      [MODE.SELECT]: selectModeActions,
+      [MODE.DRAW]: drawModeActions,
+    };
 
-      const state = getState();
-      const prevMode = state.appState.mode;
+    const state = getState();
+    const prevMode = state.appState.mode;
 
-      if (prevMode !== mode) {
-        const destroy = lifecycle[prevMode]?.destroy;
+    if (prevMode !== mode) {
+      const destroy = lifecycle[prevMode]?.destroy;
 
-        if (destroy) {
-          dispatch(destroy());
-        }
+      if (destroy) {
+        dispatch(destroy());
       }
+    }
 
-      const init = lifecycle[mode]?.init
+    const init = lifecycle[mode]?.init;
 
-      if (init) {
-        dispatch(init(payload));
-      }
+    if (init) {
+      dispatch(init(payload));
+    }
 
-      return mode;
+    return mode;
   }
 );
 
@@ -48,9 +47,8 @@ export const draw = createAsyncThunk(
       const sizeX = sizeIndexX * 16;
       const sizeY = sizeIndexY * 16;
 
-      const pos = CanvasUtil.getPosition(event, event.target, {
-        x: -(sizeX / 2) + 8,
-        y: -(sizeY / 2) + 8,
+      const pos = Vec2Util.calc(CanvasUtil.getPosition(event, event.target), {
+        add: { x: -(sizeX / 2) + 8, y: -(sizeY / 2) + 8 },
       });
 
       const index = CanvasUtil.positionToIndex(pos);
@@ -66,12 +64,14 @@ export const draw = createAsyncThunk(
         return;
       }
 
-      dispatch(addTilesToScene({
-        selectedArea: [index[0], index[1], sizeIndexX, sizeIndexY],
-        firstTileOriginInSprite: [originX, originY],
-        transparent,
-        source: selected.source,
-      }));
+      dispatch(
+        addTilesToScene({
+          selectedArea: [index[0], index[1], sizeIndexX, sizeIndexY],
+          firstTileOriginInSprite: [originX, originY],
+          transparent,
+          source: selected.source,
+        })
+      );
     } catch (error) {
       console.log(error);
     }
@@ -80,36 +80,43 @@ export const draw = createAsyncThunk(
 
 export const moveSceneTiles = createAsyncThunk(
   "appState/moveSceneTiles",
-  async ({ selectedArea, firstTileOriginInSprite, tiles, transparent, restoreArea }, { getState, dispatch }) => {
+  async (
+    { selectedArea, firstTileOriginInSprite, tiles, transparent, restoreArea },
+    { getState, dispatch }
+  ) => {
     const [originX, originY] = firstTileOriginInSprite;
     const state = getState();
     const scene = state.appState.scene;
     const layer = scene.layers[scene.selectedLayerIndex];
 
-    if (CanvasUtil.hasExistedTile({
-      selectedArea,
-      firstTileOriginInSprite: [originX, originY],
-      layer,
-      transparent,
-    })) {
-      dispatch(selectModeActions.selectArea(restoreArea));
-      dispatch(addTilesToScene({
-        selectedArea: restoreArea,
-        firstTileOriginInSprite,
-        tiles,
-        transparent,
-        disableCheckExistedTile: true,
-      }));
-    } else {
-      dispatch(addTilesToScene({
+    if (
+      CanvasUtil.hasExistedTile({
         selectedArea,
-        firstTileOriginInSprite,
-        tiles,
+        firstTileOriginInSprite: [originX, originY],
+        layer,
         transparent,
-      }));
+      })
+    ) {
+      dispatch(selectModeActions.selectArea(restoreArea));
+      dispatch(
+        addTilesToScene({
+          selectedArea: restoreArea,
+          firstTileOriginInSprite,
+          tiles,
+          transparent,
+          disableCheckExistedTile: true,
+        })
+      );
+    } else {
+      dispatch(
+        addTilesToScene({
+          selectedArea,
+          firstTileOriginInSprite,
+          tiles,
+          transparent,
+        })
+      );
     }
-
-    
   }
 );
 
@@ -167,25 +174,28 @@ export const appStateSlice = createSlice({
             if (!state.scene.layers[layerIndex].tiles[indexX + x]) {
               state.scene.layers[layerIndex].tiles[indexX + x] = [];
             }
-  
+
             const source = action.payload.source;
             const tiles = action.payload.tiles;
             const tile = tiles?.[x]?.[y] || {
               source: action.payload.source,
               index: [originX + x, originY + y],
-            }
-  
+            };
+
             state.scene.layers[layerIndex].tiles[indexX + x][indexY + y] = tile;
           }
         });
-      }
+      };
 
-      if (!action.payload.disableCheckExistedTile && CanvasUtil.hasExistedTile({
-        selectedArea,
-        firstTileOriginInSprite: [originX, originY],
-        layer: state.scene.layers[layerIndex],
-        transparent,
-      })) {
+      if (
+        !action.payload.disableCheckExistedTile &&
+        CanvasUtil.hasExistedTile({
+          selectedArea,
+          firstTileOriginInSprite: [originX, originY],
+          layer: state.scene.layers[layerIndex],
+          transparent,
+        })
+      ) {
         return;
       }
 
@@ -202,14 +212,16 @@ export const appStateSlice = createSlice({
           const tile = tiles?.[x]?.[y] || {
             source: action.payload.source,
             index: [originX + x, originY + y],
-          }
+          };
 
           state.scene.layers[layerIndex].tiles[indexX + x][indexY + y] = tile;
         }
-      });      
+      });
     },
     deleteSceneTiles: (state, action) => {
-      const selectedArea = CanvasUtil.normalizeRect(action.payload.selectedArea);
+      const selectedArea = CanvasUtil.normalizeRect(
+        action.payload.selectedArea
+      );
       const [indexX, indexY, sizeIndexX, sizeIndexY] = selectedArea;
 
       const layerIndex = state.scene.selectedLayerIndex;
@@ -218,7 +230,8 @@ export const appStateSlice = createSlice({
         if (!state.scene.layers[layerIndex].tiles[indexX + x]) {
           state.scene.layers[layerIndex].tiles[indexX + x] = [];
         }
-        state.scene.layers[layerIndex].tiles[indexX + x][indexY + y] = undefined;
+        state.scene.layers[layerIndex].tiles[indexX + x][indexY + y] =
+          undefined;
       });
     },
     addLayer: (state) => {
@@ -245,6 +258,7 @@ export const {
   selectLayer,
 } = appStateSlice.actions;
 
-export const selectedLayerSelector = (state) => state.appState.scene.layers[state.appState.scene.selectedLayerIndex]
+export const selectedLayerSelector = (state) =>
+  state.appState.scene.layers[state.appState.scene.selectedLayerIndex];
 
 export default appStateSlice.reducer;

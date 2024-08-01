@@ -1,4 +1,4 @@
-import { BoundingBox } from "@/helpers/BoundingBox";
+import { getBoundingBox } from "@/helpers/BoundingBox";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 
 class CanvasUtil {
@@ -6,19 +6,19 @@ class CanvasUtil {
     return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAB9JREFUOE9jZKAQMFKon2HUAIbRMGAYDQNQPhr4vAAAJpgAEX/anFwAAAAASUVORK5CYII=";
   }
 
-  static getPosition(event, box, offset = { x: 0, y: 0 }, allowDiff = 0) {
-    const bounds = new BoundingBox(box);
-    const originX = event.pageX - bounds.pos.x + offset.x;
-    const originY = event.pageY - bounds.pos.y + offset.y;
+  static getPosition(event, box) {
+    const bounds = getBoundingBox(box);
+    const originX = event.pageX - bounds.pos.x;
+    const originY = event.pageY - bounds.pos.y;
 
     return {
       x: Math.min(Math.max(1, originX), bounds.size.x - 1),
       y: Math.min(Math.max(1, originY), bounds.size.y - 1),
       within:
-        originX >= 0 - allowDiff &&
-        originX <= bounds.size.x + allowDiff &&
-        originY >= 0 - allowDiff &&
-        originY <= bounds.size.y + allowDiff,
+        originX >= 0 &&
+        originX <= bounds.size.x &&
+        originY >= 0 &&
+        originY <= bounds.size.y,
     };
   }
 
@@ -108,7 +108,7 @@ class CanvasUtil {
   static calc(rect, { limit }) {
     if (limit) {
       const [x, y, dx, dy] = CanvasUtil.normalizeRect(rect);
-      const bounds = new BoundingBox(limit);
+      const bounds = getBoundingBox(limit);
       const maxIndex = CanvasUtil.positionToIndex({
         x: bounds.size.x,
         y: bounds.size.y,

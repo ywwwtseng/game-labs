@@ -4,7 +4,7 @@ import { Text } from "@/components/ui/Text";
 import { Dropdown } from "@/components/ui/Dropdown/Dropdown";
 import { CreateSceneModal } from "@/components/common/CreateSceneModal";
 import { useExportPng } from "@/hooks/useExportPng";
-import { BoundingBox } from "@/helpers/BoundingBox";
+import { getBoundingBox } from "@/helpers/BoundingBox";
 import { useModal } from "@/context/ModalContext";
 import logo from "@/icon.png";
 
@@ -112,7 +112,7 @@ function Navigation() {
               }
             }}
             onMouseLeave={(event) => {
-              const bounds = new BoundingBox(event.target);
+              const bounds = getBoundingBox(event.target);
               if (event.pageY && event.pageY >= bounds.size.y) {
                 return;
               }

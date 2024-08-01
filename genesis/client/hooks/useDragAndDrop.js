@@ -1,6 +1,6 @@
 import { useRef, useCallback, useContext, useMemo } from "react";
 import { DragAndDropContext } from "@/context/DragAndDropContext";
-import { BoundingBox } from "@/helpers/BoundingBox";
+import { getBoundingBox } from "@/helpers/BoundingBox";
 import { useDataTransfer } from "@/hooks/useDataTransfer";
 import { useCursorDelta } from "@/hooks/useCursorDelta";
 
@@ -28,7 +28,7 @@ function useDragAndDrop({
         document.body.append(draggedItemRef.current);
       }
 
-      const bounds = new BoundingBox(draggedItemRef.current);
+      const bounds = getBoundingBox(draggedItemRef.current);
       draggedItemRef.current.style.pointerEvents = "none";
       draggedItemRef.current.style.position = "fixed";
       draggedItemRef.current.style.zIndex = 9999;
@@ -41,7 +41,7 @@ function useDragAndDrop({
     const { delta } = cursorDelta.move(event);
 
     if (delta) {
-      onMove?.(delta);
+      onMove?.(delta, draggedItemRef.current);
     }
   }, []);
 

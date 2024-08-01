@@ -4,6 +4,7 @@ import { CanvasUtil } from "@/utils/CanvasUtil";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
 import { useCursor } from "@/hooks/useCursor";
 import { draw } from "@/features/appState/appStateSlice";
+import { getBoundingBox, contain } from '@/helpers/BoundingBox';
 
 function DrawModeBehavior({ children }) {
   const spriteSheets = useSpriteSheets();
@@ -19,14 +20,23 @@ function DrawModeBehavior({ children }) {
         displayId
       )
     }), [spriteSheets, drawMode]),
+    onMove: (event, _, icon) => {
+      const bounds = getBoundingBox({ event, rect: drawMode.rect });
+      if (icon) {
+        icon.style.opacity = contain(event.target, { in: bounds }) ? 1 : 0.5;
+      }
+    },
     onDownMove: (event) => {
-      dispatch(
-        draw({
-          event,
-          selected: drawMode,
-          transparent: spriteSheets[drawMode.source].transparent,
-        })
-      );
+      const bounds = getBoundingBox({ event, rect: drawMode.rect });
+      if (contain(event.target, { in: bounds })) {
+        dispatch(
+          draw({
+            event,
+            selected: drawMode,
+            transparent: spriteSheets[drawMode.source].transparent,
+          })
+        );
+      }
     },
   });
 

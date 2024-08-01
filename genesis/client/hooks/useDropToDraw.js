@@ -6,6 +6,7 @@ import { draw } from "@/features/appState/appStateSlice";
 import { addTileToScene } from "@/features/appState/appStateSlice";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
+import { getBoundingBox, overlaps } from "@/helpers/BoundingBox";
 
 function useDropToDraw({ id }) {
   const selectedRect = useSelector((state) => state.selectMode.selected.rect);
@@ -17,19 +18,17 @@ function useDropToDraw({ id }) {
       tile: (event, data) => {
         event.preventDefault();
         if (!data) return;
-  
-        const pos = CanvasUtil.getPosition(event, document.getElementById(id));
-        const index = CanvasUtil.positionToIndex(pos);
-  
+
+        const canvas = document.getElementById(id);
+        const rect = [...data.index, 1, 1];
+        
         if (
           selectedRect &&
-          index[0] >= selectedRect[0] &&
-          index[0] < selectedRect[0] + selectedRect[2] &&
-          index[1] >= selectedRect[1] &&
-          index[1] < selectedRect[1] + selectedRect[3]
+          overlaps({ selectedArea: selectedRect, canvas }, { event, rect })
         ) {
+
           const [originX, originY, sizeIndexX, sizeIndexY] = selectedRect;
-  
+
           MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
             dispatch(
               addTileToScene({
@@ -64,7 +63,7 @@ function useDropToDraw({ id }) {
   const setup = setupDropzone({ id, accept: ["tile", "pattern"], events });
 
   return {
-    setup
+    setup,
   };
 }
 

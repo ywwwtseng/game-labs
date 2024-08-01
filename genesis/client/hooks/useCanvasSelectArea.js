@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { produce } from "immer";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
-import { BoundingBox } from "@/helpers/BoundingBox";
+import { overlaps } from "@/helpers/BoundingBox";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { Vec2Util } from "@/utils/Vec2Util";
 
@@ -21,7 +21,6 @@ function useICanvasSelectArea({
   onMoveDownEnd = () => {},
   onSelected = () => {},
 }) {
-  const moveDownCache = useRef(null);
   const isPressRef = useRef(false);
   const hasMoveDownBehaviorRef = useRef(false);
   const ref = useRef(null);
@@ -31,7 +30,7 @@ function useICanvasSelectArea({
       if (
         ref.current &&
         draggedEl &&
-        new BoundingBox(ref.current).overlaps(new BoundingBox(draggedEl))
+        overlaps(ref.current, draggedEl)
       ) {
         return false;
       }
