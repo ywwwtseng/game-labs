@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { CanvasUtil } from "@/utils/CanvasUtil";
+import { MatrixUtil } from "@/utils/MatrixUtil";
 
 export const CANVAS_LAYER = {
   GRID: ({ width, height }) => ({
@@ -9,7 +10,7 @@ export const CANVAS_LAYER = {
   TILES: ({ tiles, width, height }) => ({
     name: 'TILES',
     buffer: CanvasUtil.createTileBuffer(
-      tiles,
+      MatrixUtil.isMatrix(tiles) ? [{ tiles }] : tiles,
       width + 1,
       height + 1,
     ),

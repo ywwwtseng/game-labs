@@ -31,7 +31,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
       label={
         <Draggable
           data={{
-            type: "tiles",
+            type: "tile",
             source: spriteSheet.source,
             index: [...index, 1, 1],
           }}
@@ -41,10 +41,6 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
               drawImage(el);
               return el;
             },
-            pos: (event, bounds) => ({
-              x: event.pageX - bounds.size.x / 2,
-              y: event.pageY - bounds.size.y / 2,
-            }),
           }}
         >
           <canvas ref={ref} width={width} height={height} />

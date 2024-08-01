@@ -5,7 +5,6 @@ import { useCanvasSelectArea } from "@/hooks/useCanvasSelectArea";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 
 function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
-  const tiles = useMemo(() => [{ tiles: spriteSheet.tiles }], [spriteSheet.tiles]);
   const { selected, register, connect } = useCanvasSelectArea({
     defaultSelected,
     selectedWhenMouseLeave: true,
@@ -19,10 +18,6 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
         }
         return MatrixUtil.drawSelected(data.selected, spriteSheet);
       },
-      pos: (event, bounds) => ({
-        x: event.pageX - bounds.size.x / 2,
-        y: event.pageY - bounds.size.y / 2,
-      }),
     },
     onSelected: (selected) => {
       if (onSelected && selected.rect) {
@@ -38,7 +33,7 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
 
   const layers = useMemo(() => [
     CANVAS_LAYER.TILES({
-      tiles,
+      tiles: spriteSheet.tiles,
       width: spriteSheet.image.naturalWidth,
       height: spriteSheet.image.naturalHeight,
     }),
@@ -46,7 +41,7 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
       width: spriteSheet.image.naturalWidth,
       height: spriteSheet.image.naturalHeight,
     }),
-  ], [spriteSheet.image.naturalWidth, spriteSheet.image.naturalHeight, tiles]);
+  ], [spriteSheet.image.naturalWidth, spriteSheet.image.naturalHeight, spriteSheet.tiles]);
 
   const cache = useCallback((ctx) => {
     CanvasUtil.selected(ctx, selected.rect);

@@ -5,6 +5,7 @@ import { MatrixUtil } from "@/utils/MatrixUtil";
 import { Dropdown } from "@/components/ui/Dropdown/Dropdown";
 import { useAnchor } from "@/hooks/useAnchor";
 import { SpriteSheetTileList } from "@/components/common/EditSettingsArea/SpriteSheetTileList/SpriteSheetTileList";
+import { SpriteSheetPatternList } from "@/components/common/EditSettingsArea/SpriteSheetPatternList/SpriteSheetPatternList";
 
 const SpriteSheetSettings = memo(({ spriteSheet }) => {
   const { open, toggle } = useAnchor({ clickAwayListener: true });
@@ -16,6 +17,7 @@ const SpriteSheetSettings = memo(({ spriteSheet }) => {
       onClick: () => {
         setOpened("tiles");
       },
+      component: SpriteSheetTileList
     },
     {
       type: "option",
@@ -24,9 +26,12 @@ const SpriteSheetSettings = memo(({ spriteSheet }) => {
       onClick: () => {
         setOpened('patterns');
       },
+      component: SpriteSheetPatternList
     },
   ];
   const [opened, setOpened] = useState(options[0].id);
+  const selectedOption = options.find((option) => option.id === opened);
+  const List = selectedOption.component;
 
   return (
     <div className="flex-1 flex flex-col">
@@ -63,12 +68,12 @@ const SpriteSheetSettings = memo(({ spriteSheet }) => {
         <Dropdown
           icon
           open={open}
-          label={options.find((option) => option.id === opened).label}
+          label={selectedOption.label}
           options={options}
           onClick={toggle}
         />
       </div>
-      <SpriteSheetTileList spriteSheet={spriteSheet} />
+      <List spriteSheet={spriteSheet} />
     </div>
   );
 });

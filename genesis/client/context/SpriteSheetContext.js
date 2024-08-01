@@ -30,12 +30,12 @@ export const SpriteSheetProvider = ({ children }) => {
     if (data && data.list) {
       Promise.all(
         data.list
-          .filter(({ source }) => !Object.keys(spriteSheets).includes(source))
+          // .filter(({ id }) => !Object.keys(spriteSheets).includes(id))
           .map((spriteSheet) =>
             Promise.all([
               spriteSheet,
               LoaderUtil.loadImage(
-                `${window.location.origin}${spriteSheet.source}`
+                `${window.location.origin}${spriteSheet.path}`
               ),
             ])
           )
@@ -58,15 +58,14 @@ export const SpriteSheetProvider = ({ children }) => {
               };
             });
 
-            acc[spriteSheet.source] = {
+            acc[spriteSheet.id] = {
               image,
               name: spriteSheet.name,
-              source: spriteSheet.source,
+              source: spriteSheet.id,
               index,
               tiles,
               transparent: spriteSheet.transparent.split(","),
-              // TODO:
-              patterns: [],
+              patterns: spriteSheet.patterns,
               animations: [],
             };
             return acc;
@@ -86,6 +85,11 @@ export const SpriteSheetProvider = ({ children }) => {
 export function useSpriteSheets() {
   const spriteSheets = useContext(SpriteSheetContext);
   return spriteSheets;
+}
+
+export function useSpriteSheet(source) {
+  const spriteSheets = useContext(SpriteSheetContext);
+  return spriteSheets?.[source];
 }
 
 export function useUpdateSpriteSheets() {

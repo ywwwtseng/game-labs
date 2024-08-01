@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setupDropzone } from "@/context/DragAndDropContext";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
@@ -12,51 +12,56 @@ function useDropToDraw({ id }) {
 
   const dispatch = useDispatch();
   const spriteSheets = useSpriteSheets();
-  const onDrop = useCallback(
-    (event, data) => {
-      event.preventDefault();
-      if (!data) return;
-
-      const pos = CanvasUtil.getPosition(event, document.getElementById(id));
-      const index = CanvasUtil.positionToIndex(pos);
-
-      if (
-        selectedRect &&
-        index[0] >= selectedRect[0] &&
-        index[0] < selectedRect[0] + selectedRect[2] &&
-        index[1] >= selectedRect[1] &&
-        index[1] < selectedRect[1] + selectedRect[3]
-      ) {
-        const [originX, originY, sizeIndexX, sizeIndexY] = selectedRect;
-
-        MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
+  const events = useMemo(
+    () => ({
+      tile: (event, data) => {
+        event.preventDefault();
+        if (!data) return;
+  
+        const pos = CanvasUtil.getPosition(event, document.getElementById(id));
+        const index = CanvasUtil.positionToIndex(pos);
+  
+        if (
+          selectedRect &&
+          index[0] >= selectedRect[0] &&
+          index[0] < selectedRect[0] + selectedRect[2] &&
+          index[1] >= selectedRect[1] &&
+          index[1] < selectedRect[1] + selectedRect[3]
+        ) {
+          const [originX, originY, sizeIndexX, sizeIndexY] = selectedRect;
+  
+          MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
+            dispatch(
+              addTileToScene({
+                index: [originX + x, originY + y],
+                tile: {
+                  index: data.index,
+                  source: data.source,
+                },
+              })
+            );
+          });
+        } else {
           dispatch(
-            addTileToScene({
-              index: [originX + x, originY + y],
-              tile: {
-                index: data.index,
+            draw({
+              event,
+              selected: {
+                rect: [...data.index, 1, 1],
                 source: data.source,
               },
+              transparent: spriteSheets[data.source].transparent,
             })
           );
-        });
-      } else {
-        dispatch(
-          draw({
-            event,
-            selected: {
-              rect: [...data.index, 1, 1],
-              source: data.source,
-            },
-            transparent: spriteSheets[data.source].transparent,
-          })
-        );
-      }
-    },
+        }
+      },
+      pattern: (event, data) => {
+        console.log("pattern");
+      },
+    }),
     [spriteSheets, selectedRect]
   );
 
-  const setup = setupDropzone({ id, accept: "tiles", onDrop });
+  const setup = setupDropzone({ id, accept: ["tile", "pattern"], events });
 
   return {
     setup

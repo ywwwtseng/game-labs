@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
 import { JSONFilePreset } from "lowdb/node";
 
@@ -20,8 +21,19 @@ const MIME_TYPE_MAP = {
 const app = express();
 const port = 3000;
 
+const unless = function(path, middleware) {
+  return function(req, res, next) {
+      if (path === req.baseUrl) {
+          return next();
+      } else {
+          return middleware(req, res, next);
+      }
+  };
+};
+
 app.use(express.static("dist"));
 app.use(express.static("public"));
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   // Send the HTML file as the response
@@ -45,11 +57,34 @@ const upload = multer({ storage: storage });
 
 app.get("/api/sprites", (req, res) => {
   const { sprites } = db.data;
-  const filenames = fs.readdirSync(path.join(__dirname, "public", "sprites"));
-  res.send({ filenames, list: sprites });
+  res.send({ list: sprites });
 });
 
-app.post("/api/sprites/:source/patterns", (req, res) => {
+app.post("/api/sprites/:source/patterns", async (req, res) => {
+  const { sprites } = db.data;
+  const index = sprites.findIndex((sprite) => sprite.id === req.params.source);
+
+  if (index === -1) {
+    return res.status(400).send("No match any sprites.");
+  }
+
+  await db.update(({ sprites }) => {
+    sprites[index] = {
+      ...sprites[index],
+      patterns: [
+        ...sprites[index].patterns,
+        {
+          name: req.body.name,
+          tiles: req.body.tiles,
+        }
+      ],
+    }
+  });
+
+  res.send({
+    ok: true,
+    message: "Pattern uploaded successfully",
+  });
 
 });
 
@@ -61,8 +96,9 @@ app.post("/api/image/upload", upload.single("image"), async (req, res) => {
 
   await db.update(({ sprites }) =>
     sprites.push({
+      id: req.file.path.match(/\d+/g).join(""),
       name: req.file.originalname.replace(".png", ""),
-      source: req.file.path.replace("public", ""),
+      path: req.file.path.replace("public", ""),
       transparent: req.body.transparent,
       patterns: [],
       animations: [],

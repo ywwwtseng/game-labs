@@ -21,15 +21,11 @@ function useKeyBoard(inputMapping) {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      event.preventDefault();
-      event.stopPropagation();
       holdingKeyCodeRef.current[event.keyCode] = true;
       inputRef.current?.[event.keyCode]?.(event);
     };
 
     const handleKeyUp = (event) => {
-      event.preventDefault();
-      event.stopPropagation();
       console.log(event.keyCode);
       holdingKeyCodeRef.current[event.keyCode] = false;
     };

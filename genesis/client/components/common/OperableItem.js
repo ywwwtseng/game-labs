@@ -8,7 +8,7 @@ function OperableItem({ checkIcon, selected, label, className, actions, onClick 
   return (
     <div
       className={cx(
-        "flex items-center cursor-pointer text-xs whitespace-nowrap px-1 w-full h-[20px] odd:bg-[#2B2B2B] hover:text-white",
+        "flex items-center cursor-pointer text-xs whitespace-nowrap px-1 w-full min-h-[20px] odd:bg-[#2B2B2B] hover:text-white",
         {
           "text-zinc-400": !selected,
           "text-white": selected,

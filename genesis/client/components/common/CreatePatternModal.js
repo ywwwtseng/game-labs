@@ -1,44 +1,65 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal } from "@/components/ui/Modal";
 import { BaseInput } from "@/components/ui/BaseInput";
+import { Text } from "@/components/ui/Text";
 import { Canvas2D, CANVAS_LAYER } from "@/components/common/Canvas2D";
 import { addScene, selectedLayerSelector } from "@/features/appState/appStateSlice";
-import { useSpriteSheets } from "@/context/SpriteSheetContext";
+import { useSpriteSheets, useUpdateSpriteSheets } from "@/context/SpriteSheetContext";
+import { AlertIcon } from "@/components/icon/AlertIcon";
+import { useMutation } from "@/hooks/useMutation";
 import { MatrixUtil } from "@/utils/MatrixUtil";
+import { ArrayUtil } from "@/utils/ArrayUtil";
+import { CanvasUtil } from "@/utils/CanvasUtil";
 
 function CreatePatternModal() {
   const layer = useSelector(selectedLayerSelector);
   const selectedArea = useSelector((state) => state.selectMode.selected.rect);
   const spriteSheets = useSpriteSheets();
+  const updateSpriteSheets = useUpdateSpriteSheets();
   const dispatch = useDispatch();
 
   const [name, setName] = useState("");
-  const [width, setWidth] = useState("");
-  const disabled = !name.trim() || isNaN(width);
+  const [type, setType] = useState("");
+
+  const tiles = useMemo(() => {
+    return CanvasUtil.getSceneSelectedTiles(selectedArea, layer, (tile) => {
+      return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[tile?.index?.[1]];
+    });
+  }, [selectedArea, layer.tiles]);
 
   const layers = useMemo(() => ([
     CANVAS_LAYER.TILES({
-      tiles: [{
-        tiles: MatrixUtil.createByRect(selectedArea, (x, y) => {
-          const tile = layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y];
-          return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[tile?.index?.[1]];
-        })
-      }],
+      tiles,
       width: selectedArea[2] * 16,
       height: selectedArea[3] * 16,
     })
-  ]), [selectedArea, layer.tiles]);
+  ]), [selectedArea, tiles]);
+
+  const source = useMemo(() => {
+    const sources = ArrayUtil.uniq(
+      CanvasUtil.getSceneSelectedTiles(selectedArea, layer, (tile) => {
+        return tile?.source;
+      }).flat()
+    ).filter(Boolean);
+    return sources.length === 1 ? sources[0] : undefined;
+  }, [selectedArea, layer.tiles]);
+
+  const { trigger } = useMutation(`/api/sprites/${source}/patterns`);
+
+  const disabled = source && !name.trim();
 
   return (
     <Modal>
       <Modal.Header title="Create Pattern" showCloseButton />
       <Modal.Body className="flex">
-        <Canvas2D
-          layers={layers}
-          width={selectedArea[2] * 16}
-          height={selectedArea[3] * 16}
-        />
+        <div>
+          <Canvas2D
+            layers={layers}
+            width={selectedArea[2] * 16}
+            height={selectedArea[3] * 16}
+          />
+        </div>
         <div className="pl-2">
           <BaseInput
             label="Name"
@@ -47,31 +68,33 @@ function CreatePatternModal() {
           />
           <BaseInput
             label="Type"
-            value={width}
-            onChange={(e) => setWidth(e.target.value)}
-            onBlur={(e) => {
-              if (!isNaN(e.target.value)) {
-                setWidth(
-                  String(Math.max(1, Math.ceil(Number(e.target.value) / 16)) * 16)
-                );
-              }
-            }}
+            value={type}
+            onChange={(e) => setType(e.target.value)}
           />
+          {!source && (
+            <div className="flex items-center mt-1">
+              <AlertIcon className="mr-2" color="fill-red-600" />
+              <Text size="xs" color="red-600">Need the same source</Text>
+            </div>
+          )}
+          
         </div>
         
       </Modal.Body>
       <Modal.Footer>
         <Modal.Action
           disabled={disabled}
-          onClick={() => {
-            dispatch(addScene({
+          onClick={async () => {
+            const res = await trigger({
               name,
-              width: Number(width),
-              height: Number(height),
-            }));
+              type,
+              tiles: CanvasUtil.getSceneSelectedTiles(selectedArea, layer, (tile) => tile?.index)
+            });
+
+            updateSpriteSheets();
           }}
         >
-          Create
+          {source ? 'Create' : 'Close'}
         </Modal.Action>
       </Modal.Footer>
     </Modal>

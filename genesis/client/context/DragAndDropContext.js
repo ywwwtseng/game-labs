@@ -18,11 +18,11 @@ export const DragAndDropProvider = ({ children }) => {
   };
 
   const onDrop = useCallback((event) => {
-    dropzonesRef.current.forEach(({ accept, el, onDrop }) => {
+    dropzonesRef.current.forEach(({ accept, el, events }) => {
       el = el();
 
-      if (ref.current && accept === ref.current.type) {
-        onDrop(event, ref.current);
+      if (ref.current && accept.includes(ref.current.type)) {
+        events?.[ref.current.type]?.(event, ref.current);
       }
     });
   }, []);
@@ -57,7 +57,7 @@ export const DragAndDropProvider = ({ children }) => {
   );
 };
 
-export function setupDropzone({ id, accept = "tiles", onDrop }) {
+export function setupDropzone({ id, accept = [], events }) {
   const { addDropzone, removeDropzone } = useContext(DragAndDropContext);
 
   useEffect(() => {
@@ -65,13 +65,13 @@ export function setupDropzone({ id, accept = "tiles", onDrop }) {
       id,
       accept,
       el: () => document.getElementById(id),
-      onDrop,
+      events,
     });
 
     return () => {
       removeDropzone(id);
     };
-  }, [onDrop]);
+  }, [events]);
 
   return {
     id,

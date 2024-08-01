@@ -1,6 +1,14 @@
 import range from "lodash-es/range";
 
 class MatrixUtil {
+  static isMatrix(matrix) {
+    return Array.isArray(matrix) && Array.isArray(matrix[0]);
+  }
+
+  static size(matrix) {
+    return [matrix.length, matrix[0].length];
+  }
+
   static forEach(matrix, callback) {
     matrix.forEach((column, x) => {
       column.forEach((value, y) => {
@@ -21,7 +29,7 @@ class MatrixUtil {
     });
   }
 
-  static find(matrix, callback) {
+  static findIndex(matrix, callback) {
     const array = [];
 
     matrix.forEach((column, x) => {

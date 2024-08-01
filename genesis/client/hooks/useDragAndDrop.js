@@ -32,9 +32,10 @@ function useDragAndDrop({
       draggedItemRef.current.style.pointerEvents = "none";
       draggedItemRef.current.style.position = "fixed";
       draggedItemRef.current.style.zIndex = 9999;
-      const position = draggedItem.pos(event, bounds);
-      draggedItemRef.current.style.left = `${position.x}px`;
-      draggedItemRef.current.style.top = `${position.y}px`;
+      const x = event.pageX - bounds.size.x / 2;
+      const y = event.pageY - bounds.size.y / 2;
+      draggedItemRef.current.style.left = `${x}px`;
+      draggedItemRef.current.style.top = `${y}px`;
     }
 
     const { delta } = cursorDelta.move(event);

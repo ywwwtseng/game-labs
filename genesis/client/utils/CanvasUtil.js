@@ -197,6 +197,13 @@ class CanvasUtil {
 
     return false;
   }
+
+  static getSceneSelectedTiles(selectedArea, layer, callback = (any) => any) {
+    return MatrixUtil.createByRect(selectedArea, (x, y) => {
+      const tile = layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y];
+      return callback(tile);
+    })
+  }
 }
 
 export { CanvasUtil };
