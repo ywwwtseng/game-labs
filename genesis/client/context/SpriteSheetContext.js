@@ -42,9 +42,9 @@ export const SpriteSheetProvider = ({ children }) => {
       )
         .then((spriteSheets) => {
           return spriteSheets.reduce((acc, [spriteSheet, image]) => {
-            const index = ImageUtil.getIndex(image);
+            const sizeIndex = ImageUtil.getSizeIndex(image);
 
-            const tiles = MatrixUtil.createByIndex(index, (x, y) => {
+            const tiles = MatrixUtil.create(sizeIndex, (x, y) => {
               const buffer = CanvasUtil.createBufferBySource(
                 image,
                 x * 16,
@@ -62,8 +62,8 @@ export const SpriteSheetProvider = ({ children }) => {
               image,
               name: spriteSheet.name,
               source: spriteSheet.id,
-              index,
               tiles,
+              sizeIndex,
               transparent: spriteSheet.transparent.split(","),
               patterns: spriteSheet.patterns,
               animations: [],

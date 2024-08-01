@@ -4,7 +4,7 @@ import { MatrixUtil } from "@/utils/MatrixUtil";
 function SpriteSheetTileList({ spriteSheet }) {
   return (
     <div className="flex-1 grow basis-0 overflow-y-scroll no-scrollbar">
-      {MatrixUtil.rangeByIndex(spriteSheet.index, (x, y) => (
+      {MatrixUtil.map(spriteSheet.sizeIndex, (x, y) => (
         <SpriteSheetTile
           key={`${spriteSheet}-[${x},${y}]`}
           spriteSheet={spriteSheet}

@@ -8,12 +8,12 @@ class ImageUtil {
       height
     };
   }
-  static getIndex(image) {
+  static getSizeIndex(image) {
     const size = ImageUtil.getSize(image);
 
     return  [
-      Math.ceil(size.width / 16 - 1),
-      Math.ceil(size.height / 16 - 1),
+      Math.ceil(size.width / 16),
+      Math.ceil(size.height / 16),
     ]
   }
 }

@@ -60,41 +60,41 @@ class BoundingBox {
   }
 }
 
-function getBoundingBox(any) {
-  if (any instanceof HTMLElement) {
-    const { left, top, width, height } = any.getBoundingClientRect();
+function getBoundingBox(T) {
+  if (T instanceof HTMLElement) {
+    const { left, top, width, height } = T.getBoundingClientRect();
     const pos = { x: left, y: top };
     const size = { x: width, y: height };
 
     return new BoundingBox({ pos, size });
   }
 
-  if (any?.event && any?.rect) {
-    const size = MatrixUtil.size(any?.rect);
+  if (T?.event && T?.rect) {
+    const size = MatrixUtil.size(T?.rect);
     const pos = {
-      x: any.event.pageX - size.x / 2, 
-      y: any.event.pageY - size.y / 2,
+      x: T.event.pageX - size.x / 2, 
+      y: T.event.pageY - size.y / 2,
     };
 
     return new BoundingBox({ pos, size });
   }
 
-  if (any?.selectedArea && any?.canvas) {
-    const { left, top } = any.canvas.getBoundingClientRect();
-    const [indexX, indexY] = any.selectedArea;
+  if (T?.selectedArea && T?.canvas) {
+    const { left, top } = T.canvas.getBoundingClientRect();
+    const [indexX, indexY] = T.selectedArea;
     const pos = {
       x: left + indexX * 16,
       y: top + indexY * 16,
     };
-    const size = MatrixUtil.size(any.selectedArea);
+    const size = MatrixUtil.size(T.selectedArea);
     return new BoundingBox({ pos, size });
   }
 
-  return any;
+  return T;
 }
 
-function overlaps(any1, any2) {
-  return getBoundingBox(any1).overlaps(getBoundingBox(any2));
+function overlaps(T1, T2) {
+  return getBoundingBox(T1).overlaps(getBoundingBox(T2));
 }
 
 function contain(outer, { in: inner }) {

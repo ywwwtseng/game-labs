@@ -8,8 +8,7 @@ import { MatrixUtil } from "@/utils/MatrixUtil";
 function SpriteSheetPattern({ spriteSheet, pattern }) {
   const ref = useRef(null);
   const sizeIndex = useMemo(() => {
-    const size = MatrixUtil.sizeIndex(pattern.tiles);
-    return [size.x, size.y];
+    return MatrixUtil.sizeIndex(pattern.tiles);
   }, [pattern.tiles]);
   const size = {
     x: sizeIndex[0] > sizeIndex[1] ? 64 : 64 * sizeIndex[0] / sizeIndex[1],
@@ -48,7 +47,6 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
   return (
     <OperableItem
       label={
-        
         <div className="flex items-start justify-center">
           <div className="w-16 h-16 flex items-center justify-center">
             <Draggable

@@ -16,7 +16,7 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
         if (!data.selected) {
           return
         }
-        return MatrixUtil.drawSelected(data.selected, spriteSheet);
+        return CanvasUtil.drawSelected(data.selected, spriteSheet);
       },
     },
     onSelected: (selected) => {

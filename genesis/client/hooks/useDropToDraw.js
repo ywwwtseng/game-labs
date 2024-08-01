@@ -2,11 +2,9 @@ import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setupDropzone } from "@/context/DragAndDropContext";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
-import { draw } from "@/features/appState/appStateSlice";
-import { addTileToScene } from "@/features/appState/appStateSlice";
-import { CanvasUtil } from "@/utils/CanvasUtil";
+import { draw, fill } from "@/features/appState/appStateSlice";
 import { MatrixUtil } from "@/utils/MatrixUtil";
-import { getBoundingBox, overlaps } from "@/helpers/BoundingBox";
+import { overlaps } from "@/helpers/BoundingBox";
 
 function useDropToDraw({ id }) {
   const selectedRect = useSelector((state) => state.selectMode.selected.rect);
@@ -21,25 +19,20 @@ function useDropToDraw({ id }) {
 
         const canvas = document.getElementById(id);
         const rect = [...data.index, 1, 1];
-        
+
         if (
           selectedRect &&
           overlaps({ selectedArea: selectedRect, canvas }, { event, rect })
         ) {
-
-          const [originX, originY, sizeIndexX, sizeIndexY] = selectedRect;
-
-          MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
-            dispatch(
-              addTileToScene({
-                index: [originX + x, originY + y],
-                tile: {
-                  index: data.index,
-                  source: data.source,
-                },
-              })
-            );
-          });
+          dispatch(
+            fill({
+              selectedRect,
+              tile: {
+                index: data.index,
+                source: data.source,
+              },
+            })
+          );
         } else {
           dispatch(
             draw({

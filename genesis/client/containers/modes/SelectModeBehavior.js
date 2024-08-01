@@ -143,7 +143,7 @@ function SelectModeBehavior({ children }) {
       const [originX, originY, ...sizeIndex] = area.origin;
 
       if (!cacheSelectedTilesRef.current) {
-        cacheSelectedTilesRef.current = MatrixUtil.createBySize(sizeIndex, (x, y) => {
+        cacheSelectedTilesRef.current = MatrixUtil.create(sizeIndex, (x, y) => {
           const tile = selectedLayer.tiles?.[originX + x]?.[originY + y];
  
           if (tile && !isHolding(S_KEY)) {
@@ -192,7 +192,7 @@ function SelectModeBehavior({ children }) {
 
   const cache = useCallback((ctx) => {
     if (selectedArea && cacheSelectedTilesRef.current) {
-      MatrixUtil.traverse([selectedArea[2], selectedArea[3]], (x, y) => {
+      MatrixUtil.traverse(selectedArea, ({x, y}, index) => {
         const tile = cacheSelectedTilesRef.current[x][y];
 
         if (tile) {
@@ -202,8 +202,8 @@ function SelectModeBehavior({ children }) {
             0,
             16,
             16,
-            (selectedArea[0] + x) * 16,
-            (selectedArea[1] + y) * 16,
+            index.x * 16,
+            index.y * 16,
             16,
             16
           );

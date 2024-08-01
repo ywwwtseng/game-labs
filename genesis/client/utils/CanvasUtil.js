@@ -75,11 +75,10 @@ class CanvasUtil {
     canvas.width = selectedRect[2] * 16;
     canvas.height = selectedRect[3] * 16;
     const ctx = canvas.getContext("2d");
-    const [originX, originY, sizeIndexX, sizeIndexY] = selectedRect;
 
-    MatrixUtil.traverse([sizeIndexX, sizeIndexY], (x, y) => {
+    MatrixUtil.traverse(selectedRect, ({x, y}, index) => {
       ctx.drawImage(
-        spriteSheet.tiles[originX + x][originY + y].buffer,
+        spriteSheet.tiles[index.x][index.y].buffer,
         0,
         0,
         16,
@@ -150,7 +149,7 @@ class CanvasUtil {
       height,
       (ctx) => {
         tiles.forEach((layer) => {
-          MatrixUtil.forEach(layer.tiles, (tile, x, y) => {
+          MatrixUtil.traverse(layer.tiles, ({value: tile, x, y}) => {
             ctx.drawImage(
               tile.buffer,
               0,
@@ -199,7 +198,7 @@ class CanvasUtil {
   }
 
   static getSceneSelectedTiles(selectedArea, layer, callback = (any) => any) {
-    return MatrixUtil.createByRect(selectedArea, (x, y) => {
+    return MatrixUtil.create(selectedArea, (x, y) => {
       const tile = layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y];
       return callback(tile);
     })

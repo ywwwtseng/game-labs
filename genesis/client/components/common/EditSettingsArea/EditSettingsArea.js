@@ -22,11 +22,11 @@ function EditSettingsArea() {
 
   const upload = async (file) => {
     const image = await LoaderUtil.readFile(file).then(LoaderUtil.loadImage);
-    const index = ImageUtil.getIndex(image);
+    const sizeIndex = ImageUtil.getSizeIndex(image);
 
     const transparent = [];
 
-    MatrixUtil.traverseByIndex(index, (x, y) => {
+    MatrixUtil.traverse(sizeIndex, ({x, y}) => {
       const buffer = CanvasUtil.createBufferBySource(image, x * 16, y * 16, 16, 16);
       if (buffer.toDataURL() === CanvasUtil.transparent) {
         transparent.push(`${x}.${y}`);
