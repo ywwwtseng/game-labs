@@ -270,6 +270,8 @@ export const {
   selectLayer,
 } = appStateSlice.actions;
 
+export const selectedIsDrawMode = (state) =>
+  state.appState.mode === MODE.DRAW;
 export const selectedLayerSelector = (state) =>
   state.appState.scene.layers[state.appState.scene.selectedLayerIndex];
 

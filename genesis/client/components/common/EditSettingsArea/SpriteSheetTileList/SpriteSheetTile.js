@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useRef } from "react";
+import { useSelector } from 'react-redux';
 import { Draggable } from "@/containers/Draggable";
 import { OperableItem } from "@/components/common/OperableItem";
+import { contain } from "@/helpers/BoundingBox";
+import { selectedIsDrawMode } from '@/features/appState/appStateSlice';
 
 function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
+  const isDrawMode = useSelector(selectedIsDrawMode);
   const ref = useRef(null);
-  const transparent = spriteSheet.transparent.includes(`${index[0]}.${index[1]}`);
+  const transparent = spriteSheet.transparent.includes(
+    `${index[0]}.${index[1]}`
+  );
   const tile = spriteSheet.tiles[index[0]][index[1]];
 
   const drawImage = useCallback((el) => {
@@ -30,17 +36,26 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
     <OperableItem
       label={
         <Draggable
+          disabled={isDrawMode}
           data={{
             type: "tile",
             source: spriteSheet.source,
             index,
           }}
-          draggedItem={{
+          icon={{
             display: () => {
               const el = ref.current.cloneNode();
               drawImage(el);
               return el;
             },
+          }}
+          beforeDrop={(_, { iconEl }) => iconEl && contain(iconEl, { in: "canvas" })}
+          onMove={(_, { iconEl }) => {
+            if (iconEl) {
+              iconEl.style.opacity = contain(iconEl, { in: "canvas" })
+                ? 1
+                : 0.5;
+            }
           }}
         >
           <canvas ref={ref} width={width} height={height} />

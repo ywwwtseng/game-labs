@@ -89,6 +89,16 @@ function getBoundingBox(T) {
     return new BoundingBox({ pos, size });
   }
 
+  if (T instanceof Event) {
+    const size = { x: 1, y: 1 };
+    const pos = {
+      x: T.pageX, 
+      y: T.pageY,
+    };
+
+    return new BoundingBox({ pos, size });
+  }
+
   if (T?.rect && T?.canvas) {
     const { left, top } = T.canvas.getBoundingClientRect();
     const rect = CanvasUtil.normalizeRect(T.rect);

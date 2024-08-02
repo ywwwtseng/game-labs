@@ -8,7 +8,7 @@ function useSelectorBridge({
   canvasId,
   selectedWhenMouseLeave,
   draggable = false,
-  draggedItem = null,
+  icon = null,
   selector,
   cursorIndex,
   selectAreaStart,
@@ -23,12 +23,12 @@ function useSelectorBridge({
   const hasMoveDownBehaviorRef = useRef(false);
   const ref = useRef(null);
   const { dataTransfer, handleMouseDown } = useDragAndDrop({
-    draggedItem,
-    beforeDrop: (_, draggedEl) => {
+    icon,
+    beforeDrop: (_, { iconEl }) => {
       if (
         ref.current &&
-        draggedEl &&
-        overlaps(ref.current, draggedEl)
+        iconEl &&
+        overlaps(ref.current, iconEl)
       ) {
         return false;
       }

@@ -6,55 +6,55 @@ import { useCursorDelta } from "@/hooks/useCursorDelta";
 
 function useDragAndDrop({
   data,
-  draggedItem,
+  icon,
   handle,
   onMove,
   beforeDrop = () => true,
 }) {
   const cursorDelta = useCursorDelta();
   const dataTransfer = useDataTransfer({ defaultData: data });
-  const draggedItemRef = useRef(null);
+  const iconRef = useRef(null);
   const { setDragStart, onDrop, setDragStop } = useContext(DragAndDropContext);
 
   const handleMouseMove = useCallback((event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    if (draggedItem) {
-      if (!draggedItemRef.current) {
+    if (icon) {
+      if (!iconRef.current) {
         setDragStart(dataTransfer.getData());
-        draggedItemRef.current = draggedItem.display(event, dataTransfer.getData());
-        document.body.append(draggedItemRef.current);
+        iconRef.current = icon.display(event, dataTransfer.getData());
+        document.body.append(iconRef.current);
       }
 
-      const bounds = getBoundingBox(draggedItemRef.current);
-      draggedItemRef.current.style.pointerEvents = "none";
-      draggedItemRef.current.style.position = "fixed";
-      draggedItemRef.current.style.zIndex = 9999;
+      const bounds = getBoundingBox(iconRef.current);
+      iconRef.current.style.pointerEvents = "none";
+      iconRef.current.style.position = "fixed";
+      iconRef.current.style.zIndex = 9999;
       const x = event.pageX - bounds.size.x / 2;
       const y = event.pageY - bounds.size.y / 2;
-      draggedItemRef.current.style.left = `${x}px`;
-      draggedItemRef.current.style.top = `${y}px`;
+      iconRef.current.style.left = `${x}px`;
+      iconRef.current.style.top = `${y}px`;
     }
 
     const { delta } = cursorDelta.move(event);
 
     if (delta) {
-      onMove?.(delta, draggedItemRef.current);
+      onMove?.(event, { delta, iconEl: iconRef.current });
     }
   }, []);
 
   const handleMouseStop = useCallback((event) => {
-    if (beforeDrop(event, draggedItemRef.current)) {
+    if (beforeDrop(event, { iconEl: iconRef.current })) {
       onDrop(event);
     }
 
     
     setDragStop(event);
 
-    if (draggedItemRef.current) {
-      draggedItemRef.current.remove();
-      draggedItemRef.current = null;
+    if (iconRef.current) {
+      iconRef.current.remove();
+      iconRef.current = null;
     }
 
     cursorDelta.end(event);

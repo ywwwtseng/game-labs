@@ -20,15 +20,13 @@ function DrawModeBehavior({ children }) {
         displayId
       )
     }), [spriteSheets, drawMode]),
-    onMove: (event, _, icon) => {
-      const bounds = getBoundingBox({ event, rect: drawMode.rect });
-      if (icon) {
-        icon.style.opacity = contain(bounds, { in: event.target }) ? 1 : 0.5;
+    onMove: (event, { iconEl }) => {
+      if (iconEl) {
+        iconEl.style.opacity = contain(iconEl, { in: event.target }) ? 1 : 0.5;
       }
     },
-    onDownMove: (event) => {
-      const bounds = getBoundingBox({ event, rect: drawMode.rect });
-      if (contain(bounds, { in: event.target })) {
+    onDownMove: (event, { iconEl }) => {
+      if (contain(iconEl, { in: event.target })) {
         dispatch(
           drawTiles({
             event,

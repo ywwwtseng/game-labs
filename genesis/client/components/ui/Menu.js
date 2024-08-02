@@ -12,9 +12,9 @@ import { getBoundingBox } from "@/helpers/BoundingBox";
 const Menu = forwardRef(({ children, origin, limit = "edit-area", ...props }, ref) => {
   const itemRef = useRef();
   const [pos, setPos] = useState(origin);
-  const updatePos = useCallback((delta) => {
+  const updatePos = useCallback((_, { delta }) => {
     setPos((pos) => {
-      const limitBounds = getBoundingBox(document.getElementById(limit));
+      const limitBounds = getBoundingBox(limit);
       const bounds = getBoundingBox(itemRef.current);
       bounds.left = pos.x + delta.x;
       bounds.top = pos.y + delta.y;
@@ -40,7 +40,7 @@ const Menu = forwardRef(({ children, origin, limit = "edit-area", ...props }, re
 
   useImperativeHandle(ref, () => ({
     checkPos: () => {
-      updatePos({x:0, y: 0});
+      updatePos(undefined, {delta:{x:0, y: 0}});
     },
   }));
 

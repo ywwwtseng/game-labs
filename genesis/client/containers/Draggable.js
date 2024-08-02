@@ -1,8 +1,12 @@
 import React from "react";
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 
-function Draggable({ data, draggedItem, handle, onMove, children }) {
-  const { handleMouseDown } = useDragAndDrop({ data, draggedItem, handle, onMove });
+function Draggable({ disabled, data, icon, handle, onMove, children, beforeDrop }) {
+  const { handleMouseDown } = useDragAndDrop({ data, icon, handle, onMove, beforeDrop });
+
+  if (disabled) {
+    return children;
+  }
 
   return (
     React.cloneElement(children, {

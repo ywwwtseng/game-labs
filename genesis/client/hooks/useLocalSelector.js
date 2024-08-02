@@ -8,7 +8,7 @@ function useLocalSelector({
   selectedWhenMouseLeave = false,
   canvasId,
   draggable = false,
-  draggedItem = null,
+  icon = null,
   onSelected = () => {},
 }) {
   const [state, setState] = useState({
@@ -57,7 +57,7 @@ function useLocalSelector({
     canvasId,
     selectedWhenMouseLeave,
     draggable,
-    draggedItem,
+    icon,
     selector: state,
     cursorIndex: state.cursorIndex,
     selectArea,
