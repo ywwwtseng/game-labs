@@ -53,7 +53,7 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
               data={{
                 type: "pattern",
                 source: spriteSheet.source,
-                tiles,
+                pattern,
               }}
               draggedItem={{
                 display: () => {

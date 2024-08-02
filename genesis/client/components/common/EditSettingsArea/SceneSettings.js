@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AreaHeader } from "@/components/common/AreaHeader";
 import { OperableItem } from "@/components/common/OperableItem";
@@ -7,12 +7,13 @@ import { LayersIcon } from "@/components/icon/LayersIcon";
 import { PlusIcon } from "@/components/icon/PlusIcon";
 import { AngleRightIcon } from "@/components/icon/AngleRightIcon";
 import { addLayer, selectLayer } from "@/features/appState/appStateSlice";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 function SceneSettings() {
   const scene = useSelector((state) => state.appState.scene);
   const dispatch = useDispatch();
   const scenes = [scene];
-  const [selectedScene, selectScene] = useState(scenes[0].name);
+  const [selectedScene, selectScene] = useLocalStorage("selected:scene", scenes[0].name);
 
   return (
     <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828]">

@@ -35,20 +35,17 @@ export const setMode = createAsyncThunk(
   }
 );
 
-export const draw = createAsyncThunk(
-  "appState/draw",
-  async ({ event, selected, transparent = [] }, { getState, dispatch }) => {
+export const drawTiles = createAsyncThunk(
+  "appState/drawTiles",
+  async ({ event, selectedTiles, transparent = [] }, { getState, dispatch }) => {
     try {
       const scene = getState().appState.scene;
 
-      const [originX, originY, sizeIndexX, sizeIndexY] = selected.rect;
+      const [originX, originY, sizeIndexX, sizeIndexY] = selectedTiles.rect;
 
-      const sizeX = sizeIndexX * 16;
-      const sizeY = sizeIndexY * 16;
 
-      const pos = Vec2Util.calc(CanvasUtil.getPosition(event, event.target), {
-        add: { x: -(sizeX / 2) + 8, y: -(sizeY / 2) + 8 },
-      });
+      const pos = CanvasUtil.getSelectedAreaPosition(event, selectedTiles.rect);
+
 
       const index = CanvasUtil.positionToIndex(pos);
       const canvasMaxIndex = CanvasUtil.positionToIndex({
@@ -68,7 +65,7 @@ export const draw = createAsyncThunk(
           selectedArea: [index[0], index[1], sizeIndexX, sizeIndexY],
           firstTileOriginInSprite: [originX, originY],
           transparent,
-          source: selected.source,
+          source: selectedTiles.source,
         })
       );
     } catch (error) {
@@ -76,6 +73,22 @@ export const draw = createAsyncThunk(
     }
   }
 );
+
+export const drawPattern = createAsyncThunk(
+  "appState/drawPattern",
+  async (
+    { event, source, pattern },
+    { getState, dispatch }
+  ) => {
+    try {
+      console.log(pattern.tiles)
+      const rect = CanvasUtil.getPatternRect(pattern);
+      console.log(rect)
+    } catch (error) {
+      console.log(error);
+    }
+  },
+)
 
 export const moveSceneTiles = createAsyncThunk(
   "appState/moveSceneTiles",
@@ -133,6 +146,7 @@ const initialState = {
     layers: [
       {
         tiles: [],
+        patterns: [],
       },
     ],
   },
@@ -192,7 +206,7 @@ export const appStateSlice = createSlice({
         }
       });
     },
-    fill: (state, action) => {
+    fillTile: (state, action) => {
       const layerIndex = state.scene.selectedLayerIndex;
       const selectedRect = action.payload.selectedRect;
       const tile = action.payload.tile;
@@ -241,7 +255,7 @@ export const {
   addScene,
   addTileToScene,
   addTilesToScene,
-  fill,
+  fillTile,
   deleteSceneTiles,
   addLayer,
   selectLayer,

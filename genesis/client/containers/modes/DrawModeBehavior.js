@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
 import { useCursor } from "@/hooks/useCursor";
-import { draw } from "@/features/appState/appStateSlice";
+import { drawTiles } from "@/features/appState/appStateSlice";
 import { getBoundingBox, contain } from '@/helpers/BoundingBox';
 
 function DrawModeBehavior({ children }) {
@@ -30,9 +30,9 @@ function DrawModeBehavior({ children }) {
       const bounds = getBoundingBox({ event, rect: drawMode.rect });
       if (contain(event.target, { in: bounds })) {
         dispatch(
-          draw({
+          drawTiles({
             event,
-            selected: drawMode,
+            selectedTiles: drawMode,
             transparent: spriteSheets[drawMode.source].transparent,
           })
         );

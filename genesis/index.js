@@ -62,6 +62,7 @@ app.get("/api/sprites", (req, res) => {
 
 app.post("/api/sprites/:source/patterns", async (req, res) => {
   const { sprites } = db.data;
+  const source = req.params.source;
   const index = sprites.findIndex((sprite) => sprite.id === req.params.source);
 
   if (index === -1) {
@@ -74,6 +75,7 @@ app.post("/api/sprites/:source/patterns", async (req, res) => {
       patterns: [
         ...sprites[index].patterns,
         {
+          id: `${source}.P${sprites[index].patterns.length}`,
           name: req.body.name,
           tiles: req.body.tiles,
         }

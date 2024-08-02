@@ -163,7 +163,7 @@ function SelectModeBehavior({ children }) {
             selectedArea,
             firstTileOriginInSprite: [area.next[0], area.next[1]],
             tiles: cacheSelectedTilesRef.current,
-            transparent: MatrixUtil.findIndex(cacheSelectedTilesRef.current, (tile) => tile === undefined)
+            transparent: MatrixUtil.findIndexArray(cacheSelectedTilesRef.current, (tile) => tile === undefined)
               .map(([x, y]) => `${x + area.next[0]}.${y + area.next[1]}`),
           }));
         }
@@ -179,7 +179,7 @@ function SelectModeBehavior({ children }) {
           selectedArea,
           firstTileOriginInSprite: [selectedArea[0], selectedArea[1]],
           tiles: cacheSelectedTilesRef.current,
-          transparent: MatrixUtil.findIndex(cacheSelectedTilesRef.current, (tile) => tile === undefined)
+          transparent: MatrixUtil.findIndexArray(cacheSelectedTilesRef.current, (tile) => tile === undefined)
             .map(([x, y]) => `${x + selectedArea[0]}.${y + selectedArea[1]}`),
           restoreArea: isMoveAddTilesMode() ? null : originSelectedRectRef.current,
         }));

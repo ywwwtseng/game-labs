@@ -10,6 +10,7 @@ import {
   useSpriteSheets,
   useUpdateSpriteSheets,
 } from "@/context/SpriteSheetContext";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LoaderUtil } from "@/utils/LoaderUtil";
 import { ImageUtil } from "@/utils/ImageUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
@@ -18,7 +19,7 @@ import { CanvasUtil } from "@/utils/CanvasUtil";
 function EditSettingsArea() {
   const spriteSheets = useSpriteSheets();
   const updateSpriteSheets = useUpdateSpriteSheets();
-  const [selectedSpriteSheet, selectSpriteSheet] = useState(null);
+  const [selectedSpriteSheet, selectSpriteSheet] = useLocalStorage("selected:spritesheet");
 
   const upload = async (file) => {
     const image = await LoaderUtil.readFile(file).then(LoaderUtil.loadImage);
@@ -101,7 +102,7 @@ function EditSettingsArea() {
       </div>
 
       <div className="rounded w-full flex-1 bg-[#282828] mt-1 flex flex-col">
-        {selectedSpriteSheet && (
+        {spriteSheets[selectedSpriteSheet] && (
           <SpriteSheetSettings
             key={selectedSpriteSheet}
             spriteSheet={spriteSheets[selectedSpriteSheet]}

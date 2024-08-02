@@ -110,7 +110,7 @@ class MatrixUtil {
     return matrix;
   }
 
-  static findIndex(matrix, callback) {
+  static findIndexArray(matrix, callback) {
     const array = [];
 
     matrix.forEach((column, x) => {
@@ -122,6 +122,18 @@ class MatrixUtil {
     });
 
     return array;
+  }
+
+  static findIndex(matrix, callback) {
+    for (let y = 0; y < matrix.length; y++) {
+      const column = matrix[y];
+
+      for (let x = 0; x < column.length; x++) {
+        if (callback(column[x], x, y)) {
+          return [x, y];
+        }
+      }
+    }
   }
 }
 

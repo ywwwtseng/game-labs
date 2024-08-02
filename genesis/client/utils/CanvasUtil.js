@@ -1,5 +1,6 @@
 import { getBoundingBox } from "@/helpers/BoundingBox";
 import { MatrixUtil } from "@/utils/MatrixUtil";
+import { Vec2Util } from "@/utils/Vec2Util";
 
 class CanvasUtil {
   static get transparent() {
@@ -20,6 +21,16 @@ class CanvasUtil {
         originY >= 0 &&
         originY <= bounds.size.y,
     };
+  }
+
+  static getSelectedAreaPosition(event, rect) {
+    const size = MatrixUtil.size(rect);
+
+    const pos = Vec2Util.calc(CanvasUtil.getPosition(event, event.target), {
+      add: { x: -(size.x / 2) + 8, y: -(size.y / 2) + 8 },
+    });
+
+    return pos;
   }
 
   static positionToIndex(pos) {
@@ -202,6 +213,10 @@ class CanvasUtil {
       const tile = layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y];
       return callback(tile);
     })
+  }
+
+  static getPatternRect(pattern) {
+    return [0, 0, ...MatrixUtil.sizeIndex(pattern.tiles)];
   }
 }
 

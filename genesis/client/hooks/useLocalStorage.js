@@ -1,8 +1,14 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 
 function useLocalStorage(key, defaultValue) {
   const itemKey = `genesis:${key}`;
-  const [state ,_setState] = useState(localStorage.getItem(itemKey) || defaultValue);
+  const [_state ,_setState] = useState(localStorage.getItem(itemKey) || defaultValue);
+
+
+
+  const state = useMemo(() => {
+    return ['null','undefined'].includes(_state) ? undefined : _state
+  }, [_state]);
 
   const setState = (value) => {
     localStorage.setItem(itemKey, value);
@@ -10,7 +16,7 @@ function useLocalStorage(key, defaultValue) {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem(itemKey)) {
+    if (defaultValue && !localStorage.getItem(itemKey)) {
       localStorage.setItem(itemKey, defaultValue);
     }
   }, [defaultValue]);
