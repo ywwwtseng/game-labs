@@ -4,7 +4,7 @@ import {
   addTileToScene,
   addTilesToScene,
   moveSceneTiles,
-  deleteSceneTiles,
+  deleteSelectedElements,
   selectedLayerSelector
 } from "@/features/appState/appStateSlice";
 import {
@@ -121,9 +121,7 @@ function SelectModeBehavior({ children }) {
     },
     [BACKSPACE_KEY]: (event) => {
       if (!userSelectedArea || !scene) return;
-      dispatch(deleteSceneTiles({
-        selectedArea: userSelectedArea
-      }));
+      dispatch(deleteSelectedElements());
     },
   }), [userSelectedArea, scene]);
 
@@ -177,7 +175,7 @@ function SelectModeBehavior({ children }) {
     onMoveDownEnd: () => {
       if (userSelectedArea && cacheSelectedTilesRef.current) {
         dispatch(moveSceneTiles({
-          userSelectedArea,
+          selectedArea: userSelectedArea,
           firstTileOriginInSprite: [userSelectedArea[0], userSelectedArea[1]],
           tiles: cacheSelectedTilesRef.current,
           transparent: MatrixUtil.findIndexArray(cacheSelectedTilesRef.current, (tile) => tile === undefined)

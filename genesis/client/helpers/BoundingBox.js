@@ -62,6 +62,15 @@ class BoundingBox {
 }
 
 function getBoundingBox(T) {
+  if (typeof T === 'string') {
+    const el = document.getElementById(T);
+    const { left, top, width, height } = el.getBoundingClientRect();
+    const pos = { x: left, y: top };
+    const size = { x: width, y: height };
+
+    return new BoundingBox({ pos, size });
+  }
+
   if (T instanceof HTMLElement) {
     const { left, top, width, height } = T.getBoundingClientRect();
     const pos = { x: left, y: top };

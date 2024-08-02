@@ -6,7 +6,7 @@ export const selectAreaStart = createAsyncThunk(
   "selectMode/selectAreaStart",
   async (payload, { dispatch }) => {
     dispatch(_selectAreaStart(payload));
-    dispatch(_selectArea(payload));
+    dispatch(forceSelectArea(payload));
   },
 )
 
@@ -15,14 +15,14 @@ export const selectArea = createAsyncThunk(
   async (payload, { getState, dispatch }) => {
     try {
       if (!payload) {
-        dispatch(_selectArea([]));
+        dispatch(forceSelectArea([]));
       }
 
       const state = getState();
       const scene = state.appState.scene;
       const layer = scene.layers[scene.selectedLayerIndex];
 
-      dispatch(_selectArea([
+      dispatch(forceSelectArea([
         payload,
         ...Object.values(layer.patterns).map((pattern) => {
           const size = MatrixUtil.sizeIndex(pattern.tiles);
@@ -60,7 +60,7 @@ export const selectModeSlice = createSlice({
     _selectAreaStart: (state, action) => {
       state.selected.progress = Boolean(action.payload);
     },
-    _selectArea: (state, action) => {
+    forceSelectArea: (state, action) => {
       state.selected.rect = action.payload || [];
     },
     selectAreaStop: (state) => {
@@ -75,7 +75,7 @@ export const selectModeSlice = createSlice({
 export const {
   setCursorPosition,
   _selectAreaStart,
-  _selectArea,
+  forceSelectArea,
   selectAreaStop,
   destroy,
 } = selectModeSlice.actions;

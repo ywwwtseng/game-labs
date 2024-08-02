@@ -10,7 +10,6 @@ function useICanvasSelectArea({
   selectedWhenMouseLeave,
   draggable = false,
   draggedItem = null,
-  source,
   selected,
   position,
   selectAreaStart,
@@ -123,7 +122,7 @@ function useICanvasSelectArea({
             const pos0 = CanvasUtil.indexToPosition([x, y]);
 
             const vec = Vec2Util.calc(pos1, { sub: Vec2Util.calc(pos0, { add: { x: 1,y: 1 }})});
-            dataTransfer.setData({ type: "tiles", source, selected: [x, y, dx, dy], vec });
+            dataTransfer.setData({ type: "tiles", selected: [x, y, dx, dy], vec });
             handleMouseDown(event);
             return;
           }
@@ -204,7 +203,6 @@ function useCanvasSelectArea({
   defaultSelected = null,
   selectedWhenMouseLeave = false,
   canvasId,
-  source,
   draggable = false,
   draggedItem = null,
   onSelected = () => {},
@@ -256,7 +254,6 @@ function useCanvasSelectArea({
   return useICanvasSelectArea({
     canvasId,
     selectedWhenMouseLeave,
-    source,
     draggable,
     draggedItem,
     selected: state.selected,

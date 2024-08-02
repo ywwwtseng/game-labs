@@ -69,7 +69,6 @@ export const drawPattern = createAsyncThunk(
     const pos = CanvasUtil.getSelectedAreaPosition(event, rect);
     const index = CanvasUtil.positionToIndex(pos);
     try {
-
       dispatch(
         addPatternToScene({
           index,
@@ -88,6 +87,7 @@ export const moveSceneTiles = createAsyncThunk(
     { selectedArea, firstTileOriginInSprite, tiles, transparent, restoreArea },
     { getState, dispatch }
   ) => {
+    console.log(selectedArea, firstTileOriginInSprite, tiles, transparent, restoreArea)
     const [originX, originY] = firstTileOriginInSprite;
     const state = getState();
     const scene = state.appState.scene;
@@ -122,6 +122,23 @@ export const moveSceneTiles = createAsyncThunk(
       );
     }
   }
+);
+
+export const deleteSelectedElements = createAsyncThunk(
+  "appState/deleteSelectedElements",
+  async (_, { getState, dispatch }) => {
+    const state = getState();
+    const selectedRect = selectModeActions.selectedSelectedRectList(state);
+
+    if (selectedRect.user) {
+      dispatch(deleteSceneTiles(selectedRect.user));
+    }
+
+    if (selectedRect.patterns) {
+      dispatch(selectModeActions.forceSelectArea([selectedRect.user]));
+      dispatch(deleteScenePatterns(selectedRect.patterns));
+    }
+  },
 );
 
 const initialState = {
@@ -233,11 +250,8 @@ export const appStateSlice = createSlice({
       });
     },
     deleteSceneTiles: (state, action) => {
-      const selectedArea = CanvasUtil.normalizeRect(
-        action.payload.selectedArea
-      );
+      const selectedArea = CanvasUtil.normalizeRect(action.payload);
       const [indexX, indexY] = selectedArea;
-
       const layerIndex = state.scene.selectedLayerIndex;
 
       MatrixUtil.traverse(selectedArea, ({ x, y }, index) => {
@@ -246,6 +260,17 @@ export const appStateSlice = createSlice({
         }
         state.scene.layers[layerIndex].tiles[index.x][index.y] = undefined;
       });
+    },
+    deleteScenePatterns: (state, action) => {
+      const layerIndex = state.scene.selectedLayerIndex;
+      const rects = action.payload;
+      const patterns = state.scene.layers[layerIndex].patterns;
+      
+      Object.keys(patterns).forEach((key) => {
+        state.scene.layers[layerIndex].patterns[key].index = patterns[key].index.filter(index => {
+          return !rects.some(rect => rect[0] === index[0] && rect[1] === index[1]);
+        });
+      })
     },
     addLayer: (state) => {
       state.scene.layers.push({ tiles: [] });
@@ -267,6 +292,7 @@ export const {
   addTilesToScene,
   fillTile,
   deleteSceneTiles,
+  deleteScenePatterns,
   addPatternToScene,
   addLayer,
   selectLayer,

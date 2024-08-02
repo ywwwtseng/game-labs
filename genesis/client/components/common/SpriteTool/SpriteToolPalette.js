@@ -9,7 +9,6 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
     defaultSelected,
     selectedWhenMouseLeave: true,
     canvasId: `spriteSheet-${spriteSheet.source}`,
-    source: spriteSheet.source,
     draggable: false,
     draggedItem: {
       display: (_, data) => {

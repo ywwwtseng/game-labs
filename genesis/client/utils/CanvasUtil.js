@@ -105,7 +105,6 @@ class CanvasUtil {
   }
 
   static normalizeRect(rect) {
-    console.trace(rect)
     const [x, y, dx, dy] = rect;
 
     return [
