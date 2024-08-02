@@ -105,6 +105,10 @@ class CanvasUtil {
   }
 
   static normalizeRect(rect) {
+    if (!rect) {
+      return rect;
+    }
+    
     const [x, y, dx, dy] = rect;
 
     return [
@@ -208,7 +212,7 @@ class CanvasUtil {
 
   static hasExistedTile({
     selectedArea,
-    firstTileOriginInSprite,
+    localOriginIndex,
     layer,
     transparent,
   }) {
@@ -216,7 +220,7 @@ class CanvasUtil {
       for (let y = 0; y < selectedArea[3]; y++) {
         if (
           layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y] &&
-          !transparent.includes(`${firstTileOriginInSprite[0] + x}.${firstTileOriginInSprite[1] + y}`)
+          !transparent.includes(`${localOriginIndex[0] + x}.${localOriginIndex[1] + y}`)
         ) {
           return true;
         }

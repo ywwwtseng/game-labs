@@ -8,12 +8,12 @@ import {
   selectedLayerSelector
 } from "@/features/appState/appStateSlice";
 import {
-  setCursorPosition,
+  setCursorIndex,
   selectAreaStart,
   selectArea,
   selectAreaStop,
 } from "@/features/selectMode/selectModeSlice";
-import { useICanvasSelectArea } from "@/hooks/useCanvasSelectArea";
+import { useSelectorBridge } from "@/hooks/useSelectorBridge";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { useDropToDraw } from "@/hooks/useDropToDraw";
@@ -31,8 +31,8 @@ import {
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
 import { useModal } from '@/context/ModalContext';
 import { CreatePatternModal } from '@/components/common/CreatePatternModal';
-import { contain, overlaps } from "@/helpers/BoundingBox";
-import { selectedSelectedRectList, selectedUserSelectedState } from "@/features/selectMode/selectModeSlice";
+import { selectedCursorIndex } from "@/features/selectMode/selectModeSlice";
+import { selectedSelectModeSeletor } from "@/features/selectMode/selectModeSlice";
 
 function SelectModeBehavior({ children }) {
   const cacheSelectedTilesRef = useRef(null);
@@ -40,10 +40,9 @@ function SelectModeBehavior({ children }) {
   const spriteSheets = useSpriteSheets();
   const selectedLayer = useSelector(selectedLayerSelector);
   const dispatch = useDispatch();
-  const position = useSelector((state) => state.selectMode.cursor.position);
+  const cursorIndex = useSelector(selectedCursorIndex);
   const scene = useSelector((state) => state.appState.scene);
-  const selected = useSelector(selectedUserSelectedState);
-  const { user: userSelectedArea, patterns: selectedPatterns } = useSelector(selectedSelectedRectList);
+  const selector = useSelector(selectedSelectModeSeletor);
 
   const { open: openCreatePatternModal } = useModal(CreatePatternModal);
 
@@ -53,15 +52,15 @@ function SelectModeBehavior({ children }) {
         return;
       }
 
-      if (!userSelectedArea) {
+      if (!selector.rect.default) {
         return;
       }
 
       openCreatePatternModal();
     },
     [ARROW_LEFT_KEY]: (event) => {
-      if (!userSelectedArea || !scene) return;
-      const rect = CanvasUtil.normalizeRect(userSelectedArea);
+      if (!selector.rect.default || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selector.rect.default);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -70,8 +69,8 @@ function SelectModeBehavior({ children }) {
       );
     },
     [ARROW_RIGHT_KEY]: (event) => {
-      if (!userSelectedArea || !scene) return;
-      const rect = CanvasUtil.normalizeRect(userSelectedArea);
+      if (!selector.rect.default || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selector.rect.default);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -90,8 +89,8 @@ function SelectModeBehavior({ children }) {
       );
     },
     [ARROW_UP_KEY]: (event) => {
-      if (!userSelectedArea || !scene) return;
-      const rect = CanvasUtil.normalizeRect(userSelectedArea);
+      if (!selector.rect.default || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selector.rect.default);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -100,8 +99,8 @@ function SelectModeBehavior({ children }) {
       );
     },
     [ARROW_DOWN_KEY]: (event) => {
-      if (!userSelectedArea || !scene) return;
-      const rect = CanvasUtil.normalizeRect(userSelectedArea);
+      if (!selector.rect.default || !scene) return;
+      const rect = CanvasUtil.normalizeRect(selector.rect.default);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -120,24 +119,24 @@ function SelectModeBehavior({ children }) {
 
     },
     [BACKSPACE_KEY]: (event) => {
-      if (!userSelectedArea || !scene) return;
+      if (!selector.rect.default || !scene) return;
       dispatch(deleteSelectedElements());
     },
-  }), [userSelectedArea, scene]);
+  }), [selector.rect.default, scene]);
 
   const { isHolding } = useKeyBoard(inputMapping);
 
   const isMoveAddTilesMode = () => isHolding(S_KEY) && isHolding(D_KEY);
 
-  const { register, connect } = useICanvasSelectArea({
+  const { register, connect } = useSelectorBridge({
     canvasId: "canvas",
-    selected,
+    selector,
     draggable: true,
-    position,
+    cursorIndex,
     selectAreaStart: (index) => dispatch(selectAreaStart(index)),
     selectArea: (index) => dispatch(selectArea(index)),
     selectAreaStop: () => dispatch(selectAreaStop()),
-    setCursorPosition: (position) => dispatch(setCursorPosition(position)),
+    setCursorIndex: (cursorIndex) => dispatch(setCursorIndex(cursorIndex)),
     onMoveDown: (area) => {
       const [originX, originY, ...sizeIndex] = area.origin;
 
@@ -159,8 +158,8 @@ function SelectModeBehavior({ children }) {
       if (isMoveAddTilesMode()) {
         if (area.next && originSelectedRectRef.current) {
           dispatch(addTilesToScene({
-            userSelectedArea,
-            firstTileOriginInSprite: [area.next[0], area.next[1]],
+            selectedArea: selector.rect.default,
+            localOriginIndex: [area.next[0], area.next[1]],
             tiles: cacheSelectedTilesRef.current,
             transparent: MatrixUtil.findIndexArray(cacheSelectedTilesRef.current, (tile) => tile === undefined)
               .map(([x, y]) => `${x + area.next[0]}.${y + area.next[1]}`),
@@ -173,14 +172,13 @@ function SelectModeBehavior({ children }) {
       }
     },
     onMoveDownEnd: () => {
-      if (userSelectedArea && cacheSelectedTilesRef.current) {
+      if (selector.rect.default && cacheSelectedTilesRef.current) {
         dispatch(moveSceneTiles({
-          selectedArea: userSelectedArea,
-          firstTileOriginInSprite: [userSelectedArea[0], userSelectedArea[1]],
+          selectedArea: selector.rect.default,
+          localOriginIndex: [selector.rect.default[0], selector.rect.default[1]],
           tiles: cacheSelectedTilesRef.current,
           transparent: MatrixUtil.findIndexArray(cacheSelectedTilesRef.current, (tile) => tile === undefined)
-            .map(([x, y]) => `${x + userSelectedArea[0]}.${y + userSelectedArea[1]}`),
-          restoreArea: isMoveAddTilesMode() ? null : originSelectedRectRef.current,
+            .map(([x, y]) => `${x + selector.rect.default[0]}.${y + selector.rect.default[1]}`),
         }));
       }
 
@@ -192,8 +190,8 @@ function SelectModeBehavior({ children }) {
   const cache = useCallback((ctx) => {
     const patterns = selectedLayer.patterns;
 
-    if (userSelectedArea && cacheSelectedTilesRef.current) {
-      MatrixUtil.traverse(userSelectedArea, (selectedIndex, index) => {
+    if (selector.rect.default && cacheSelectedTilesRef.current) {
+      MatrixUtil.traverse(selector.rect.default, (selectedIndex, index) => {
         const tile = cacheSelectedTilesRef.current[selectedIndex.x][selectedIndex.y];
         
 
@@ -221,14 +219,14 @@ function SelectModeBehavior({ children }) {
       });
     }
 
-    if (userSelectedArea) {
-      selectedPatterns.forEach((rect) => {
+    if (selector.rect.default) {
+      selector.rect.follows.forEach((rect) => {
         CanvasUtil.selected(ctx, rect, 'rgba(255,255,255,0.8)');
       });
     }
 
-    CanvasUtil.selected(ctx, userSelectedArea);
-  }, [userSelectedArea, selectedPatterns, selectedLayer]);
+    CanvasUtil.selected(ctx, selector.rect.default);
+  }, [selector.rect, selectedLayer]);
 
   const { setup: setupDropToDraw } = useDropToDraw({ id: "canvas" });
 

@@ -1,11 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { Canvas2D, CANVAS_LAYER } from "@/components/common/Canvas2D";
-import { MatrixUtil } from "@/utils/MatrixUtil";
-import { useCanvasSelectArea } from "@/hooks/useCanvasSelectArea";
+import { useLocalSelector } from "@/hooks/useLocalSelector";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 
 function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
-  const { selected, register, connect } = useCanvasSelectArea({
+  const { selector, register, connect } = useLocalSelector({
     defaultSelected,
     selectedWhenMouseLeave: true,
     canvasId: `spriteSheet-${spriteSheet.source}`,
@@ -18,10 +17,10 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
         return CanvasUtil.drawSelected(data.selected, spriteSheet);
       },
     },
-    onSelected: (selected) => {
-      if (onSelected && selected.rect) {
+    onSelected: (selectedRect) => {
+      if (onSelected && selectedRect.default) {
         onSelected({
-          rect: selected.rect,
+          rect: selectedRect.default,
           source: spriteSheet.source,
         });
       } else {
@@ -43,8 +42,8 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
   ], [spriteSheet.image.naturalWidth, spriteSheet.image.naturalHeight, spriteSheet.tiles]);
 
   const cache = useCallback((ctx) => {
-    CanvasUtil.selected(ctx, selected.rect);
-  }, [selected.rect]);
+    CanvasUtil.selected(ctx, selector.rect.default);
+  }, [selector.rect.default]);
 
   return (
     <div className="px-2 pt-0.5 pb-2" {...register}>

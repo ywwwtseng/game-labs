@@ -4,7 +4,6 @@ import * as drawModeActions from "@/features/drawMode/drawModeSlice";
 import { CanvasUtil } from "@/utils/CanvasUtil";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { MODE } from "@/constants";
-import { Vec2Util } from "@/utils/Vec2Util";
 
 export const setMode = createAsyncThunk(
   "appState/setMode",
@@ -48,7 +47,7 @@ export const drawTiles = createAsyncThunk(
       dispatch(
         addTilesToScene({
           selectedArea: [index[0], index[1], sizeIndexX, sizeIndexY],
-          firstTileOriginInSprite: [originX, originY],
+          localOriginIndex: [originX, originY],
           transparent,
           source: selectedTiles.source,
         })
@@ -84,43 +83,18 @@ export const drawPattern = createAsyncThunk(
 export const moveSceneTiles = createAsyncThunk(
   "appState/moveSceneTiles",
   async (
-    { selectedArea, firstTileOriginInSprite, tiles, transparent, restoreArea },
-    { getState, dispatch }
+    { selectedArea, localOriginIndex, tiles, transparent },
+    { dispatch }
   ) => {
-    console.log(selectedArea, firstTileOriginInSprite, tiles, transparent, restoreArea)
-    const [originX, originY] = firstTileOriginInSprite;
-    const state = getState();
-    const scene = state.appState.scene;
-    const layer = scene.layers[scene.selectedLayerIndex];
-
-    if (
-      CanvasUtil.hasExistedTile({
+    dispatch(
+      addTilesToScene({
         selectedArea,
-        firstTileOriginInSprite: [originX, originY],
-        layer,
+        localOriginIndex,
+        tiles,
         transparent,
+        disableCheckExistedTile: true,
       })
-    ) {
-      dispatch(selectModeActions.selectArea(restoreArea));
-      dispatch(
-        addTilesToScene({
-          selectedArea: restoreArea,
-          firstTileOriginInSprite,
-          tiles,
-          transparent,
-          disableCheckExistedTile: true,
-        })
-      );
-    } else {
-      dispatch(
-        addTilesToScene({
-          selectedArea,
-          firstTileOriginInSprite,
-          tiles,
-          transparent,
-        })
-      );
-    }
+    );
   }
 );
 
@@ -128,15 +102,15 @@ export const deleteSelectedElements = createAsyncThunk(
   "appState/deleteSelectedElements",
   async (_, { getState, dispatch }) => {
     const state = getState();
-    const selectedRect = selectModeActions.selectedSelectedRectList(state);
+    const selectorRect = selectModeActions.selectedSelectModeSeletorRect(state);
 
-    if (selectedRect.user) {
-      dispatch(deleteSceneTiles(selectedRect.user));
+    if (selectorRect.default) {
+      dispatch(deleteSceneTiles(selectorRect.default));
     }
 
-    if (selectedRect.patterns) {
-      dispatch(selectModeActions.forceSelectArea([selectedRect.user]));
-      dispatch(deleteScenePatterns(selectedRect.patterns));
+    if (selectorRect.follows) {
+      dispatch(selectModeActions.forceSelectArea({ default: selectorRect.default }));
+      dispatch(deleteScenePatterns(selectorRect.follows));
     }
   },
 );
@@ -202,7 +176,7 @@ export const appStateSlice = createSlice({
     },
     addTilesToScene: (state, action) => {
       const selectedArea = action.payload.selectedArea;
-      const [originX, originY] = action.payload.firstTileOriginInSprite;
+      const [originX, originY] = action.payload.localOriginIndex;
       const transparent = action.payload.transparent || [];
 
       const layerIndex = state.scene.selectedLayerIndex;
@@ -211,7 +185,7 @@ export const appStateSlice = createSlice({
         !action.payload.disableCheckExistedTile &&
         CanvasUtil.hasExistedTile({
           selectedArea,
-          firstTileOriginInSprite: [originX, originY],
+          localOriginIndex: [originX, originY],
           layer: state.scene.layers[layerIndex],
           transparent,
         })
@@ -244,9 +218,7 @@ export const appStateSlice = createSlice({
           state.scene.layers[layerIndex].tiles[x] = [];
         }
 
-        if (!state.scene.layers[layerIndex].tiles[x][y]) {
-          state.scene.layers[layerIndex].tiles[x][y] = tile;
-        }
+        state.scene.layers[layerIndex].tiles[x][y] = tile;
       });
     },
     deleteSceneTiles: (state, action) => {

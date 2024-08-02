@@ -16,7 +16,6 @@ function useDragAndDrop({
   const draggedItemRef = useRef(null);
   const { setDragStart, onDrop, setDragStop } = useContext(DragAndDropContext);
 
-
   const handleMouseMove = useCallback((event) => {
     event.preventDefault();
     event.stopPropagation();

@@ -3,6 +3,7 @@ import { Text } from "@/components/ui/Text";
 import { SelectModeInfo } from "@/components/common/AppInfo/SelectModeInfo";
 import { EditModeInfo } from "@/components/common/AppInfo/EditModeInfo";
 import { DrawModeInfo } from "@/components/common/AppInfo/DrawModeInfo";
+import { selectedCursorIndex } from "@/features/selectMode/selectModeSlice";
 import { MODE } from "@/constants";
 
 const ModeInfo = {
@@ -12,16 +13,16 @@ const ModeInfo = {
 };
 
 function AppInfo() {
-  const position = useSelector((state) => state.selectMode.cursor.position);
+  const cursorIndex = useSelector(selectedCursorIndex);
   const mode = useSelector((state) => state.appState.mode);
   const Info = ModeInfo[mode];
 
   return (
     <div className="flex items-center max-h-[24px] min-h-[24px] h-[24px] px-2 py-1 rounded w-full bg-[#282828] mt-1">
-      {Info && (<Info />)}
-      
+      {Info && <Info />}
+
       <div className="flex items-center ml-auto">
-        {position && <Text>{`Location: ${position[0]},${position[1]}`}</Text>}
+        {cursorIndex && <Text>{`Location: ${cursorIndex[0]},${cursorIndex[1]}`}</Text>}
       </div>
     </div>
   );

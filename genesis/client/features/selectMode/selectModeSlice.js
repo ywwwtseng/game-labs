@@ -5,26 +5,27 @@ import { overlaps, contain } from "@/helpers/BoundingBox";
 export const selectAreaStart = createAsyncThunk(
   "selectMode/selectAreaStart",
   async (payload, { dispatch }) => {
-    dispatch(_selectAreaStart(payload));
-    dispatch(forceSelectArea(payload));
+    dispatch(selectAreaStartProgcess(Boolean(payload)));
+    dispatch(selectArea(payload));
   },
 )
 
 export const selectArea = createAsyncThunk(
-  "selectMode/selectAreaStart",
+  "selectMode/selectArea",
   async (payload, { getState, dispatch }) => {
     try {
       if (!payload) {
-        dispatch(forceSelectArea([]));
+        dispatch(forceSelectArea({ default: null, follows: [] }));
+        return;
       }
 
       const state = getState();
       const scene = state.appState.scene;
       const layer = scene.layers[scene.selectedLayerIndex];
 
-      dispatch(forceSelectArea([
-        payload,
-        ...Object.values(layer.patterns).map((pattern) => {
+      dispatch(forceSelectArea({
+        default: payload,
+        follows: Object.values(layer.patterns).map((pattern) => {
           const size = MatrixUtil.sizeIndex(pattern.tiles);
           return pattern.index.map(([x, y]) => {
             const rect = [x, y, ...size];
@@ -33,7 +34,7 @@ export const selectArea = createAsyncThunk(
             }
           });
         }).flat()
-      ]));
+      }));
     } catch (error) {
       console.log(error);
     }
@@ -41,12 +42,13 @@ export const selectArea = createAsyncThunk(
 )
 
 const initialState = {
-  cursor: {
-    position: null,
-  },
-  selected: {
+  selector: {
+    cursorIndex: null,
     progress: false,
-    rect: [],
+    rect: {
+      default: null,
+      follows: [],
+    },
   },
 };
 
@@ -54,40 +56,38 @@ export const selectModeSlice = createSlice({
   name: "selectMode",
   initialState,
   reducers: {
-    setCursorPosition: (state, action) => {
-      state.cursor.position = action.payload;
+    setCursorIndex: (state, action) => {
+      state.selector.cursorIndex = action.payload;
     },
-    _selectAreaStart: (state, action) => {
-      state.selected.progress = Boolean(action.payload);
+    selectAreaStartProgcess: (state, action) => {
+      state.selector.progress = action.payload;
     },
     forceSelectArea: (state, action) => {
-      state.selected.rect = action.payload || [];
+      state.selector.rect = {
+        default: action.payload.default || null,
+        follows: action.payload.follows || [],
+      };
     },
     selectAreaStop: (state) => {
-      state.selected.progress = false;
+      state.selector.progress = false;
     },
     destroy: (state) => {
-      state.selected.rect = [];
+      state.selector.rect = [];
     },
   },
 });
 
 export const {
-  setCursorPosition,
-  _selectAreaStart,
+  setCursorIndex,
+  selectAreaStartProgcess,
   forceSelectArea,
   selectAreaStop,
   destroy,
 } = selectModeSlice.actions;
 
-export const selectedUserSelectedState = (state) => state.selectMode.selected;
-export const selectedUserSelectedRect = (state) => state.selectMode.selected.rect[0];
-export const selectedSelectedRectList = (state) => {
-  const [user, ...patterns] = state.selectMode.selected.rect;
-  return {
-    user,
-    patterns: patterns.filter(Boolean)
-  }
-};
+export const selectedCursorIndex = (state) => state.selectMode.selector.cursorIndex;
+export const selectedSelectModeSeletor = (state) => state.selectMode.selector;
+export const selectedSelectModeSeletorRect = (state) => state.selectMode.selector.rect;
+export const selectedSelectModeSeletorRectDefault = (state) => state.selectMode.selector.rect.default;
 
 export default selectModeSlice.reducer;

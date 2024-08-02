@@ -3,12 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { setupDropzone } from "@/context/DragAndDropContext";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
 import { drawTiles, fillTile, drawPattern } from "@/features/appState/appStateSlice";
-import { MatrixUtil } from "@/utils/MatrixUtil";
+import { selectedSelectModeSeletorRect } from '@/features/selectMode/selectModeSlice';
 import { overlaps } from "@/helpers/BoundingBox";
-import { CanvasUtil } from "@/utils/CanvasUtil";
 
 function useDropToDraw({ id }) {
-  const selectedRect = useSelector((state) => state.selectMode.selected.rect);
+  const selectorRect = useSelector(selectedSelectModeSeletorRect);
 
   const dispatch = useDispatch();
   const spriteSheets = useSpriteSheets();
@@ -22,12 +21,12 @@ function useDropToDraw({ id }) {
         const rect = [...data.index, 1, 1];
 
         if (
-          selectedRect &&
-          overlaps({ rect: selectedRect, canvas }, { event, rect })
+          selectorRect.default &&
+          overlaps({ rect: selectorRect.default, canvas }, { event, rect })
         ) {
           dispatch(
             fillTile({
-              selectedRect,
+              selectedRect: selectorRect.default,
               tile: {
                 index: data.index,
                 source: data.source,
@@ -56,7 +55,7 @@ function useDropToDraw({ id }) {
         )
       },
     }),
-    [spriteSheets, selectedRect]
+    [spriteSheets, selectorRect.default]
   );
 
   const setup = setupDropzone({ id, accept: ["tile", "pattern"], events });
