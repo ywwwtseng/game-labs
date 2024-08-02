@@ -23,12 +23,12 @@ function DrawModeBehavior({ children }) {
     onMove: (event, _, icon) => {
       const bounds = getBoundingBox({ event, rect: drawMode.rect });
       if (icon) {
-        icon.style.opacity = contain(event.target, { in: bounds }) ? 1 : 0.5;
+        icon.style.opacity = contain(bounds, { in: event.target }) ? 1 : 0.5;
       }
     },
     onDownMove: (event) => {
       const bounds = getBoundingBox({ event, rect: drawMode.rect });
-      if (contain(event.target, { in: bounds })) {
+      if (contain(bounds, { in: event.target })) {
         dispatch(
           drawTiles({
             event,

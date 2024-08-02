@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useMemo } from "react";
 import { produce } from "immer";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { overlaps } from "@/helpers/BoundingBox";
@@ -21,6 +21,10 @@ function useICanvasSelectArea({
   onMoveDownEnd = () => {},
   onSelected = () => {},
 }) {
+  const selectedRect = useMemo(() => {
+    return Array.isArray(selected?.rect?.[0]) ? selected?.rect?.[0] : selected.rect;
+  }, [selected.rect]);
+
   const isPressRef = useRef(false);
   const hasMoveDownBehaviorRef = useRef(false);
   const ref = useRef(null);
@@ -53,12 +57,12 @@ function useICanvasSelectArea({
     }
 
     if (selected.progress) {
-      const dx = index[0] - selected.rect[0];
-      const dy = index[1] - selected.rect[1];
+      const dx = index[0] - selectedRect[0];
+      const dy = index[1] - selectedRect[1];
 
       selectArea([
-        selected.rect[0],
-        selected.rect[1],
+        selectedRect[0],
+        selectedRect[1],
         dx > 0 ? dx + 1 : dx === 0 ? 1 : dx - 1,
         dy > 0 ? dy + 1 : dy === 0 ? 1 : dy - 1,
       ]);
@@ -72,12 +76,12 @@ function useICanvasSelectArea({
 
         const [indexX, indexY] = CanvasUtil.positionToIndex(pos);
 
-        if (selected.rect[0] !== indexX || selected.rect[1] !== indexY) {
+        if (selectedRect[0] !== indexX || selectedRect[1] !== indexY) {
           const newSelectedRect = CanvasUtil.calc([
             indexX,
             indexY,
-            selected.rect[2],
-            selected.rect[3],
+            selectedRect[2],
+            selectedRect[3],
           ], { limit: document.getElementById(canvasId) })
 
           selectArea(newSelectedRect);
@@ -87,8 +91,8 @@ function useICanvasSelectArea({
           });
         }
 
-      } else if (draggable && pos.within && selected.rect) {
-        const [x, y, dx, dy] = CanvasUtil.normalizeRect(selected.rect);
+      } else if (draggable && pos.within && selectedRect) {
+        const [x, y, dx, dy] = CanvasUtil.normalizeRect(selectedRect);
         if (index[0] >= x && index[0] < x + dx) {
           if (index[1] >= y && index[1] < y + dy) {
             event.target.style.cursor = "pointer";
@@ -101,7 +105,7 @@ function useICanvasSelectArea({
   }, [draggable, selected]);
 
   const onMouseDown = useCallback((event) => {
-    if (draggable && selected.rect) {
+    if (draggable && selectedRect) {
       const pos = CanvasUtil.getPosition(
         event,
         document.getElementById(canvasId)
@@ -109,7 +113,7 @@ function useICanvasSelectArea({
 
       const index = CanvasUtil.positionToIndex(pos);
 
-      const [x, y, dx, dy] = CanvasUtil.normalizeRect(selected.rect);
+      const [x, y, dx, dy] = CanvasUtil.normalizeRect(selectedRect);
 
       if (pos.within) {
         if (index[0] >= x && index[0] < x + dx) {
@@ -133,7 +137,7 @@ function useICanvasSelectArea({
   const onMouseUp = useCallback((event) => {
     dataTransfer.setData(null);
 
-    const normalizedSelectedRect = selected.rect ? CanvasUtil.normalizeRect(selected.rect) : selected.rect;
+    const normalizedSelectedRect = selectedRect ? CanvasUtil.normalizeRect(selectedRect) : selectedRect;
     selectArea(normalizedSelectedRect);
     selectAreaStop();
     onSelected({
@@ -156,7 +160,7 @@ function useICanvasSelectArea({
     setCursorPosition(null);
 
     if (selected.progress && selectedWhenMouseLeave) {
-      const normalizedSelectedRect = selected.rect ? CanvasUtil.normalizeRect(selected.rect) : selected.rect;
+      const normalizedSelectedRect = selectedRect ? CanvasUtil.normalizeRect(selectedRect) : selectedRect;
 
       onSelected({
         rect: normalizedSelectedRect,
@@ -170,11 +174,11 @@ function useICanvasSelectArea({
 
   const onClick = useCallback((event) => {
     if (event.detail === 2) {
-      if (selected.rect) {
+      if (selectedRect) {
         onSelected({
           rect: null,
         })
-        selectAreaStart(null);
+        selectAreaStart([]);
       }
     }
   }, [selected]);
@@ -215,18 +219,19 @@ function useCanvasSelectArea({
     },
   });
 
-  const selectArea = useCallback((rect) => {
-    setState(
-      produce((draft) => {
-        draft.selected.rect = rect;
-      })
-    );
-  }, []);
-
   const selectAreaStart = useCallback((rect) => {
     setState(
       produce((draft) => {
-        draft.selected.progress = !!rect;
+        draft.selected.progress = Boolean(rect);
+      })
+    );
+
+    selectArea(rect);
+  }, []);
+
+  const selectArea = useCallback((rect) => {
+    setState(
+      produce((draft) => {
         draft.selected.rect = rect;
       })
     );

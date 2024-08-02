@@ -126,9 +126,6 @@ export const moveSceneTiles = createAsyncThunk(
 
 const initialState = {
   mode: MODE.SELECT,
-  cursor: {
-    position: null,
-  },
   // scene: undefined
   scene: {
     name: "default",
@@ -148,9 +145,6 @@ export const appStateSlice = createSlice({
   name: "appState",
   initialState,
   reducers: {
-    setCursorPosition: (state, action) => {
-      state.cursor.position = action.payload;
-    },
     addScene: (state, action) => {
       state.scene = { ...state.scene, ...action.payload };
     },
@@ -268,7 +262,6 @@ export const appStateSlice = createSlice({
 });
 
 export const {
-  setCursorPosition,
   addScene,
   addTileToScene,
   addTilesToScene,

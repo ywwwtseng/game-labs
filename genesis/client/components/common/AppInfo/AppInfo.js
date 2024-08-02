@@ -12,7 +12,7 @@ const ModeInfo = {
 };
 
 function AppInfo() {
-  const position = useSelector((state) => state.appState.cursor.position);
+  const position = useSelector((state) => state.selectMode.cursor.position);
   const mode = useSelector((state) => state.appState.mode);
   const Info = ModeInfo[mode];
 

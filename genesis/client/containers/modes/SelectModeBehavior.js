@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setCursorPosition,
   addTileToScene,
   addTilesToScene,
   moveSceneTiles,
@@ -9,6 +8,7 @@ import {
   selectedLayerSelector
 } from "@/features/appState/appStateSlice";
 import {
+  setCursorPosition,
   selectAreaStart,
   selectArea,
   selectAreaStop,
@@ -32,6 +32,7 @@ import { useSpriteSheets } from "@/context/SpriteSheetContext";
 import { useModal } from '@/context/ModalContext';
 import { CreatePatternModal } from '@/components/common/CreatePatternModal';
 import { contain, overlaps } from "@/helpers/BoundingBox";
+import { selectedSelectedRectList, selectedUserSelectedState } from "@/features/selectMode/selectModeSlice";
 
 function SelectModeBehavior({ children }) {
   const cacheSelectedTilesRef = useRef(null);
@@ -39,10 +40,10 @@ function SelectModeBehavior({ children }) {
   const spriteSheets = useSpriteSheets();
   const selectedLayer = useSelector(selectedLayerSelector);
   const dispatch = useDispatch();
-  const position = useSelector((state) => state.appState.cursor.position);
+  const position = useSelector((state) => state.selectMode.cursor.position);
   const scene = useSelector((state) => state.appState.scene);
-  const selected = useSelector((state) => state.selectMode.selected);
-  const selectedArea = selected.rect;
+  const selected = useSelector(selectedUserSelectedState);
+  const { user: userSelectedArea, patterns: selectedPatterns } = useSelector(selectedSelectedRectList);
 
   const { open: openCreatePatternModal } = useModal(CreatePatternModal);
 
@@ -52,15 +53,15 @@ function SelectModeBehavior({ children }) {
         return;
       }
 
-      if (!selectedArea) {
+      if (!userSelectedArea) {
         return;
       }
 
       openCreatePatternModal();
     },
     [ARROW_LEFT_KEY]: (event) => {
-      if (!selectedArea || !scene) return;
-      const rect = CanvasUtil.normalizeRect(selectedArea);
+      if (!userSelectedArea || !scene) return;
+      const rect = CanvasUtil.normalizeRect(userSelectedArea);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -69,8 +70,8 @@ function SelectModeBehavior({ children }) {
       );
     },
     [ARROW_RIGHT_KEY]: (event) => {
-      if (!selectedArea || !scene) return;
-      const rect = CanvasUtil.normalizeRect(selectedArea);
+      if (!userSelectedArea || !scene) return;
+      const rect = CanvasUtil.normalizeRect(userSelectedArea);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -89,8 +90,8 @@ function SelectModeBehavior({ children }) {
       );
     },
     [ARROW_UP_KEY]: (event) => {
-      if (!selectedArea || !scene) return;
-      const rect = CanvasUtil.normalizeRect(selectedArea);
+      if (!userSelectedArea || !scene) return;
+      const rect = CanvasUtil.normalizeRect(userSelectedArea);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -99,8 +100,8 @@ function SelectModeBehavior({ children }) {
       );
     },
     [ARROW_DOWN_KEY]: (event) => {
-      if (!selectedArea || !scene) return;
-      const rect = CanvasUtil.normalizeRect(selectedArea);
+      if (!userSelectedArea || !scene) return;
+      const rect = CanvasUtil.normalizeRect(userSelectedArea);
       const sizeIndexX = rect[2];
       const sizeIndexY = rect[3];
 
@@ -119,13 +120,12 @@ function SelectModeBehavior({ children }) {
 
     },
     [BACKSPACE_KEY]: (event) => {
-      if (!selectedArea || !scene) return;
-
+      if (!userSelectedArea || !scene) return;
       dispatch(deleteSceneTiles({
-        selectedArea: selectedArea
+        selectedArea: userSelectedArea
       }));
     },
-  }), [selectedArea, scene]);
+  }), [userSelectedArea, scene]);
 
   const { isHolding } = useKeyBoard(inputMapping);
 
@@ -161,7 +161,7 @@ function SelectModeBehavior({ children }) {
       if (isMoveAddTilesMode()) {
         if (area.next && originSelectedRectRef.current) {
           dispatch(addTilesToScene({
-            selectedArea,
+            userSelectedArea,
             firstTileOriginInSprite: [area.next[0], area.next[1]],
             tiles: cacheSelectedTilesRef.current,
             transparent: MatrixUtil.findIndexArray(cacheSelectedTilesRef.current, (tile) => tile === undefined)
@@ -175,13 +175,13 @@ function SelectModeBehavior({ children }) {
       }
     },
     onMoveDownEnd: () => {
-      if (selectedArea && cacheSelectedTilesRef.current) {
+      if (userSelectedArea && cacheSelectedTilesRef.current) {
         dispatch(moveSceneTiles({
-          selectedArea,
-          firstTileOriginInSprite: [selectedArea[0], selectedArea[1]],
+          userSelectedArea,
+          firstTileOriginInSprite: [userSelectedArea[0], userSelectedArea[1]],
           tiles: cacheSelectedTilesRef.current,
           transparent: MatrixUtil.findIndexArray(cacheSelectedTilesRef.current, (tile) => tile === undefined)
-            .map(([x, y]) => `${x + selectedArea[0]}.${y + selectedArea[1]}`),
+            .map(([x, y]) => `${x + userSelectedArea[0]}.${y + userSelectedArea[1]}`),
           restoreArea: isMoveAddTilesMode() ? null : originSelectedRectRef.current,
         }));
       }
@@ -194,8 +194,8 @@ function SelectModeBehavior({ children }) {
   const cache = useCallback((ctx) => {
     const patterns = selectedLayer.patterns;
 
-    if (selectedArea && cacheSelectedTilesRef.current) {
-      MatrixUtil.traverse(selectedArea, (selectedIndex, index) => {
+    if (userSelectedArea && cacheSelectedTilesRef.current) {
+      MatrixUtil.traverse(userSelectedArea, (selectedIndex, index) => {
         const tile = cacheSelectedTilesRef.current[selectedIndex.x][selectedIndex.y];
         
 
@@ -223,20 +223,14 @@ function SelectModeBehavior({ children }) {
       });
     }
 
-    if (selectedArea) {
-      Object.values(patterns).forEach((pattern) => {
-        const size = MatrixUtil.sizeIndex(pattern.tiles);
-        pattern.index.forEach(([x, y]) => {
-          const rect = [x, y, ...size];
-          if (overlaps(selectedArea, rect) || contain(selectedArea, { in: rect })) {
-            CanvasUtil.selected(ctx, rect, 'rgba(255,255,255,0.8)');
-          }
-        });
+    if (userSelectedArea) {
+      selectedPatterns.forEach((rect) => {
+        CanvasUtil.selected(ctx, rect, 'rgba(255,255,255,0.8)');
       });
     }
 
-    CanvasUtil.selected(ctx, selectedArea);
-  }, [selectedArea, selectedLayer]);
+    CanvasUtil.selected(ctx, userSelectedArea);
+  }, [userSelectedArea, selectedPatterns, selectedLayer]);
 
   const { setup: setupDropToDraw } = useDropToDraw({ id: "canvas" });
 

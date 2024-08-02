@@ -110,7 +110,7 @@ function overlaps(T1, T2) {
   return getBoundingBox(T1).overlaps(getBoundingBox(T2));
 }
 
-function contain(outer, { in: inner }) {
+function contain(inner, { in: outer }) {
   const outerBounds = getBoundingBox(outer);
   const innerBounds = getBoundingBox(inner);
 

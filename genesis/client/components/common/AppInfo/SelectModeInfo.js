@@ -2,9 +2,10 @@ import { useSelector } from "react-redux";
 import { Text } from "@/components/ui/Text";
 import { SelectIcon } from "@/components/icon/SelectIcon";
 import { CheckIcon } from "@/components/icon/CheckIcon";
+import { selectedUserSelectedRect } from "@/features/selectMode/selectModeSlice";
 
 function SelectModeInfo() {
-  const selectedRect = useSelector((state) => state.selectMode.selected.rect);
+  const selectedRect = useSelector(selectedUserSelectedRect);
   return (
     <>
       <SelectIcon className="mr-0.5" size={4} />

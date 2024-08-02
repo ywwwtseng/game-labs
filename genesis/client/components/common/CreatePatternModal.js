@@ -11,10 +11,11 @@ import { useMutation } from "@/hooks/useMutation";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { ArrayUtil } from "@/utils/ArrayUtil";
 import { CanvasUtil } from "@/utils/CanvasUtil";
+import { selectedUserSelectedRect } from "@/features/selectMode/selectModeSlice";
 
 function CreatePatternModal() {
   const layer = useSelector(selectedLayerSelector);
-  const selectedArea = useSelector((state) => state.selectMode.selected.rect);
+  const selectedArea = useSelector(selectedUserSelectedRect);
   const spriteSheets = useSpriteSheets();
   const updateSpriteSheets = useUpdateSpriteSheets();
   const dispatch = useDispatch();
