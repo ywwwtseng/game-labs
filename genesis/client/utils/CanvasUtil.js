@@ -154,25 +154,43 @@ class CanvasUtil {
     return buffer;
   }
 
-  static createTileBuffer(tiles, width, height) {
+  static drawBufferOnCanvas(ctx, buffer, x, y) {
+    ctx.drawImage(
+      buffer,
+      0,
+      0,
+      16,
+      16,
+      x * 16,
+      y * 16,
+      16,
+      16
+    ); 
+  }
+
+  static drawTilesOnCanvas(ctx, T, offset = {x: 0, y: 0}) {
+    MatrixUtil.traverse(T, ({value, x, y}) => {
+      if (value.buffer) {
+        CanvasUtil.drawBufferOnCanvas(ctx, value.buffer, offset.x + x, offset.y + y);
+      }
+    });
+  }
+
+  static createSpriteLayerBuffer(layers, width, height) {
+
     return CanvasUtil.createBuffer(
       width,
       height,
       (ctx) => {
-        tiles.forEach((layer) => {
-          MatrixUtil.traverse(layer.tiles, ({value: tile, x, y}) => {
-            ctx.drawImage(
-              tile.buffer,
-              0,
-              0,
-              16,
-              16,
-              x * 16,
-              y * 16,
-              16,
-              16
-            );
-          });
+        layers.forEach((layer) => {
+
+          CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);
+
+          layer.patterns?.forEach((pattern) => {
+            pattern.index.forEach((index) => {
+              CanvasUtil.drawTilesOnCanvas(ctx, pattern.tiles, {x: index[0], y: index[1]});
+            })
+          })
         });
       }
     );

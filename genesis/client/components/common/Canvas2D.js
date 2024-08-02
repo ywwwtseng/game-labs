@@ -7,10 +7,10 @@ export const CANVAS_LAYER = {
     name: 'GRID',
     buffer: CanvasUtil.createGridBuffer(width + 1, height + 1),
   }),
-  TILES: ({ tiles, width, height }) => ({
-    name: 'TILES',
-    buffer: CanvasUtil.createTileBuffer(
-      MatrixUtil.isMatrix(tiles) ? [{ tiles }] : tiles,
+  SPRITE_LAYER: ({ layers, width, height }) => ({
+    name: 'SPRITE_LAYER',
+    buffer: CanvasUtil.createSpriteLayerBuffer(
+      MatrixUtil.isMatrix(layers) ? [{ tiles: layers }] : layers,
       width + 1,
       height + 1,
     ),

@@ -40,25 +40,10 @@ export const drawTiles = createAsyncThunk(
   async ({ event, selectedTiles, transparent = [] }, { getState, dispatch }) => {
     try {
       const scene = getState().appState.scene;
-
       const [originX, originY, sizeIndexX, sizeIndexY] = selectedTiles.rect;
 
-
       const pos = CanvasUtil.getSelectedAreaPosition(event, selectedTiles.rect);
-
-
       const index = CanvasUtil.positionToIndex(pos);
-      const canvasMaxIndex = CanvasUtil.positionToIndex({
-        x: scene.width,
-        y: scene.height,
-      });
-
-      if (
-        index[0] + sizeIndexX - 1 > canvasMaxIndex[0] ||
-        index[1] + sizeIndexY - 1 > canvasMaxIndex[1]
-      ) {
-        return;
-      }
 
       dispatch(
         addTilesToScene({
@@ -77,13 +62,20 @@ export const drawTiles = createAsyncThunk(
 export const drawPattern = createAsyncThunk(
   "appState/drawPattern",
   async (
-    { event, source, pattern },
+    { event, pattern },
     { getState, dispatch }
   ) => {
+    const rect = CanvasUtil.getPatternRect(pattern);
+    const pos = CanvasUtil.getSelectedAreaPosition(event, rect);
+    const index = CanvasUtil.positionToIndex(pos);
     try {
-      console.log(pattern.tiles)
-      const rect = CanvasUtil.getPatternRect(pattern);
-      console.log(rect)
+
+      dispatch(
+        addPatternToScene({
+          index,
+          pattern,
+        })
+      )
     } catch (error) {
       console.log(error);
     }
@@ -146,7 +138,7 @@ const initialState = {
     layers: [
       {
         tiles: [],
-        patterns: [],
+        patterns: {},
       },
     ],
   },
@@ -161,6 +153,31 @@ export const appStateSlice = createSlice({
     },
     addScene: (state, action) => {
       state.scene = { ...state.scene, ...action.payload };
+    },
+    addPatternToScene(state, action) {
+      const layerIndex = state.scene.selectedLayerIndex;
+      const [indexX, indexY] = action.payload.index;
+      const pattern_id = action.payload.pattern.id;
+
+      if (!state.scene.layers[layerIndex].tiles[indexX]) {
+        state.scene.layers[layerIndex].tiles[indexX] = [];
+      }
+
+
+      // state.scene.layers[layerIndex].tiles[indexX][indexY] = {
+      //   pattern_id
+      // };
+
+      const pattern = state.scene.layers[layerIndex].patterns[pattern_id]
+
+      if (!pattern) {
+        state.scene.layers[layerIndex].patterns[pattern_id] = {
+          ...action.payload.pattern,
+          index: [[indexX, indexY]],
+        };
+      } else {
+        state.scene.layers[layerIndex].patterns[pattern_id].index.push([indexX, indexY])
+      }
     },
     addTileToScene: (state, action) => {
       const layerIndex = state.scene.selectedLayerIndex;
@@ -257,6 +274,7 @@ export const {
   addTilesToScene,
   fillTile,
   deleteSceneTiles,
+  addPatternToScene,
   addLayer,
   selectLayer,
 } = appStateSlice.actions;

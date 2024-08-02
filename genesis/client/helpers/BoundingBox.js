@@ -1,3 +1,4 @@
+import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 
 class BoundingBox {
@@ -70,7 +71,7 @@ function getBoundingBox(T) {
   }
 
   if (T?.event && T?.rect) {
-    const size = MatrixUtil.size(T?.rect);
+    const size = MatrixUtil.size(CanvasUtil.normalizeRect(T.rect));
     const pos = {
       x: T.event.pageX - size.x / 2, 
       y: T.event.pageY - size.y / 2,
@@ -79,14 +80,26 @@ function getBoundingBox(T) {
     return new BoundingBox({ pos, size });
   }
 
-  if (T?.selectedArea && T?.canvas) {
+  if (T?.rect && T?.canvas) {
     const { left, top } = T.canvas.getBoundingClientRect();
-    const [indexX, indexY] = T.selectedArea;
+    const rect = CanvasUtil.normalizeRect(T.rect);
+    const [indexX, indexY] = rect;
     const pos = {
       x: left + indexX * 16,
       y: top + indexY * 16,
     };
-    const size = MatrixUtil.size(T.selectedArea);
+    const size = MatrixUtil.size(rect);
+    return new BoundingBox({ pos, size });
+  }
+
+  if (T?.rect || T?.length === 4) {
+    const rect = CanvasUtil.normalizeRect(T.rect || T);
+    const [indexX, indexY] = rect;
+    const pos = {
+      x: indexX * 16,
+      y: indexY * 16,
+    };
+    const size = MatrixUtil.size(rect);
     return new BoundingBox({ pos, size });
   }
 

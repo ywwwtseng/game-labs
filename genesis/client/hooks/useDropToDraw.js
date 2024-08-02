@@ -23,7 +23,7 @@ function useDropToDraw({ id }) {
 
         if (
           selectedRect &&
-          overlaps({ selectedArea: selectedRect, canvas }, { event, rect })
+          overlaps({ rect: selectedRect, canvas }, { event, rect })
         ) {
           dispatch(
             fillTile({
@@ -39,7 +39,7 @@ function useDropToDraw({ id }) {
             drawTiles({
               event,
               selectedTiles: {
-                rect: [...data.index, 1, 1],
+                rect,
                 source: data.source,
               },
               transparent: spriteSheets[data.source].transparent,
@@ -51,7 +51,6 @@ function useDropToDraw({ id }) {
         dispatch(
           drawPattern({
             event,
-            source: data.source,
             pattern: data.pattern,
           })
         )

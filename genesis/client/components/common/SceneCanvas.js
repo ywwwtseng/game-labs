@@ -4,27 +4,52 @@ import { Canvas2D, CANVAS_LAYER } from "@/components/common/Canvas2D";
 import { MatrixUtil } from "@/utils/MatrixUtil";
 import { ModeConnectToCanvas } from "@/containers/ModeConnectToCanvas";
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
+import { selectedLayerSelector } from "@/features/appState/appStateSlice";
 
 function SceneCanvas() {
+  selectedLayerSelector
   const scene = useSelector((state) => state.appState.scene);
+  const selectedLayer = useSelector(selectedLayerSelector);
   const spriteSheets = useSpriteSheets();
 
-  const tiles = useMemo(() => {
+  const spriteLayers = useMemo(() => {
+    if (Object.keys(spriteSheets).length === 0) {
+      return [];
+    }
+
     return scene.layers.map((layer) => {
       return {
         tiles: MatrixUtil.map(
           layer.tiles,
-          ({ source, index: [indexX, indexY] }) => ({
-            buffer: spriteSheets[source].tiles[indexX][indexY].buffer,
-          })
+          (T) => {
+            if (T.source && T.index) {
+              const { source, index } = T;
+              return {
+                buffer: spriteSheets[source].tiles[index[0]][index[1]].buffer,
+              }
+            }
+          }
         ),
+        patterns: Object.values(layer.patterns).map((pattern) => {
+          const source = pattern.id.split('.')[0];
+
+          return {
+            id: pattern.id,
+            index: pattern.index,
+            tiles: MatrixUtil.map(pattern.tiles, (index) => {
+              return index 
+                ? { buffer: spriteSheets[source].tiles[index[0]][index[1]].buffer }
+                : undefined
+            })
+          }
+        })
       };
     });
   }, [spriteSheets, scene.layers]);
 
   const layers = useMemo(() => [
-    CANVAS_LAYER.TILES({
-      tiles,
+    CANVAS_LAYER.SPRITE_LAYER({
+      layers: spriteLayers,
       width: scene.width,
       height: scene.height,
     }),

@@ -31,6 +31,7 @@ import {
 import { useSpriteSheets } from "@/context/SpriteSheetContext";
 import { useModal } from '@/context/ModalContext';
 import { CreatePatternModal } from '@/components/common/CreatePatternModal';
+import { contain, overlaps } from "@/helpers/BoundingBox";
 
 function SelectModeBehavior({ children }) {
   const cacheSelectedTilesRef = useRef(null);
@@ -191,28 +192,51 @@ function SelectModeBehavior({ children }) {
   });
 
   const cache = useCallback((ctx) => {
-    if (selectedArea && cacheSelectedTilesRef.current) {
-      MatrixUtil.traverse(selectedArea, ({x, y}, index) => {
-        const tile = cacheSelectedTilesRef.current[x][y];
+    const patterns = selectedLayer.patterns;
 
-        if (tile) {
-          ctx.drawImage(
+    if (selectedArea && cacheSelectedTilesRef.current) {
+      MatrixUtil.traverse(selectedArea, (selectedIndex, index) => {
+        const tile = cacheSelectedTilesRef.current[selectedIndex.x][selectedIndex.y];
+        
+
+
+        if (tile && tile.pattern_id) {
+          const pattern = patterns[tile.pattern_id]
+          const source = pattern.id.split(".")[0];
+
+          MatrixUtil.traverse(pattern.tiles, ({ x, y }) => {
+            CanvasUtil.drawBufferOnCanvas(
+              ctx,
+              spriteSheets[source].tiles[x][y].buffer,
+              (index.x + x),
+              (index.y + y),
+            );
+          });
+        } else if (tile) {
+          CanvasUtil.drawBufferOnCanvas(
+            ctx,
             spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
-            0,
-            0,
-            16,
-            16,
-            index.x * 16,
-            index.y * 16,
-            16,
-            16
-          );
+            index.x,
+            index.y,
+          )
         }
       });
     }
 
+    if (selectedArea) {
+      Object.values(patterns).forEach((pattern) => {
+        const size = MatrixUtil.sizeIndex(pattern.tiles);
+        pattern.index.forEach(([x, y]) => {
+          const rect = [x, y, ...size];
+          if (overlaps(selectedArea, rect) || contain(selectedArea, { in: rect })) {
+            CanvasUtil.selected(ctx, rect, 'rgba(255,255,255,0.8)');
+          }
+        });
+      });
+    }
+
     CanvasUtil.selected(ctx, selectedArea);
-  }, [selectedArea]);
+  }, [selectedArea, selectedLayer]);
 
   const { setup: setupDropToDraw } = useDropToDraw({ id: "canvas" });
 

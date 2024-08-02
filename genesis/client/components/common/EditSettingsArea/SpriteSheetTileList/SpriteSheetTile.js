@@ -33,7 +33,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
           data={{
             type: "tile",
             source: spriteSheet.source,
-            index: [...index, 1, 1],
+            index,
           }}
           draggedItem={{
             display: () => {
