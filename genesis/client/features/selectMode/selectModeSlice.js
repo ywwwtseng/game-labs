@@ -76,7 +76,10 @@ export const selectModeSlice = createSlice({
       state.selector.progress = false;
     },
     destroy: (state) => {
-      state.selector.rect = [];
+      state.selector.rect = {
+        default: null,
+        follows: [],
+      };
     },
   },
 });

@@ -4,12 +4,12 @@ import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { selectedLayerSelector } from '@/features/appState/appStateSlice';
+import { selectedCurrentLayerSelector } from '@/features/appState/appStateSlice';
 
 function SceneCanvas() {
-  selectedLayerSelector;
+  selectedCurrentLayerSelector;
   const scene = useSelector((state) => state.appState.scene);
-  const selectedLayer = useSelector(selectedLayerSelector);
+  const selectedLayer = useSelector(selectedCurrentLayerSelector);
   const spriteSheets = useSpriteSheets();
 
   const spriteLayers = useMemo(() => {

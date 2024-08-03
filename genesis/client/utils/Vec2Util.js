@@ -1,4 +1,11 @@
 class Vec2Util {
+  static get unit() {
+    return {
+      x: 1,
+      y: 1,
+    };
+  }
+
   static calc(vec1, { sub, add }) {
     let x = vec1.x;
     let y = vec1.y;
@@ -16,6 +23,10 @@ class Vec2Util {
       x,
       y,
     };
+  }
+
+  static diff(vec1, vec2) {
+    return vec1[0] !== vec2[0] || vec1[1] !== vec2[1];
   }
 }
 

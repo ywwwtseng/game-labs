@@ -89,22 +89,22 @@ class MatrixUtil {
     );
   }
 
-  static create(T, callback) {
+  static create(T, callback, offset) {
     if (T.length === 2) {
-      return MatrixUtil._createBySizeIndex(T, callback);
+      return MatrixUtil._createBySizeIndex(T, callback, offset = { x: 0, y: 0 });
     } else if (T.length === 4) {
-      return MatrixUtil._createBySizeIndex([T[2], T[3]], callback);
+      return MatrixUtil._createBySizeIndex([T[2], T[3]], callback, offset = { x: T[0], y: T[1] });
     }
   }
 
-  static _createBySizeIndex(sizeIndex, callback) {
+  static _createBySizeIndex(sizeIndex, callback, offset = { x: 0, y: 0 }) {
     const matrix = [];
     MatrixUtil.traverse(sizeIndex, ({ x, y }) => {
       if (!matrix[x]) {
         matrix[x] = [];
       }
 
-      matrix[x][y] = callback(x, y);
+      matrix[x][y] = callback({ x, y }, { x: x + offset.x, y: y + offset.y });
     });
 
     return matrix;

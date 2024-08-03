@@ -5,7 +5,8 @@ import {
   addTilesToScene,
   moveSceneTiles,
   deleteSelectedElements,
-  selectedLayerSelector,
+  selectedScene,
+  selectedCurrentLayerSelector,
 } from '@/features/appState/appStateSlice';
 import {
   setCursorIndex,
@@ -13,6 +14,7 @@ import {
   selectArea,
   selectAreaStop,
 } from '@/features/selectMode/selectModeSlice';
+import { selectedCursorIndex, selectedSelectModeSeletor } from '@/features/selectMode/selectModeSlice';
 import { useSelectorBridge } from '@/hooks/useSelectorBridge';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
@@ -31,17 +33,16 @@ import {
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useModal } from '@/context/ModalContext';
 import { CreatePatternModal } from '@/components/common/CreatePatternModal';
-import { selectedCursorIndex } from '@/features/selectMode/selectModeSlice';
-import { selectedSelectModeSeletor } from '@/features/selectMode/selectModeSlice';
+import { CANVAS_ELEMENT } from '@/constants';
 
 function SelectModeBehavior({ children }) {
-  const cacheSelectedTilesRef = useRef(null);
-  const originSelectedRectRef = useRef(null);
+  const bufferRef = useRef({});
+  const genesisRef = useRef({});
   const spriteSheets = useSpriteSheets();
-  const selectedLayer = useSelector(selectedLayerSelector);
+  const scene = useSelector(selectedScene);
+  const selectedLayer = useSelector(selectedCurrentLayerSelector);
   const dispatch = useDispatch();
   const cursorIndex = useSelector(selectedCursorIndex);
-  const scene = useSelector((state) => state.appState.scene);
   const selector = useSelector(selectedSelectModeSeletor);
 
   const { open: openCreatePatternModal } = useModal(CreatePatternModal);
@@ -49,7 +50,7 @@ function SelectModeBehavior({ children }) {
   const inputMapping = useMemo(
     () => ({
       [P_KEY]: () => {
-        if (cacheSelectedTilesRef.current || originSelectedRectRef.current) {
+        if (bufferRef.current.default || genesisRef.current.default) {
           return;
         }
 
@@ -149,69 +150,83 @@ function SelectModeBehavior({ children }) {
     selectArea: (index) => dispatch(selectArea(index)),
     selectAreaStop: () => dispatch(selectAreaStop()),
     setCursorIndex: (cursorIndex) => dispatch(setCursorIndex(cursorIndex)),
-    onMoveDown: (area) => {
-      const [originX, originY, ...sizeIndex] = area.origin;
+    onMoveDown: (selected) => {
+      const type = selected.follows.length === 0 ? CANVAS_ELEMENT.TILE : CANVAS_ELEMENT.PATTERN;
 
-      if (!cacheSelectedTilesRef.current) {
-        cacheSelectedTilesRef.current = MatrixUtil.create(sizeIndex, (x, y) => {
-          const tile = selectedLayer.tiles?.[originX + x]?.[originY + y];
+      if (type === CANVAS_ELEMENT.PATTERN) {
+        if (!bufferRef.current.follows) {
 
-          if (tile && !isHolding(S_KEY)) {
+        }
+        // bufferRef.current.follows = selected.follows.genesis.map(rect => {
+        //   return MatrixUtil.create(rect, (_, { x, y }) => {
+
+        //   });
+        // });
+      }
+
+    
+      if (type === CANVAS_ELEMENT.TILE) {
+        if (!bufferRef.current.default) {
+          bufferRef.current.default = CanvasUtil.cloneSceneSelectedTiles(selected.default.genesis, scene, ({ tile, x, y }) => {            
+            if (tile && !isHolding(S_KEY)) {
+              dispatch(
+                addTileToScene({
+                  index: [x, y],
+                  tile: undefined,
+                }),
+              );
+            }
+            
+            return tile;
+          });
+        }
+        
+        if (isMoveAddTilesMode()) {
+          if (selected.default.next && genesisRef.current.default) {
             dispatch(
-              addTileToScene({
-                index: [originX + x, originY + y],
-                tile: undefined,
+              addTilesToScene({
+                selectedArea: selector.rect.default,
+                localOriginIndex: [selected.default.next[0], selected.default.next[1]],
+                tiles: bufferRef.current.default,
+                transparent: MatrixUtil.findIndexArray(
+                  bufferRef.current.default,
+                  (tile) => tile === undefined,
+                ).map(([x, y]) => `${x + selected.default.next[0]}.${y + selected.default.next[1]}`),
               }),
             );
           }
-
-          return tile;
-        });
-      }
-
-      if (isMoveAddTilesMode()) {
-        if (area.next && originSelectedRectRef.current) {
-          dispatch(
-            addTilesToScene({
-              selectedArea: selector.rect.default,
-              localOriginIndex: [area.next[0], area.next[1]],
-              tiles: cacheSelectedTilesRef.current,
-              transparent: MatrixUtil.findIndexArray(
-                cacheSelectedTilesRef.current,
-                (tile) => tile === undefined,
-              ).map(([x, y]) => `${x + area.next[0]}.${y + area.next[1]}`),
-            }),
-          );
         }
-      }
-
-      if (!originSelectedRectRef.current) {
-        originSelectedRectRef.current = area.origin;
+        
+        if (!genesisRef.current.default) {
+          genesisRef.current.default = selected.default.genesis;
+        }
       }
     },
     onMoveDownEnd: () => {
-      if (selector.rect.default && cacheSelectedTilesRef.current) {
-        dispatch(
-          moveSceneTiles({
-            selectedArea: selector.rect.default,
-            localOriginIndex: [
-              selector.rect.default[0],
-              selector.rect.default[1],
-            ],
-            tiles: cacheSelectedTilesRef.current,
-            transparent: MatrixUtil.findIndexArray(
-              cacheSelectedTilesRef.current,
-              (tile) => tile === undefined,
-            ).map(
-              ([x, y]) =>
-                `${x + selector.rect.default[0]}.${y + selector.rect.default[1]}`,
-            ),
-          }),
-        );
-      }
+      if (selector.rect.follows.length === 0) {
+        if (selector.rect.default && bufferRef.current.default) {
+          dispatch(
+            moveSceneTiles({
+              selectedArea: selector.rect.default,
+              localOriginIndex: [
+                selector.rect.default[0],
+                selector.rect.default[1],
+              ],
+              tiles: bufferRef.current.default,
+              transparent: MatrixUtil.findIndexArray(
+                bufferRef.current.default,
+                (tile) => tile === undefined,
+              ).map(
+                ([x, y]) =>
+                  `${x + selector.rect.default[0]}.${y + selector.rect.default[1]}`,
+              ),
+            }),
+          );
+        }
 
-      cacheSelectedTilesRef.current = null;
-      originSelectedRectRef.current = null;
+        bufferRef.current.default = null;
+        genesisRef.current.default = null;
+      }
     },
   });
 
@@ -219,10 +234,10 @@ function SelectModeBehavior({ children }) {
     (ctx) => {
       const patterns = selectedLayer.patterns;
 
-      if (selector.rect.default && cacheSelectedTilesRef.current) {
+      if (selector.rect.default && bufferRef.current.default) {
         MatrixUtil.traverse(selector.rect.default, (selectedIndex, index) => {
           const tile =
-            cacheSelectedTilesRef.current[selectedIndex.x][selectedIndex.y];
+            bufferRef.current.default[selectedIndex.x][selectedIndex.y];
 
           if (tile && tile.pattern_id) {
             const pattern = patterns[tile.pattern_id];

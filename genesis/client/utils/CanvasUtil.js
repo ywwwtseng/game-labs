@@ -23,14 +23,20 @@ class CanvasUtil {
     };
   }
 
-  static getSelectedAreaPosition(event, rect) {
+  static getDraggedIconPosition(event, rect, offset = { x: 0, y: 0 }) {
     const size = MatrixUtil.size(rect);
 
     const pos = Vec2Util.calc(CanvasUtil.getPosition(event, event.target), {
-      add: { x: -(size.x / 2) + 8, y: -(size.y / 2) + 8 },
+      add: { x: -(size.x / 2) + offset.x, y: -(size.y / 2) + offset.y },
     });
 
     return pos;
+  }
+  static getRectPosIndex(rect) {
+    const {pos} = getBoundingBox(rect);
+    const index = CanvasUtil.positionToIndex(pos);
+    return index;
+
   }
 
   static positionToIndex(pos) {
@@ -220,15 +226,36 @@ class CanvasUtil {
     return false;
   }
 
-  static getSceneSelectedTiles(selectedArea, layer, callback = (any) => any) {
-    return MatrixUtil.create(selectedArea, (x, y) => {
-      const tile = layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y];
-      return callback(tile);
+  static cloneSceneSelectedTiles(rect, scene, callback = (any) => any) {
+    const layer = scene.layers[scene.selectedLayerIndex];
+    return MatrixUtil.create(rect, (_, { x, y }) => {
+      const tile = layer.tiles?.[x]?.[y];
+      return callback({ tile, x, y });
     });
   }
 
   static getPatternRect(pattern) {
     return [0, 0, ...MatrixUtil.sizeIndex(pattern.tiles)];
+  }
+
+  static createFollowClosely({ event, rect, canvas }) {
+    const pos1 = CanvasUtil.getPosition(event, canvas);
+    const [x, y] = rect;
+    const pos0 = CanvasUtil.indexToPosition([x, y]);
+
+    const vec = Vec2Util.calc(pos1, {
+      sub: Vec2Util.calc(pos0, { add: Vec2Util.unit }),
+    });
+
+    return (event) => {
+      const pos = Vec2Util.calc(CanvasUtil.getPosition(event, canvas), { sub: vec });
+      const index = CanvasUtil.positionToIndex(pos);
+
+      return {
+        pos,
+        index,
+      };
+    };
   }
 }
 

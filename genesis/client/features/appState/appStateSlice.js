@@ -38,13 +38,12 @@ export const drawTiles = createAsyncThunk(
   'appState/drawTiles',
   async (
     { event, selectedTiles, transparent = [] },
-    { getState, dispatch },
+    { dispatch },
   ) => {
     try {
-      const scene = getState().appState.scene;
       const [originX, originY, sizeIndexX, sizeIndexY] = selectedTiles.rect;
 
-      const pos = CanvasUtil.getSelectedAreaPosition(event, selectedTiles.rect);
+      const pos = CanvasUtil.getDraggedIconPosition(event, selectedTiles.rect, { x: 8, y: 8 });
       const index = CanvasUtil.positionToIndex(pos);
 
       dispatch(
@@ -63,9 +62,9 @@ export const drawTiles = createAsyncThunk(
 
 export const drawPattern = createAsyncThunk(
   'appState/drawPattern',
-  async ({ event, pattern }, { getState, dispatch }) => {
+  async ({ event, pattern }, { dispatch }) => {
     const rect = CanvasUtil.getPatternRect(pattern);
-    const pos = CanvasUtil.getSelectedAreaPosition(event, rect);
+    const pos = CanvasUtil.getDraggedIconPosition(event, rect, { x: 8, y: 8 });
     const index = CanvasUtil.positionToIndex(pos);
     try {
       dispatch(
@@ -279,7 +278,8 @@ export const {
 } = appStateSlice.actions;
 
 export const selectedIsDrawMode = (state) => state.appState.mode === MODE.DRAW;
-export const selectedLayerSelector = (state) =>
+export const selectedScene = (state) => state.appState.scene;
+export const selectedCurrentLayerSelector = (state) =>
   state.appState.scene.layers[state.appState.scene.selectedLayerIndex];
 
 export default appStateSlice.reducer;

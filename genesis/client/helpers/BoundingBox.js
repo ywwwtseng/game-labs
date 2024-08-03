@@ -1,4 +1,5 @@
 import { CanvasUtil } from '@/utils/CanvasUtil';
+import { DomUtil } from '@/utils/DomUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 
 class BoundingBox {
@@ -91,18 +92,8 @@ function getBoundingBox(T) {
     return new BoundingBox({ pos, size });
   }
 
-  if (T instanceof Event) {
-    const size = { x: 1, y: 1 };
-    const pos = {
-      x: T.pageX,
-      y: T.pageY,
-    };
-
-    return new BoundingBox({ pos, size });
-  }
-
-  if (T?.rect && T?.canvas) {
-    const { left, top } = T.canvas.getBoundingClientRect();
+  if (T?.rect && T?.with) {
+    const { left, top } = DomUtil.getEl(T.with).getBoundingClientRect();
     const rect = CanvasUtil.normalizeRect(T.rect);
     const [indexX, indexY] = rect;
     const pos = {
@@ -124,7 +115,15 @@ function getBoundingBox(T) {
     return new BoundingBox({ pos, size });
   }
 
-  return T;
+  // if (T instanceof Event) {
+    const size = { x: 1, y: 1 };
+    const pos = {
+      x: T.pageX,
+      y: T.pageY,
+    };
+
+    return new BoundingBox({ pos, size });
+  // }
 }
 
 function overlaps(T1, T2) {

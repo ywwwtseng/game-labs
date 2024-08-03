@@ -44,7 +44,7 @@ export const SpriteSheetProvider = ({ children }) => {
           return spriteSheets.reduce((acc, [spriteSheet, image]) => {
             const sizeIndex = ImageUtil.getSizeIndex(image);
 
-            const tiles = MatrixUtil.create(sizeIndex, (x, y) => {
+            const tiles = MatrixUtil.create(sizeIndex, ({ x, y }) => {
               const buffer = CanvasUtil.createBufferBySource(
                 image,
                 x * 16,

@@ -4,7 +4,7 @@ import { Modal } from '@/components/ui/Modal';
 import { BaseInput } from '@/components/ui/BaseInput';
 import { Text } from '@/components/ui/Text';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
-import { selectedLayerSelector } from '@/features/appState/appStateSlice';
+import { selectedScene } from '@/features/appState/appStateSlice';
 import {
   useSpriteSheets,
   useUpdateSpriteSheets,
@@ -16,22 +16,21 @@ import { CanvasUtil } from '@/utils/CanvasUtil';
 import { selectedSelectModeSeletorRectDefault } from '@/features/selectMode/selectModeSlice';
 
 function CreatePatternModal() {
-  const layer = useSelector(selectedLayerSelector);
+  const scene = useSelector(selectedScene);
   const selectedRect = useSelector(selectedSelectModeSeletorRectDefault);
   const spriteSheets = useSpriteSheets();
   const updateSpriteSheets = useUpdateSpriteSheets();
-  const dispatch = useDispatch();
 
   const [name, setName] = useState('');
   const [type, setType] = useState('');
 
   const tiles = useMemo(() => {
-    return CanvasUtil.getSceneSelectedTiles(selectedRect, layer, (tile) => {
+    return CanvasUtil.cloneSceneSelectedTiles(selectedRect, scene, ({ tile }) => {
       return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[
         tile?.index?.[1]
       ];
     });
-  }, [selectedRect, layer.tiles]);
+  }, [selectedRect, scene]);
 
   const layers = useMemo(
     () => [
@@ -46,12 +45,12 @@ function CreatePatternModal() {
 
   const source = useMemo(() => {
     const sources = ArrayUtil.uniq(
-      CanvasUtil.getSceneSelectedTiles(selectedRect, layer, (tile) => {
+      CanvasUtil.cloneSceneSelectedTiles(selectedRect, scene, ({ tile }) => {
         return tile?.source;
       }).flat(),
     ).filter(Boolean);
     return sources.length === 1 ? sources[0] : undefined;
-  }, [selectedRect, layer.tiles]);
+  }, [selectedRect, scene]);
 
   const { trigger } = useMutation(`/api/sprites/${source}/patterns`);
 
@@ -96,10 +95,10 @@ function CreatePatternModal() {
             const res = await trigger({
               name,
               type,
-              tiles: CanvasUtil.getSceneSelectedTiles(
+              tiles: CanvasUtil.cloneSceneSelectedTiles(
                 selectedRect,
-                layer,
-                (tile) => tile?.index,
+                scene,
+                ({ tile }) => tile?.index,
               ),
             });
 
