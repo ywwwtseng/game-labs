@@ -1,8 +1,8 @@
-import cx from "classnames";
-import { CloseIcon } from "@/components/icon/CloseIcon";
-import { BaseButton } from "@/components/ui/BaseButton";
-import { Button } from "@/components/ui/Button";
-import { useCloseModal } from "@/context/ModalContext";
+import cx from 'classnames';
+import { CloseIcon } from '@/components/icon/CloseIcon';
+import { BaseButton } from '@/components/ui/BaseButton';
+import { Button } from '@/components/ui/Button';
+import { useCloseModal } from '@/context/ModalContext';
 
 function Modal({ width = 'auto', children }) {
   return (
@@ -40,7 +40,7 @@ Modal.Header = ({ title, showCloseButton = true }) => {
 };
 
 Modal.Body = ({ className, children }) => {
-  return <div className={cx("px-2 py-1", className)}>{children}</div>;
+  return <div className={cx('px-2 py-1', className)}>{children}</div>;
 };
 
 Modal.Footer = ({ children }) => {

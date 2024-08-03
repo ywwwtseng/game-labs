@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Text } from "@/components/ui/Text";
-import { Dropdown } from "@/components/ui/Dropdown/Dropdown";
-import { CreateSceneModal } from "@/components/common/CreateSceneModal";
-import { useExportPng } from "@/hooks/useExportPng";
-import { getBoundingBox } from "@/helpers/BoundingBox";
-import { useModal } from "@/context/ModalContext";
-import logo from "@/icon.png";
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Text } from '@/components/ui/Text';
+import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
+import { CreateSceneModal } from '@/components/common/CreateSceneModal';
+import { useExportPng } from '@/hooks/useExportPng';
+import { getBoundingBox } from '@/helpers/BoundingBox';
+import { useModal } from '@/context/ModalContext';
+import logo from '@/icon.png';
 
 function Navigation() {
   const scene = useSelector((state) => state.appState.scene);
@@ -17,28 +17,28 @@ function Navigation() {
 
   const dropdowns = [
     {
-      id: "file",
-      label: "File",
+      id: 'file',
+      label: 'File',
       options: [
         {
-          type: "option",
-          label: "New Scene",
+          type: 'option',
+          label: 'New Scene',
           onClick: open,
         },
         {
-          type: "option",
-          label: "Export PNG File",
+          type: 'option',
+          label: 'Export PNG File',
           onClick: exportPng,
         },
       ],
     },
     {
-      id: "help",
-      label: "Help",
+      id: 'help',
+      label: 'Help',
       options: [
         {
-          type: "option",
-          label: "Genesis Help",
+          type: 'option',
+          label: 'Genesis Help',
         },
       ],
     },
@@ -49,9 +49,9 @@ function Navigation() {
     event.stopPropagation();
     setOpened(null);
 
-    if (event.type === "click") {
+    if (event.type === 'click') {
       setFocus(false);
-      window.removeEventListener("click", closeDropdown);
+      window.removeEventListener('click', closeDropdown);
     }
   }, []);
 
@@ -61,9 +61,9 @@ function Navigation() {
 
     setOpened(event.target.id);
 
-    if (event.type === "click") {
+    if (event.type === 'click') {
       setFocus(true);
-      window.addEventListener("click", closeDropdown);
+      window.addEventListener('click', closeDropdown);
     }
   }, []);
 
@@ -78,7 +78,7 @@ function Navigation() {
         closeDropdown(event);
       }
     },
-    [opened]
+    [opened],
   );
 
   useEffect(() => {
@@ -104,7 +104,7 @@ function Navigation() {
             label={dropdown.label}
             options={dropdown.options}
             open={opened === dropdown.id}
-            menuProps={{className: 'w-56'}}
+            menuProps={{ className: 'w-56' }}
             onClick={toggleDropdown}
             onMouseEnter={(event) => {
               if (focus) {

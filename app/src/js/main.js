@@ -19,7 +19,6 @@ import SocketClient from '@/js/SocketClient';
 import { debugMode } from '@/js/env';
 
 async function main(canvas) {
-  
   const videoContext = canvas.getContext('2d', { alpha: false });
   const audioContext = new AudioContext();
 
@@ -30,9 +29,10 @@ async function main(canvas) {
 
   const player = makePlayer(entityFactory.role(), 'PLAYER');
 
-  const inputRouter = !debugMode && ('ontouchstart' in window)
-    ? setupJoystick(window)
-    : setupKeyboard(window);
+  const inputRouter =
+    !debugMode && 'ontouchstart' in window
+      ? setupJoystick(window)
+      : setupKeyboard(window);
 
   inputRouter.addReceiver(player);
 
@@ -56,7 +56,9 @@ async function main(canvas) {
   const sceneManager = new SceneManager(gameContext);
 
   async function runScene(name) {
-    await sceneManager.loadScene('loading', LoadingScene, { text: `Loading ${name}` });
+    await sceneManager.loadScene('loading', LoadingScene, {
+      text: `Loading ${name}`,
+    });
     sceneManager.runScene('loading');
     await sceneManager.loadScene(name, WorldScene);
     sceneManager.runScene(name);
@@ -67,7 +69,7 @@ async function main(canvas) {
   timer.update = function update(deltaTime) {
     gameContext.deltaTime = deltaTime;
     sceneManager.update(gameContext);
-  }
+  };
 
   timer.start();
   runScene('world');

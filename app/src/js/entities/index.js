@@ -7,7 +7,7 @@ export function loadEntities(audioContext) {
   const entityFactories = {};
 
   function addAs(name) {
-    return (factory) => entityFactories[name] = factory;
+    return (factory) => (entityFactories[name] = factory);
   }
 
   return Promise.all([
@@ -15,6 +15,5 @@ export function loadEntities(audioContext) {
     loadChicken(audioContext).then(addAs('chicken')),
     loadTree(audioContext).then(addAs('tree')),
     loadFireEffectBullet(audioContext).then(addAs('bullet')),
-  ])
-  .then(() => entityFactories);
+  ]).then(() => entityFactories);
 }

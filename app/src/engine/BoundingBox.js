@@ -1,5 +1,5 @@
 import { SIDES } from '@/engine/constants';
- import { Vec2 } from '@/engine/math';
+import { Vec2 } from '@/engine/math';
 
 export default class BoundingBox {
   constructor(pos, size, offset) {
@@ -19,10 +19,12 @@ export default class BoundingBox {
     //               |                     |
     //               .---------------------.
 
-    return this.bottom > box.top
-      && this.top < box.bottom
-      && this.left < box.right
-      && this.right > box.left;
+    return (
+      this.bottom > box.top &&
+      this.top < box.bottom &&
+      this.left < box.right &&
+      this.right > box.left
+    );
   }
 
   get bottom() {

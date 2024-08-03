@@ -1,13 +1,13 @@
-import { useMemo } from "react";
-import { useSelector } from "react-redux";
-import { Canvas2D, CANVAS_LAYER } from "@/components/common/Canvas2D";
-import { MatrixUtil } from "@/utils/MatrixUtil";
-import { ModeConnectToCanvas } from "@/containers/ModeConnectToCanvas";
-import { useSpriteSheets } from "@/context/SpriteSheetContext";
-import { selectedLayerSelector } from "@/features/appState/appStateSlice";
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
+import { MatrixUtil } from '@/utils/MatrixUtil';
+import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { selectedLayerSelector } from '@/features/appState/appStateSlice';
 
 function SceneCanvas() {
-  selectedLayerSelector
+  selectedLayerSelector;
   const scene = useSelector((state) => state.appState.scene);
   const selectedLayer = useSelector(selectedLayerSelector);
   const spriteSheets = useSpriteSheets();
@@ -19,17 +19,14 @@ function SceneCanvas() {
 
     return scene.layers.map((layer) => {
       return {
-        tiles: MatrixUtil.map(
-          layer.tiles,
-          (T) => {
-            if (T.source && T.index) {
-              const { source, index } = T;
-              return {
-                buffer: spriteSheets[source].tiles[index[0]][index[1]].buffer,
-              }
-            }
+        tiles: MatrixUtil.map(layer.tiles, (T) => {
+          if (T.source && T.index) {
+            const { source, index } = T;
+            return {
+              buffer: spriteSheets[source].tiles[index[0]][index[1]].buffer,
+            };
           }
-        ),
+        }),
         patterns: Object.values(layer.patterns).map((pattern) => {
           const source = pattern.id.split('.')[0];
 
@@ -37,27 +34,33 @@ function SceneCanvas() {
             id: pattern.id,
             index: pattern.index,
             tiles: MatrixUtil.map(pattern.tiles, (index) => {
-              return index 
-                ? { buffer: spriteSheets[source].tiles[index[0]][index[1]].buffer }
-                : undefined
-            })
-          }
-        })
+              return index
+                ? {
+                    buffer:
+                      spriteSheets[source].tiles[index[0]][index[1]].buffer,
+                  }
+                : undefined;
+            }),
+          };
+        }),
       };
     });
   }, [spriteSheets, scene.layers]);
 
-  const layers = useMemo(() => [
-    CANVAS_LAYER.SPRITE_LAYER({
-      layers: spriteLayers,
-      width: scene.width,
-      height: scene.height,
-    }),
-    CANVAS_LAYER.GRID({
-      width: scene.width,
-      height: scene.height,
-    }),
-  ], [scene]);
+  const layers = useMemo(
+    () => [
+      CANVAS_LAYER.SPRITE_LAYER({
+        layers: spriteLayers,
+        width: scene.width,
+        height: scene.height,
+      }),
+      CANVAS_LAYER.GRID({
+        width: scene.width,
+        height: scene.height,
+      }),
+    ],
+    [scene],
+  );
 
   return (
     <ModeConnectToCanvas>

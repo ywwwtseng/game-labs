@@ -4,8 +4,8 @@ import {
   useCallback,
   useRef,
   useEffect,
-} from "react";
-import { contain } from "@/helpers/BoundingBox";
+} from 'react';
+import { contain } from '@/helpers/BoundingBox';
 
 export const DragAndDropContext = createContext({
   setDragStart: () => {},
@@ -45,7 +45,7 @@ export const DragAndDropProvider = ({ children }) => {
 
   const removeDropzone = (id) => {
     dropzonesRef.current = [...dropzonesRef.current].filter(
-      (dropzone) => dropzone.id !== id
+      (dropzone) => dropzone.id !== id,
     );
   };
 

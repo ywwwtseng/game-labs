@@ -1,10 +1,10 @@
-import { useSelector } from "react-redux";
-import { Text } from "@/components/ui/Text";
-import { SelectModeInfo } from "@/components/common/AppInfo/SelectModeInfo";
-import { EditModeInfo } from "@/components/common/AppInfo/EditModeInfo";
-import { DrawModeInfo } from "@/components/common/AppInfo/DrawModeInfo";
-import { selectedCursorIndex } from "@/features/selectMode/selectModeSlice";
-import { MODE } from "@/constants";
+import { useSelector } from 'react-redux';
+import { Text } from '@/components/ui/Text';
+import { SelectModeInfo } from '@/components/common/AppInfo/SelectModeInfo';
+import { EditModeInfo } from '@/components/common/AppInfo/EditModeInfo';
+import { DrawModeInfo } from '@/components/common/AppInfo/DrawModeInfo';
+import { selectedCursorIndex } from '@/features/selectMode/selectModeSlice';
+import { MODE } from '@/constants';
 
 const ModeInfo = {
   [MODE.SELECT]: SelectModeInfo,
@@ -22,7 +22,9 @@ function AppInfo() {
       {Info && <Info />}
 
       <div className="flex items-center ml-auto">
-        {cursorIndex && <Text>{`Location: ${cursorIndex[0]},${cursorIndex[1]}`}</Text>}
+        {cursorIndex && (
+          <Text>{`Location: ${cursorIndex[0]},${cursorIndex[1]}`}</Text>
+        )}
       </div>
     </div>
   );

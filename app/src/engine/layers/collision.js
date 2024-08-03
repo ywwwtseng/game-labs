@@ -20,19 +20,19 @@ function createTileCandidateLayer(tileResolver) {
 
   const getByIndexOriginal = tileResolver.getByIndex;
   tileResolver.getByIndex = function getByIndexFake(x, y) {
-    resolvedTiles.push({x, y});
+    resolvedTiles.push({ x, y });
     return getByIndexOriginal.call(tileResolver, x, y);
-  }
+  };
 
   return function drawTileCandidates(context, camera) {
     context.strokeStyle = 'blue';
-    resolvedTiles.forEach(({x, y}) => {
+    resolvedTiles.forEach(({ x, y }) => {
       context.beginPath();
       context.rect(
         x * tileSize - camera.pos.x,
         y * tileSize - camera.pos.y,
         tileSize,
-        tileSize
+        tileSize,
       );
       context.stroke();
     });
@@ -42,7 +42,9 @@ function createTileCandidateLayer(tileResolver) {
 }
 
 export function createCollisionLayer(scene) {
-  const drawTileCandidates = scene.tileCollider.resolvers.map(createTileCandidateLayer);
+  const drawTileCandidates = scene.tileCollider.resolvers.map(
+    createTileCandidateLayer,
+  );
   const drawBoundingBoxs = createEntityLayer(scene.entities);
 
   return function drawCollision(context, camera) {

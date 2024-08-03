@@ -1,5 +1,5 @@
 export const MODE = {
-  EDIT: "EDIT",
-  SELECT: "SELECT",
-  DRAW: "DRAW"
+  EDIT: 'EDIT',
+  SELECT: 'SELECT',
+  DRAW: 'DRAW',
 };

@@ -1,9 +1,9 @@
-import { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { CanvasUtil } from "@/utils/CanvasUtil";
-import { useSpriteSheets } from "@/context/SpriteSheetContext";
-import { useCursor } from "@/hooks/useCursor";
-import { drawTiles } from "@/features/appState/appStateSlice";
+import { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { CanvasUtil } from '@/utils/CanvasUtil';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useCursor } from '@/hooks/useCursor';
+import { drawTiles } from '@/features/appState/appStateSlice';
 import { getBoundingBox, contain } from '@/helpers/BoundingBox';
 
 function DrawModeBehavior({ children }) {
@@ -12,14 +12,18 @@ function DrawModeBehavior({ children }) {
   const dispatch = useDispatch();
 
   const { setup } = useCursor({
-    icon: useMemo(() => ({
-      id: `draw-selected-${drawMode.rect}`,
-      display: (_, displayId) => CanvasUtil.drawSelected(
-        drawMode.rect,
-        spriteSheets[drawMode.source],
-        displayId
-      )
-    }), [spriteSheets, drawMode]),
+    icon: useMemo(
+      () => ({
+        id: `draw-selected-${drawMode.rect}`,
+        display: (_, displayId) =>
+          CanvasUtil.drawSelected(
+            drawMode.rect,
+            spriteSheets[drawMode.source],
+            displayId,
+          ),
+      }),
+      [spriteSheets, drawMode],
+    ),
     onMove: (event, { iconEl }) => {
       if (iconEl) {
         iconEl.style.opacity = contain(iconEl, { in: event.target }) ? 1 : 0.5;
@@ -32,7 +36,7 @@ function DrawModeBehavior({ children }) {
             event,
             selectedTiles: drawMode,
             transparent: spriteSheets[drawMode.source].transparent,
-          })
+          }),
         );
       }
     },

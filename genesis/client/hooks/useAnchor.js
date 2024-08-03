@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback } from "react";
-import { getBoundingBox } from "@/helpers/BoundingBox";
+import { useState, useMemo, useCallback } from 'react';
+import { getBoundingBox } from '@/helpers/BoundingBox';
 
 const defaultProps = {
   clickAwayListener: false,
@@ -14,20 +14,21 @@ function useAnchor({ clickAwayListener = false } = defaultProps) {
     setAnchor(null);
 
     if (clickAwayListener) {
-      window.removeEventListener("click", close);
+      window.removeEventListener('click', close);
     }
   }, []);
   const open = useCallback((event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    setAnchor(event.target.getAttribute("data-toggle")
-      ? event.target
-      : event.target.closest("[data-toggle]")
+    setAnchor(
+      event.target.getAttribute('data-toggle')
+        ? event.target
+        : event.target.closest('[data-toggle]'),
     );
 
     if (clickAwayListener) {
-      window.addEventListener("click", close);
+      window.addEventListener('click', close);
     }
   }, []);
   const toggle = (event) => {

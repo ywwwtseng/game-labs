@@ -1,8 +1,8 @@
-import { useSelector } from "react-redux";
-import { Text } from "@/components/ui/Text";
-import { SelectIcon } from "@/components/icon/SelectIcon";
-import { CheckIcon } from "@/components/icon/CheckIcon";
-import { selectedSelectModeSeletorRectDefault } from "@/features/selectMode/selectModeSlice";
+import { useSelector } from 'react-redux';
+import { Text } from '@/components/ui/Text';
+import { SelectIcon } from '@/components/icon/SelectIcon';
+import { CheckIcon } from '@/components/icon/CheckIcon';
+import { selectedSelectModeSeletorRectDefault } from '@/features/selectMode/selectModeSlice';
 
 function SelectModeInfo() {
   const selectedRect = useSelector(selectedSelectModeSeletorRectDefault);

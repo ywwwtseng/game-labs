@@ -4,7 +4,7 @@ export default class EntityCollider {
   }
 
   check(subject) {
-    this.entities.forEach(candidate => {
+    this.entities.forEach((candidate) => {
       if (subject === candidate) {
         return;
       }
@@ -13,5 +13,5 @@ export default class EntityCollider {
         subject.collides(candidate);
       }
     });
-  } 
+  }
 }

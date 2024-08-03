@@ -13,7 +13,7 @@ export default class Solid extends Trait {
     }
 
     if (side === SIDES.BOTTOM) {
-      entity.bounds.bottom = match.y1; 
+      entity.bounds.bottom = match.y1;
       entity.vel.y = 0;
     } else if (side === SIDES.TOP) {
       entity.bounds.top = match.y2;

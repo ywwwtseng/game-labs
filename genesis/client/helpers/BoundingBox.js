@@ -18,10 +18,12 @@ class BoundingBox {
     //               |                     |
     //               .---------------------.
 
-    return this.bottom > box.top
-      && this.top < box.bottom
-      && this.left < box.right
-      && this.right > box.left;
+    return (
+      this.bottom > box.top &&
+      this.top < box.bottom &&
+      this.left < box.right &&
+      this.right > box.left
+    );
   }
 
   get bottom() {
@@ -29,7 +31,7 @@ class BoundingBox {
   }
 
   set bottom(y) {
-    this.pos.y = y - (this.size.y);
+    this.pos.y = y - this.size.y;
   }
 
   get top() {
@@ -53,11 +55,11 @@ class BoundingBox {
   }
 
   set right(x) {
-    this.pos.x = x - (this.size.x);
+    this.pos.x = x - this.size.x;
   }
 
   get center() {
-    return {x: this.left + this.size.x / 2, y: this.top + this.size.y / 2};
+    return { x: this.left + this.size.x / 2, y: this.top + this.size.y / 2 };
   }
 }
 
@@ -82,7 +84,7 @@ function getBoundingBox(T) {
   if (T?.event && T?.rect) {
     const size = MatrixUtil.size(CanvasUtil.normalizeRect(T.rect));
     const pos = {
-      x: T.event.pageX - size.x / 2, 
+      x: T.event.pageX - size.x / 2,
       y: T.event.pageY - size.y / 2,
     };
 
@@ -92,7 +94,7 @@ function getBoundingBox(T) {
   if (T instanceof Event) {
     const size = { x: 1, y: 1 };
     const pos = {
-      x: T.pageX, 
+      x: T.pageX,
       y: T.pageY,
     };
 
@@ -133,10 +135,12 @@ function contain(inner, { in: outer }) {
   const outerBounds = getBoundingBox(outer);
   const innerBounds = getBoundingBox(inner);
 
-  return outerBounds.top <= innerBounds.top
-    && outerBounds.bottom >= innerBounds.bottom
-    && outerBounds.left <= innerBounds.left
-    && outerBounds.right >= innerBounds.right;
+  return (
+    outerBounds.top <= innerBounds.top &&
+    outerBounds.bottom >= innerBounds.bottom &&
+    outerBounds.left <= innerBounds.left &&
+    outerBounds.right >= innerBounds.right
+  );
 }
 
 export { BoundingBox, getBoundingBox, overlaps, contain };

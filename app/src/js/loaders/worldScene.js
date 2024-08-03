@@ -31,7 +31,6 @@ function setupBehavior(scene) {
   scene.events.listen(SceneTimer.EVENT_TIMER_IDLE, () => {
     scene.music.playIdleTheme();
   });
-
 }
 
 function setupBackgrounds(sceneSpec, scene, sceneSprites, patterns) {
@@ -44,7 +43,7 @@ function setupBackgrounds(sceneSpec, scene, sceneSprites, patterns) {
 }
 
 function setupEntities(sceneSpec, scene, entityFactory) {
-  sceneSpec.entities.forEach(({name, pos: [x, y]}) => {
+  sceneSpec.entities.forEach(({ name, pos: [x, y] }) => {
     const createEntity = entityFactory[name];
     const entity = createEntity();
     entity.pos.set(x, y);
@@ -63,7 +62,12 @@ function setupTriggers(sceneSpec, scene) {
     const trigger = new Trigger();
     if (triggerSpec.type === 'goto') {
       trigger.conditions.push((entity, touches, gameContext, scene) => {
-        scene.events.emit(WorldScene.EVENT_TRIGGER, triggerSpec, entity, touches);
+        scene.events.emit(
+          WorldScene.EVENT_TRIGGER,
+          triggerSpec,
+          entity,
+          touches,
+        );
       });
     }
     const entity = new Entity();
@@ -77,29 +81,31 @@ function setupTriggers(sceneSpec, scene) {
 export function createWorldSceneLoader(entityFactory) {
   return function loadScene(name) {
     return loadJSON(`/scene/${name}.json`)
-      .then((sceneSpec) => Promise.all([
-        sceneSpec,
-        loadSpriteSheet(sceneSpec.spriteSheet),
-        loadMusicSheet(sceneSpec.spriteSheet),
-        loadPatternSheet(sceneSpec.patternSheet),
-      ]))
-      .then((([sceneSpec, sceneSprites, musicPlayer, patterns]) => {
+      .then((sceneSpec) =>
+        Promise.all([
+          sceneSpec,
+          loadSpriteSheet(sceneSpec.spriteSheet),
+          loadMusicSheet(sceneSpec.spriteSheet),
+          loadPatternSheet(sceneSpec.patternSheet),
+        ]),
+      )
+      .then(([sceneSpec, sceneSprites, musicPlayer, patterns]) => {
         return (scene) => {
           scene.music.setPlayer(musicPlayer);
-    
+
           setupBackgrounds(sceneSpec, scene, sceneSprites, patterns);
           setupEntities(sceneSpec, scene, entityFactory, sceneSprites);
           setupTriggers(sceneSpec, scene);
           setupBehavior(scene);
         };
-    }));
-  }
+      });
+  };
 }
 
 function createGrid(tiles, patterns) {
   const grid = new Matrix();
 
-  for (const {tile, x, y} of expandTiles(tiles, patterns)) {
+  for (const { tile, x, y } of expandTiles(tiles, patterns)) {
     grid.set(x, y, tile);
   }
 
@@ -112,7 +118,7 @@ function* expandSpan(xStart, xLen, yStart, yLen) {
 
   for (let x = xStart; x < xEnd; ++x) {
     for (let y = yStart; y < yEnd; ++y) {
-      yield {x, y};
+      yield { x, y };
     }
   }
 }
@@ -139,13 +145,10 @@ function* expandRanges(ranges) {
 function* expandTiles(tiles, patterns) {
   function* walkTiles(tiles, offsetX = 0, offsetY = 0) {
     for (const tile of tiles) {
-
-      for (const {x, y} of expandRanges(tile.ranges)) {
+      for (const { x, y } of expandRanges(tile.ranges)) {
         const derivedX = x + offsetX;
         const derivedY = y + offsetY;
 
-
-  
         if (tile.pattern) {
           const tiles = patterns[tile.pattern].tiles;
           yield* walkTiles(tiles, derivedX, derivedY);
@@ -156,7 +159,6 @@ function* expandTiles(tiles, patterns) {
             y: derivedY,
           };
         }
-        
       }
     }
   }

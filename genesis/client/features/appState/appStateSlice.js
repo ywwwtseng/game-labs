@@ -1,12 +1,12 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import * as selectModeActions from "@/features/selectMode/selectModeSlice";
-import * as drawModeActions from "@/features/drawMode/drawModeSlice";
-import { CanvasUtil } from "@/utils/CanvasUtil";
-import { MatrixUtil } from "@/utils/MatrixUtil";
-import { MODE } from "@/constants";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import * as selectModeActions from '@/features/selectMode/selectModeSlice';
+import * as drawModeActions from '@/features/drawMode/drawModeSlice';
+import { CanvasUtil } from '@/utils/CanvasUtil';
+import { MatrixUtil } from '@/utils/MatrixUtil';
+import { MODE } from '@/constants';
 
 export const setMode = createAsyncThunk(
-  "appState/setMode",
+  'appState/setMode',
   async ({ mode, payload }, { getState, dispatch }) => {
     const lifecycle = {
       [MODE.SELECT]: selectModeActions,
@@ -31,12 +31,15 @@ export const setMode = createAsyncThunk(
     }
 
     return mode;
-  }
+  },
 );
 
 export const drawTiles = createAsyncThunk(
-  "appState/drawTiles",
-  async ({ event, selectedTiles, transparent = [] }, { getState, dispatch }) => {
+  'appState/drawTiles',
+  async (
+    { event, selectedTiles, transparent = [] },
+    { getState, dispatch },
+  ) => {
     try {
       const scene = getState().appState.scene;
       const [originX, originY, sizeIndexX, sizeIndexY] = selectedTiles.rect;
@@ -50,20 +53,17 @@ export const drawTiles = createAsyncThunk(
           localOriginIndex: [originX, originY],
           transparent,
           source: selectedTiles.source,
-        })
+        }),
       );
     } catch (error) {
       console.log(error);
     }
-  }
+  },
 );
 
 export const drawPattern = createAsyncThunk(
-  "appState/drawPattern",
-  async (
-    { event, pattern },
-    { getState, dispatch }
-  ) => {
+  'appState/drawPattern',
+  async ({ event, pattern }, { getState, dispatch }) => {
     const rect = CanvasUtil.getPatternRect(pattern);
     const pos = CanvasUtil.getSelectedAreaPosition(event, rect);
     const index = CanvasUtil.positionToIndex(pos);
@@ -72,19 +72,19 @@ export const drawPattern = createAsyncThunk(
         addPatternToScene({
           index,
           pattern,
-        })
-      )
+        }),
+      );
     } catch (error) {
       console.log(error);
     }
   },
-)
+);
 
 export const moveSceneTiles = createAsyncThunk(
-  "appState/moveSceneTiles",
+  'appState/moveSceneTiles',
   async (
     { selectedArea, localOriginIndex, tiles, transparent },
-    { dispatch }
+    { dispatch },
   ) => {
     dispatch(
       addTilesToScene({
@@ -93,13 +93,13 @@ export const moveSceneTiles = createAsyncThunk(
         tiles,
         transparent,
         disableCheckExistedTile: true,
-      })
+      }),
     );
-  }
+  },
 );
 
 export const deleteSelectedElements = createAsyncThunk(
-  "appState/deleteSelectedElements",
+  'appState/deleteSelectedElements',
   async (_, { getState, dispatch }) => {
     const state = getState();
     const selectorRect = selectModeActions.selectedSelectModeSeletorRect(state);
@@ -109,7 +109,9 @@ export const deleteSelectedElements = createAsyncThunk(
     }
 
     if (selectorRect.follows) {
-      dispatch(selectModeActions.forceSelectArea({ default: selectorRect.default }));
+      dispatch(
+        selectModeActions.forceSelectArea({ default: selectorRect.default }),
+      );
       dispatch(deleteScenePatterns(selectorRect.follows));
     }
   },
@@ -119,7 +121,7 @@ const initialState = {
   mode: MODE.SELECT,
   // scene: undefined
   scene: {
-    name: "default",
+    name: 'default',
     width: 512,
     height: 512,
     selectedLayerIndex: 0,
@@ -133,7 +135,7 @@ const initialState = {
 };
 
 export const appStateSlice = createSlice({
-  name: "appState",
+  name: 'appState',
   initialState,
   reducers: {
     addScene: (state, action) => {
@@ -148,12 +150,11 @@ export const appStateSlice = createSlice({
         state.scene.layers[layerIndex].tiles[indexX] = [];
       }
 
-
       // state.scene.layers[layerIndex].tiles[indexX][indexY] = {
       //   pattern_id
       // };
 
-      const pattern = state.scene.layers[layerIndex].patterns[pattern_id]
+      const pattern = state.scene.layers[layerIndex].patterns[pattern_id];
 
       if (!pattern) {
         state.scene.layers[layerIndex].patterns[pattern_id] = {
@@ -161,7 +162,10 @@ export const appStateSlice = createSlice({
           index: [[indexX, indexY]],
         };
       } else {
-        state.scene.layers[layerIndex].patterns[pattern_id].index.push([indexX, indexY])
+        state.scene.layers[layerIndex].patterns[pattern_id].index.push([
+          indexX,
+          indexY,
+        ]);
       }
     },
     addTileToScene: (state, action) => {
@@ -237,12 +241,16 @@ export const appStateSlice = createSlice({
       const layerIndex = state.scene.selectedLayerIndex;
       const rects = action.payload;
       const patterns = state.scene.layers[layerIndex].patterns;
-      
+
       Object.keys(patterns).forEach((key) => {
-        state.scene.layers[layerIndex].patterns[key].index = patterns[key].index.filter(index => {
-          return !rects.some(rect => rect[0] === index[0] && rect[1] === index[1]);
+        state.scene.layers[layerIndex].patterns[key].index = patterns[
+          key
+        ].index.filter((index) => {
+          return !rects.some(
+            (rect) => rect[0] === index[0] && rect[1] === index[1],
+          );
         });
-      })
+      });
     },
     addLayer: (state) => {
       state.scene.layers.push({ tiles: [] });
@@ -270,8 +278,7 @@ export const {
   selectLayer,
 } = appStateSlice.actions;
 
-export const selectedIsDrawMode = (state) =>
-  state.appState.mode === MODE.DRAW;
+export const selectedIsDrawMode = (state) => state.appState.mode === MODE.DRAW;
 export const selectedLayerSelector = (state) =>
   state.appState.scene.layers[state.appState.scene.selectedLayerIndex];
 

@@ -10,13 +10,11 @@ import Attack from '@/js/traits/Attack';
 import Killable from '@/js/traits/Killable';
 import SkillController from '@/js/traits/SkillController';
 
-
 export function loadRole(audioContext) {
   return Promise.all([
     loadSpriteSheet('role'),
     loadAudioBoard('role', audioContext),
-  ])
-  .then(([sprite, audio]) => {
+  ]).then(([sprite, audio]) => {
     return createRoleFactory(sprite, audio);
   });
 }
@@ -30,16 +28,16 @@ export function createRoleFactory(sprite, audio) {
 
     if (role.traits.get(Go).heading === DIRECTION.DOWN) {
       bullet.vel.set(0, 200);
-      bullet.pos.copy(role.pos).add({x: 0, y: 16});
+      bullet.pos.copy(role.pos).add({ x: 0, y: 16 });
     } else if (role.traits.get(Go).heading === DIRECTION.UP) {
       bullet.vel.set(0, -200);
-      bullet.pos.copy(role.pos).add({x: 0, y: -16});
+      bullet.pos.copy(role.pos).add({ x: 0, y: -16 });
     } else if (role.traits.get(Go).heading === DIRECTION.LEFT) {
       bullet.vel.set(-200, 0);
-      bullet.pos.copy(role.pos).add({x: -16, y: 0});
+      bullet.pos.copy(role.pos).add({ x: -16, y: 0 });
     } else {
       bullet.vel.set(200, 0);
-      bullet.pos.copy(role.pos).add({x: 16, y: 0});
+      bullet.pos.copy(role.pos).add({ x: 16, y: 0 });
     }
 
     scene.entities.unshift(bullet);
@@ -47,14 +45,18 @@ export function createRoleFactory(sprite, audio) {
 
   function routeFrame(role) {
     if (role.traits.get(Attack).lifetime) {
-      return attackAnim[role.traits.get(Go).heading](role.traits.get(Attack).lifetime);
+      return attackAnim[role.traits.get(Go).heading](
+        role.traits.get(Attack).lifetime,
+      );
     }
 
     if (role.vel.x === 0 && role.vel.y === 0) {
       return `idle${role.traits.get(Go).heading}`;
     }
 
-    return runAnim[role.traits.get(Go).heading](role.traits.get(Go).distance.length());
+    return runAnim[role.traits.get(Go).heading](
+      role.traits.get(Go).distance.length(),
+    );
   }
 
   function drawRole(context) {
@@ -74,9 +76,8 @@ export function createRoleFactory(sprite, audio) {
     role.traits.get(Killable).removeAfter = 0;
     role.addTrait(new SkillController(emitBullet));
     role.traits.get(SkillController).setSkill('bullet', emitBullet);
-    
-    
+
     role.draw = drawRole;
     return role;
-  }
+  };
 }

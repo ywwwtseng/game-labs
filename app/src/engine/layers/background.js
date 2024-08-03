@@ -1,6 +1,6 @@
 import Dimensions from '@/engine/Dimensions';
 import TileResolver from '@/engine/TileResolver';
- import { Vec2 } from '@/engine/math';
+import { Vec2 } from '@/engine/math';
 
 export function createBackgroundLayer(scene, tiles, sprites) {
   const resolver = new TileResolver(tiles);
@@ -28,12 +28,22 @@ export function createBackgroundLayer(scene, tiles, sprites) {
 
           if (tile) {
             if (sprites.animations.has(tile.name)) {
-              sprites.drawAnim(tile.name, context, x - startIndex.x, y - startIndex.y, scene.totalTime);
+              sprites.drawAnim(
+                tile.name,
+                context,
+                x - startIndex.x,
+                y - startIndex.y,
+                scene.totalTime,
+              );
             } else {
-              sprites.drawTile(tile.name, context, x - startIndex.x, y - startIndex.y);
+              sprites.drawTile(
+                tile.name,
+                context,
+                x - startIndex.x,
+                y - startIndex.y,
+              );
             }
           }
-          
         }
       }
     }
@@ -46,7 +56,7 @@ export function createBackgroundLayer(scene, tiles, sprites) {
     );
     const drawFrom = new Vec2(
       resolver.toIndex(camera.pos.x),
-      resolver.toIndex(camera.pos.y)
+      resolver.toIndex(camera.pos.y),
     );
     const drawTo = drawFrom.clone().add(drawSize);
 

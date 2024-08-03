@@ -13,22 +13,12 @@ export default class SpriteSheet {
 
   define(name, x, y, width, height) {
     const buffer = document.createElement('canvas');
-    buffer.width = width; 
+    buffer.width = width;
     buffer.height = height;
     buffer
       .getContext('2d')
-      .drawImage(
-        this.image,
-        x,
-        y,
-        width,
-        height,
-        0,
-        0,
-        width,
-        height,
-      );
-    
+      .drawImage(this.image, x, y, width, height, 0, 0, width, height);
+
     this.tiles.set(name, buffer);
   }
 
@@ -38,11 +28,7 @@ export default class SpriteSheet {
 
   draw(name, context, x, y) {
     const buffer = this.tiles.get(name);
-    context.drawImage(
-      buffer,
-      x,
-      y,
-    );
+    context.drawImage(buffer, x, y);
   }
 
   drawAnim(name, context, x, y, distance) {

@@ -1,8 +1,12 @@
-import cx from "classnames"
+import cx from 'classnames';
 
 function BaseButton({ className, ...props }) {
   return (
-    <button className={cx("focus:outline-none", className)} type="button" {...props} />
+    <button
+      className={cx('focus:outline-none', className)}
+      type="button"
+      {...props}
+    />
   );
 }
 

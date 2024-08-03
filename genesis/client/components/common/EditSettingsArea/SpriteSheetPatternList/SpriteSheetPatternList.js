@@ -1,5 +1,5 @@
-import { SpriteSheetPattern } from "@/components/common/EditSettingsArea/SpriteSheetPatternList/SpriteSheetPattern";
-import { MatrixUtil } from "@/utils/MatrixUtil";
+import { SpriteSheetPattern } from '@/components/common/EditSettingsArea/SpriteSheetPatternList/SpriteSheetPattern';
+import { MatrixUtil } from '@/utils/MatrixUtil';
 
 function SpriteSheetPatternList({ spriteSheet }) {
   return (

@@ -1,8 +1,8 @@
-import { useRef, useCallback, useContext, useMemo } from "react";
-import { DragAndDropContext } from "@/context/DragAndDropContext";
-import { getBoundingBox } from "@/helpers/BoundingBox";
-import { useDataTransfer } from "@/hooks/useDataTransfer";
-import { useCursorDelta } from "@/hooks/useCursorDelta";
+import { useRef, useCallback, useContext, useMemo } from 'react';
+import { DragAndDropContext } from '@/context/DragAndDropContext';
+import { getBoundingBox } from '@/helpers/BoundingBox';
+import { useDataTransfer } from '@/hooks/useDataTransfer';
+import { useCursorDelta } from '@/hooks/useCursorDelta';
 
 function useDragAndDrop({
   data,
@@ -28,8 +28,8 @@ function useDragAndDrop({
       }
 
       const bounds = getBoundingBox(iconRef.current);
-      iconRef.current.style.pointerEvents = "none";
-      iconRef.current.style.position = "fixed";
+      iconRef.current.style.pointerEvents = 'none';
+      iconRef.current.style.position = 'fixed';
       iconRef.current.style.zIndex = 9999;
       const x = event.pageX - bounds.size.x / 2;
       const y = event.pageY - bounds.size.y / 2;
@@ -49,7 +49,6 @@ function useDragAndDrop({
       onDrop(event);
     }
 
-    
     setDragStop(event);
 
     if (iconRef.current) {
@@ -58,20 +57,20 @@ function useDragAndDrop({
     }
 
     cursorDelta.end(event);
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseStop);
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleMouseStop);
   }, []);
 
   const handleMouseDown = useCallback((event) => {
     if (handle) {
-      if (event.target.getAttribute("data-handle") !== handle) {
+      if (event.target.getAttribute('data-handle') !== handle) {
         return;
       }
     }
 
     cursorDelta.start(event);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseStop);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseStop);
   }, []);
 
   return {

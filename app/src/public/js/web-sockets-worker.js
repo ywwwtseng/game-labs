@@ -13,7 +13,7 @@ socket.addEventListener('open', () => {
     time: 123456,
     channel: 'futures.tickers',
     event: 'subscribe',
-    payload: ['BTC_USD', 'ETH_USD']
+    payload: ['BTC_USD', 'ETH_USD'],
   });
 
   socket.send(data);
@@ -22,7 +22,7 @@ socket.addEventListener('open', () => {
 // Send data from socket to all open tabs.
 socket.addEventListener('message', ({ data }) => {
   const payload = JSON.parse(data);
-  connectedPorts.forEach(port => port.postMessage(payload));
+  connectedPorts.forEach((port) => port.postMessage(payload));
 });
 
 /**
@@ -46,7 +46,7 @@ self.addEventListener('connect', ({ ports }) => {
     if (action === 'send') {
       socket.send(JSON.stringify(value));
 
-    // Remove port from connected ports list.
+      // Remove port from connected ports list.
     } else if (action === 'unload') {
       connectedPorts.delete(port);
     }

@@ -1,8 +1,8 @@
-import { useSelector } from "react-redux";
-import { SelectModeBehavior } from "@/containers/modes/SelectModeBehavior";
-import { EditModeBehavior } from "@/containers/modes/EditModeBehavior";
-import { DrawModeBehavior } from "@/containers/modes/DrawModeBehavior";
-import { MODE } from "@/constants";
+import { useSelector } from 'react-redux';
+import { SelectModeBehavior } from '@/containers/modes/SelectModeBehavior';
+import { EditModeBehavior } from '@/containers/modes/EditModeBehavior';
+import { DrawModeBehavior } from '@/containers/modes/DrawModeBehavior';
+import { MODE } from '@/constants';
 
 const Behavior = {
   [MODE.SELECT]: SelectModeBehavior,

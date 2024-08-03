@@ -6,10 +6,8 @@ import { DIRECTION } from '@/engine/constants';
 import Physics from '@/js/traits/Physics';
 import Solid from '@/js/traits/Solid';
 
-
 export function loadTree() {
-  return loadSpriteSheet('game-tiles')
-    .then(createTreeFactory);
+  return loadSpriteSheet('game-tiles').then(createTreeFactory);
 }
 
 class Behavior extends Trait {}
@@ -31,9 +29,9 @@ export function createTreeFactory(sprite) {
     tree.addTrait(new Physics());
     tree.addTrait(new Solid());
     tree.addTrait(new Behavior());
-    
+
     tree.draw = drawTree;
 
     return tree;
-  }
+  };
 }

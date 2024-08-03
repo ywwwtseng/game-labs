@@ -1,9 +1,9 @@
-import { Navigation } from "@/components/common/Navigation";
-import { CreationToolBar } from "@/components/common/CreationToolBar/CreationToolBar";
-import { ShortcutBar } from "@/components/common/ShortcutBar";
-import { EditSettingsArea } from "@/components/common/EditSettingsArea/EditSettingsArea";
-import { SceneCanvas } from "@/components/common/SceneCanvas";
-import { AppInfo } from "@/components/common/AppInfo/AppInfo";
+import { Navigation } from '@/components/common/Navigation';
+import { CreationToolBar } from '@/components/common/CreationToolBar/CreationToolBar';
+import { ShortcutBar } from '@/components/common/ShortcutBar';
+import { EditSettingsArea } from '@/components/common/EditSettingsArea/EditSettingsArea';
+import { SceneCanvas } from '@/components/common/SceneCanvas';
+import { AppInfo } from '@/components/common/AppInfo/AppInfo';
 
 function Main() {
   return (

@@ -20,4 +20,4 @@ export default class Trigger extends Trait {
       this.touches.clear();
     }
   }
-} 
+}

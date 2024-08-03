@@ -17,7 +17,7 @@ export default class PendulumMove extends Trait {
         entity.vel.x = -entity.vel.x;
         this.speed = entity.vel.x;
       }
-      
+
       this.distance += entity.vel.x * deltaTime;
       this.lifetime += deltaTime;
     } else {

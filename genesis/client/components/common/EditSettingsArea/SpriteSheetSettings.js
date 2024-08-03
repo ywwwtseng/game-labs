@@ -1,36 +1,39 @@
-import { memo, useState } from "react";
+import { memo, useState } from 'react';
 
-import { AreaHeader } from "@/components/common/AreaHeader";
-import { Dropdown } from "@/components/ui/Dropdown/Dropdown";
-import { SpriteSheetTileList } from "@/components/common/EditSettingsArea/SpriteSheetTileList/SpriteSheetTileList";
-import { SpriteSheetPatternList } from "@/components/common/EditSettingsArea/SpriteSheetPatternList/SpriteSheetPatternList";
-import { useAnchor } from "@/hooks/useAnchor";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { MatrixUtil } from "@/utils/MatrixUtil";
+import { AreaHeader } from '@/components/common/AreaHeader';
+import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
+import { SpriteSheetTileList } from '@/components/common/EditSettingsArea/SpriteSheetTileList/SpriteSheetTileList';
+import { SpriteSheetPatternList } from '@/components/common/EditSettingsArea/SpriteSheetPatternList/SpriteSheetPatternList';
+import { useAnchor } from '@/hooks/useAnchor';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { MatrixUtil } from '@/utils/MatrixUtil';
 
 const SpriteSheetSettings = memo(({ spriteSheet }) => {
   const { open, toggle } = useAnchor({ clickAwayListener: true });
   const options = [
     {
-      type: "option",
-      id: "tiles",
-      label: "Tiles",
+      type: 'option',
+      id: 'tiles',
+      label: 'Tiles',
       onClick: () => {
-        setOpened("tiles");
+        setOpened('tiles');
       },
-      component: SpriteSheetTileList
+      component: SpriteSheetTileList,
     },
     {
-      type: "option",
-      id: "patterns",
-      label: "Patterns",
+      type: 'option',
+      id: 'patterns',
+      label: 'Patterns',
       onClick: () => {
         setOpened('patterns');
       },
-      component: SpriteSheetPatternList
+      component: SpriteSheetPatternList,
     },
   ];
-  const [opened, setOpened] = useLocalStorage('sprites:settings:list:type', options[0].id);
+  const [opened, setOpened] = useLocalStorage(
+    'sprites:settings:list:type',
+    options[0].id,
+  );
   const selectedOption = options.find((option) => option.id === opened);
   const List = selectedOption.component;
 

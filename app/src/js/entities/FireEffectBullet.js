@@ -6,10 +6,10 @@ import Velocity from '@/js/traits/Velocity';
 import Killable from '@/js/traits/Killable';
 import SkillController from '@/js/traits/SkillController';
 
-
 export function loadFireEffectBullet() {
-  return loadSpriteSheet('fire-effect-bullet')
-    .then(createFireEffectBulletFactory);
+  return loadSpriteSheet('fire-effect-bullet').then(
+    createFireEffectBulletFactory,
+  );
 }
 
 class Behavior extends Trait {
@@ -54,9 +54,9 @@ export function createFireEffectBulletFactory(sprite) {
     bullet.addTrait(new Velocity());
     bullet.addTrait(new Behavior());
     bullet.addTrait(new Killable());
-    
+
     bullet.draw = drawFireEffectBullet;
 
     return bullet;
-  }
+  };
 }

@@ -1,25 +1,27 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { FileInput } from "@/components/ui/FileInput";
-import { SpriteSheetSettings } from "@/components/common/EditSettingsArea/SpriteSheetSettings";
-import { AreaHeader } from "@/components/common/AreaHeader";
-import { PlusIcon } from "@/components/icon/PlusIcon";
-import { SceneSettings } from "@/components/common/EditSettingsArea/SceneSettings";
-import { OperableItem } from "@/components/common/OperableItem";
+import { FileInput } from '@/components/ui/FileInput';
+import { SpriteSheetSettings } from '@/components/common/EditSettingsArea/SpriteSheetSettings';
+import { AreaHeader } from '@/components/common/AreaHeader';
+import { PlusIcon } from '@/components/icon/PlusIcon';
+import { SceneSettings } from '@/components/common/EditSettingsArea/SceneSettings';
+import { OperableItem } from '@/components/common/OperableItem';
 import {
   useSpriteSheets,
   useUpdateSpriteSheets,
-} from "@/context/SpriteSheetContext";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { LoaderUtil } from "@/utils/LoaderUtil";
-import { ImageUtil } from "@/utils/ImageUtil";
-import { MatrixUtil } from "@/utils/MatrixUtil";
-import { CanvasUtil } from "@/utils/CanvasUtil";
+} from '@/context/SpriteSheetContext';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { LoaderUtil } from '@/utils/LoaderUtil';
+import { ImageUtil } from '@/utils/ImageUtil';
+import { MatrixUtil } from '@/utils/MatrixUtil';
+import { CanvasUtil } from '@/utils/CanvasUtil';
 
 function EditSettingsArea() {
   const spriteSheets = useSpriteSheets();
   const updateSpriteSheets = useUpdateSpriteSheets();
-  const [selectedSpriteSheet, selectSpriteSheet] = useLocalStorage("selected:spritesheet");
+  const [selectedSpriteSheet, selectSpriteSheet] = useLocalStorage(
+    'selected:spritesheet',
+  );
 
   const upload = async (file) => {
     const image = await LoaderUtil.readFile(file).then(LoaderUtil.loadImage);
@@ -27,20 +29,26 @@ function EditSettingsArea() {
 
     const transparent = [];
 
-    MatrixUtil.traverse(sizeIndex, ({x, y}) => {
-      const buffer = CanvasUtil.createBufferBySource(image, x * 16, y * 16, 16, 16);
+    MatrixUtil.traverse(sizeIndex, ({ x, y }) => {
+      const buffer = CanvasUtil.createBufferBySource(
+        image,
+        x * 16,
+        y * 16,
+        16,
+        16,
+      );
       if (buffer.toDataURL() === CanvasUtil.transparent) {
         transparent.push(`${x}.${y}`);
       }
     });
 
     const formData = new FormData();
-    formData.append("image", file);
-    formData.append("transparent", transparent);
+    formData.append('image', file);
+    formData.append('transparent', transparent);
 
     try {
-      const response = await fetch("/api/image/upload", {
-        method: "POST",
+      const response = await fetch('/api/image/upload', {
+        method: 'POST',
         body: formData,
       });
 
@@ -49,7 +57,7 @@ function EditSettingsArea() {
         updateSpriteSheets();
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error('Error uploading image:', error);
     }
   };
 
@@ -92,7 +100,9 @@ function EditSettingsArea() {
               selected={selectedSpriteSheet === spriteSheet.source}
               onClick={() =>
                 selectSpriteSheet(
-                  selectedSpriteSheet === spriteSheet.source ? null : spriteSheet.source
+                  selectedSpriteSheet === spriteSheet.source
+                    ? null
+                    : spriteSheet.source,
                 )
               }
               label={spriteSheet.name}

@@ -1,5 +1,5 @@
-import { Text } from "@/components/ui/Text";
-import { EditIcon } from "@/components/icon/EditIcon";
+import { Text } from '@/components/ui/Text';
+import { EditIcon } from '@/components/icon/EditIcon';
 
 function EditModeInfo() {
   return (

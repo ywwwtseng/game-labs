@@ -1,6 +1,6 @@
-import { useRef, useEffect } from "react";
-import { CanvasUtil } from "@/utils/CanvasUtil";
-import { MatrixUtil } from "@/utils/MatrixUtil";
+import { useRef, useEffect } from 'react';
+import { CanvasUtil } from '@/utils/CanvasUtil';
+import { MatrixUtil } from '@/utils/MatrixUtil';
 
 export const CANVAS_LAYER = {
   GRID: ({ width, height }) => ({
@@ -18,27 +18,22 @@ export const CANVAS_LAYER = {
 };
 
 function Canvas2D({
-  id = "canvas",
+  id = 'canvas',
   layers = [],
   cache,
   width,
   height,
   ...props
 }) {
-  
   const ref = useRef(null);
   const padding = 1;
 
   useEffect(() => {
-    const ctx = ref.current.getContext("2d");
+    const ctx = ref.current.getContext('2d');
     CanvasUtil.clear(ctx);
 
     layers.forEach((layer) => {
-      ctx.drawImage(
-        layer.buffer,
-        0,
-        0
-      );
+      ctx.drawImage(layer.buffer, 0, 0);
     });
 
     if (cache) {
@@ -58,4 +53,4 @@ function Canvas2D({
   );
 }
 
-export { Canvas2D }
+export { Canvas2D };

@@ -1,14 +1,20 @@
-import cx from "classnames";
+import cx from 'classnames';
 
-function Text({ children, size = 'xs', color = 'white', weight = 'normal', className }) {
+function Text({
+  children,
+  size = 'xs',
+  color = 'white',
+  weight = 'normal',
+  className,
+}) {
   return (
     <span
       className={cx(
-        "self-center whitespace-nowrap",
+        'self-center whitespace-nowrap',
         `text-${size}`,
         `text-${color}`,
         `font-${weight}`,
-        className
+        className,
       )}
     >
       {children}

@@ -29,4 +29,4 @@ export default class SkillController extends Trait {
       this.emitters.length = 0;
     }
   }
-} 
+}

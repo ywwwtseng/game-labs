@@ -1,15 +1,9 @@
-import { useRef } from "react";
-import { useObservableRef } from "@/hooks/useObservableRef";
-import { getBoundingBox } from "@/helpers/BoundingBox";
-import { useCursorDelta } from "@/hooks/useCursorDelta";
+import { useRef } from 'react';
+import { useObservableRef } from '@/hooks/useObservableRef';
+import { getBoundingBox } from '@/helpers/BoundingBox';
+import { useCursorDelta } from '@/hooks/useCursorDelta';
 
-function useCursor({
-  icon,
-  onStart,
-  onEnd,
-  onMove,
-  onDownMove
-}) {
+function useCursor({ icon, onStart, onEnd, onMove, onDownMove }) {
   const cursorDelta = useCursorDelta();
   const isPressRef = useRef(false);
   const iconElRef = useRef(null);
@@ -26,11 +20,13 @@ function useCursor({
 
       if (iconElRef.current.id !== iconRef.current.id) {
         iconElRef.current.remove();
-        iconElRef.current = iconRef.current.display(event, displayIdRef.current);
+        iconElRef.current = iconRef.current.display(
+          event,
+          displayIdRef.current,
+        );
         document.body.append(iconElRef.current);
       }
 
-  
       const bounds = getBoundingBox(iconElRef.current);
       const position = {
         x: event.pageX - bounds.size.x / 2,
@@ -38,23 +34,23 @@ function useCursor({
       };
       iconElRef.current.style.left = `${position.x}px`;
       iconElRef.current.style.top = `${position.y}px`;
-      iconElRef.current.style.pointerEvents = "none";
-      iconElRef.current.style.position = "fixed";
+      iconElRef.current.style.pointerEvents = 'none';
+      iconElRef.current.style.position = 'fixed';
       iconElRef.current.style.zIndex = 9999;
     }
-    
+
     const { delta } = cursorDelta.move(event);
 
     if (isPressRef.current) {
       onDownMove?.(event, { delta, iconEl: iconElRef.current });
     }
 
-      onMove?.(event, { delta, iconEl: iconElRef.current });
+    onMove?.(event, { delta, iconEl: iconElRef.current });
   };
 
   const onMouseEnter = () => {
     moveHandlerRef.current = onMouseMove;
-    window.addEventListener("mousemove", moveHandlerRef.current);
+    window.addEventListener('mousemove', moveHandlerRef.current);
   };
 
   const onMouseLeave = () => {
@@ -64,7 +60,7 @@ function useCursor({
     }
 
     if (moveHandlerRef.current) {
-      window.removeEventListener("mousemove", moveHandlerRef.current);
+      window.removeEventListener('mousemove', moveHandlerRef.current);
       moveHandlerRef.current = null;
     }
   };
@@ -81,7 +77,7 @@ function useCursor({
     // }
 
     if (upHandlerRef.current) {
-      document.removeEventListener("mouseup", upHandlerRef.current);
+      document.removeEventListener('mouseup', upHandlerRef.current);
     }
   };
 
@@ -93,13 +89,13 @@ function useCursor({
     cursorDelta.start(event);
 
     if (isPressRef.current) {
-      onDownMove?.(event, { delta:null, iconEl: iconElRef.current});
+      onDownMove?.(event, { delta: null, iconEl: iconElRef.current });
     }
 
-    onMove?.(event, { delta:null, iconEl: iconElRef.current});
+    onMove?.(event, { delta: null, iconEl: iconElRef.current });
 
     upHandlerRef.current = onMouseUp;
-    document.addEventListener("mouseup", upHandlerRef.current);
+    document.addEventListener('mouseup', upHandlerRef.current);
   };
 
   return {
@@ -108,7 +104,7 @@ function useCursor({
       onMouseLeave,
       onMouseDown,
       onMouseUp,
-    }
+    },
   };
 }
 

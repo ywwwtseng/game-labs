@@ -1,5 +1,5 @@
 import { SpriteSheetTile } from '@/components/common/EditSettingsArea/SpriteSheetTileList/SpriteSheetTile';
-import { MatrixUtil } from "@/utils/MatrixUtil";
+import { MatrixUtil } from '@/utils/MatrixUtil';
 
 function SpriteSheetTileList({ spriteSheet }) {
   return (

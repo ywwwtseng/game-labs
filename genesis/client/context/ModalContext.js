@@ -4,8 +4,8 @@ import {
   useCallback,
   useState,
   useContext,
-} from "react";
-import { createPortal } from "react-dom";
+} from 'react';
+import { createPortal } from 'react-dom';
 
 export const ModalContext = createContext({
   openModal: () => {},
@@ -16,11 +16,13 @@ export const ModalProvider = ({ children }) => {
   const [modals, setModals] = useState([]);
 
   const openModal = useCallback((modal) => {
-    setModals(modals => [...modals, modal]);
+    setModals((modals) => [...modals, modal]);
   }, []);
 
   const closeModal = useCallback(() => {
-    setModals(modals => modals.filter((_, index) => index + 1 !== modals.length));
+    setModals((modals) =>
+      modals.filter((_, index) => index + 1 !== modals.length),
+    );
   }, []);
 
   return (

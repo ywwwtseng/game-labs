@@ -1,4 +1,3 @@
-
 import TileResolver from '@/engine/TileResolver';
 
 export default class TileCollider {
@@ -21,12 +20,14 @@ export default class TileCollider {
       return;
     }
 
-    for (const resolver of this.resolvers) { 
+    for (const resolver of this.resolvers) {
       const matches = resolver.searchByRange(
-        x, x,
-        entity.bounds.top, entity.bounds.bottom,
+        x,
+        x,
+        entity.bounds.top,
+        entity.bounds.bottom,
       );
-      
+
       matches.forEach((match) => {
         this.handler(0, entity, match, resolver, gameContext, scene);
       });
@@ -45,10 +46,12 @@ export default class TileCollider {
 
     for (const resolver of this.resolvers) {
       const matches = resolver.searchByRange(
-        entity.bounds.left, entity.bounds.right,
-        y, y,
+        entity.bounds.left,
+        entity.bounds.right,
+        y,
+        y,
       );
-      
+
       matches.forEach((match) => {
         this.handler(1, entity, match, resolver, gameContext, scene);
       });

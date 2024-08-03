@@ -1,7 +1,6 @@
 import Compositor from '@/engine/Compositor';
 import EventEmitter from '@/engine/EventEmitter';
 
-
 export default class Scene {
   static EVENT_LOADED = Symbol('scene loaded');
 
@@ -22,15 +21,11 @@ export default class Scene {
     this.events.emit(Scene.EVENT_LOADED);
   }
 
-
-
   draw(gameContext) {
     this.comp.draw(gameContext.videoContext);
   }
 
   update(gameContext) {}
 
-  pause() {
-    
-  }
+  pause() {}
 }

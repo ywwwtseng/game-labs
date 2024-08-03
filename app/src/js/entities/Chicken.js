@@ -10,10 +10,8 @@ import Killable from '@/js/traits/Killable';
 import Attack from '@/js/traits/Attack';
 import SkillController from '@/js/traits/SkillController';
 
-
 export function loadChicken() {
-  return loadSpriteSheet('chicken')
-    .then(createChickenFactory);
+  return loadSpriteSheet('chicken').then(createChickenFactory);
 }
 
 class Behavior extends Trait {
@@ -49,7 +47,6 @@ class Behavior extends Trait {
     // if (us.traits.get(Killable).dead) {
     //   return;
     // }
-
     // if (them.traits.get(Attack).engageTime) {
     //   us.traits.get(PendulumMove).enable = false;
     //   us.traits.get(Killable).kill();
@@ -63,7 +60,9 @@ export function createChickenFactory(sprite) {
 
   function routeFrame(chicken) {
     if (chicken.traits.get(PendulumMove).speed > 0) {
-      return walkAnim[DIRECTION.RIGHT](chicken.traits.get(PendulumMove).lifetime);
+      return walkAnim[DIRECTION.RIGHT](
+        chicken.traits.get(PendulumMove).lifetime,
+      );
     }
 
     return walkAnim[DIRECTION.LEFT](chicken.traits.get(PendulumMove).lifetime);
@@ -83,9 +82,9 @@ export function createChickenFactory(sprite) {
     chicken.addTrait(new PendulumMove());
     chicken.addTrait(new Behavior());
     chicken.addTrait(new Killable());
-    
+
     chicken.draw = drawChicken;
 
     return chicken;
-  }
+  };
 }

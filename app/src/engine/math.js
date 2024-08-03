@@ -99,7 +99,7 @@ export class Vec2 {
     if (len > s && len > 0) {
       this.scale(s / len);
     }
-  
+
     return this;
   }
 

@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useSelector } from "react-redux";
-import { Draggable } from "@/containers/Draggable";
-import { OperableItem } from "@/components/common/OperableItem";
-import { CANVAS_LAYER } from "@/components/common/Canvas2D";
-import { Text } from "@/components/ui/Text";
-import { MatrixUtil } from "@/utils/MatrixUtil";
-import { contain } from "@/helpers/BoundingBox";
-import { selectedIsDrawMode } from "@/features/appState/appStateSlice";
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { Draggable } from '@/containers/Draggable';
+import { OperableItem } from '@/components/common/OperableItem';
+import { CANVAS_LAYER } from '@/components/common/Canvas2D';
+import { Text } from '@/components/ui/Text';
+import { MatrixUtil } from '@/utils/MatrixUtil';
+import { contain } from '@/helpers/BoundingBox';
+import { selectedIsDrawMode } from '@/features/appState/appStateSlice';
 
 function SpriteSheetPattern({ spriteSheet, pattern }) {
   const isDrawMode = useSelector(selectedIsDrawMode);
@@ -32,15 +32,15 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
         width: sizeIndex[0] * 16,
         height: sizeIndex[1] * 16,
       }).buffer,
-    [sizeIndex, tiles]
+    [sizeIndex, tiles],
   );
 
   const drawImage = useCallback(
     (el) => {
-      const ctx = el.getContext("2d");
+      const ctx = el.getContext('2d');
       ctx.drawImage(buffer, 0, 0, size.x, size.y);
     },
-    [size, buffer]
+    [size, buffer],
   );
 
   useEffect(() => {
@@ -55,26 +55,26 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
             <Draggable
               disabled={isDrawMode}
               data={{
-                type: "pattern",
+                type: 'pattern',
                 source: spriteSheet.source,
                 pattern,
               }}
               icon={{
                 display: () => {
-                  const canvas = document.createElement("canvas");
+                  const canvas = document.createElement('canvas');
                   canvas.width = sizeIndex[0] * 16;
                   canvas.height = sizeIndex[1] * 16;
-                  const ctx = canvas.getContext("2d");
+                  const ctx = canvas.getContext('2d');
                   ctx.drawImage(buffer, 0, 0);
                   return canvas;
                 },
               }}
               beforeDrop={(_, { iconEl }) =>
-                iconEl && contain(iconEl, { in: "canvas" })
+                iconEl && contain(iconEl, { in: 'canvas' })
               }
               onMove={(_, { iconEl }) => {
                 if (iconEl) {
-                  iconEl.style.opacity = contain(iconEl, { in: "canvas" })
+                  iconEl.style.opacity = contain(iconEl, { in: 'canvas' })
                     ? 1
                     : 0.5;
                 }

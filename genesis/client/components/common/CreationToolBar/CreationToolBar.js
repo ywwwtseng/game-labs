@@ -1,20 +1,19 @@
-import { useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { SelectIcon } from "@/components/icon/SelectIcon";
-import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
-import { SpriteTool } from "@/components/common/SpriteTool/SpriteTool";
-import { CreationToolBarButton } from "@/components/common/CreationToolBar/CreationToolBarButton";
-import { CreationToolBarToggle } from "@/components/common/CreationToolBar/CreationToolBarToggle";
-import { setMode } from "@/features/appState/appStateSlice";
-import { useSpriteSheets } from "@/context/SpriteSheetContext";
-import { MODE } from "@/constants";
+import { useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { SelectIcon } from '@/components/icon/SelectIcon';
+import { SpriteSheetIcon } from '@/components/icon/SpriteSheetIcon';
+import { SpriteTool } from '@/components/common/SpriteTool/SpriteTool';
+import { CreationToolBarButton } from '@/components/common/CreationToolBar/CreationToolBarButton';
+import { CreationToolBarToggle } from '@/components/common/CreationToolBar/CreationToolBarToggle';
+import { setMode } from '@/features/appState/appStateSlice';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { MODE } from '@/constants';
 
 function CreationToolBar() {
   const menuRef = useRef(null);
   const mode = useSelector((state) => state.appState.mode);
   const dispatch = useDispatch();
   const spriteSheets = useSpriteSheets();
-
 
   return (
     <div
@@ -25,9 +24,11 @@ function CreationToolBar() {
         icon={SelectIcon}
         onClick={(event) => {
           menuRef.current.close(event);
-          dispatch(setMode({
-            mode: mode === MODE.SELECT ? MODE.EDIT : MODE.SELECT
-          }));
+          dispatch(
+            setMode({
+              mode: mode === MODE.SELECT ? MODE.EDIT : MODE.SELECT,
+            }),
+          );
         }}
       />
       <CreationToolBarToggle

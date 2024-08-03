@@ -1,19 +1,26 @@
 import { useState } from 'react';
-import cx from "classnames";
-import { CheckIcon } from "@/components/icon/CheckIcon";
+import cx from 'classnames';
+import { CheckIcon } from '@/components/icon/CheckIcon';
 
-function OperableItem({ checkIcon, selected, label, className, actions, onClick }) {
+function OperableItem({
+  checkIcon,
+  selected,
+  label,
+  className,
+  actions,
+  onClick,
+}) {
   const [showActions, setShowActions] = useState(false);
 
   return (
     <div
       className={cx(
-        "flex items-center cursor-pointer text-xs whitespace-nowrap px-1 w-full min-h-[20px] odd:bg-[#2B2B2B] hover:text-white",
+        'flex items-center cursor-pointer text-xs whitespace-nowrap px-1 w-full min-h-[20px] odd:bg-[#2B2B2B] hover:text-white',
         {
-          "text-zinc-400": !selected,
-          "text-white": selected,
+          'text-zinc-400': !selected,
+          'text-white': selected,
         },
-        className
+        className,
       )}
       onClick={onClick}
       onMouseEnter={() => setShowActions(true)}
@@ -24,11 +31,8 @@ function OperableItem({ checkIcon, selected, label, className, actions, onClick 
       )}
       {label}
       {showActions && (
-        <div className="flex items-center ml-auto">
-          {actions}
-        </div>
+        <div className="flex items-center ml-auto">{actions}</div>
       )}
-      
     </div>
   );
 }

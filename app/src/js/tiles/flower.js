@@ -16,7 +16,6 @@ function handlerX({ entity, match }) {
 
 function handlerY({ entity, match, resolver, gameContext, scene }) {
   if (entity.vel.y > 0) {
-
     if (entity.bounds.bottom > match.y1) {
       entity.obstruct(SIDES.BOTTOM, match);
     }
@@ -34,6 +33,5 @@ function handlerY({ entity, match, resolver, gameContext, scene }) {
     }
   }
 }
-
 
 export const flower = [handlerX, handlerY];

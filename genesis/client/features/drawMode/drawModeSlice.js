@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   source: null,
@@ -6,7 +6,7 @@ const initialState = {
 };
 
 export const drawModeSlice = createSlice({
-  name: "drawMode",
+  name: 'drawMode',
   initialState,
   reducers: {
     init: (state, action) => {

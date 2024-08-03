@@ -1,6 +1,6 @@
 import AudioBoard from '@/engine/AudioBoard';
 import Trait from '@/engine/Trait';
- import { Vec2 } from '@/engine/math';
+import { Vec2 } from '@/engine/math';
 import BoundingBox from '@/engine/BoundingBox';
 import EventBuffer from '@/engine/EventBuffer';
 

@@ -1,4 +1,4 @@
-import range from "lodash-es/range";
+import range from 'lodash-es/range';
 
 class MatrixUtil {
   static isMatrix(matrix) {
@@ -20,13 +20,13 @@ class MatrixUtil {
       const matrix = T;
       return {
         x: matrix.length * 16,
-        y: matrix[0].length * 16
+        y: matrix[0].length * 16,
       };
     } else if (T.length === 4) {
       const rect = T;
       return {
         x: rect[2] * 16,
-        y: rect[3] * 16
+        y: rect[3] * 16,
       };
     }
   }
@@ -52,9 +52,7 @@ class MatrixUtil {
   }
 
   static _mapBySizeIndex(size, callback) {
-    return range(size[1]).map((y) =>
-      range(size[0]).map((x) => callback(x, y))
-    );
+    return range(size[1]).map((y) => range(size[0]).map((x) => callback(x, y)));
   }
 
   static traverse(T, callback) {
@@ -79,13 +77,15 @@ class MatrixUtil {
 
   static _traverseBySizeIndex(sizeIndex, callback) {
     range(sizeIndex[1]).forEach((y) =>
-      range(sizeIndex[0]).forEach((x) => callback({ x, y }))
+      range(sizeIndex[0]).forEach((x) => callback({ x, y })),
     );
   }
 
   static _traverseRect(rect, callback) {
     range(rect[3]).forEach((y) =>
-      range(rect[2]).forEach((x) => callback({x, y}, {x: rect[0] + x, y:rect[1] + y}))
+      range(rect[2]).forEach((x) =>
+        callback({ x, y }, { x: rect[0] + x, y: rect[1] + y }),
+      ),
     );
   }
 
@@ -99,7 +99,7 @@ class MatrixUtil {
 
   static _createBySizeIndex(sizeIndex, callback) {
     const matrix = [];
-    MatrixUtil.traverse(sizeIndex, ({x, y}) => {
+    MatrixUtil.traverse(sizeIndex, ({ x, y }) => {
       if (!matrix[x]) {
         matrix[x] = [];
       }

@@ -9,7 +9,7 @@ export default class Killable extends Trait {
   }
 
   kill() {
-    this.queue(() => this.dead = true);
+    this.queue(() => (this.dead = true));
   }
 
   revive() {
@@ -22,7 +22,10 @@ export default class Killable extends Trait {
       this.deadTime += deltaTime;
       if (this.deadTime > this.removeAfter) {
         this.queue(() => {
-         scene.entities.splice(scene.entities.findIndex(e => e === entity), 1);
+          scene.entities.splice(
+            scene.entities.findIndex((e) => e === entity),
+            1,
+          );
         });
       }
     }

@@ -1,16 +1,19 @@
-import { useMemo, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Modal } from "@/components/ui/Modal";
-import { BaseInput } from "@/components/ui/BaseInput";
-import { Text } from "@/components/ui/Text";
-import { Canvas2D, CANVAS_LAYER } from "@/components/common/Canvas2D";
-import { selectedLayerSelector } from "@/features/appState/appStateSlice";
-import { useSpriteSheets, useUpdateSpriteSheets } from "@/context/SpriteSheetContext";
-import { AlertIcon } from "@/components/icon/AlertIcon";
-import { useMutation } from "@/hooks/useMutation";
-import { ArrayUtil } from "@/utils/ArrayUtil";
-import { CanvasUtil } from "@/utils/CanvasUtil";
-import { selectedSelectModeSeletorRectDefault } from "@/features/selectMode/selectModeSlice";
+import { useMemo, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Modal } from '@/components/ui/Modal';
+import { BaseInput } from '@/components/ui/BaseInput';
+import { Text } from '@/components/ui/Text';
+import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
+import { selectedLayerSelector } from '@/features/appState/appStateSlice';
+import {
+  useSpriteSheets,
+  useUpdateSpriteSheets,
+} from '@/context/SpriteSheetContext';
+import { AlertIcon } from '@/components/icon/AlertIcon';
+import { useMutation } from '@/hooks/useMutation';
+import { ArrayUtil } from '@/utils/ArrayUtil';
+import { CanvasUtil } from '@/utils/CanvasUtil';
+import { selectedSelectModeSeletorRectDefault } from '@/features/selectMode/selectModeSlice';
 
 function CreatePatternModal() {
   const layer = useSelector(selectedLayerSelector);
@@ -19,28 +22,33 @@ function CreatePatternModal() {
   const updateSpriteSheets = useUpdateSpriteSheets();
   const dispatch = useDispatch();
 
-  const [name, setName] = useState("");
-  const [type, setType] = useState("");
+  const [name, setName] = useState('');
+  const [type, setType] = useState('');
 
   const tiles = useMemo(() => {
     return CanvasUtil.getSceneSelectedTiles(selectedRect, layer, (tile) => {
-      return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[tile?.index?.[1]];
+      return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[
+        tile?.index?.[1]
+      ];
     });
   }, [selectedRect, layer.tiles]);
 
-  const layers = useMemo(() => ([
-    CANVAS_LAYER.SPRITE_LAYER({
-      layers: tiles,
-      width: selectedRect[2] * 16,
-      height: selectedRect[3] * 16,
-    })
-  ]), [selectedRect, tiles]);
+  const layers = useMemo(
+    () => [
+      CANVAS_LAYER.SPRITE_LAYER({
+        layers: tiles,
+        width: selectedRect[2] * 16,
+        height: selectedRect[3] * 16,
+      }),
+    ],
+    [selectedRect, tiles],
+  );
 
   const source = useMemo(() => {
     const sources = ArrayUtil.uniq(
       CanvasUtil.getSceneSelectedTiles(selectedRect, layer, (tile) => {
         return tile?.source;
-      }).flat()
+      }).flat(),
     ).filter(Boolean);
     return sources.length === 1 ? sources[0] : undefined;
   }, [selectedRect, layer.tiles]);
@@ -74,12 +82,12 @@ function CreatePatternModal() {
           {!source && (
             <div className="flex items-center mt-1">
               <AlertIcon className="mr-2" color="fill-red-600" />
-              <Text size="xs" color="white">Need the same source</Text>
+              <Text size="xs" color="white">
+                Need the same source
+              </Text>
             </div>
           )}
-          
         </div>
-        
       </Modal.Body>
       <Modal.Footer>
         <Modal.Action
@@ -88,7 +96,11 @@ function CreatePatternModal() {
             const res = await trigger({
               name,
               type,
-              tiles: CanvasUtil.getSceneSelectedTiles(selectedRect, layer, (tile) => tile?.index)
+              tiles: CanvasUtil.getSceneSelectedTiles(
+                selectedRect,
+                layer,
+                (tile) => tile?.index,
+              ),
             });
 
             updateSpriteSheets();

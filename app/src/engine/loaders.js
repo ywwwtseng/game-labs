@@ -1,5 +1,5 @@
 export function loadImage(url) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const image = new Image();
     image.addEventListener('load', () => {
       resolve(image);
@@ -9,6 +9,5 @@ export function loadImage(url) {
 }
 
 export function loadJSON(url) {
-  return fetch(url)
-    .then((r) => r.json());
+  return fetch(url).then((r) => r.json());
 }

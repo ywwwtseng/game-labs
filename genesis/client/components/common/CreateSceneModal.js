@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Modal } from "@/components/ui/Modal";
-import { BaseInput } from "@/components/ui/BaseInput";
-import { addScene } from "@/features/appState/appStateSlice";
+import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Modal } from '@/components/ui/Modal';
+import { BaseInput } from '@/components/ui/BaseInput';
+import { addScene } from '@/features/appState/appStateSlice';
 
 function CreateSceneModal() {
   const scene = useSelector((state) => state.appState.scene);
   const dispatch = useDispatch();
 
-  const [name, setName] = useState("");
-  const [width, setWidth] = useState("");
-  const [height, setHeight] = useState("");
+  const [name, setName] = useState('');
+  const [width, setWidth] = useState('');
+  const [height, setHeight] = useState('');
   const disabled = !name.trim() || isNaN(width) || isNaN(height);
 
   return (
@@ -29,7 +29,9 @@ function CreateSceneModal() {
           onBlur={(e) => {
             if (!isNaN(e.target.value)) {
               setWidth(
-                String(Math.max(1, Math.ceil(Number(e.target.value) / 16)) * 16)
+                String(
+                  Math.max(1, Math.ceil(Number(e.target.value) / 16)) * 16,
+                ),
               );
             }
           }}
@@ -41,7 +43,9 @@ function CreateSceneModal() {
           onBlur={(e) => {
             if (!isNaN(e.target.value)) {
               setHeight(
-                String(Math.max(1, Math.ceil(Number(e.target.value) / 16)) * 16)
+                String(
+                  Math.max(1, Math.ceil(Number(e.target.value) / 16)) * 16,
+                ),
               );
             }
           }}
@@ -51,11 +55,13 @@ function CreateSceneModal() {
         <Modal.Action
           disabled={disabled}
           onClick={() => {
-            dispatch(addScene({
-              name,
-              width: Number(width),
-              height: Number(height),
-            }));
+            dispatch(
+              addScene({
+                name,
+                width: Number(width),
+                height: Number(height),
+              }),
+            );
           }}
         >
           Create

@@ -16,12 +16,12 @@ class SocketClient {
         callback(data.data);
       }
     });
-      
+
     // Initialize the port connection.
     this.webSocketWorker.port.start();
 
     // Remove the current worker port from the connected ports list.
-    // This way your connectedPorts list stays true to the actual connected ports, 
+    // This way your connectedPorts list stays true to the actual connected ports,
     // as they array won't get automatically updated when a port is disconnected.
     window.addEventListener('beforeunload', () => {
       this.disconnect();
@@ -30,22 +30,22 @@ class SocketClient {
 
   disconnect() {
     console.log('disconnect');
-    this.webSocketWorker.port.postMessage({ 
-      action: 'unload', 
+    this.webSocketWorker.port.postMessage({
+      action: 'unload',
       value: null,
     });
-  
+
     this.webSocketWorker.port.close();
     this.webSocketWorker = null;
   }
 
   /**
    * Sends a message to the worker and passes that to the Web Socket.
-   * @param {any} message 
+   * @param {any} message
    */
   emit(message) {
-    this.webSocketWorker.port.postMessage({ 
-      action: 'send', 
+    this.webSocketWorker.port.postMessage({
+      action: 'send',
       value: message,
     });
   }

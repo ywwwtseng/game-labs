@@ -14,7 +14,7 @@ export default class TileResolver {
     let pos = pos1;
     do {
       range.push(this.toIndex(pos));
-      pos +=this.tileSize;
+      pos += this.tileSize;
     } while (pos < pMax);
     return range;
   }
@@ -36,15 +36,12 @@ export default class TileResolver {
         x2,
         y1,
         y2,
-      }
+      };
     }
   }
 
   matchByPosition(posX, posY) {
-    return this.getByIndex(
-      this.toIndex(posX),
-      this.toIndex(posY),
-    );
+    return this.getByIndex(this.toIndex(posX), this.toIndex(posY));
   }
 
   searchByRange(x1, x2, y1, y2) {

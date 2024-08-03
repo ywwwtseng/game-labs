@@ -1,10 +1,10 @@
-import { getBoundingBox } from "@/helpers/BoundingBox";
-import { MatrixUtil } from "@/utils/MatrixUtil";
-import { Vec2Util } from "@/utils/Vec2Util";
+import { getBoundingBox } from '@/helpers/BoundingBox';
+import { MatrixUtil } from '@/utils/MatrixUtil';
+import { Vec2Util } from '@/utils/Vec2Util';
 
 class CanvasUtil {
   static get transparent() {
-    return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAB9JREFUOE9jZKAQMFKon2HUAIbRMGAYDQNQPhr4vAAAJpgAEX/anFwAAAAASUVORK5CYII=";
+    return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAB9JREFUOE9jZKAQMFKon2HUAIbRMGAYDQNQPhr4vAAAJpgAEX/anFwAAAAASUVORK5CYII=';
   }
 
   static getPosition(event, box) {
@@ -38,19 +38,19 @@ class CanvasUtil {
     const indexY = pos.y === 0 ? 0 : Math.ceil(pos.y / 16) - 1;
     return [indexX, indexY];
   }
-  
+
   static indexToPosition(index) {
     return {
       x: index[0] * 16,
       y: index[1] * 16,
-    }
+    };
   }
 
   static clear(ctx) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   }
 
-  static grid(ctx, { width, height, color = "#424242" }) {
+  static grid(ctx, { width, height, color = '#424242' }) {
     for (var x = 0; x <= width; x += 16) {
       ctx.moveTo(0.5 + x, 0);
       ctx.lineTo(0.5 + x, height);
@@ -65,7 +65,7 @@ class CanvasUtil {
     ctx.stroke();
   }
 
-  static selected(ctx, selected, color = "white") {
+  static selected(ctx, selected, color = 'white') {
     if (!selected) {
       return;
     }
@@ -74,20 +74,20 @@ class CanvasUtil {
       (selected[0] + (selected[2] > 0 ? 0 : +1)) * 16 + 0.5,
       (selected[1] + (selected[3] > 0 ? 0 : +1)) * 16 + 0.5,
       selected[2] * 16,
-      selected[3] * 16
+      selected[3] * 16,
     );
     ctx.strokeStyle = color;
     ctx.stroke();
   }
 
   static drawSelected(selectedRect, spriteSheet, displayId) {
-    const canvas = document.createElement("canvas");
+    const canvas = document.createElement('canvas');
     canvas.id = displayId;
     canvas.width = selectedRect[2] * 16;
     canvas.height = selectedRect[3] * 16;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
 
-    MatrixUtil.traverse(selectedRect, ({x, y}, index) => {
+    MatrixUtil.traverse(selectedRect, ({ x, y }, index) => {
       ctx.drawImage(
         spriteSheet.tiles[index.x][index.y].buffer,
         0,
@@ -97,7 +97,7 @@ class CanvasUtil {
         x * 16,
         y * 16,
         16,
-        16
+        16,
       );
     });
 
@@ -108,7 +108,7 @@ class CanvasUtil {
     if (!rect) {
       return rect;
     }
-    
+
     const [x, y, dx, dy] = rect;
 
     return [
@@ -140,11 +140,11 @@ class CanvasUtil {
   }
 
   static createBuffer(width, height, render) {
-    const buffer = document.createElement("canvas");
+    const buffer = document.createElement('canvas');
     buffer.width = width;
     buffer.height = height;
     if (render) {
-      render(buffer.getContext("2d"));
+      render(buffer.getContext('2d'));
     }
     return buffer;
   }
@@ -152,62 +152,50 @@ class CanvasUtil {
   static createBufferBySource(source, x, y, width, height) {
     const buffer = CanvasUtil.createBuffer(width, height);
     buffer
-      .getContext("2d")
+      .getContext('2d')
       .drawImage(source, x, y, width, height, 0, 0, width, height);
 
     return buffer;
   }
 
   static drawBufferOnCanvas(ctx, buffer, x, y) {
-    ctx.drawImage(
-      buffer,
-      0,
-      0,
-      16,
-      16,
-      x * 16,
-      y * 16,
-      16,
-      16
-    ); 
+    ctx.drawImage(buffer, 0, 0, 16, 16, x * 16, y * 16, 16, 16);
   }
 
-  static drawTilesOnCanvas(ctx, T, offset = {x: 0, y: 0}) {
-    MatrixUtil.traverse(T, ({value, x, y}) => {
+  static drawTilesOnCanvas(ctx, T, offset = { x: 0, y: 0 }) {
+    MatrixUtil.traverse(T, ({ value, x, y }) => {
       if (value.buffer) {
-        CanvasUtil.drawBufferOnCanvas(ctx, value.buffer, offset.x + x, offset.y + y);
+        CanvasUtil.drawBufferOnCanvas(
+          ctx,
+          value.buffer,
+          offset.x + x,
+          offset.y + y,
+        );
       }
     });
   }
 
   static createSpriteLayerBuffer(layers, width, height) {
+    return CanvasUtil.createBuffer(width, height, (ctx) => {
+      layers.forEach((layer) => {
+        CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);
 
-    return CanvasUtil.createBuffer(
-      width,
-      height,
-      (ctx) => {
-        layers.forEach((layer) => {
-
-          CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);
-
-          layer.patterns?.forEach((pattern) => {
-            pattern.index.forEach((index) => {
-              CanvasUtil.drawTilesOnCanvas(ctx, pattern.tiles, {x: index[0], y: index[1]});
-            })
-          })
+        layer.patterns?.forEach((pattern) => {
+          pattern.index.forEach((index) => {
+            CanvasUtil.drawTilesOnCanvas(ctx, pattern.tiles, {
+              x: index[0],
+              y: index[1],
+            });
+          });
         });
-      }
-    );
+      });
+    });
   }
 
   static createGridBuffer(width, height) {
-    return CanvasUtil.createBuffer(
-      width,
-      height,
-      (ctx) => {
-        CanvasUtil.grid(ctx, { width, height });
-      }
-    );
+    return CanvasUtil.createBuffer(width, height, (ctx) => {
+      CanvasUtil.grid(ctx, { width, height });
+    });
   }
 
   static hasExistedTile({
@@ -220,7 +208,9 @@ class CanvasUtil {
       for (let y = 0; y < selectedArea[3]; y++) {
         if (
           layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y] &&
-          !transparent.includes(`${localOriginIndex[0] + x}.${localOriginIndex[1] + y}`)
+          !transparent.includes(
+            `${localOriginIndex[0] + x}.${localOriginIndex[1] + y}`,
+          )
         ) {
           return true;
         }
@@ -234,7 +224,7 @@ class CanvasUtil {
     return MatrixUtil.create(selectedArea, (x, y) => {
       const tile = layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y];
       return callback(tile);
-    })
+    });
   }
 
   static getPatternRect(pattern) {

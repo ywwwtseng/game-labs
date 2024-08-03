@@ -1,5 +1,5 @@
-import { useEffect, useRef, useCallback } from "react";
-import { useObservableRef } from "@/hooks/useObservableRef";
+import { useEffect, useRef, useCallback } from 'react';
+import { useObservableRef } from '@/hooks/useObservableRef';
 
 export const BACKSPACE_KEY = 8;
 export const TAB_KEY = 9;
@@ -17,7 +17,10 @@ function useKeyBoard(inputMapping) {
   const inputRef = useObservableRef(inputMapping);
   const holdingKeyCodeRef = useRef({});
 
-  const isHolding = useCallback((keyCode) => holdingKeyCodeRef.current[keyCode], []);
+  const isHolding = useCallback(
+    (keyCode) => holdingKeyCodeRef.current[keyCode],
+    [],
+  );
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -30,17 +33,17 @@ function useKeyBoard(inputMapping) {
       holdingKeyCodeRef.current[event.keyCode] = false;
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
     };
   }, []);
 
   return {
-    isHolding
-  }
+    isHolding,
+  };
 }
 
 export { useKeyBoard };

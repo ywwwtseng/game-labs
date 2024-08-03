@@ -23,4 +23,4 @@ export default class IntervalEmitter extends Trait {
       this.coolDown = this.interval;
     }
   }
-} 
+}

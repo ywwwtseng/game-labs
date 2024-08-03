@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from "react";
-import { Canvas2D, CANVAS_LAYER } from "@/components/common/Canvas2D";
-import { useLocalSelector } from "@/hooks/useLocalSelector";
-import { CanvasUtil } from "@/utils/CanvasUtil";
+import { useCallback, useMemo } from 'react';
+import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
+import { useLocalSelector } from '@/hooks/useLocalSelector';
+import { CanvasUtil } from '@/utils/CanvasUtil';
 
 function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
   const { selector, register, connect } = useLocalSelector({
@@ -12,7 +12,7 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
     icon: {
       display: (_, data) => {
         if (!data.selected) {
-          return
+          return;
         }
         return CanvasUtil.drawSelected(data.selected, spriteSheet);
       },
@@ -29,21 +29,31 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
     },
   });
 
-  const layers = useMemo(() => [
-    CANVAS_LAYER.SPRITE_LAYER({
-      layers: spriteSheet.tiles,
-      width: spriteSheet.image.naturalWidth,
-      height: spriteSheet.image.naturalHeight,
-    }),
-    CANVAS_LAYER.GRID({
-      width: spriteSheet.image.naturalWidth,
-      height: spriteSheet.image.naturalHeight,
-    }),
-  ], [spriteSheet.image.naturalWidth, spriteSheet.image.naturalHeight, spriteSheet.tiles]);
+  const layers = useMemo(
+    () => [
+      CANVAS_LAYER.SPRITE_LAYER({
+        layers: spriteSheet.tiles,
+        width: spriteSheet.image.naturalWidth,
+        height: spriteSheet.image.naturalHeight,
+      }),
+      CANVAS_LAYER.GRID({
+        width: spriteSheet.image.naturalWidth,
+        height: spriteSheet.image.naturalHeight,
+      }),
+    ],
+    [
+      spriteSheet.image.naturalWidth,
+      spriteSheet.image.naturalHeight,
+      spriteSheet.tiles,
+    ],
+  );
 
-  const cache = useCallback((ctx) => {
-    CanvasUtil.selected(ctx, selector.rect.default);
-  }, [selector.rect.default]);
+  const cache = useCallback(
+    (ctx) => {
+      CanvasUtil.selected(ctx, selector.rect.default);
+    },
+    [selector.rect.default],
+  );
 
   return (
     <div className="px-2 pt-0.5 pb-2" {...register}>

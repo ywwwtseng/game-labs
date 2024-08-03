@@ -9,7 +9,6 @@ export function createTextLayer(font, scene) {
     const x = screenW / 2 - textW / 2;
     const y = screenH / 2;
 
-
     font.print(scene.text, context, x, y);
-  }
+  };
 }

@@ -1,5 +1,5 @@
-import cx from "classnames";
-import { DropdownItem } from "./DropdownItem";
+import cx from 'classnames';
+import { DropdownItem } from './DropdownItem';
 
 function Dropdown({ label, icon, open, options, menuProps = {}, ...props }) {
   return (
@@ -9,8 +9,8 @@ function Dropdown({ label, icon, open, options, menuProps = {}, ...props }) {
         type="button"
         data-toggle="true"
         className={cx(
-          "flex h-full items-center justify-center rounded px-2 py-1 my-auto text-xs text-white",
-          { "bg-zinc-700": open }
+          'flex h-full items-center justify-center rounded px-2 py-1 my-auto text-xs text-white',
+          { 'bg-zinc-700': open },
         )}
         aria-expanded="true"
         aria-haspopup="true"
@@ -39,8 +39,8 @@ function Dropdown({ label, icon, open, options, menuProps = {}, ...props }) {
           tabIndex="-1"
           {...menuProps}
           className={cx(
-            "absolute left-0 top-[100%] z-10 mt-[1px] py-0.5 origin-top-right rounded-md bg-zinc-800 shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none flex flex-col items-center",
-            menuProps.className
+            'absolute left-0 top-[100%] z-10 mt-[1px] py-0.5 origin-top-right rounded-md bg-zinc-800 shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none flex flex-col items-center',
+            menuProps.className,
           )}
         >
           {options.map((option) => (

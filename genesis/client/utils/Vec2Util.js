@@ -13,8 +13,9 @@ class Vec2Util {
     }
 
     return {
-      x, y
-    }
+      x,
+      y,
+    };
   }
 }
 

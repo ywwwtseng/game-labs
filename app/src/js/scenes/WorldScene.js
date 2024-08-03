@@ -15,8 +15,12 @@ import * as tileHandlers from '@/js/tiles';
 
 function focusPlyer(scene) {
   for (const player of findPlayers(scene.entities)) {
-    scene.camera.pos.x = Math.floor(player.pos.x - scene.camera.size.x / 2 + player.size.x / 2);
-    scene.camera.pos.y = Math.floor(player.pos.y - scene.camera.size.y / 2 + player.size.y / 2);
+    scene.camera.pos.x = Math.floor(
+      player.pos.x - scene.camera.size.x / 2 + player.size.x / 2,
+    );
+    scene.camera.pos.y = Math.floor(
+      player.pos.y - scene.camera.size.y / 2 + player.size.y / 2,
+    );
   }
 }
 
@@ -36,7 +40,9 @@ export default class WorldScene extends Scene {
   }
 
   async load() {
-    const loadWorldScene = createWorldSceneLoader(this.gameContext.entityFactory);
+    const loadWorldScene = createWorldSceneLoader(
+      this.gameContext.entityFactory,
+    );
     const setupWorldScene = await loadWorldScene(this.name);
     setupWorldScene(this);
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -50,7 +56,10 @@ export default class WorldScene extends Scene {
       }
     });
 
-    const playerProgressLayer = createPlayerProgressLayer(this.gameContext.font, this);
+    const playerProgressLayer = createPlayerProgressLayer(
+      this.gameContext.font,
+      this,
+    );
     const dashboardLayer = createDashboardLayer(this.gameContext.font, this);
 
     const playerEnv = createPlayerEnv(this.gameContext.player);
@@ -64,7 +73,11 @@ export default class WorldScene extends Scene {
         createCollisionLayer(this),
         createCameraLayer(this.camera),
       );
-      setupMouseControl(this.gameContext.canvas, this.gameContext.player, this.camera);
+      setupMouseControl(
+        this.gameContext.canvas,
+        this.gameContext.player,
+        this.camera,
+      );
     }
 
     this.comp.layers.push(dashboardLayer);

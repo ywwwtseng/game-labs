@@ -1,7 +1,6 @@
-import { useCallback, useState } from "react";
-import { produce } from "immer";
-import { useSelectorBridge } from "@/hooks/useSelectorBridge";
-
+import { useCallback, useState } from 'react';
+import { produce } from 'immer';
+import { useSelectorBridge } from '@/hooks/useSelectorBridge';
 
 function useLocalSelector({
   defaultSelected = null,
@@ -15,7 +14,7 @@ function useLocalSelector({
     cursorIndex: null,
     progress: false,
     rect: {
-      default: defaultSelected
+      default: defaultSelected,
     },
   });
 
@@ -23,7 +22,7 @@ function useLocalSelector({
     setState(
       produce((draft) => {
         draft.progress = Boolean(rect);
-      })
+      }),
     );
 
     selectArea(rect);
@@ -33,7 +32,7 @@ function useLocalSelector({
     setState(
       produce((draft) => {
         draft.rect.default = rect;
-      })
+      }),
     );
   }, []);
 
@@ -41,7 +40,7 @@ function useLocalSelector({
     setState(
       produce((draft) => {
         draft.progress = false;
-      })
+      }),
     );
   }, []);
 
@@ -49,7 +48,7 @@ function useLocalSelector({
     setState(
       produce((draft) => {
         draft.cursorIndex = cursorIndex;
-      })
+      }),
     );
   }, []);
 

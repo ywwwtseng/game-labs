@@ -5,7 +5,7 @@ export default class SceneManager {
   }
 
   getActiveScene() {
-    return [...this.scenes.values()].find(scene => scene.active);
+    return [...this.scenes.values()].find((scene) => scene.active);
   }
 
   async loadScene(name, Scene, params) {

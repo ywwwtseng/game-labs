@@ -1,19 +1,22 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AreaHeader } from "@/components/common/AreaHeader";
-import { OperableItem } from "@/components/common/OperableItem";
-import { BaseButton } from "@/components/ui/BaseButton";
-import { LayersIcon } from "@/components/icon/LayersIcon";
-import { PlusIcon } from "@/components/icon/PlusIcon";
-import { AngleRightIcon } from "@/components/icon/AngleRightIcon";
-import { addLayer, selectLayer } from "@/features/appState/appStateSlice";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AreaHeader } from '@/components/common/AreaHeader';
+import { OperableItem } from '@/components/common/OperableItem';
+import { BaseButton } from '@/components/ui/BaseButton';
+import { LayersIcon } from '@/components/icon/LayersIcon';
+import { PlusIcon } from '@/components/icon/PlusIcon';
+import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
+import { addLayer, selectLayer } from '@/features/appState/appStateSlice';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 function SceneSettings() {
   const scene = useSelector((state) => state.appState.scene);
   const dispatch = useDispatch();
   const scenes = [scene];
-  const [selectedScene, selectScene] = useLocalStorage("selected:scene", scenes[0].name);
+  const [selectedScene, selectScene] = useLocalStorage(
+    'selected:scene',
+    scenes[0].name,
+  );
 
   return (
     <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828]">
@@ -57,7 +60,11 @@ function SceneSettings() {
                   <div className="flex items-center">
                     <AngleRightIcon
                       size={3}
-                      className={scene.selectedLayerIndex === index ? 'opacity-100': 'opacity-0'}
+                      className={
+                        scene.selectedLayerIndex === index
+                          ? 'opacity-100'
+                          : 'opacity-0'
+                      }
                     />
                     <span className="ml-1">{`Layer${index + 1}`}</span>
                   </div>

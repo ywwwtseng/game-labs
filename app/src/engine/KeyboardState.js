@@ -15,7 +15,7 @@ export default class KeyboardState {
   }
 
   handleEvent(event) {
-    const {code} = event;
+    const { code } = event;
 
     if (!this.keyMap.has(code)) {
       // Did not have key mapped
@@ -32,17 +32,13 @@ export default class KeyboardState {
 
     this.keyStates.set(code, keyState);
     this.keyMap.get(code)(keyState);
-  } 
+  }
 
   listenTo(window) {
-    ['keydown', 'keyup'].forEach(eventName => {
-      window.addEventListener(
-        eventName,
-        (event) => {
-          this.handleEvent(event);
-        }
-      );
+    ['keydown', 'keyup'].forEach((eventName) => {
+      window.addEventListener(eventName, (event) => {
+        this.handleEvent(event);
+      });
     });
-    
   }
 }

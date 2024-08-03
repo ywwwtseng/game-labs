@@ -1,4 +1,4 @@
- import { Vec2 } from '@/engine/math';
+import { Vec2 } from '@/engine/math';
 
 export default class Joystick {
   constructor() {
@@ -37,7 +37,9 @@ export default class Joystick {
     this.move = this.move.bind(this);
     this.up = this.up.bind(this);
 
-    document.addEventListener('touchstart', this.tap.bind(this), { passive: false });
+    document.addEventListener('touchstart', this.tap.bind(this), {
+      passive: false,
+    });
   }
 
   get dragging() {
@@ -45,8 +47,12 @@ export default class Joystick {
   }
 
   getMousePosition(event) {
-    const clientX = event.targetTouches ? event.targetTouches[0].pageX : event.clientX;
-    const clientY = event.targetTouches ? event.targetTouches[0].pageY : event.clientY;
+    const clientX = event.targetTouches
+      ? event.targetTouches[0].pageX
+      : event.clientX;
+    const clientY = event.targetTouches
+      ? event.targetTouches[0].pageY
+      : event.clientY;
 
     return new Vec2(clientX, clientY);
   }
@@ -67,10 +73,7 @@ export default class Joystick {
     event = event || window.event;
     const mouse = this.getMousePosition(event);
 
-    const delta = mouse
-      .clone()
-      .sub(this.origin)
-      .limit(this.maxRadius);
+    const delta = mouse.clone().sub(this.origin).limit(this.maxRadius);
 
     if (!this.dragging) {
       this.circle.style.top = `${mouse.y}px`;
@@ -84,7 +87,10 @@ export default class Joystick {
     delta.normalize();
 
     if (this.onMove !== undefined) {
-      this.onMove({ x: Math.floor(delta.x * 600) / 600, y: Math.floor(delta.y * 600) / 600 });
+      this.onMove({
+        x: Math.floor(delta.x * 600) / 600,
+        y: Math.floor(delta.y * 600) / 600,
+      });
     }
   }
 

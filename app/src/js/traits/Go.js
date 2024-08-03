@@ -14,11 +14,11 @@ export default class Go extends Trait {
     this.heading = DIRECTION.DOWN;
     this.touched = false;
   }
-  
+
   collides(us, them) {
     if (
-      !(us.traits.has(Solid) && us.traits.get(Solid).obstructs)
-      || !(them.traits.has(Solid) && them.traits.get(Solid).obstructs)
+      !(us.traits.has(Solid) && us.traits.get(Solid).obstructs) ||
+      !(them.traits.has(Solid) && them.traits.get(Solid).obstructs)
     ) {
       return;
     }

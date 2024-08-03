@@ -1,4 +1,4 @@
-import { Svg } from "@/components/icon/Svg";
+import { Svg } from '@/components/icon/Svg';
 
 function LayersIcon(props) {
   return (

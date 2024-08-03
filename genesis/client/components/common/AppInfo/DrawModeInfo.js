@@ -1,5 +1,5 @@
-import { Text } from "@/components/ui/Text";
-import { PenNibIcon } from "@/components/icon/PenNibIcon";
+import { Text } from '@/components/ui/Text';
+import { PenNibIcon } from '@/components/icon/PenNibIcon';
 
 function DrawModeInfo() {
   return (

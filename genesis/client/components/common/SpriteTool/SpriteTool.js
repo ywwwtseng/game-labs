@@ -1,20 +1,20 @@
-import { useRef, useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Menu } from "@/components/ui/Menu";
-import { BaseButton } from "@/components/ui/BaseButton";
-import { CloseIcon } from "@/components/icon/CloseIcon";
-import { SpriteSheetIcon } from "@/components/icon/SpriteSheetIcon";
-import { SpriteToolGallery } from "@/components/common/SpriteTool/SpriteToolGallery";
-import { SpriteToolPalette } from "@/components/common/SpriteTool/SpriteToolPalette";
-import { setMode } from "@/features/appState/appStateSlice";
+import { useRef, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Menu } from '@/components/ui/Menu';
+import { BaseButton } from '@/components/ui/BaseButton';
+import { CloseIcon } from '@/components/icon/CloseIcon';
+import { SpriteSheetIcon } from '@/components/icon/SpriteSheetIcon';
+import { SpriteToolGallery } from '@/components/common/SpriteTool/SpriteToolGallery';
+import { SpriteToolPalette } from '@/components/common/SpriteTool/SpriteToolPalette';
+import { setMode } from '@/features/appState/appStateSlice';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { MODE } from "@/constants";
+import { MODE } from '@/constants';
 
 function SpriteTool({ origin, onClose }) {
   const menuRef = useRef();
   const spriteSheets = useSpriteSheets();
   const dispatch = useDispatch();
-  const drawMode = useSelector(state => state.drawMode);
+  const drawMode = useSelector((state) => state.drawMode);
   const [selectedSource, setSelectedSource] = useState(drawMode.source);
   const spriteSheet = spriteSheets[selectedSource];
 
@@ -32,11 +32,11 @@ function SpriteTool({ origin, onClose }) {
               <div>
                 <span onClick={() => setSelectedSource(null)}>
                   Sprite Palette
-                </span>{" "}
+                </span>{' '}
                 | <span>{spriteSheet.name}</span>
               </div>
             ) : (
-              "Sprite Palette"
+              'Sprite Palette'
             )}
           </div>
         </div>

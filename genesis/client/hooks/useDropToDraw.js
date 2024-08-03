@@ -1,10 +1,14 @@
-import { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setupDropzone } from "@/context/DragAndDropContext";
-import { useSpriteSheets } from "@/context/SpriteSheetContext";
-import { drawTiles, fillTile, drawPattern } from "@/features/appState/appStateSlice";
+import { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setupDropzone } from '@/context/DragAndDropContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import {
+  drawTiles,
+  fillTile,
+  drawPattern,
+} from '@/features/appState/appStateSlice';
 import { selectedSelectModeSeletorRect } from '@/features/selectMode/selectModeSlice';
-import { overlaps } from "@/helpers/BoundingBox";
+import { overlaps } from '@/helpers/BoundingBox';
 
 function useDropToDraw({ id }) {
   const selectorRect = useSelector(selectedSelectModeSeletorRect);
@@ -31,7 +35,7 @@ function useDropToDraw({ id }) {
                 index: data.index,
                 source: data.source,
               },
-            })
+            }),
           );
         } else {
           dispatch(
@@ -42,7 +46,7 @@ function useDropToDraw({ id }) {
                 source: data.source,
               },
               transparent: spriteSheets[data.source].transparent,
-            })
+            }),
           );
         }
       },
@@ -51,14 +55,14 @@ function useDropToDraw({ id }) {
           drawPattern({
             event,
             pattern: data.pattern,
-          })
-        )
+          }),
+        );
       },
     }),
-    [spriteSheets, selectorRect.default]
+    [spriteSheets, selectorRect.default],
   );
 
-  const setup = setupDropzone({ id, accept: ["tile", "pattern"], events });
+  const setup = setupDropzone({ id, accept: ['tile', 'pattern'], events });
 
   return {
     setup,

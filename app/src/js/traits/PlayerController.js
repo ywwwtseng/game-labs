@@ -6,7 +6,6 @@ import Attack from '@/js/traits/Attack';
 import Go from '@/js/traits/Go';
 import Killable from '@/js/traits/Killable';
 
-
 export default class PlayerController extends Trait {
   constructor() {
     super();
@@ -19,7 +18,7 @@ export default class PlayerController extends Trait {
   }
 
   update(entity, { deltaTime }, scene) {
-    if (!scene.entities.find(entity => entity === this.player)) {
+    if (!scene.entities.find((entity) => entity === this.player)) {
       this.player.traits.get(Killable).revive();
       this.player.traits.get(Attack).stop();
       this.player.vel.set(0, 0);

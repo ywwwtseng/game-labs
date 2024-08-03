@@ -13,19 +13,27 @@ export function setupKeyboard(window) {
   input.listenTo(window);
 
   input.addMapping('ArrowUp', (keyState) => {
-    router.route((entity) => entity.traits.get(Go).dir.y += keyState ? -1 : 1);
+    router.route(
+      (entity) => (entity.traits.get(Go).dir.y += keyState ? -1 : 1),
+    );
   });
 
   input.addMapping('ArrowDown', (keyState) => {
-    router.route((entity) => entity.traits.get(Go).dir.y += keyState ? 1 : -1);
+    router.route(
+      (entity) => (entity.traits.get(Go).dir.y += keyState ? 1 : -1),
+    );
   });
 
   input.addMapping('ArrowLeft', (keyState) => {
-    router.route((entity) => entity.traits.get(Go).dir.x += keyState ? -1 : 1);
+    router.route(
+      (entity) => (entity.traits.get(Go).dir.x += keyState ? -1 : 1),
+    );
   });
 
   input.addMapping('ArrowRight', (keyState) => {
-    router.route((entity) => entity.traits.get(Go).dir.x += keyState ? 1 : -1);
+    router.route(
+      (entity) => (entity.traits.get(Go).dir.x += keyState ? 1 : -1),
+    );
   });
 
   input.addMapping('Space', (keyState) => {
@@ -41,7 +49,7 @@ export function setupJoystick(entity) {
   const input = new Joystick();
   const router = new InputRouter();
 
-  input.onMove = ({x, y}) => {
+  input.onMove = ({ x, y }) => {
     router.route((entity) => {
       entity.traits.get(Go).dir.x = x;
       entity.traits.get(Go).dir.y = y;
@@ -53,7 +61,9 @@ export function setupJoystick(entity) {
   };
 
   input.onLongPress = () => {
-    router.route((entity) => entity.traits.get(SkillController).doSkill('bullet'));
+    router.route((entity) =>
+      entity.traits.get(SkillController).doSkill('bullet'),
+    );
   };
 
   return router;
