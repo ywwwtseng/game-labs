@@ -47,7 +47,7 @@ function useSelectorBridge({
       if (
         draggable &&
         [selector.rect.default, ...selector.rect.follows].some((rect) =>
-          contain(event, { in: { rect, with: canvasId } })
+          contain(event, { in: { rect, with: canvasId } }),
         )
       ) {
         event.target.style.cursor = 'pointer';
@@ -58,12 +58,15 @@ function useSelectorBridge({
         const dx = index[0] - selector.rect.default[0];
         const dy = index[1] - selector.rect.default[1];
 
-        selectArea([
-          selector.rect.default[0],
-          selector.rect.default[1],
-          dx > 0 ? dx + 1 : dx === 0 ? 1 : dx - 1,
-          dy > 0 ? dy + 1 : dy === 0 ? 1 : dy - 1,
-        ]);
+        selectArea({
+          default: [
+            selector.rect.default[0],
+            selector.rect.default[1],
+            dx > 0 ? dx + 1 : dx === 0 ? 1 : dx - 1,
+            dy > 0 ? dy + 1 : dy === 0 ? 1 : dy - 1,
+          ],
+          follow: [],
+        });
       } else if (isPressRef.current === true) {
         hasMoveDownBehaviorRef.current = true;
         const { genesis } = dataTransfer.getData();
@@ -73,20 +76,22 @@ function useSelectorBridge({
           const predict = ({ rect, follow }) => {
             const { index } = follow(event);
 
-            return CanvasUtil.calc(
-              [
-                index[0],
-                index[1],
-                rect[2],
-                rect[3],
-              ],
-              { limit: canvasId }
-            );
-          }
+            return CanvasUtil.calc([index[0], index[1], rect[2], rect[3]], {
+              limit: canvasId,
+            });
+          };
 
-          const next = predict({ rect: selector.rect.default, follow: genesis.default.follow  })
+          const next = predict({
+            rect: selector.rect.default,
+            follow: genesis.default.follow,
+          });
 
-          selectArea(next);
+          selectArea({
+            default: next,
+            follows: selector.rect.follows.map((rect, index) =>
+              predict({ rect, follow: genesis.follows[index].follow }),
+            ),
+          });
           onMoveDown({
             default: {
               genesis: genesis.default.rect,
@@ -94,22 +99,21 @@ function useSelectorBridge({
             },
             follows: selector.rect.follows.map((rect, index) => ({
               genesis: genesis.follows[index].rect,
-              next: predict({ rect, follow: genesis.follows[index].follow  })
-            }))
+              next: predict({ rect, follow: genesis.follows[index].follow }),
+            })),
           });
         }
       }
     },
-    [draggable, selector]
+    [draggable, selector],
   );
 
   const onMouseDown = useCallback(
     (event) => {
       if (draggable && selector.rect.default) {
-        console.log(selector.rect)
         if (
           [selector.rect.default, ...selector.rect.follows].some((rect) =>
-            contain(event, { in: { rect, with: canvasId } })
+            contain(event, { in: { rect, with: canvasId } }),
           )
         ) {
           isPressRef.current = true;
@@ -142,7 +146,7 @@ function useSelectorBridge({
 
       selectAreaStart(cursorIndex ? [...cursorIndex, 1, 1] : null);
     },
-    [draggable, selector, cursorIndex]
+    [draggable, selector, cursorIndex],
   );
 
   const onMouseUp = useCallback(
@@ -150,7 +154,7 @@ function useSelectorBridge({
       dataTransfer.setData(null);
 
       const rect = CanvasUtil.normalizeRect(selector.rect.default);
-      selectArea(rect);
+      selectArea({ default: rect });
       selectAreaStop();
       onSelected({
         default: rect,
@@ -165,7 +169,7 @@ function useSelectorBridge({
         }
       }
     },
-    [selector]
+    [selector],
   );
 
   const onMouseLeave = useCallback(
@@ -179,11 +183,11 @@ function useSelectorBridge({
         onSelected({
           default: rect,
         });
-        selectArea(rect);
+        selectArea({ default: rect });
         selectAreaStop();
       }
     },
-    [selector]
+    [selector],
   );
 
   const onClick = useCallback(
@@ -197,7 +201,7 @@ function useSelectorBridge({
         }
       }
     },
-    [selector]
+    [selector],
   );
 
   return {

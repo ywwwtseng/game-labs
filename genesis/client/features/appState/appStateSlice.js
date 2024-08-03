@@ -36,14 +36,14 @@ export const setMode = createAsyncThunk(
 
 export const drawTiles = createAsyncThunk(
   'appState/drawTiles',
-  async (
-    { event, selectedTiles, transparent = [] },
-    { dispatch },
-  ) => {
+  async ({ event, selectedTiles, transparent = [] }, { dispatch }) => {
     try {
       const [originX, originY, sizeIndexX, sizeIndexY] = selectedTiles.rect;
 
-      const pos = CanvasUtil.getDraggedIconPosition(event, selectedTiles.rect, { x: 8, y: 8 });
+      const pos = CanvasUtil.getDraggedIconPosition(event, selectedTiles.rect, {
+        x: 8,
+        y: 8,
+      });
       const index = CanvasUtil.positionToIndex(pos);
 
       dispatch(
@@ -62,19 +62,33 @@ export const drawTiles = createAsyncThunk(
 
 export const drawPattern = createAsyncThunk(
   'appState/drawPattern',
-  async ({ event, pattern }, { dispatch }) => {
-    const rect = CanvasUtil.getPatternRect(pattern);
-    const pos = CanvasUtil.getDraggedIconPosition(event, rect, { x: 8, y: 8 });
-    const index = CanvasUtil.positionToIndex(pos);
-    try {
+  async (T, { getState, dispatch }) => {
+
+    if (T.event && T.pattern) {
+      const rect = CanvasUtil.getPatternRect(T.pattern);
+      const pos = CanvasUtil.getDraggedIconPosition(T.event, rect, { x: 8, y: 8 });
+      const index = CanvasUtil.positionToIndex(pos);
+
       dispatch(
         addPatternToScene({
           index,
-          pattern,
+          pattern: T.pattern,
         }),
       );
-    } catch (error) {
-      console.log(error);
+    }
+
+    if (T.index && T.pattern) {
+      dispatch(
+        addPatternToScene(T),
+      );
+    }
+
+    const state = getState();
+
+    if (state.selectMode.selector.rect.default) {
+      dispatch(selectModeActions.selectArea({
+        default: state.selectMode.selector.rect.default,
+      }));
     }
   },
 );
@@ -148,10 +162,6 @@ export const appStateSlice = createSlice({
       if (!state.scene.layers[layerIndex].tiles[indexX]) {
         state.scene.layers[layerIndex].tiles[indexX] = [];
       }
-
-      // state.scene.layers[layerIndex].tiles[indexX][indexY] = {
-      //   pattern_id
-      // };
 
       const pattern = state.scene.layers[layerIndex].patterns[pattern_id];
 

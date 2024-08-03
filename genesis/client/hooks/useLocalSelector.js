@@ -25,13 +25,13 @@ function useLocalSelector({
       }),
     );
 
-    selectArea(rect);
+    selectArea({ default: rect });
   }, []);
 
   const selectArea = useCallback((rect) => {
     setState(
       produce((draft) => {
-        draft.rect.default = rect;
+        draft.rect.default = rect.default;
       }),
     );
   }, []);

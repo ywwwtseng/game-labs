@@ -1,42 +1,30 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { MatrixUtil } from '@/utils/MatrixUtil';
-import { overlaps, contain } from '@/helpers/BoundingBox';
+import { selectedScene } from '@/features/appState/appStateSlice';
+import { CanvasUtil } from '@/utils/CanvasUtil';
 
 export const selectAreaStart = createAsyncThunk(
   'selectMode/selectAreaStart',
   async (payload, { dispatch }) => {
     dispatch(selectAreaStartProgcess(Boolean(payload)));
-    dispatch(selectArea(payload));
+    dispatch(selectArea({ default: payload }));
   },
 );
 
 export const selectArea = createAsyncThunk(
   'selectMode/selectArea',
   async (payload, { getState, dispatch }) => {
+    const scene = selectedScene(getState());
+
     try {
-      if (!payload) {
+      if (!payload.default) {
         dispatch(forceSelectArea({ default: null, follows: [] }));
         return;
       }
 
-      const state = getState();
-      const scene = state.appState.scene;
-      const layer = scene.layers[scene.selectedLayerIndex];
-
       dispatch(
         forceSelectArea({
-          default: payload,
-          follows: Object.values(layer.patterns)
-            .map((pattern) => {
-              const size = MatrixUtil.sizeIndex(pattern.tiles);
-              return pattern.index.map(([x, y]) => {
-                const rect = [x, y, ...size];
-                if (overlaps(payload, rect) || contain(rect, { in: payload })) {
-                  return rect;
-                }
-              });
-            })
-            .flat(),
+          default: payload.default,
+          follows: payload.follows || CanvasUtil.getFollowedSelectedPatterns(payload.default, scene),
         }),
       );
     } catch (error) {
@@ -89,6 +77,7 @@ export const {
   selectAreaStartProgcess,
   forceSelectArea,
   selectAreaStop,
+  selectAreaDefault,
   destroy,
 } = selectModeSlice.actions;
 

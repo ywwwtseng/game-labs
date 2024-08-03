@@ -2,6 +2,6 @@
   "name": "project-web3rpg",
   "repository": "git@github.com:ywwwtseng/project-web3rpg.git",
   "scripts": {
-    "prettier": "npx prettier --write \"**\/*.js\" --single-quote"
+    "prettier": "npx prettier --write \"**\/*.js\" --single-quote --print-width 80"
   }
 }

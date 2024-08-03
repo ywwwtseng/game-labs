@@ -10,7 +10,9 @@ function Dropdown({ label, icon, open, options, menuProps = {}, ...props }) {
         data-toggle="true"
         className={cx(
           'flex h-full items-center justify-center rounded px-2 py-1 my-auto text-xs text-white',
-          { 'bg-zinc-700': open },
+          {
+            'bg-zinc-700': open,
+          },
         )}
         aria-expanded="true"
         aria-haspopup="true"

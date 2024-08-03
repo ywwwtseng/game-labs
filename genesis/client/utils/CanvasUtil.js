@@ -1,6 +1,7 @@
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { Vec2Util } from '@/utils/Vec2Util';
+import { overlaps, contain } from '@/helpers/BoundingBox';
 
 class CanvasUtil {
   static get transparent() {
@@ -33,10 +34,9 @@ class CanvasUtil {
     return pos;
   }
   static getRectPosIndex(rect) {
-    const {pos} = getBoundingBox(rect);
+    const { pos } = getBoundingBox(rect);
     const index = CanvasUtil.positionToIndex(pos);
     return index;
-
   }
 
   static positionToIndex(pos) {
@@ -80,7 +80,7 @@ class CanvasUtil {
       (selected[0] + (selected[2] > 0 ? 0 : +1)) * 16 + 0.5,
       (selected[1] + (selected[3] > 0 ? 0 : +1)) * 16 + 0.5,
       selected[2] * 16,
-      selected[3] * 16,
+      selected[3] * 16
     );
     ctx.strokeStyle = color;
     ctx.stroke();
@@ -103,7 +103,7 @@ class CanvasUtil {
         x * 16,
         y * 16,
         16,
-        16,
+        16
       );
     });
 
@@ -175,7 +175,7 @@ class CanvasUtil {
           ctx,
           value.buffer,
           offset.x + x,
-          offset.y + y,
+          offset.y + y
         );
       }
     });
@@ -215,7 +215,7 @@ class CanvasUtil {
         if (
           layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y] &&
           !transparent.includes(
-            `${localOriginIndex[0] + x}.${localOriginIndex[1] + y}`,
+            `${localOriginIndex[0] + x}.${localOriginIndex[1] + y}`
           )
         ) {
           return true;
@@ -234,6 +234,65 @@ class CanvasUtil {
     });
   }
 
+  static findPatternBySelectedRect(rect, scene) {
+    const patterns = Object.values(
+      scene.layers[scene.selectedLayerIndex].patterns
+    );
+    for (let i = 0; i < patterns.length; i++) {
+      const pattern = patterns[i];
+
+      if (pattern.index.find((index) => Vec2Util.same(rect, index))) {
+        return pattern;
+      }
+    }
+
+    return null;
+  }
+
+  static cloneSceneSelectedPattern(rect, scene) {
+    const pattern = CanvasUtil.findPatternBySelectedRect(rect, scene);
+    const source = pattern.id.split('.')[0];
+    const tiles = MatrixUtil.create(pattern.tiles, ({ value: index }) =>
+      index
+        ? {
+            index,
+            source,
+          }
+        : undefined
+    );
+
+    return {
+      id: pattern.id,
+      tiles,
+    };
+  }
+
+  static getFollowedSelectedPatterns(selectedRect, scene) {
+    if (!selectedRect) {
+      return [];
+    }
+
+    const patterns = Object.values(
+      scene.layers[scene.selectedLayerIndex].patterns
+    );
+
+    return Object.values(patterns)
+      .map((pattern) => {
+        const size = MatrixUtil.sizeIndex(pattern.tiles);
+        return pattern.index.map(([x, y]) => {
+          const rect = [x, y, ...size];
+          if (
+            overlaps(rect, selectedRect) ||
+            contain(rect, { in: selectedRect })
+          ) {
+            return rect;
+          }
+        });
+      })
+      .flat()
+      .filter(Boolean);
+  }
+
   static getPatternRect(pattern) {
     return [0, 0, ...MatrixUtil.sizeIndex(pattern.tiles)];
   }
@@ -248,7 +307,9 @@ class CanvasUtil {
     });
 
     return (event) => {
-      const pos = Vec2Util.calc(CanvasUtil.getPosition(event, canvas), { sub: vec });
+      const pos = Vec2Util.calc(CanvasUtil.getPosition(event, canvas), {
+        sub: vec,
+      });
       const index = CanvasUtil.positionToIndex(pos);
 
       return {

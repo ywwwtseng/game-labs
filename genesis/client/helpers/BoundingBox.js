@@ -116,13 +116,13 @@ function getBoundingBox(T) {
   }
 
   // if (T instanceof Event) {
-    const size = { x: 1, y: 1 };
-    const pos = {
-      x: T.pageX,
-      y: T.pageY,
-    };
+  const size = { x: 1, y: 1 };
+  const pos = {
+    x: T.pageX,
+    y: T.pageY,
+  };
 
-    return new BoundingBox({ pos, size });
+  return new BoundingBox({ pos, size });
   // }
 }
 

@@ -7,4 +7,4 @@ export const MODE = {
 export const CANVAS_ELEMENT = {
   TILE: 'TILE',
   PATTERN: 'PATTERN',
-}
+};

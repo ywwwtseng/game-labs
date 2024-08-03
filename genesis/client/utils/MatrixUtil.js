@@ -90,10 +90,29 @@ class MatrixUtil {
   }
 
   static create(T, callback, offset) {
+    if (MatrixUtil.isMatrix(T)) {
+      const rect = [0, 0, ...MatrixUtil.sizeIndex(T)];
+      return MatrixUtil.create(
+        rect,
+        ({ x, y }) => {
+          const value = T?.[x]?.[y];
+          return callback({ value, x, y });
+        },
+        offset,
+      );
+    }
     if (T.length === 2) {
-      return MatrixUtil._createBySizeIndex(T, callback, offset = { x: 0, y: 0 });
+      return MatrixUtil._createBySizeIndex(
+        T,
+        callback,
+        (offset = { x: 0, y: 0 }),
+      );
     } else if (T.length === 4) {
-      return MatrixUtil._createBySizeIndex([T[2], T[3]], callback, offset = { x: T[0], y: T[1] });
+      return MatrixUtil._createBySizeIndex(
+        [T[2], T[3]],
+        callback,
+        (offset = { x: T[0], y: T[1] }),
+      );
     }
   }
 

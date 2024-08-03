@@ -21,12 +21,11 @@ function useDropToDraw({ id }) {
         event.preventDefault();
         if (!data) return;
 
-        const canvas = document.getElementById(id);
         const rect = [...data.index, 1, 1];
 
         if (
           selectorRect.default &&
-          overlaps({ rect: selectorRect.default, canvas }, { event, rect })
+          overlaps({ rect: selectorRect.default, with: id }, { event, rect })
         ) {
           dispatch(
             fillTile({

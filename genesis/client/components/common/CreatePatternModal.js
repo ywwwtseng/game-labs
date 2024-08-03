@@ -25,11 +25,15 @@ function CreatePatternModal() {
   const [type, setType] = useState('');
 
   const tiles = useMemo(() => {
-    return CanvasUtil.cloneSceneSelectedTiles(selectedRect, scene, ({ tile }) => {
-      return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[
-        tile?.index?.[1]
-      ];
-    });
+    return CanvasUtil.cloneSceneSelectedTiles(
+      selectedRect,
+      scene,
+      ({ tile }) => {
+        return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[
+          tile?.index?.[1]
+        ];
+      },
+    );
   }, [selectedRect, scene]);
 
   const layers = useMemo(
