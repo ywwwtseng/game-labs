@@ -70,21 +70,21 @@ function useSelectorBridge({
       } else if (isPressRef.current === true) {
         hasMoveDownBehaviorRef.current = true;
         const { genesis } = dataTransfer.getData();
-        const { index } = genesis.default.follow(event);
 
         if (Vec2Util.diff(selector.rect.default, index)) {
-          const predict = ({ rect, follow }) => {
-            const { index } = follow(event);
+          const next = genesis.default.follow({ event, rect: selector.rect.default });
 
-            return CanvasUtil.calc([index[0], index[1], rect[2], rect[3]], {
-              limit: canvasId,
-            });
+          const predict = ({ rect, follow }) => {
+            const { index } = follow(next);
+
+            return [index[0], index[1], rect[2], rect[3]];
           };
 
-          const next = predict({
-            rect: selector.rect.default,
-            follow: genesis.default.follow,
-          });
+          console.log(selector.rect.follows.map((rect, index) =>
+            predict({ rect, follow: genesis.follows[index].follow }),
+          ))
+
+          
 
           selectArea({
             default: next,
@@ -123,7 +123,7 @@ function useSelectorBridge({
             genesis: {
               default: {
                 rect: selector.rect.default,
-                follow: CanvasUtil.createFollowClosely({
+                follow: CanvasUtil.createFollowCursor({
                   event,
                   rect: selector.rect.default,
                   canvas: canvasId,
@@ -131,10 +131,9 @@ function useSelectorBridge({
               },
               follows: selector.rect.follows.map((rect) => ({
                 rect,
-                follow: CanvasUtil.createFollowClosely({
-                  event,
+                follow: CanvasUtil.createFollowIndex({
+                  index: [selector.rect.default[0], selector.rect.default[1]],
                   rect,
-                  canvas: canvasId,
                 }),
               })),
             },

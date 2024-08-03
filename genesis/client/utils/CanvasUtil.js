@@ -297,7 +297,7 @@ class CanvasUtil {
     return [0, 0, ...MatrixUtil.sizeIndex(pattern.tiles)];
   }
 
-  static createFollowClosely({ event, rect, canvas }) {
+  static createFollowCursor({ event, rect, canvas }) {
     const pos1 = CanvasUtil.getPosition(event, canvas);
     const [x, y] = rect;
     const pos0 = CanvasUtil.indexToPosition([x, y]);
@@ -306,17 +306,33 @@ class CanvasUtil {
       sub: Vec2Util.calc(pos0, { add: Vec2Util.unit }),
     });
 
-    return (event) => {
+    return ({ event, rect }) => {
       const pos = Vec2Util.calc(CanvasUtil.getPosition(event, canvas), {
         sub: vec,
       });
       const index = CanvasUtil.positionToIndex(pos);
 
-      return {
-        pos,
-        index,
-      };
+      return CanvasUtil.calc([index[0], index[1], rect[2], rect[3]], {
+        limit: canvas,
+      });
     };
+  }
+
+  static createFollowIndex({ index, rect }) {
+    const vec = [
+      index[0] - rect[0],
+      index[1] - rect[1]
+    ];
+
+    return (index) => {
+      return {
+        index: [
+          index[0] - vec[0],
+          index[1] - vec[1]
+        ]
+      };
+    }
+
   }
 }
 

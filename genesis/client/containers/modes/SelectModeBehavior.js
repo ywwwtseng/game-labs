@@ -265,7 +265,7 @@ function SelectModeBehavior({ children }) {
         bufferRef.current.default = null;
         genesisRef.current.default = null;
       } else {
-        if (selector.rect.follows) {
+        if (selector.rect.follows && genesisRef.current.follows) {
           selector.rect.follows.forEach((rect, index) => {
             dispatch(
               drawPattern({
