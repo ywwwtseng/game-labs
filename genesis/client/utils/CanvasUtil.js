@@ -1,3 +1,4 @@
+import range from 'lodash-es/range';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { Vec2Util } from '@/utils/Vec2Util';
@@ -238,11 +239,16 @@ class CanvasUtil {
     const patterns = Object.values(
       scene.layers[scene.selectedLayerIndex].patterns
     );
-    for (let i = 0; i < patterns.length; i++) {
+
+    for (let i = patterns.length - 1; i >= 0; i--) {
       const pattern = patterns[i];
 
-      if (pattern.index.find((index) => Vec2Util.same(rect, index))) {
-        return pattern;
+      for (let j = 0; j < pattern.index.length; j++) {
+        const index = pattern.index[j];
+
+        if (CanvasUtil.same(rect, [index[0], index[1], ...MatrixUtil.sizeIndex(pattern.tiles)])) {
+          return pattern;
+        }
       }
     }
 
@@ -267,7 +273,7 @@ class CanvasUtil {
     };
   }
 
-  static getFollowedSelectedPatterns(selectedRect, scene) {
+  static getFollowedSelectedPatternRects(selectedRect, scene) {
     if (!selectedRect) {
       return [];
     }
@@ -290,49 +296,91 @@ class CanvasUtil {
         });
       })
       .flat()
-      .filter(Boolean);
+      .reduce((acc, val) => {
+        if (val && !acc.some(rect => CanvasUtil.same(rect, val))) {
+          return [...acc, val];
+        }
+        return acc;
+      }, []);
   }
 
   static getPatternRect(pattern) {
     return [0, 0, ...MatrixUtil.sizeIndex(pattern.tiles)];
   }
 
-  static createFollowCursor({ event, rect, canvas }) {
+  static createFollowCursor({ event, rect, groupRect, canvas }) {
+    if (!rect) {
+      return null;
+    }
     const pos1 = CanvasUtil.getPosition(event, canvas);
-    const [x, y] = rect;
+    const [x, y] = groupRect;
+
     const pos0 = CanvasUtil.indexToPosition([x, y]);
+
+    const deltaRect = [groupRect[0] - rect[0], groupRect[1] - rect[1]];
 
     const vec = Vec2Util.calc(pos1, {
       sub: Vec2Util.calc(pos0, { add: Vec2Util.unit }),
     });
 
-    return ({ event, rect }) => {
-      const pos = Vec2Util.calc(CanvasUtil.getPosition(event, canvas), {
+    return ({ event: nextEvent }) => {
+      const pos = Vec2Util.calc(CanvasUtil.getPosition(nextEvent, canvas), {
         sub: vec,
       });
       const index = CanvasUtil.positionToIndex(pos);
 
-      return CanvasUtil.calc([index[0], index[1], rect[2], rect[3]], {
-        limit: canvas,
-      });
+      const newGroupRect = CanvasUtil.calc(
+        [index[0], index[1], groupRect[2], groupRect[3]],
+        {
+          limit: canvas,
+        }
+      );
+
+      return [
+        newGroupRect[0] - deltaRect[0],
+        newGroupRect[1] - deltaRect[1],
+        rect[2],
+        rect[3],
+      ];
     };
   }
 
   static createFollowIndex({ index, rect }) {
-    const vec = [
-      index[0] - rect[0],
-      index[1] - rect[1]
-    ];
+    const vec = [index[0] - rect[0], index[1] - rect[1]];
 
-    return (index) => {
-      return {
-        index: [
-          index[0] - vec[0],
-          index[1] - vec[1]
-        ]
-      };
+    return (nextIndex) => {
+      return [nextIndex[0] - vec[0], nextIndex[1] - vec[1], rect[2], rect[3]];
+    };
+  }
+
+  static getGroupRect(group) {
+    const bounds = [];
+
+    for (let index = 0; index < group.length; index++) {
+      const rect = group[index];
+
+      if (!bounds[0] || rect[0] < bounds[0]) {
+        bounds[0] = rect[0];
+      }
+
+      if (!bounds[1] || rect[1] < bounds[1]) {
+        bounds[1] = rect[1];
+      }
+
+      if (!bounds[2] || rect[0] + rect[2] > bounds[2]) {
+        bounds[2] = rect[0] + rect[2];
+      }
+
+      if (!bounds[3] || rect[1] + rect[3] > bounds[3]) {
+        bounds[3] = rect[1] + rect[3];
+      }
     }
 
+    return [bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1]];
+  }
+
+  static same(any1, any2) {
+    return any1.every((item, index) => item === any2[index]);
   }
 }
 

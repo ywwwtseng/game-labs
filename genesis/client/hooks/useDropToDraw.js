@@ -7,13 +7,12 @@ import {
   fillTile,
   drawPattern,
 } from '@/features/appState/appStateSlice';
-import { selectedSelectModeSeletorRect } from '@/features/selectMode/selectModeSlice';
+import { SELECT_MODE, selectedSelectModeSeletor } from '@/features/selectMode/selectModeSlice';
 import { overlaps } from '@/helpers/BoundingBox';
 
 function useDropToDraw({ id }) {
-  const selectorRect = useSelector(selectedSelectModeSeletorRect);
-
   const dispatch = useDispatch();
+  const selector = useSelector(selectedSelectModeSeletor);
   const spriteSheets = useSpriteSheets();
   const events = useMemo(
     () => ({
@@ -24,12 +23,13 @@ function useDropToDraw({ id }) {
         const rect = [...data.index, 1, 1];
 
         if (
-          selectorRect.default &&
-          overlaps({ rect: selectorRect.default, with: id }, { event, rect })
+          selector.mode !== SELECT_MODE.PATTERN &&
+          selector.rect.default && selector.rect.follows.length === 0 &&
+          overlaps({ rect: selector.rect.default, with: id }, { event, rect })
         ) {
           dispatch(
             fillTile({
-              selectedRect: selectorRect.default,
+              selectedRect: selector.rect.default,
               tile: {
                 index: data.index,
                 source: data.source,
@@ -58,7 +58,7 @@ function useDropToDraw({ id }) {
         );
       },
     }),
-    [spriteSheets, selectorRect.default],
+    [spriteSheets, selector.rect.default],
   );
 
   const setup = setupDropzone({ id, accept: ['tile', 'pattern'], events });

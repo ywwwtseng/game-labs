@@ -7,7 +7,6 @@ import {
   deleteScenePatterns,
   deleteSelectedElements,
   selectedScene,
-  selectedCurrentLayerSelector,
   drawPattern,
 } from '@/features/appState/appStateSlice';
 import {
@@ -15,6 +14,8 @@ import {
   selectAreaStart,
   selectArea,
   selectAreaStop,
+  SELECT_MODE,
+  KEEP_FOLLOWS,
 } from '@/features/selectMode/selectModeSlice';
 import {
   selectedCursorIndex,
@@ -32,21 +33,19 @@ import {
   ARROW_RIGHT_KEY,
   ARROW_DOWN_KEY,
   D_KEY,
+  E_KEY,
   P_KEY,
   S_KEY,
 } from '@/hooks/useKeyBoard';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useModal } from '@/context/ModalContext';
 import { CreatePatternModal } from '@/components/common/CreatePatternModal';
-import { overlaps, contain } from '@/helpers/BoundingBox';
-import { CANVAS_ELEMENT } from '@/constants';
 
 function SelectModeBehavior({ children }) {
   const bufferRef = useRef({});
   const genesisRef = useRef({});
   const spriteSheets = useSpriteSheets();
   const scene = useSelector(selectedScene);
-  const selectedLayer = useSelector(selectedCurrentLayerSelector);
   const dispatch = useDispatch();
   const cursorIndex = useSelector(selectedCursorIndex);
   const selector = useSelector(selectedSelectModeSeletor);
@@ -153,25 +152,48 @@ function SelectModeBehavior({ children }) {
     draggable: true,
     cursorIndex,
     selectAreaStart: (index) => dispatch(selectAreaStart(index)),
-    selectArea: (rects) => {
+    selectArea: (rects, type) => {
+      let mode = selector.mode;
+      let follows = rects.follows;
+
+      if (type === 'mouseup') {
+        if (mode === SELECT_MODE.PATTERN_OR_TILE && isHolding(E_KEY)) {
+          mode = SELECT_MODE.TILE;
+        }
+
+        if (mode === SELECT_MODE.PATTERN_OR_TILE) {
+          follows = CanvasUtil.getFollowedSelectedPatternRects(rects.default, scene);
+
+          if (follows.length === 0) {
+            mode = SELECT_MODE.TILE;
+          } else {
+            mode = SELECT_MODE.PATTERN;
+          }
+        }
+
+        if (mode === SELECT_MODE.PATTERN && selector.rect.follows.length !== 0) {
+          follows = KEEP_FOLLOWS;
+        }
+      }
+
       dispatch(
         selectArea({
+          mode: mode,
           default: rects.default,
-          follows: rects.follows,
+          follows,
         })
       );
+      
     },
     selectAreaStop: () => dispatch(selectAreaStop()),
     setCursorIndex: (cursorIndex) => dispatch(setCursorIndex(cursorIndex)),
-    onMoveDown: (selected) => {
-      const type =
-        selected.follows.length === 0
-          ? CANVAS_ELEMENT.TILE
-          : CANVAS_ELEMENT.PATTERN;
+    onMoveDown: (rects) => {
+      const mode = selector.mode;
 
-      if (type === CANVAS_ELEMENT.PATTERN) {
+      if (mode === SELECT_MODE.PATTERN) {
         if (!bufferRef.current.follows) {
-          bufferRef.current.follows = selected.follows.map(
+         
+          bufferRef.current.follows = rects.follows.map(
             ({ genesis: rect }) => {
               const pattern = CanvasUtil.cloneSceneSelectedPattern(rect, scene);
               return pattern.tiles;
@@ -179,7 +201,7 @@ function SelectModeBehavior({ children }) {
           );
 
           if (!genesisRef.current.default) {
-            genesisRef.current.follows = selected.follows.map(
+            genesisRef.current.follows = rects.follows.map(
               ({ genesis }) => ({
                 genesis,
                 pattern: CanvasUtil.findPatternBySelectedRect(genesis, scene),
@@ -187,12 +209,13 @@ function SelectModeBehavior({ children }) {
             );
           }
 
-          dispatch(deleteScenePatterns(selector.rect.follows));
+          dispatch(deleteScenePatterns({ rects: selector.rect.follows }));
         }
-      } else if (type === CANVAS_ELEMENT.TILE) {
+
+      } else if (mode === SELECT_MODE.TILE) {
         if (!bufferRef.current.default) {
           bufferRef.current.default = CanvasUtil.cloneSceneSelectedTiles(
-            selected.default.genesis,
+            rects.default.genesis,
             scene,
             ({ tile, x, y }) => {
               if (tile && !isHolding(S_KEY)) {
@@ -210,13 +233,13 @@ function SelectModeBehavior({ children }) {
         }
 
         if (isMoveAddTilesMode()) {
-          if (selected.default.next && genesisRef.current.default) {
+          if (rects.default.next && genesisRef.current.default) {
             dispatch(
               addTilesToScene({
                 selectedArea: selector.rect.default,
                 localOriginIndex: [
-                  selected.default.next[0],
-                  selected.default.next[1],
+                  rects.default.next[0],
+                  rects.default.next[1],
                 ],
                 tiles: bufferRef.current.default,
                 transparent: MatrixUtil.findIndexArray(
@@ -224,8 +247,8 @@ function SelectModeBehavior({ children }) {
                   (tile) => tile === undefined
                 ).map(
                   ([x, y]) =>
-                    `${x + selected.default.next[0]}.${
-                      y + selected.default.next[1]
+                    `${x + rects.default.next[0]}.${
+                      y + rects.default.next[1]
                     }`
                 ),
               })
@@ -234,7 +257,7 @@ function SelectModeBehavior({ children }) {
         }
 
         if (!genesisRef.current.default) {
-          genesisRef.current.default = selected.default.genesis;
+          genesisRef.current.default = rects.default.genesis;
         }
       }
     },
@@ -309,8 +332,7 @@ function SelectModeBehavior({ children }) {
               if (tile) {
                 CanvasUtil.drawBufferOnCanvas(
                   ctx,
-                  spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]]
-                    .buffer,
+                  spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
                   rect[0] + x,
                   rect[1] + y
                 );
@@ -320,21 +342,15 @@ function SelectModeBehavior({ children }) {
         });
       }
 
-      if (selector.rect.default) {
+      if (selector.mode === SELECT_MODE.PATTERN) {
         selector.rect.follows.forEach((rect) => {
           CanvasUtil.selected(ctx, rect, 'rgba(255,255,255,0.8)');
         });
-      }
-
-      if (
-        !selector.rect.follows.some((rect) =>
-          contain(selector.rect.default, { in: { rect, canvas: 'canvas' } })
-        )
-      ) {
+      } else {
         CanvasUtil.selected(ctx, selector.rect.default);
       }
     },
-    [selector.rect, selectedLayer]
+    [selector, scene]
   );
 
   const { setup: setupDropToDraw } = useDropToDraw({ id: 'canvas' });

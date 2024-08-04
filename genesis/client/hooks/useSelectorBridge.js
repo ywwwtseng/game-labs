@@ -33,6 +33,51 @@ function useSelectorBridge({
     },
   });
 
+  const onMouseDown = useCallback(
+    (event) => {
+      if (draggable && selector.rect.default) {
+        const group =
+          !selector.rect.follows || selector.rect.follows.length === 0
+            ? [selector.rect.default]
+            : selector.rect.follows;
+        if (
+          group.some((rect) =>
+            contain(event, { in: { rect, with: canvasId } })
+          )
+        ) {
+          isPressRef.current = true;
+
+          dataTransfer.setData({
+            genesis: {
+              default: {
+                rect: selector.rect.default,
+                follow: CanvasUtil.createFollowCursor({
+                  event,
+                  rect: selector.rect.default,
+                  groupRect: CanvasUtil.getGroupRect(group),
+                  canvas: canvasId,
+                }),
+              },
+              follows: selector.rect.follows.map((rect) => ({
+                rect,
+                follow: CanvasUtil.createFollowIndex({
+                  index: [selector.rect.default[0], selector.rect.default[1]],
+                  rect,
+                }),
+              })),
+            },
+          });
+      
+          handleMouseDown(event);
+          return;
+        }
+      }
+
+      selectAreaStart(cursorIndex ? [...cursorIndex, 1, 1] : null);
+    },
+    [draggable, selector, cursorIndex]
+  );
+
   const onMouseMove = useCallback(
     (event) => {
       event.target.style.cursor = 'default';
@@ -44,11 +89,14 @@ function useSelectorBridge({
         setCursorIndex(index);
       }
 
+      const group =
+        !selector.rect.follows || selector.rect.follows.length === 0
+            ? [selector.rect.default]
+            : selector.rect.follows;
+
       if (
         draggable &&
-        [selector.rect.default, ...selector.rect.follows].some((rect) =>
-          contain(event, { in: { rect, with: canvasId } }),
-        )
+        group.some((rect) => contain(event, { in: { rect, with: canvasId } }))
       ) {
         event.target.style.cursor = 'pointer';
       }
@@ -65,110 +113,71 @@ function useSelectorBridge({
             dx > 0 ? dx + 1 : dx === 0 ? 1 : dx - 1,
             dy > 0 ? dy + 1 : dy === 0 ? 1 : dy - 1,
           ],
-          follow: [],
-        });
+          follows: [],
+        }, 'mousemove');
       } else if (isPressRef.current === true) {
         hasMoveDownBehaviorRef.current = true;
         const { genesis } = dataTransfer.getData();
 
         if (Vec2Util.diff(selector.rect.default, index)) {
-          const next = genesis.default.follow({ event, rect: selector.rect.default });
-
-          const predict = ({ rect, follow }) => {
-            const { index } = follow(next);
-
-            return [index[0], index[1], rect[2], rect[3]];
-          };
-
-          console.log(selector.rect.follows.map((rect, index) =>
-            predict({ rect, follow: genesis.follows[index].follow }),
-          ))
-
-          
+          const next = genesis.default.follow({event});
 
           selectArea({
             default: next,
-            follows: selector.rect.follows.map((rect, index) =>
-              predict({ rect, follow: genesis.follows[index].follow }),
+            follows: selector.rect.follows.map((_, index) =>
+              genesis.follows[index].follow(next)
             ),
-          });
+          }, 'mosuemove');
           onMoveDown({
             default: {
               genesis: genesis.default.rect,
               next,
             },
-            follows: selector.rect.follows.map((rect, index) => ({
+            follows: selector.rect.follows.map((_, index) => ({
               genesis: genesis.follows[index].rect,
-              next: predict({ rect, follow: genesis.follows[index].follow }),
+              next: genesis.follows[index].follow(next),
             })),
           });
         }
       }
     },
-    [draggable, selector],
-  );
-
-  const onMouseDown = useCallback(
-    (event) => {
-      if (draggable && selector.rect.default) {
-        if (
-          [selector.rect.default, ...selector.rect.follows].some((rect) =>
-            contain(event, { in: { rect, with: canvasId } }),
-          )
-        ) {
-          isPressRef.current = true;
-
-          dataTransfer.setData({
-            type: 'tiles',
-            genesis: {
-              default: {
-                rect: selector.rect.default,
-                follow: CanvasUtil.createFollowCursor({
-                  event,
-                  rect: selector.rect.default,
-                  canvas: canvasId,
-                }),
-              },
-              follows: selector.rect.follows.map((rect) => ({
-                rect,
-                follow: CanvasUtil.createFollowIndex({
-                  index: [selector.rect.default[0], selector.rect.default[1]],
-                  rect,
-                }),
-              })),
-            },
-          });
-          handleMouseDown(event);
-          return;
-        }
-      }
-
-      selectAreaStart(cursorIndex ? [...cursorIndex, 1, 1] : null);
-    },
-    [draggable, selector, cursorIndex],
+    [draggable, selector]
   );
 
   const onMouseUp = useCallback(
     (event) => {
-      dataTransfer.setData(null);
-
-      const rect = CanvasUtil.normalizeRect(selector.rect.default);
-      selectArea({ default: rect });
-      selectAreaStop();
-      onSelected({
-        default: rect,
-      });
-
       if (isPressRef.current === true) {
         isPressRef.current = false;
-
-        if (hasMoveDownBehaviorRef.current === true) {
-          hasMoveDownBehaviorRef.current = false;
-          onMoveDownEnd(event, selector);
-        }
       }
+
+      if (hasMoveDownBehaviorRef.current === true) {
+        const { genesis } = dataTransfer.getData();
+        const next = genesis.default.follow({ event });
+        onMoveDownEnd({
+          default: {
+            genesis: genesis.default.rect,
+            next,
+          },
+          follows: selector.rect.follows.map((_, index) => ({
+            genesis: genesis.follows[index].rect,
+            next: genesis.follows[index].follow(next),
+          })),
+        });
+        hasMoveDownBehaviorRef.current = false;
+      } else {
+        const rect = CanvasUtil.normalizeRect(selector.rect.default);
+        selectArea({ default: rect, follows: [] }, 'mouseup');
+        onSelected({
+          default: rect,
+        });
+      }
+
+      selectAreaStop();
+
+
+      dataTransfer.setData(null);
     },
-    [selector],
+    [selector]
   );
 
   const onMouseLeave = useCallback(
@@ -182,25 +191,25 @@ function useSelectorBridge({
         onSelected({
           default: rect,
         });
-        selectArea({ default: rect });
+        selectArea({ default: rect, follows: [] }, 'mouseleave');
         selectAreaStop();
       }
     },
-    [selector],
+    [selector]
   );
 
   const onClick = useCallback(
     (event) => {
-      if (event.detail === 2) {
+      if (event.detail === 2 && !selector.progress) {
         if (selector.rect.default) {
           onSelected({
             default: null,
           });
-          selectAreaStart([]);
+          selectAreaStart(null);
         }
       }
     },
-    [selector],
+    [selector]
   );
 
   return {

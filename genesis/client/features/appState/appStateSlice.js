@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import * as selectModeActions from '@/features/selectMode/selectModeSlice';
-import * as drawModeActions from '@/features/drawMode/drawModeSlice';
+import * as selectMode from '@/features/selectMode/selectModeSlice';
+import * as drawMode from '@/features/drawMode/drawModeSlice';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { MODE } from '@/constants';
@@ -9,8 +9,8 @@ export const setMode = createAsyncThunk(
   'appState/setMode',
   async ({ mode, payload }, { getState, dispatch }) => {
     const lifecycle = {
-      [MODE.SELECT]: selectModeActions,
-      [MODE.DRAW]: drawModeActions,
+      [MODE.SELECT]: selectMode,
+      [MODE.DRAW]: drawMode,
     };
 
     const state = getState();
@@ -62,34 +62,31 @@ export const drawTiles = createAsyncThunk(
 
 export const drawPattern = createAsyncThunk(
   'appState/drawPattern',
-  async (T, { getState, dispatch }) => {
-
-    if (T.event && T.pattern) {
-      const rect = CanvasUtil.getPatternRect(T.pattern);
-      const pos = CanvasUtil.getDraggedIconPosition(T.event, rect, { x: 8, y: 8 });
-      const index = CanvasUtil.positionToIndex(pos);
-
-      dispatch(
-        addPatternToScene({
-          index,
-          pattern: T.pattern,
-        }),
-      );
+  async (T, { dispatch }) => {
+    try {
+      if (T.event && T.pattern) {
+        const rect = CanvasUtil.getPatternRect(T.pattern);
+        const pos = CanvasUtil.getDraggedIconPosition(T.event, rect, { x: 8, y: 8 });
+        const index = CanvasUtil.positionToIndex(pos);
+  
+        dispatch(
+          addPatternToScene({
+            index,
+            pattern: T.pattern,
+          }),
+        );
+      }
+  
+      if (T.index && T.pattern) {
+        dispatch(
+          addPatternToScene(T),
+        );
+      }
+    } catch (error) {
+      console.log(error);
     }
 
-    if (T.index && T.pattern) {
-      dispatch(
-        addPatternToScene(T),
-      );
-    }
-
-    const state = getState();
-
-    if (state.selectMode.selector.rect.default) {
-      dispatch(selectModeActions.selectArea({
-        default: state.selectMode.selector.rect.default,
-      }));
-    }
+    
   },
 );
 
@@ -115,18 +112,21 @@ export const deleteSelectedElements = createAsyncThunk(
   'appState/deleteSelectedElements',
   async (_, { getState, dispatch }) => {
     const state = getState();
-    const selectorRect = selectModeActions.selectedSelectModeSeletorRect(state);
+    const selector = selectMode.selectedSelectModeSeletor(state);
 
-    if (selectorRect.default) {
-      dispatch(deleteSceneTiles(selectorRect.default));
+    if (selector.mode === selectMode.SELECT_MODE.TILE) {
+      dispatch(deleteSceneTiles(selector.rect.default));
     }
 
-    if (selectorRect.follows) {
+    if (selector.mode === selectMode.SELECT_MODE.PATTERN) {
       dispatch(
-        selectModeActions.forceSelectArea({ default: selectorRect.default }),
+        selectMode.forceSelectArea({ default: selector.rect.default }),
       );
-      dispatch(deleteScenePatterns(selectorRect.follows));
+      dispatch(deleteScenePatterns({ rects: selector.rect.follows, fully: true }));
+      dispatch(selectMode.destroy());
     }
+
+   
   },
 );
 
@@ -164,6 +164,8 @@ export const appStateSlice = createSlice({
       }
 
       const pattern = state.scene.layers[layerIndex].patterns[pattern_id];
+
+
 
       if (!pattern) {
         state.scene.layers[layerIndex].patterns[pattern_id] = {
@@ -236,30 +238,59 @@ export const appStateSlice = createSlice({
     },
     deleteSceneTiles: (state, action) => {
       const selectedArea = CanvasUtil.normalizeRect(action.payload);
-      const [indexX, indexY] = selectedArea;
       const layerIndex = state.scene.selectedLayerIndex;
 
-      MatrixUtil.traverse(selectedArea, ({ x, y }, index) => {
-        if (!state.scene.layers[layerIndex].tiles[index.x]) {
-          state.scene.layers[layerIndex].tiles[index.x] = [];
+      MatrixUtil.traverse(selectedArea, (_, { x, y }) => {
+        if (!state.scene.layers[layerIndex].tiles[x]) {
+          state.scene.layers[layerIndex].tiles[x] = [];
         }
-        state.scene.layers[layerIndex].tiles[index.x][index.y] = undefined;
+        state.scene.layers[layerIndex].tiles[x][y] = undefined;
       });
     },
     deleteScenePatterns: (state, action) => {
       const layerIndex = state.scene.selectedLayerIndex;
-      const rects = action.payload;
+      const { rects, fully } = action.payload;
       const patterns = state.scene.layers[layerIndex].patterns;
+      const patternKeys = Object.keys(patterns);
 
-      Object.keys(patterns).forEach((key) => {
-        state.scene.layers[layerIndex].patterns[key].index = patterns[
-          key
-        ].index.filter((index) => {
-          return !rects.some(
-            (rect) => rect[0] === index[0] && rect[1] === index[1],
-          );
-        });
-      });
+      for (let i = 0; i < rects.length; i++) {
+        let deleted = false;
+
+        const rect = rects[i];
+
+        for (let j = patternKeys.length - 1; j >= 0; j--) {
+          const pattern = state.scene.layers[layerIndex].patterns[patternKeys[j]];
+          const sizeIndex = MatrixUtil.sizeIndex(pattern.tiles);
+          const index = state.scene.layers[layerIndex].patterns[patternKeys[j]].index;
+
+          for (let k = 0; k < index.length; k++) {
+            if (CanvasUtil.same(rect, [...index[k], ...sizeIndex])) {
+              delete state.scene.layers[layerIndex].patterns[patternKeys[j]].index[k];
+
+              state.scene.layers[layerIndex].patterns[patternKeys[j]].index = 
+                state.scene.layers[layerIndex].patterns[patternKeys[j]].index.filter(Boolean);
+
+              deleted = true;
+
+              if (!fully) {
+                break;
+              }
+            }
+          }
+
+          if (deleted) {
+            if (!fully) {
+              break;
+            }
+          }
+        }
+
+        if (deleted) {
+          if (!fully) {
+            break;
+          }
+        }
+      }
     },
     addLayer: (state) => {
       state.scene.layers.push({ tiles: [] });
