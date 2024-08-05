@@ -6,7 +6,6 @@ import { SpriteSheetTileList } from '@/components/common/EditSettingsArea/Sprite
 import { SpriteSheetPatternList } from '@/components/common/EditSettingsArea/SpriteSheetPatternList/SpriteSheetPatternList';
 import { useAnchor } from '@/hooks/useAnchor';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { MatrixUtil } from '@/utils/MatrixUtil';
 
 const SpriteSheetSettings = memo(({ spriteSheet }) => {
   const { open, toggle } = useAnchor({ clickAwayListener: true });
@@ -77,7 +76,7 @@ const SpriteSheetSettings = memo(({ spriteSheet }) => {
           onClick={toggle}
         />
       </div>
-      <List spriteSheet={spriteSheet} />
+      <List source={spriteSheet.source} />
     </div>
   );
 });

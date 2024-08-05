@@ -32,7 +32,7 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
   const layers = useMemo(
     () => [
       CANVAS_LAYER.SPRITE_LAYER({
-        layers: spriteSheet.tiles,
+        layers: [{ tiles: spriteSheet.tiles }],
         width: spriteSheet.image.naturalWidth,
         height: spriteSheet.image.naturalHeight,
       }),

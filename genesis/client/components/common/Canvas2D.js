@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react';
 import { CanvasUtil } from '@/utils/CanvasUtil';
-import { MatrixUtil } from '@/utils/MatrixUtil';
 
 export const CANVAS_LAYER = {
   GRID: ({ width, height }) => ({
@@ -10,7 +9,7 @@ export const CANVAS_LAYER = {
   SPRITE_LAYER: ({ layers, width, height }) => ({
     name: 'SPRITE_LAYER',
     buffer: CanvasUtil.createSpriteLayerBuffer(
-      MatrixUtil.isMatrix(layers) ? [{ tiles: layers }] : layers,
+      layers,
       width + 1,
       height + 1,
     ),

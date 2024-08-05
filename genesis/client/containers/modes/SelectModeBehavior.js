@@ -37,18 +37,19 @@ import {
   P_KEY,
   S_KEY,
 } from '@/hooks/useKeyBoard';
-import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { usePatterns, useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useModal } from '@/context/ModalContext';
 import { CreatePatternModal } from '@/components/common/CreatePatternModal';
 
 function SelectModeBehavior({ children }) {
+  const dispatch = useDispatch();
   const bufferRef = useRef({});
   const genesisRef = useRef({});
   const spriteSheets = useSpriteSheets();
   const scene = useSelector(selectedScene);
-  const dispatch = useDispatch();
   const cursorIndex = useSelector(selectedCursorIndex);
   const selector = useSelector(selectedSelectModeSeletor);
+  const patterns = usePatterns();
 
   const { open: openCreatePatternModal } = useModal(CreatePatternModal);
 
@@ -195,7 +196,7 @@ function SelectModeBehavior({ children }) {
          
           bufferRef.current.follows = rects.follows.map(
             ({ genesis: rect }) => {
-              const pattern = CanvasUtil.cloneSceneSelectedPattern(rect, scene);
+              const pattern = CanvasUtil.cloneSceneSelectedPattern(rect, scene, patterns);
               return pattern.tiles;
             }
           );
@@ -262,7 +263,7 @@ function SelectModeBehavior({ children }) {
       }
     },
     onMoveDownEnd: () => {
-      if (selector.rect.follows.length === 0) {
+      if (selector.mode === SELECT_MODE.TILE) {
         if (selector.rect.default && bufferRef.current.default) {
           dispatch(
             moveSceneTiles({
@@ -292,7 +293,7 @@ function SelectModeBehavior({ children }) {
           selector.rect.follows.forEach((rect, index) => {
             dispatch(
               drawPattern({
-                index: [rect[0], rect[1]],
+                rect,
                 pattern: genesisRef.current.follows[index].pattern,
               })
             );

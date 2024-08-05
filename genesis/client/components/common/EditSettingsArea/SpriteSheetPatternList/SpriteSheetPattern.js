@@ -28,7 +28,7 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
   const buffer = useMemo(
     () =>
       CANVAS_LAYER.SPRITE_LAYER({
-        layers: tiles,
+        layers: [{ tiles }],
         width: sizeIndex[0] * 16,
         height: sizeIndex[1] * 16,
       }).buffer,

@@ -71,15 +71,18 @@ export const drawPattern = createAsyncThunk(
   
         dispatch(
           addPatternToScene({
-            index,
+            rect: [...index, rect[2], rect[3]],
             pattern: T.pattern,
           }),
         );
       }
   
-      if (T.index && T.pattern) {
+      if (T.rect && T.pattern) {
         dispatch(
-          addPatternToScene(T),
+          addPatternToScene({
+            rect: T.rect,
+            pattern: T.pattern,
+          }),
         );
       }
     } catch (error) {
@@ -111,19 +114,24 @@ export const moveSceneTiles = createAsyncThunk(
 export const deleteSelectedElements = createAsyncThunk(
   'appState/deleteSelectedElements',
   async (_, { getState, dispatch }) => {
-    const state = getState();
-    const selector = selectMode.selectedSelectModeSeletor(state);
+    try {
+      const state = getState();
+      const selector = selectMode.selectedSelectModeSeletor(state);
 
-    if (selector.mode === selectMode.SELECT_MODE.TILE) {
-      dispatch(deleteSceneTiles(selector.rect.default));
-    }
+      if (selector.mode === selectMode.SELECT_MODE.TILE) {
+        dispatch(deleteSceneTiles(selector.rect.default));
+      }
 
-    if (selector.mode === selectMode.SELECT_MODE.PATTERN) {
-      dispatch(
-        selectMode.forceSelectArea({ default: selector.rect.default }),
-      );
-      dispatch(deleteScenePatterns({ rects: selector.rect.follows, fully: true }));
-      dispatch(selectMode.destroy());
+      if (selector.mode === selectMode.SELECT_MODE.PATTERN) {
+        dispatch(
+          selectMode.forceSelectArea({ default: selector.rect.default }),
+        );
+        dispatch(deleteScenePatterns({ rects: selector.rect.follows, fully: true }));
+        dispatch(selectMode.destroy());
+      }
+
+    } catch (error) {
+      console.log(error)
     }
 
    
@@ -141,7 +149,7 @@ const initialState = {
     layers: [
       {
         tiles: [],
-        patterns: {},
+        patterns: [],
       },
     ],
   },
@@ -156,28 +164,12 @@ export const appStateSlice = createSlice({
     },
     addPatternToScene(state, action) {
       const layerIndex = state.scene.selectedLayerIndex;
-      const [indexX, indexY] = action.payload.index;
       const pattern_id = action.payload.pattern.id;
 
-      if (!state.scene.layers[layerIndex].tiles[indexX]) {
-        state.scene.layers[layerIndex].tiles[indexX] = [];
-      }
-
-      const pattern = state.scene.layers[layerIndex].patterns[pattern_id];
-
-
-
-      if (!pattern) {
-        state.scene.layers[layerIndex].patterns[pattern_id] = {
-          ...action.payload.pattern,
-          index: [[indexX, indexY]],
-        };
-      } else {
-        state.scene.layers[layerIndex].patterns[pattern_id].index.push([
-          indexX,
-          indexY,
-        ]);
-      }
+      state.scene.layers[layerIndex].patterns.push({
+        id: pattern_id,
+        rect: action.payload.rect,
+      });
     },
     addTileToScene: (state, action) => {
       const layerIndex = state.scene.selectedLayerIndex;
@@ -251,46 +243,30 @@ export const appStateSlice = createSlice({
       const layerIndex = state.scene.selectedLayerIndex;
       const { rects, fully } = action.payload;
       const patterns = state.scene.layers[layerIndex].patterns;
-      const patternKeys = Object.keys(patterns);
 
-      for (let i = 0; i < rects.length; i++) {
-        let deleted = false;
+      if (fully) {
+        state.scene.layers[layerIndex].patterns = state.scene.layers[layerIndex].patterns.filter((pattern) => {
+          return !rects.some(rect => CanvasUtil.same(rect, pattern.rect));
+        });
 
-        const rect = rects[i];
-
-        for (let j = patternKeys.length - 1; j >= 0; j--) {
-          const pattern = state.scene.layers[layerIndex].patterns[patternKeys[j]];
-          const sizeIndex = MatrixUtil.sizeIndex(pattern.tiles);
-          const index = state.scene.layers[layerIndex].patterns[patternKeys[j]].index;
-
-          for (let k = 0; k < index.length; k++) {
-            if (CanvasUtil.same(rect, [...index[k], ...sizeIndex])) {
-              delete state.scene.layers[layerIndex].patterns[patternKeys[j]].index[k];
-
-              state.scene.layers[layerIndex].patterns[patternKeys[j]].index = 
-                state.scene.layers[layerIndex].patterns[patternKeys[j]].index.filter(Boolean);
-
-              deleted = true;
-
-              if (!fully) {
-                break;
-              }
-            }
-          }
-
-          if (deleted) {
-            if (!fully) {
+      } else {
+        for (let i = 0; i < rects.length; i++) {
+          const rect = rects[i];
+  
+          for (let j = patterns.length - 1; j >= 0; j--) {
+            const pattern = state.scene.layers[layerIndex].patterns[j];
+  
+            if (pattern && CanvasUtil.same(rect, pattern.rect)) {
+              delete state.scene.layers[layerIndex].patterns[j];
               break;
             }
           }
         }
-
-        if (deleted) {
-          if (!fully) {
-            break;
-          }
-        }
+  
+        state.scene.layers[layerIndex].patterns = state.scene.layers[layerIndex].patterns.filter(Boolean);
       }
+
+      
     },
     addLayer: (state) => {
       state.scene.layers.push({ tiles: [] });

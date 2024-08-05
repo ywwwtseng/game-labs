@@ -187,14 +187,16 @@ class CanvasUtil {
       layers.forEach((layer) => {
         CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);
 
-        layer.patterns?.forEach((pattern) => {
-          pattern.index.forEach((index) => {
-            CanvasUtil.drawTilesOnCanvas(ctx, pattern.tiles, {
-              x: index[0],
-              y: index[1],
+        if (layer.patterns) {
+          layer.patterns.order.forEach((pattern) => {
+            CanvasUtil.drawTilesOnCanvas(ctx, layer.patterns.buffer[pattern.id], {
+              x: pattern.rect[0],
+              y: pattern.rect[1],
             });
           });
-        });
+        }
+
+        
       });
     });
   }
@@ -236,29 +238,23 @@ class CanvasUtil {
   }
 
   static findPatternBySelectedRect(rect, scene) {
-    const patterns = Object.values(
-      scene.layers[scene.selectedLayerIndex].patterns
-    );
+    const patterns = scene.layers[scene.selectedLayerIndex].patterns;
 
     for (let i = patterns.length - 1; i >= 0; i--) {
       const pattern = patterns[i];
 
-      for (let j = 0; j < pattern.index.length; j++) {
-        const index = pattern.index[j];
-
-        if (CanvasUtil.same(rect, [index[0], index[1], ...MatrixUtil.sizeIndex(pattern.tiles)])) {
-          return pattern;
-        }
+      if (CanvasUtil.same(rect, pattern.rect)) {
+        return pattern;
       }
     }
 
     return null;
   }
 
-  static cloneSceneSelectedPattern(rect, scene) {
+  static cloneSceneSelectedPattern(rect, scene, patterns) {
     const pattern = CanvasUtil.findPatternBySelectedRect(rect, scene);
     const source = pattern.id.split('.')[0];
-    const tiles = MatrixUtil.create(pattern.tiles, ({ value: index }) =>
+    const tiles = MatrixUtil.create(patterns[source][pattern.id].tiles, ({ value: index }) =>
       index
         ? {
             index,
@@ -278,30 +274,29 @@ class CanvasUtil {
       return [];
     }
 
-    const patterns = Object.values(
-      scene.layers[scene.selectedLayerIndex].patterns
-    );
+    console.log(selectedRect)
 
-    return Object.values(patterns)
+    const patterns = Object.values(scene.layers[scene.selectedLayerIndex].patterns);
+
+    const rects = patterns
       .map((pattern) => {
-        const size = MatrixUtil.sizeIndex(pattern.tiles);
-        return pattern.index.map(([x, y]) => {
-          const rect = [x, y, ...size];
-          if (
-            overlaps(rect, selectedRect) ||
-            contain(rect, { in: selectedRect })
-          ) {
-            return rect;
-          }
-        });
+        if (
+          overlaps(pattern.rect, selectedRect) ||
+          contain(pattern.rect, { in: selectedRect })
+        ) {
+          return pattern.rect;
+        }
       })
-      .flat()
       .reduce((acc, val) => {
         if (val && !acc.some(rect => CanvasUtil.same(rect, val))) {
           return [...acc, val];
         }
         return acc;
       }, []);
+
+      console.log(rects)
+
+    return rects;
   }
 
   static getPatternRect(pattern) {
