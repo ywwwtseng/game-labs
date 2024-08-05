@@ -283,7 +283,7 @@ class CanvasUtil {
 
       if (follows.every((rect) => !CanvasUtil.same(rect, pattern.rect)) && overlaps(pattern.rect, selectedRect)) {
         if (follows.every((rect) => !contain(pattern.rect, { in: rect }))) {
-          follows.push(pattern.rect);
+          follows.unshift(pattern.rect);
         }
       }
 
@@ -352,19 +352,19 @@ class CanvasUtil {
     for (let index = 0; index < group.length; index++) {
       const rect = group[index];
 
-      if (!bounds[0] || rect[0] < bounds[0]) {
+      if (bounds[0] === undefined || rect[0] < bounds[0]) {
         bounds[0] = rect[0];
       }
 
-      if (!bounds[1] || rect[1] < bounds[1]) {
+      if (bounds[1] === undefined || rect[1] < bounds[1]) {
         bounds[1] = rect[1];
       }
 
-      if (!bounds[2] || rect[0] + rect[2] > bounds[2]) {
+      if (bounds[2] === undefined || rect[0] + rect[2] > bounds[2]) {
         bounds[2] = rect[0] + rect[2];
       }
 
-      if (!bounds[3] || rect[1] + rect[3] > bounds[3]) {
+      if (bounds[3] === undefined || rect[1] + rect[3] > bounds[3]) {
         bounds[3] = rect[1] + rect[3];
       }
     }
