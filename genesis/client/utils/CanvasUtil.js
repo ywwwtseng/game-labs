@@ -274,29 +274,27 @@ class CanvasUtil {
       return [];
     }
 
-    console.log(selectedRect)
+    const patterns = scene.layers[scene.selectedLayerIndex].patterns;
 
-    const patterns = Object.values(scene.layers[scene.selectedLayerIndex].patterns);
+    let follows = [];
 
-    const rects = patterns
-      .map((pattern) => {
-        if (
-          overlaps(pattern.rect, selectedRect) ||
-          contain(pattern.rect, { in: selectedRect })
-        ) {
-          return pattern.rect;
+    for (let i = patterns.length - 1; i >= 0; i--) {
+      const pattern = patterns[i];
+
+      if (follows.every((rect) => !CanvasUtil.same(rect, pattern.rect)) && overlaps(pattern.rect, selectedRect)) {
+        if (follows.every((rect) => !contain(pattern.rect, { in: rect }))) {
+          follows.push(pattern.rect);
         }
-      })
-      .reduce((acc, val) => {
-        if (val && !acc.some(rect => CanvasUtil.same(rect, val))) {
-          return [...acc, val];
-        }
-        return acc;
-      }, []);
+      }
 
-      console.log(rects)
+      if (contain(selectedRect, { in: pattern.rect })) {
+        follows = [pattern.rect];
+        break;
+      }
+      
+    }
 
-    return rects;
+    return follows;
   }
 
   static getPatternRect(pattern) {
