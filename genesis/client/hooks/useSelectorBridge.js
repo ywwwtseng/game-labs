@@ -119,8 +119,10 @@ function useSelectorBridge({
         hasMoveDownBehaviorRef.current = true;
         const { genesis } = dataTransfer.getData();
 
-        if (Vec2Util.diff(selector.rect.default, index)) {
-          const next = genesis.default.follow({event});
+
+        const next = genesis.default.follow({event});
+
+        if (!CanvasUtil.same(selector.rect.default, next)) {
 
           selectArea({
             default: next,
