@@ -3,6 +3,7 @@ import { DragAndDropContext } from '@/context/DragAndDropContext';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { useDataTransfer } from '@/hooks/useDataTransfer';
 import { useCursorDelta } from '@/hooks/useCursorDelta';
+import { useObservableRef } from '@/hooks/useObservableRef';
 
 function useDragAndDrop({
   data,
@@ -11,49 +12,50 @@ function useDragAndDrop({
   onMove,
   beforeDrop = () => true,
 }) {
+  const iconRef = useObservableRef(icon);
   const cursorDelta = useCursorDelta();
   const dataTransfer = useDataTransfer({ defaultData: data });
-  const iconRef = useRef(null);
+  const iconElRef = useRef(null);
   const { setDragStart, onDrop, setDragStop } = useContext(DragAndDropContext);
 
   const handleMouseMove = useCallback((event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    if (icon) {
-      if (!iconRef.current) {
+    if (iconRef.current) {
+      if (!iconElRef.current) {
         setDragStart(dataTransfer.getData());
-        iconRef.current = icon.display(event, dataTransfer.getData());
-        document.body.append(iconRef.current);
+        iconElRef.current = iconRef.current.display(event, dataTransfer.getData());
+        document.body.append(iconElRef.current);
       }
 
-      const bounds = getBoundingBox(iconRef.current);
-      iconRef.current.style.pointerEvents = 'none';
-      iconRef.current.style.position = 'fixed';
-      iconRef.current.style.zIndex = 9999;
+      const bounds = getBoundingBox(iconElRef.current);
+      iconElRef.current.style.pointerEvents = 'none';
+      iconElRef.current.style.position = 'fixed';
+      iconElRef.current.style.zIndex = 9999;
       const x = event.pageX - bounds.size.x / 2;
       const y = event.pageY - bounds.size.y / 2;
-      iconRef.current.style.left = `${x}px`;
-      iconRef.current.style.top = `${y}px`;
+      iconElRef.current.style.left = `${x}px`;
+      iconElRef.current.style.top = `${y}px`;
     }
 
     const { delta } = cursorDelta.move(event);
 
     if (delta) {
-      onMove?.(event, { delta, iconEl: iconRef.current });
+      onMove?.(event, { delta, iconEl: iconElRef.current });
     }
   }, []);
 
   const handleMouseStop = useCallback((event) => {
-    if (beforeDrop(event, { iconEl: iconRef.current })) {
+    if (beforeDrop(event, { iconEl: iconElRef.current })) {
       onDrop(event);
     }
 
     setDragStop(event);
 
-    if (iconRef.current) {
-      iconRef.current.remove();
-      iconRef.current = null;
+    if (iconElRef.current) {
+      iconElRef.current.remove();
+      iconElRef.current = null;
     }
 
     cursorDelta.end(event);

@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
-import { usePatterns, useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { usePatterns } from '@/hooks/usePatterns';
 
 function SceneCanvas() {
   const scene = useSelector((state) => state.appState.scene);
@@ -14,7 +15,7 @@ function SceneCanvas() {
     () => [
       CANVAS_LAYER.SPRITE_LAYER({
         layers: (() => {
-          if (Object.keys(spriteSheets).length === 0 || Object.keys(patterns).length === 0) {
+          if (Object.keys(spriteSheets).length === 0 || patterns.length === 0) {
             return [];
           }
       
@@ -30,23 +31,20 @@ function SceneCanvas() {
                   }
                 });
               }),
-              patterns: layer.patterns.reduce((acc, pattern) => {
-                const source = pattern.id.split('.')[0];
-      
+              patterns: layer.patterns.reduce((acc, { id: pattern_id, rect: pattern_rect }) => {
+                const pattern = patterns.find(({ id }) => id === pattern_id);
                 if (!acc.buffer[pattern.id]) {
-                  acc.buffer[pattern.id] = MatrixUtil.map(patterns[source][pattern.id].tiles, (index) => {
-                    return index
-                      ? {
-                          buffer:
-                            spriteSheets[source].tiles[index[0]][index[1]].buffer,
-                        }
-                      : undefined;
+                  acc.buffer[pattern.id] = MatrixUtil.create(pattern.tiles, ({ value: tileItems }) => {
+                    console.log(tileItems, 'tileItems')
+                    return tileItems?.map((tile) => ({
+                      buffer: spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
+                    }));
                   });
                 }
       
                 acc.order = [...acc.order, {
                   id: pattern.id,
-                  rect: pattern.rect,
+                  rect: pattern_rect,
                 }];
       
                 return acc;

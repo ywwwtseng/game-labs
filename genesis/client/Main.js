@@ -1,7 +1,7 @@
 import { Navigation } from '@/components/common/Navigation';
 import { CreationToolBar } from '@/components/common/CreationToolBar/CreationToolBar';
 import { ShortcutBar } from '@/components/common/ShortcutBar';
-import { EditSettingsArea } from '@/components/common/EditSettingsArea/EditSettingsArea';
+import { EditGameSettingsView } from '@/components/common/EditGameSettingsView/EditGameSettingsView';
 import { SceneCanvas } from '@/components/common/SceneCanvas';
 import { AppInfo } from '@/components/common/AppInfo/AppInfo';
 
@@ -16,7 +16,7 @@ function Main() {
           <SceneCanvas />
           <AppInfo />
         </div>
-        <EditSettingsArea />
+        <EditGameSettingsView />
       </div>
     </div>
   );

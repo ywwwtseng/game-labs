@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { DropdownItem } from './DropdownItem';
 
-function Dropdown({ label, icon, open, options, menuProps = {}, ...props }) {
+function Dropdown({ label, icon, open, options, menuProps = {}, triggerProps = {}, ...props }) {
   return (
     <div className="relative z-40 flex text-left">
       <button
@@ -9,10 +9,11 @@ function Dropdown({ label, icon, open, options, menuProps = {}, ...props }) {
         type="button"
         data-toggle="true"
         className={cx(
-          'flex h-full items-center justify-center rounded px-2 py-1 my-auto text-xs text-white',
+          'flex h-full items-center justify-center rounded my-auto text-xs text-white',
           {
             'bg-zinc-700': open,
           },
+          triggerProps.className,
         )}
         aria-expanded="true"
         aria-haspopup="true"

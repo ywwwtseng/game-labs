@@ -101,6 +101,9 @@ function Navigation() {
           <Dropdown
             key={dropdown.id}
             id={dropdown.id}
+            triggerProps={{
+              className: 'px-2 py-1'
+            }}
             label={dropdown.label}
             options={dropdown.options}
             open={opened === dropdown.id}

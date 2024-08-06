@@ -3,13 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AreaHeader } from '@/components/common/AreaHeader';
 import { OperableItem } from '@/components/common/OperableItem';
 import { BaseButton } from '@/components/ui/BaseButton';
-import { LayersIcon } from '@/components/icon/LayersIcon';
+// import { LayersIcon } from '@/components/icon/LayersIcon';
 import { PlusIcon } from '@/components/icon/PlusIcon';
+import { GlobalIcon } from '@/components/icon/GlobalIcon';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
 import { addLayer, selectLayer } from '@/features/appState/appStateSlice';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
-function SceneSettings() {
+function GameStructureView() {
   const scene = useSelector((state) => state.appState.scene);
   const dispatch = useDispatch();
   const scenes = [scene];
@@ -21,8 +22,8 @@ function SceneSettings() {
   return (
     <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828]">
       <AreaHeader
-        icon={<LayersIcon />}
-        title="Scene"
+        icon={<GlobalIcon />}
+        label="Game"
         actions={[
           <BaseButton key="new-scene">
             <PlusIcon />
@@ -38,19 +39,7 @@ function SceneSettings() {
               onClick={() =>
                 selectScene(selectedScene === scene.name ? null : scene.name)
               }
-              label={scene.name.toLocaleUpperCase()}
-              actions={[
-                <BaseButton
-                  key="new-layer"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    dispatch(addLayer());
-                  }}
-                >
-                  <PlusIcon />
-                </BaseButton>,
-              ]}
+              label={scene.name}
             />
             {scene.layers.map((layer, index) => (
               <OperableItem
@@ -66,7 +55,7 @@ function SceneSettings() {
                           : 'opacity-0'
                       }
                     />
-                    <span className="ml-1">{`Layer${index + 1}`}</span>
+                    <span className="ml-1">{layer.name}</span>
                   </div>
                 }
                 selected={scene.selectedLayerIndex === index}
@@ -80,4 +69,4 @@ function SceneSettings() {
   );
 }
 
-export { SceneSettings };
+export { GameStructureView };

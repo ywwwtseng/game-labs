@@ -37,7 +37,8 @@ import {
   P_KEY,
   S_KEY,
 } from '@/hooks/useKeyBoard';
-import { usePatterns, useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { usePatterns } from '@/hooks/usePatterns';
 import { useModal } from '@/context/ModalContext';
 import { CreatePatternModal } from '@/components/common/CreatePatternModal';
 
@@ -64,77 +65,21 @@ function SelectModeBehavior({ children }) {
           return;
         }
 
-        openCreatePatternModal();
-      },
-      [ARROW_LEFT_KEY]: (event) => {
-        if (!selector.rect.default || !scene) return;
-        const rect = CanvasUtil.normalizeRect(selector.rect.default);
-        const sizeIndexX = rect[2];
-        const sizeIndexY = rect[3];
+        if (selector.mode !== SELECT_MODE.TILE) {
+          return;
+        }
 
-        dispatch(
-          selectArea([
-            Math.max(0, rect[0] - 1),
-            rect[1],
-            sizeIndexX,
-            sizeIndexY,
-          ])
-        );
-      },
-      [ARROW_RIGHT_KEY]: (event) => {
-        if (!selector.rect.default || !scene) return;
-        const rect = CanvasUtil.normalizeRect(selector.rect.default);
-        const sizeIndexX = rect[2];
-        const sizeIndexY = rect[3];
+        const notEmptyTiles = CanvasUtil.cloneSceneSelectedTiles(selector.rect.default, scene)
+          .some((column) => column.some((tile) => tile?.length > 0));
 
-        const maxIndex = CanvasUtil.positionToIndex({
-          x: scene.width,
-          y: scene.height,
-        });
-
-        dispatch(
-          selectArea([
-            Math.min(maxIndex[0] - sizeIndexX + 1, rect[0] + 1),
-            rect[1],
-            sizeIndexX,
-            sizeIndexY,
-          ])
-        );
+        if (notEmptyTiles) {
+          openCreatePatternModal();
+        }
       },
-      [ARROW_UP_KEY]: (event) => {
-        if (!selector.rect.default || !scene) return;
-        const rect = CanvasUtil.normalizeRect(selector.rect.default);
-        const sizeIndexX = rect[2];
-        const sizeIndexY = rect[3];
-
-        dispatch(
-          selectArea([
-            rect[0],
-            Math.max(0, rect[1] - 1),
-            sizeIndexX,
-            sizeIndexY,
-          ])
-        );
-      },
-      [ARROW_DOWN_KEY]: (event) => {
-        if (!selector.rect.default || !scene) return;
-        const rect = CanvasUtil.normalizeRect(selector.rect.default);
-        const sizeIndexX = rect[2];
-        const sizeIndexY = rect[3];
-
-        const maxIndex = CanvasUtil.positionToIndex({
-          x: scene.width,
-          y: scene.height,
-        });
-        dispatch(
-          selectArea([
-            rect[0],
-            Math.min(maxIndex[1] - sizeIndexY + 1, rect[1] + 1),
-            sizeIndexX,
-            sizeIndexY,
-          ])
-        );
-      },
+      [ARROW_LEFT_KEY]: (event) => {},
+      [ARROW_RIGHT_KEY]: (event) => {},
+      [ARROW_UP_KEY]: (event) => {},
+      [ARROW_DOWN_KEY]: (event) => {},
       [BACKSPACE_KEY]: (event) => {
         if (!selector.rect.default || !scene) return;
         dispatch(deleteSelectedElements());
@@ -210,7 +155,10 @@ function SelectModeBehavior({ children }) {
             );
           }
 
-          dispatch(deleteScenePatterns({ rects: selector.rect.follows }));
+          if (!isHolding(S_KEY)) {
+            dispatch(deleteScenePatterns({ rects: selector.rect.follows }));
+          }
+
         }
 
       } else if (mode === SELECT_MODE.TILE) {
@@ -320,14 +268,17 @@ function SelectModeBehavior({ children }) {
         selector.rect.follows.forEach((rect, index) => {
           MatrixUtil.traverse(
             bufferRef.current.follows[index],
-            ({ value: tile, x, y }) => {
-              if (tile) {
-                CanvasUtil.drawBufferOnCanvas(
-                  ctx,
-                  spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
-                  rect[0] + x,
-                  rect[1] + y
-                );
+            ({ value: tileItems, x, y }) => {
+              if (tileItems) {
+                tileItems.forEach((tile) => {
+                  CanvasUtil.drawBufferOnCanvas(
+                    ctx,
+                    spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
+                    rect[0] + x,
+                    rect[1] + y
+                  );
+                });
+                
               }
             }
           );

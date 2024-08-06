@@ -8,22 +8,29 @@ import { MatrixUtil } from '@/utils/MatrixUtil';
 import { contain } from '@/helpers/BoundingBox';
 import { selectedIsDrawMode } from '@/features/appState/appStateSlice';
 
-function SpriteSheetPattern({ spriteSheet, pattern }) {
+function Pattern({ spriteSheets, pattern }) {
   const isDrawMode = useSelector(selectedIsDrawMode);
   const ref = useRef(null);
   const sizeIndex = useMemo(() => {
     return MatrixUtil.sizeIndex(pattern.tiles);
   }, [pattern.tiles]);
+
   const size = {
     x: sizeIndex[0] > sizeIndex[1] ? 64 : (64 * sizeIndex[0]) / sizeIndex[1],
     y: sizeIndex[1] > sizeIndex[0] ? 64 : (64 * sizeIndex[1]) / sizeIndex[0],
   };
 
   const tiles = useMemo(() => {
-    return MatrixUtil.map(pattern.tiles, ([x, y]) => {
-      return spriteSheet.tiles?.[x]?.[y];
+    if (Object.keys(spriteSheets).length === 0) {
+      return [];
+    }
+
+    return MatrixUtil.create(pattern.tiles, ({ value: tileItems }) => {
+      return tileItems?.map((tile) => ({
+        buffer: spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
+      }));
     });
-  }, [pattern.tiles]);
+  }, [spriteSheets, pattern.tiles]);
 
   const buffer = useMemo(
     () =>
@@ -32,20 +39,13 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
         width: sizeIndex[0] * 16,
         height: sizeIndex[1] * 16,
       }).buffer,
-    [sizeIndex, tiles],
-  );
-
-  const drawImage = useCallback(
-    (el) => {
-      const ctx = el.getContext('2d');
-      ctx.drawImage(buffer, 0, 0, size.x, size.y);
-    },
-    [size, buffer],
+    [sizeIndex, tiles, spriteSheets, pattern.tiles],
   );
 
   useEffect(() => {
-    drawImage(ref.current);
-  }, [size, buffer]);
+    const ctx = ref.current.getContext('2d');
+    ctx.drawImage(buffer, 0, 0, size.x, size.y);
+  }, [buffer]);
 
   return (
     <OperableItem
@@ -56,7 +56,6 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
               disabled={isDrawMode}
               data={{
                 type: 'pattern',
-                source: spriteSheet.source,
                 pattern,
               }}
               icon={{
@@ -65,7 +64,8 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
                   canvas.width = sizeIndex[0] * 16;
                   canvas.height = sizeIndex[1] * 16;
                   const ctx = canvas.getContext('2d');
-                  ctx.drawImage(buffer, 0, 0);
+                  console.log(buffer)
+                  ctx.drawImage(buffer, 0, 0, canvas.width, canvas.height);
                   return canvas;
                 },
               }}
@@ -84,7 +84,7 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
             </Draggable>
           </div>
           <div className="p-2">
-            <Text>{pattern.name.toLocaleUpperCase()}</Text>
+            <Text>{pattern.name}</Text>
           </div>
         </div>
       }
@@ -92,4 +92,4 @@ function SpriteSheetPattern({ spriteSheet, pattern }) {
   );
 }
 
-export { SpriteSheetPattern };
+export { Pattern };

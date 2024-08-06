@@ -29,9 +29,7 @@ function CreatePatternModal() {
       selectedRect,
       scene,
       ({ tile }) => {
-        return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[
-          tile?.index?.[1]
-        ];
+        return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[tile?.index?.[1]];
       },
     );
   }, [selectedRect, scene]);
@@ -47,18 +45,9 @@ function CreatePatternModal() {
     [selectedRect, tiles],
   );
 
-  const source = useMemo(() => {
-    const sources = ArrayUtil.uniq(
-      CanvasUtil.cloneSceneSelectedTiles(selectedRect, scene, ({ tile }) => {
-        return tile?.source;
-      }).flat(),
-    ).filter(Boolean);
-    return sources.length === 1 ? sources[0] : undefined;
-  }, [selectedRect, scene]);
+  const { trigger } = useMutation('/api/patterns');
 
-  const { trigger } = useMutation(`/api/sprites/${source}/patterns`);
-
-  const disabled = source && !name.trim();
+  const disabled = !name.trim();
 
   return (
     <Modal>
@@ -82,34 +71,28 @@ function CreatePatternModal() {
             value={type}
             onChange={(e) => setType(e.target.value)}
           />
-          {!source && (
-            <div className="flex items-center mt-1">
-              <AlertIcon className="mr-2" color="fill-red-600" />
-              <Text size="xs" color="white">
-                Need the same source
-              </Text>
-            </div>
-          )}
         </div>
       </Modal.Body>
       <Modal.Footer>
         <Modal.Action
           disabled={disabled}
           onClick={async () => {
+            const tiles = CanvasUtil.cloneSceneSelectedTiles(
+              selectedRect,
+              scene,
+              ({ tile }) => (tile ? { index: tile.index, source: tile.source } : null),
+            );
+
             const res = await trigger({
               name,
               type,
-              tiles: CanvasUtil.cloneSceneSelectedTiles(
-                selectedRect,
-                scene,
-                ({ tile }) => tile?.index,
-              ),
+              tiles,
             });
 
             updateSpriteSheets();
           }}
         >
-          {source ? 'Create' : 'Close'}
+          Create
         </Modal.Action>
       </Modal.Footer>
     </Modal>

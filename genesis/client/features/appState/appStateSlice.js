@@ -141,12 +141,23 @@ const initialState = {
   mode: MODE.SELECT,
   // scene: undefined
   scene: {
-    name: 'default',
+    name: 'Land',
     width: 512,
     height: 512,
     selectedLayerIndex: 0,
     layers: [
       {
+        name: 'Background Layer',
+        tiles: [],
+        patterns: [],
+      },
+      {
+        name: 'Entity Layer',
+        tiles: [],
+        patterns: [],
+      },
+      {
+        name: 'Foreground Layer',
         tiles: [],
         patterns: [],
       },

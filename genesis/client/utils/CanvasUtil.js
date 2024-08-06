@@ -264,18 +264,11 @@ class CanvasUtil {
   static cloneSceneSelectedPattern(rect, scene, patterns) {
     const pattern = CanvasUtil.findPatternBySelectedRect(rect, scene);
     const source = pattern.id.split('.')[0];
-    const tiles = MatrixUtil.create(patterns[source][pattern.id].tiles, ({ value: index }) =>
-      index
-        ? {
-            index,
-            source,
-          }
-        : undefined
-    );
+    const tiles = patterns.find(({ id }) => pattern.id === id).tiles;
 
     return {
       id: pattern.id,
-      tiles,
+      tiles: patterns.find(({ id }) => pattern.id === id).tiles,
     };
   }
 

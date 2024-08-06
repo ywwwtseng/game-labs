@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import { fileURLToPath } from 'url';
 import { JSONFilePreset } from 'lowdb/node';
 
-const defaultData = { sprites: [] };
+const defaultData = { sprites: [], patterns: [] };
 const db = await JSONFilePreset('db.json', defaultData);
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -60,27 +60,18 @@ app.get('/api/sprites', (req, res) => {
   res.send({ list: sprites });
 });
 
-app.post('/api/sprites/:source/patterns', async (req, res) => {
-  const { sprites } = db.data;
-  const source = req.params.source;
-  const index = sprites.findIndex((sprite) => sprite.id === req.params.source);
+app.get('/api/patterns', (req, res) => {
+  const { patterns } = db.data;
+  res.send({ list: patterns });
+});
 
-  if (index === -1) {
-    return res.status(400).send('No match any sprites.');
-  }
-
-  await db.update(({ sprites }) => {
-    sprites[index] = {
-      ...sprites[index],
-      patterns: [
-        ...sprites[index].patterns,
-        {
-          id: `${source}.P${sprites[index].patterns.length}`,
-          name: req.body.name,
-          tiles: req.body.tiles,
-        },
-      ],
-    };
+app.post('/api/patterns', async (req, res) => {
+  await db.update(({ patterns }) => {
+    patterns.push({
+      id: `pattern_${Date.now()}`,
+      name: req.body.name,
+      tiles: req.body.tiles,
+    });
   });
 
   res.send({
@@ -97,7 +88,7 @@ app.post('/api/image/upload', upload.single('image'), async (req, res) => {
 
   await db.update(({ sprites }) =>
     sprites.push({
-      id: req.file.path.match(/\d+/g).join(''),
+      id: `sprites_${req.file.path.match(/\d+/g).join('')}`,
       name: req.file.originalname.replace('.png', ''),
       path: req.file.path.replace('public', ''),
       transparent: req.body.transparent,
