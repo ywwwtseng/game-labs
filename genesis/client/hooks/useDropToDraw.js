@@ -17,7 +17,6 @@ function useDropToDraw({ id }) {
   const events = useMemo(
     () => ({
       tile: (event, data) => {
-        event.preventDefault();
         if (!data) return;
 
         const rect = [...data.index, 1, 1];
@@ -49,7 +48,23 @@ function useDropToDraw({ id }) {
           );
         }
       },
+      tiles: (event, data) => {
+        if (!data) return;
+
+        dispatch(
+          drawTiles({
+            event,
+            selectedTiles: {
+              rect: data.rect,
+              source: data.source,
+            },
+            transparent: spriteSheets[data.source].transparent,
+          }),
+        );
+
+      },
       pattern: (event, data) => {
+        if (!data) return;
         dispatch(
           drawPattern({
             event,
@@ -61,7 +76,7 @@ function useDropToDraw({ id }) {
     [spriteSheets, selector.rect.default],
   );
 
-  const setup = setupDropzone({ id, accept: ['tile', 'pattern'], events });
+  const setup = setupDropzone({ id, accept: Object.keys(events), events });
 
   return {
     setup,

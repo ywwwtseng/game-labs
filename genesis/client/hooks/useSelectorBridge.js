@@ -2,12 +2,12 @@ import { useCallback, useRef } from 'react';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import { contain, overlaps } from '@/helpers/BoundingBox';
 import { CanvasUtil } from '@/utils/CanvasUtil';
-import { Vec2Util } from '@/utils/Vec2Util';
 
 function useSelectorBridge({
   canvasId,
   selectedWhenMouseLeave,
   draggable = false,
+  dragAndDrop = false,
   icon = null,
   selector,
   cursorIndex,
@@ -24,9 +24,14 @@ function useSelectorBridge({
   const ref = useRef(null);
   const { dataTransfer, handleMouseDown } = useDragAndDrop({
     icon,
-    beforeDrop: (_, { iconEl }) => {
+    onMove: dragAndDrop?.onMove,
+    beforeDrop: (event, { iconEl }) => {
       if (ref.current && iconEl && overlaps(ref.current, iconEl)) {
         return false;
+      }
+
+      if (dragAndDrop.beforeDrop) {
+        dragAndDrop.beforeDrop(event, { iconEl });
       }
 
       return true;
@@ -40,36 +45,44 @@ function useSelectorBridge({
           !selector.rect.follows || selector.rect.follows.length === 0
             ? [selector.rect.default]
             : selector.rect.follows;
-        if (
-          group.some((rect) =>
-            contain(event, { in: { rect, with: canvasId } })
-          )
-        ) {
+        
+        if (group.some((rect) => contain(event, { in: { rect, with: canvasId } }))) {
+
+
+
           isPressRef.current = true;
 
-          dataTransfer.setData({
-            genesis: {
-              default: {
-                rect: selector.rect.default,
-                follow: CanvasUtil.createFollowCursor({
-                  event,
+          if (dragAndDrop.data) {
+            dataTransfer.setData(dragAndDrop.data(selector.rect.default));
+          } else {
+            dataTransfer.setData({
+              genesis: {
+                default: {
                   rect: selector.rect.default,
-                  groupRect: CanvasUtil.getGroupRect(group),
-                  canvas: canvasId,
-                }),
-              },
-              follows: selector.rect.follows.map((rect) => ({
-                rect,
-                follow: CanvasUtil.createFollowIndex({
-                  index: [selector.rect.default[0], selector.rect.default[1]],
+                  follow: CanvasUtil.createFollowCursor({
+                    event,
+                    rect: selector.rect.default,
+                    groupRect: CanvasUtil.getGroupRect(group),
+                    canvas: canvasId,
+                  }),
+                },
+                follows: selector.rect.follows?.map((rect) => ({
                   rect,
-                }),
-              })),
-            },
-          });
+                  follow: CanvasUtil.createFollowIndex({
+                    index: [selector.rect.default[0], selector.rect.default[1]],
+                    rect,
+                  }),
+                })),
+              },
+            });
+          }
+
+          
       
           handleMouseDown(event);
           return;
+
+
         }
       }
 
@@ -115,7 +128,7 @@ function useSelectorBridge({
           ],
           follows: [],
         }, 'mousemove');
-      } else if (isPressRef.current === true) {
+      } else if (!dragAndDrop && isPressRef.current === true) {
         hasMoveDownBehaviorRef.current = true;
         const { genesis } = dataTransfer.getData();
 
@@ -126,7 +139,7 @@ function useSelectorBridge({
 
           selectArea({
             default: next,
-            follows: selector.rect.follows.map((_, index) =>
+            follows: selector.rect.follows?.map((_, index) =>
               genesis.follows[index].follow(next)
             ),
           }, 'mosuemove');
@@ -135,7 +148,7 @@ function useSelectorBridge({
               genesis: genesis.default.rect,
               next,
             },
-            follows: selector.rect.follows.map((_, index) => ({
+            follows: selector.rect.follows?.map((_, index) => ({
               genesis: genesis.follows[index].rect,
               next: genesis.follows[index].follow(next),
             })),
@@ -160,7 +173,7 @@ function useSelectorBridge({
             genesis: genesis.default.rect,
             next,
           },
-          follows: selector.rect.follows.map((_, index) => ({
+          follows: selector.rect.follows?.map((_, index) => ({
             genesis: genesis.follows[index].rect,
             next: genesis.follows[index].follow(next),
           })),

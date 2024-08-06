@@ -4,9 +4,10 @@ import { useSelectorBridge } from '@/hooks/useSelectorBridge';
 
 function useLocalSelector({
   defaultSelected = null,
-  selectedWhenMouseLeave = false,
+  selectedWhenMouseLeave,
   canvasId,
   draggable = false,
+  dragAndDrop = false,
   icon = null,
   onSelected = () => {},
 }) {
@@ -59,6 +60,7 @@ function useLocalSelector({
     icon,
     selector: state,
     cursorIndex: state.cursorIndex,
+    dragAndDrop,
     selectArea,
     selectAreaStart,
     selectAreaStop,

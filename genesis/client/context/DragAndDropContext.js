@@ -25,11 +25,13 @@ export const DragAndDropProvider = ({ children }) => {
 
   const onDrop = useCallback((event) => {
     dropzonesRef.current.forEach(({ id, accept, events }) => {
+
       if (
         ref.current &&
         contain(event, { in: id }) &&
         accept.includes(ref.current.type)
       ) {
+        event.preventDefault();
         events?.[ref.current.type]?.(event, ref.current);
       }
     });

@@ -35,7 +35,6 @@ function SceneCanvas() {
                 const pattern = patterns.find(({ id }) => id === pattern_id);
                 if (!acc.buffer[pattern.id]) {
                   acc.buffer[pattern.id] = MatrixUtil.create(pattern.tiles, ({ value: tileItems }) => {
-                    console.log(tileItems, 'tileItems')
                     return tileItems?.map((tile) => ({
                       buffer: spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
                     }));

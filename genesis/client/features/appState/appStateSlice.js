@@ -141,7 +141,7 @@ const initialState = {
   mode: MODE.SELECT,
   // scene: undefined
   scene: {
-    name: 'Land',
+    name: 'Land #1',
     width: 512,
     height: 512,
     selectedLayerIndex: 0,

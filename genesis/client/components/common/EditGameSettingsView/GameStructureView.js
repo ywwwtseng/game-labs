@@ -23,7 +23,7 @@ function GameStructureView() {
     <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828]">
       <AreaHeader
         icon={<GlobalIcon />}
-        label="Game"
+        label="World"
         actions={[
           <BaseButton key="new-scene">
             <PlusIcon />
@@ -36,9 +36,9 @@ function GameStructureView() {
             <OperableItem
               checkIcon
               selected={selectedScene === scene.name}
-              onClick={() =>
-                selectScene(selectedScene === scene.name ? null : scene.name)
-              }
+              // onClick={() =>
+              //   selectScene(selectedScene === scene.name ? null : scene.name)
+              // }
               label={scene.name}
             />
             {scene.layers.map((layer, index) => (

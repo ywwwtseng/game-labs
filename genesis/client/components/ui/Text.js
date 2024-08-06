@@ -6,6 +6,7 @@ function Text({
   color = 'white',
   weight = 'normal',
   className,
+  ...props
 }) {
   return (
     <span
@@ -16,6 +17,7 @@ function Text({
         `font-${weight}`,
         className,
       )}
+      {...props}
     >
       {children}
     </span>

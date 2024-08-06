@@ -2,30 +2,42 @@ import { useCallback, useMemo } from 'react';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { useLocalSelector } from '@/hooks/useLocalSelector';
 import { CanvasUtil } from '@/utils/CanvasUtil';
+import { contain } from '@/helpers/BoundingBox';
 
-function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
+function SpriteToolPalette({ spriteSheet, defaultSelected }) {
+  const canvasId = `spriteSheet-${spriteSheet.source}`;
   const { selector, register, connect } = useLocalSelector({
     defaultSelected,
+    canvasId,
     selectedWhenMouseLeave: true,
-    canvasId: `spriteSheet-${spriteSheet.source}`,
-    draggable: false,
+    draggable: true,
+    dragAndDrop: {
+      data: (rect) => {
+        return {
+          type: 'tiles',
+          rect,
+          source: spriteSheet.source,
+        };
+      },
+      beforeDrop: (_, { iconEl }) =>
+        iconEl && contain(iconEl, { in: 'canvas' })
+      ,
+      onMove: (_, { iconEl }) => {
+        if (iconEl) {
+          iconEl.style.opacity = contain(iconEl, { in: 'canvas' })
+            ? 1
+            : 0.5;
+        }
+      }
+    },
     icon: {
-      display: (_, data) => {
-        if (!data.selected) {
+      display: (_, { rect }) => {
+        if (!rect) {
           return;
         }
-        return CanvasUtil.drawSelected(data.selected, spriteSheet);
+
+        return CanvasUtil.drawSelected(rect, spriteSheet);
       },
-    },
-    onSelected: (selectedRect) => {
-      if (onSelected && selectedRect.default) {
-        onSelected({
-          rect: selectedRect.default,
-          source: spriteSheet.source,
-        });
-      } else {
-        onSelected(null);
-      }
     },
   });
 
@@ -58,7 +70,7 @@ function SpriteToolPalette({ spriteSheet, defaultSelected, onSelected }) {
   return (
     <div className="px-2 pt-0.5 pb-2" {...register}>
       <Canvas2D
-        id={`spriteSheet-${spriteSheet.source}`}
+        id={canvasId}
         layers={layers}
         cache={cache}
         width={spriteSheet.image.naturalWidth}

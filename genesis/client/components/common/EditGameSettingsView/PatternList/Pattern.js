@@ -64,7 +64,6 @@ function Pattern({ spriteSheets, pattern }) {
                   canvas.width = sizeIndex[0] * 16;
                   canvas.height = sizeIndex[1] * 16;
                   const ctx = canvas.getContext('2d');
-                  console.log(buffer)
                   ctx.drawImage(buffer, 0, 0, canvas.width, canvas.height);
                   return canvas;
                 },
@@ -84,7 +83,7 @@ function Pattern({ spriteSheets, pattern }) {
             </Draggable>
           </div>
           <div className="p-2">
-            <Text>{pattern.name}</Text>
+            <Text>Name: {pattern.name}</Text>
           </div>
         </div>
       }
