@@ -19,7 +19,7 @@ import {
 } from '@/features/selectMode/selectModeSlice';
 import {
   selectedCursorIndex,
-  selectedSelectModeSeletor,
+  selectedSelectModeSelector,
 } from '@/features/selectMode/selectModeSlice';
 import { useSelectorBridge } from '@/hooks/useSelectorBridge';
 import { CanvasUtil } from '@/utils/CanvasUtil';
@@ -48,7 +48,7 @@ function SelectModeBehavior({ children }) {
   const spriteSheets = useSpriteSheets();
   const scene = useSelector(selectedScene);
   const cursorIndex = useSelector(selectedCursorIndex);
-  const selector = useSelector(selectedSelectModeSeletor);
+  const selector = useSelector(selectedSelectModeSelector);
   const patterns = usePatterns();
 
   const { open: openCreatePatternModal } = useModal(CreatePatternModal);
@@ -244,14 +244,8 @@ function SelectModeBehavior({ children }) {
                 ],
                 tiles: bufferRef.current.default,
                 transparent: MatrixUtil.findIndexArray(
-                  bufferRef.current.default,
-                  (tile) => tile === undefined
-                ).map(
-                  ([x, y]) =>
-                    `${x + rects.default.next[0]}.${
-                      y + rects.default.next[1]
-                    }`
-                ),
+                  bufferRef.current.default, (tile) => tile === undefined
+                ).map(([x, y]) => `${x + rects.default.next[0]}.${y + rects.default.next[1]}`),
               })
             );
           }
@@ -276,12 +270,7 @@ function SelectModeBehavior({ children }) {
               transparent: MatrixUtil.findIndexArray(
                 bufferRef.current.default,
                 (tile) => tile === undefined
-              ).map(
-                ([x, y]) =>
-                  `${x + selector.rect.default[0]}.${
-                    y + selector.rect.default[1]
-                  }`
-              ),
+              ).map(([x, y]) => `${x + selector.rect.default[0]}.${y + selector.rect.default[1]}`),
             })
           );
         }
@@ -311,16 +300,18 @@ function SelectModeBehavior({ children }) {
       if (selector.rect.default && bufferRef.current.default) {
         MatrixUtil.traverse(
           bufferRef.current.default,
-          ({ value: tile, x, y }) => {
-            if (tile) {
-              CanvasUtil.drawBufferOnCanvas(
-                ctx,
-                spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]]
-                  .buffer,
-                selector.rect.default[0] + x,
-                selector.rect.default[1] + y
-              );
-            }
+          ({ value: tileItems, x, y }) => {
+            tileItems?.forEach((tile) => {
+              if (tile) {
+                CanvasUtil.drawBufferOnCanvas(
+                  ctx,
+                  spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
+                  selector.rect.default[0] + x,
+                  selector.rect.default[1] + y
+                );
+              }
+            });
+            
           }
         );
       }

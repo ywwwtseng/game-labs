@@ -8,25 +8,6 @@ class BoundingBox {
     this.size = size;
   }
 
-  overlaps(box) {
-    // .--------------------.
-    // | this               |
-    // |             .------|--------------.
-    // |             | box  |              |
-    // |             |      |              |
-    // |             |      |              |
-    // '--------------------'              |
-    //               |                     |
-    //               .---------------------.
-
-    return (
-      this.bottom > box.top &&
-      this.top < box.bottom &&
-      this.left < box.right &&
-      this.right > box.left
-    );
-  }
-
   get bottom() {
     return this.pos.y + this.size.y;
   }
@@ -127,18 +108,38 @@ function getBoundingBox(T) {
 }
 
 function overlaps(T1, T2) {
-  return getBoundingBox(T1).overlaps(getBoundingBox(T2));
+  const bounds_1 = getBoundingBox(T1);
+  const bounds_2 = getBoundingBox(T2);
+
+  return (
+    bounds_1.bottom > bounds_2.top &&
+    bounds_1.top < bounds_2.bottom &&
+    bounds_1.left < bounds_2.right &&
+    bounds_1.right > bounds_2.left
+  );
+}
+
+function completely_overlap(T1, T2) {
+  const bounds_1 = getBoundingBox(T1);
+  const bounds_2 = getBoundingBox(T2);
+
+  return (
+    bounds_1.bottom === bounds_2.top &&
+    bounds_1.top === bounds_2.bottom &&
+    bounds_1.left === bounds_2.right &&
+    bounds_1.right === bounds_2.left
+  );
 }
 
 function contain(inner, { in: outer }) {
-  const outerBounds = getBoundingBox(outer);
-  const innerBounds = getBoundingBox(inner);
+  const outer_bounds = getBoundingBox(outer);
+  const inner_bounds = getBoundingBox(inner);
 
   return (
-    outerBounds.top <= innerBounds.top &&
-    outerBounds.bottom >= innerBounds.bottom &&
-    outerBounds.left <= innerBounds.left &&
-    outerBounds.right >= innerBounds.right
+    outer_bounds.top <= inner_bounds.top &&
+    outer_bounds.bottom >= inner_bounds.bottom &&
+    outer_bounds.left <= inner_bounds.left &&
+    outer_bounds.right >= inner_bounds.right
   );
 }
 

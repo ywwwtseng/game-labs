@@ -169,8 +169,8 @@ class CanvasUtil {
     ctx.drawImage(buffer, 0, 0, 16, 16, x * 16, y * 16, 16, 16);
   }
 
-  static drawTilesOnCanvas(ctx, T, offset = { x: 0, y: 0 }) {
-    MatrixUtil.traverse(T, ({ value, x, y }) => {
+  static drawTilesOnCanvas(ctx, tile, offset = { x: 0, y: 0 }) {
+    MatrixUtil.traverse(tile, ({ value, x, y }) => {
       if (value.buffer) {
         CanvasUtil.drawBufferOnCanvas(
           ctx,
@@ -178,6 +178,15 @@ class CanvasUtil {
           offset.x + x,
           offset.y + y
         );
+      } else if (Array.isArray(value)) {
+        value.forEach((tile) => {
+          CanvasUtil.drawBufferOnCanvas(
+            ctx,
+            tile.buffer,
+            offset.x + x,
+            offset.y + y
+          );
+        });
       }
     });
   }
@@ -232,8 +241,9 @@ class CanvasUtil {
   static cloneSceneSelectedTiles(rect, scene, callback = (any) => any) {
     const layer = scene.layers[scene.selectedLayerIndex];
     return MatrixUtil.create(rect, (_, { x, y }) => {
-      const tile = layer.tiles?.[x]?.[y];
-      return callback({ tile, x, y });
+      return layer.tiles?.[x]?.[y]?.map((tile) => {
+        return callback({ tile, x, y });
+      });
     });
   }
 

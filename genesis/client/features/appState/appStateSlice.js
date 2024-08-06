@@ -105,7 +105,6 @@ export const moveSceneTiles = createAsyncThunk(
         localOriginIndex,
         tiles,
         transparent,
-        disableCheckExistedTile: true,
       }),
     );
   },
@@ -116,7 +115,7 @@ export const deleteSelectedElements = createAsyncThunk(
   async (_, { getState, dispatch }) => {
     try {
       const state = getState();
-      const selector = selectMode.selectedSelectModeSeletor(state);
+      const selector = selectMode.selectedSelectModeSelector(state);
 
       if (selector.mode === selectMode.SELECT_MODE.TILE) {
         dispatch(deleteSceneTiles(selector.rect.default));
@@ -126,7 +125,7 @@ export const deleteSelectedElements = createAsyncThunk(
         dispatch(
           selectMode.forceSelectArea({ default: selector.rect.default }),
         );
-        dispatch(deleteScenePatterns({ rects: selector.rect.follows, fully: true }));
+        dispatch(deleteScenePatterns({ rects: selector.rect.follows, completely: true }));
         dispatch(selectMode.destroy());
       }
 
@@ -179,39 +178,42 @@ export const appStateSlice = createSlice({
       if (!state.scene.layers[layerIndex].tiles[indexX]) {
         state.scene.layers[layerIndex].tiles[indexX] = [];
       }
-      state.scene.layers[layerIndex].tiles[indexX][indexY] = tile;
+
+      if (!state.scene.layers[layerIndex].tiles[indexX][indexY]) {
+        state.scene.layers[layerIndex].tiles[indexX][indexY] = [];
+      }
+
+      if (tile) {
+        state.scene.layers[layerIndex].tiles[indexX][indexY].push(tile);
+      } else {
+        state.scene.layers[layerIndex].tiles[indexX][indexY] = [];
+      }
     },
     addTilesToScene: (state, action) => {
       const selectedArea = action.payload.selectedArea;
       const [originX, originY] = action.payload.localOriginIndex;
       const transparent = action.payload.transparent || [];
-
       const layerIndex = state.scene.selectedLayerIndex;
-
-      if (
-        !action.payload.disableCheckExistedTile &&
-        CanvasUtil.hasExistedTile({
-          selectedArea,
-          localOriginIndex: [originX, originY],
-          layer: state.scene.layers[layerIndex],
-          transparent,
-        })
-      ) {
-        return;
-      }
 
       MatrixUtil.traverse(selectedArea, ({ x, y }, index) => {
         if (!transparent.includes(`${originX + x}.${originY + y}`)) {
           if (!state.scene.layers[layerIndex].tiles[index.x]) {
             state.scene.layers[layerIndex].tiles[index.x] = [];
           }
-          const tiles = action.payload.tiles;
-          const tile = tiles?.[x]?.[y] || {
-            source: action.payload.source,
-            index: [originX + x, originY + y],
-          };
+          const tileItems = action.payload.tiles?.[x]?.[y];
 
-          state.scene.layers[layerIndex].tiles[index.x][index.y] = tile;
+          if (!state.scene.layers[layerIndex].tiles[index.x][index.y]) {
+            state.scene.layers[layerIndex].tiles[index.x][index.y] = [];
+          }
+
+          if (tileItems) {
+            state.scene.layers[layerIndex].tiles[index.x][index.y].push(...tileItems);
+          } else {
+            state.scene.layers[layerIndex].tiles[index.x][index.y].push({
+              source: action.payload.source,
+              index: [originX + x, originY + y],
+            });
+          }
         }
       });
     },
@@ -225,7 +227,7 @@ export const appStateSlice = createSlice({
           state.scene.layers[layerIndex].tiles[x] = [];
         }
 
-        state.scene.layers[layerIndex].tiles[x][y] = tile;
+        state.scene.layers[layerIndex].tiles[x][y] = [tile];
       });
     },
     deleteSceneTiles: (state, action) => {
@@ -241,10 +243,10 @@ export const appStateSlice = createSlice({
     },
     deleteScenePatterns: (state, action) => {
       const layerIndex = state.scene.selectedLayerIndex;
-      const { rects, fully } = action.payload;
+      const { rects, completely } = action.payload;
       const patterns = state.scene.layers[layerIndex].patterns;
 
-      if (fully) {
+      if (completely) {
         state.scene.layers[layerIndex].patterns = state.scene.layers[layerIndex].patterns.filter((pattern) => {
           return !rects.some(rect => CanvasUtil.same(rect, pattern.rect));
         });

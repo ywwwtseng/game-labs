@@ -43,7 +43,7 @@ export const selectArea = createAsyncThunk(
         forceSelectArea({
           mode: payload.mode || SELECT_MODE.PATTERN_OR_TILE,
           default: payload.default,
-          follows:  payload.follows === KEEP_FOLLOWS ? selectedSelectModeSeletorRectFollows(state) : payload.follows,
+          follows:  payload.follows === KEEP_FOLLOWS ? selectedSelectModeSelectorRectFollows(state) : payload.follows,
         })
       );
     } catch (error) {
@@ -114,12 +114,12 @@ export const {
 
 export const selectedCursorIndex = (state) =>
   state.selectMode.selector.cursorIndex;
-export const selectedSelectModeSeletor = (state) => state.selectMode.selector;
-export const selectedSelectModeSeletorRect = (state) =>
+export const selectedSelectModeSelector = (state) => state.selectMode.selector;
+export const selectedSelectModeSelectorRect = (state) =>
   state.selectMode.selector.rect;
-export const selectedSelectModeSeletorRectDefault = (state) =>
+export const selectedSelectModeSelectorRectDefault = (state) =>
   state.selectMode.selector.rect.default;
-export const selectedSelectModeSeletorRectFollows = (state) =>
+export const selectedSelectModeSelectorRectFollows = (state) =>
   state.selectMode.selector.rect.follows;
 
 export default selectModeSlice.reducer;

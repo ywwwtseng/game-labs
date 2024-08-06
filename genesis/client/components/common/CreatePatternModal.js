@@ -13,11 +13,11 @@ import { AlertIcon } from '@/components/icon/AlertIcon';
 import { useMutation } from '@/hooks/useMutation';
 import { ArrayUtil } from '@/utils/ArrayUtil';
 import { CanvasUtil } from '@/utils/CanvasUtil';
-import { selectedSelectModeSeletorRectDefault } from '@/features/selectMode/selectModeSlice';
+import { selectedSelectModeSelectorRectDefault } from '@/features/selectMode/selectModeSlice';
 
 function CreatePatternModal() {
   const scene = useSelector(selectedScene);
-  const selectedRect = useSelector(selectedSelectModeSeletorRectDefault);
+  const selectedRect = useSelector(selectedSelectModeSelectorRectDefault);
   const spriteSheets = useSpriteSheets();
   const updateSpriteSheets = useUpdateSpriteSheets();
 

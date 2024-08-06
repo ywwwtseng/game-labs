@@ -20,13 +20,15 @@ function SceneCanvas() {
       
           return scene.layers.map((layer) => {
             return {
-              tiles: MatrixUtil.map(layer.tiles, (T) => {
-                if (T.source && T.index) {
-                  const { source, index } = T;
-                  return {
-                    buffer: spriteSheets[source].tiles[index[0]][index[1]].buffer,
-                  };
-                }
+              tiles: MatrixUtil.map(layer.tiles, (tileItems) => {
+                return tileItems.map((tile) => {
+                  if (tile.source && tile.index) {
+                    const { source, index } = tile;
+                    return {
+                      buffer: spriteSheets[source].tiles[index[0]][index[1]].buffer,
+                    };
+                  }
+                });
               }),
               patterns: layer.patterns.reduce((acc, pattern) => {
                 const source = pattern.id.split('.')[0];
