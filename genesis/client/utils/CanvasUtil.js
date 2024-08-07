@@ -334,12 +334,9 @@ class CanvasUtil {
 
   static cloneLandSelectedObject2D(rect, land, object2ds) {
     const object2d = CanvasUtil.findObject2DBySelectedRect(rect, land);
-    const source = object2d.id.split('.')[0];
-    const tiles = object2ds.find(({ id }) => object2d.id === id).tiles;
-
     return {
       id: object2d.id,
-      tiles: object2ds.find(({ id }) => object2d.id === id).tiles,
+      tiles: Object2DUtil.tiles(object2ds.find(({ id }) => object2d.id === id)),
     };
   }
 
