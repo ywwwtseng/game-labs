@@ -14,7 +14,8 @@ import { Object2D } from '@/utils/Object2D';
 
 function Object2DItem({ object2d }) {
   const { open, toggle } = useAnchor();
-  const { trigger: enableAnim } = useMutation(`/api/object2ds/${object2d.id}/anim/create`);
+  const { trigger: enableAnim } = useMutation(`/api/object2ds/${object2d.id}/anim/enable`, ['/api/object2ds']);
+  const { trigger: disableAnim } = useMutation(`/api/object2ds/${object2d.id}/anim/disable`, ['/api/object2ds']);
   const hasAnimation = Object2D.hasAnimation(object2d);
 
   return (
@@ -34,7 +35,13 @@ function Object2DItem({ object2d }) {
                 className="bg-[#282828]"
                 label="Animation"
                 actions={[
-                  <BaseButton key="create-animation" onClick={() => enableAnim()}>
+                  <BaseButton key="create-animation" onClick={() => {
+                    if (hasAnimation) {
+                      disableAnim();
+                    } else {
+                      enableAnim();
+                    }
+                  }}>
                     {hasAnimation ? <CircleMinusIcon /> : <CirclePlusIcon />}
                   </BaseButton>
                 ]}

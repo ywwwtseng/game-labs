@@ -32,7 +32,6 @@ const Object2DController = {
       return res.status(400).send('Object2D Animation created already.');
     }
 
-    // console.log(index)
     await req.db.update(({ object2ds }) => {
       object2ds[index].frames = [object2ds[index].tiles];
       object2ds[index].tiles = null;
@@ -40,7 +39,7 @@ const Object2DController = {
 
     res.send({
       ok: true,
-      message: 'Object2D animation created successfully',
+      message: 'Object2D animation enabled successfully',
     });
   },
 
@@ -52,11 +51,6 @@ const Object2DController = {
       return res.status(400).send('No Object2D founded.');
     }
 
-    if (object2ds[index].frames) {
-      return res.status(400).send('Object2D Animation created already.');
-    }
-
-    // console.log(index)
     await req.db.update(({ object2ds }) => {
       object2ds[index].tiles = object2ds[index].frames[0];
       object2ds[index].frames = null;
@@ -64,7 +58,7 @@ const Object2DController = {
 
     res.send({
       ok: true,
-      message: 'Object2D animation created successfully',
+      message: 'Object2D animation disabled successfully',
     });
   },
 }

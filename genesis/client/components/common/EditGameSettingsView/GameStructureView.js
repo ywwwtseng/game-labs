@@ -6,7 +6,7 @@ import { BaseButton } from '@/components/ui/BaseButton';
 import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { GlobalIcon } from '@/components/icon/GlobalIcon';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
-import { addLayer, selectLayer } from '@/features/appState/appStateSlice';
+import { selectLayer } from '@/features/appState/appStateSlice';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 function GameStructureView() {
@@ -43,9 +43,8 @@ function GameStructureView() {
             />
             {land.layers.map((layer, index) => (
               <OperableItem
-                className="px-1"
+                className="px-1 pl-6"
                 key={`${land.name}-layer-${index}`}
-                className="pl-6"
                 label={
                   <div className="flex items-center">
                     <AngleRightIcon

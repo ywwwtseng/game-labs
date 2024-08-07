@@ -9,8 +9,8 @@ const routes = (app, db) => {
   // object2d
   app.get('/api/object2ds', Object2DController.list);
   app.post('/api/object2ds', Object2DController.create);
-  app.post('/api/object2ds/:id/anim/create', Object2DController.enableAnim);
-  app.delete('/api/object2ds/:id/anim/create', Object2DController.disableAnim);
+  app.post('/api/object2ds/:id/anim/enable', Object2DController.enableAnim);
+  app.post('/api/object2ds/:id/anim/disable', Object2DController.disableAnim);
 };
 
 export default routes;
