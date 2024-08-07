@@ -4,6 +4,7 @@ import { MatrixUtil } from '@/utils/MatrixUtil';
 import { DomUtil } from '@/utils/DomUtil';
 import { Vec2Util } from '@/utils/Vec2Util';
 import { overlaps, contain } from '@/helpers/BoundingBox';
+import { Object2D } from '@/utils/Object2D';
 
 class CanvasUtil {
   static get transparent() {
@@ -192,6 +193,14 @@ class CanvasUtil {
     });
   }
 
+  static transferTilesToBuffer({ tiles, spriteSheets }) {
+    return MatrixUtil.create(tiles, ({ value: tileItems }) => {
+      return tileItems?.map((tile) => ({
+        buffer: spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
+      }));
+    })
+  }
+
   static createSpriteLayers({ scene, spriteSheets, patterns }) {
     if (Object.keys(spriteSheets).length === 0 || patterns.length === 0) {
       return [];
@@ -212,11 +221,13 @@ class CanvasUtil {
         patterns: layer.patterns.reduce((acc, { id: pattern_id, rect: pattern_rect }) => {
           const pattern = patterns.find(({ id }) => id === pattern_id);
           if (!acc.buffer[pattern.id]) {
-            acc.buffer[pattern.id] = MatrixUtil.create(pattern.tiles, ({ value: tileItems }) => {
-              return tileItems?.map((tile) => ({
-                buffer: spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
-              }));
-            });
+            if (Object2D.hasAnimation(pattern)) {
+              acc.buffer[pattern.id] = pattern.frames.map((tiles) => {
+                return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
+              });
+            } else {
+              acc.buffer[pattern.id] = CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
+            }
           }
 
           acc.order = [...acc.order, {
@@ -237,7 +248,8 @@ class CanvasUtil {
 
         if (layer.patterns) {
           layer.patterns.order.forEach((pattern) => {
-            CanvasUtil.drawTilesOnCanvas(ctx, layer.patterns.buffer[pattern.id], {
+            const tilesBuffer = layer.patterns.buffer[pattern.id][0] || layer.patterns.buffer[pattern.id]
+            CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, {
               x: pattern.rect[0],
               y: pattern.rect[1],
             });
@@ -340,7 +352,7 @@ class CanvasUtil {
   }
 
   static getPatternRect(pattern) {
-    return [0, 0, ...MatrixUtil.sizeIndex(pattern.tiles)];
+    return [0, 0, ...MatrixUtil.sizeIndex(pattern.tiles || pattern.frames[0])];
   }
 
   static createFollowCursor({ event, rect, groupRect, canvas }) {

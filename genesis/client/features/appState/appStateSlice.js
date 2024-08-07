@@ -4,6 +4,7 @@ import * as drawMode from '@/features/drawMode/drawModeSlice';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { MODE } from '@/constants';
+import { Object2D } from '@/utils/Object2D';
 
 export const setMode = createAsyncThunk(
   'appState/setMode',
@@ -65,7 +66,7 @@ export const drawPattern = createAsyncThunk(
   async (T, { dispatch }) => {
     try {
       if (T.event && T.pattern) {
-        const rect = CanvasUtil.getPatternRect(T.pattern);
+        const rect = Object2D.getRect(T.pattern);
         const pos = CanvasUtil.getDraggedIconPosition(T.event, rect, { x: 8, y: 8 });
         const index = CanvasUtil.positionToIndex(pos);
   

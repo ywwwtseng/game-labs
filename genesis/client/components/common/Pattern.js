@@ -8,39 +8,44 @@ import { MatrixUtil } from '@/utils/MatrixUtil';
 import { contain, overlaps } from '@/helpers/BoundingBox';
 import { selectedIsDrawMode } from '@/features/appState/appStateSlice';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { Object2D } from '@/utils/Object2D';
 
 function Pattern({ pattern, draggable = false, className }) {
   const spriteSheets = useSpriteSheets();
   const ref = useRef(null);
+  const tiles = Object2D.tiles(pattern);
+
   const sizeIndex = useMemo(() => {
-    return MatrixUtil.sizeIndex(pattern.tiles);
-  }, [pattern.tiles]);
+    return MatrixUtil.sizeIndex(tiles);
+  }, [tiles]);
 
   const size = {
     x: sizeIndex[0] > sizeIndex[1] ? 64 : (64 * sizeIndex[0]) / sizeIndex[1],
     y: sizeIndex[1] > sizeIndex[0] ? 64 : (64 * sizeIndex[1]) / sizeIndex[0],
   };
 
-  const tiles = useMemo(() => {
+  const layers = useMemo(() => {
     if (Object.keys(spriteSheets).length === 0) {
       return [];
     }
 
-    return MatrixUtil.create(pattern.tiles, ({ value: tileItems }) => {
-      return tileItems?.map((tile) => ({
-        buffer: spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
-      }));
-    });
-  }, [spriteSheets, pattern.tiles]);
+    return [{
+      tiles: MatrixUtil.create(tiles, ({ value: tileItems }) => {
+        return tileItems?.map((tile) => ({
+          buffer: spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
+        }));
+      })
+    }];
+  }, [spriteSheets, tiles]);
 
   const buffer = useMemo(
     () =>
       CANVAS_LAYER.SPRITE_LAYERS({
-        layers: [{ tiles }],
+        layers,
         width: sizeIndex[0] * 16,
         height: sizeIndex[1] * 16,
       }).buffer,
-    [sizeIndex, tiles, spriteSheets, pattern.tiles],
+    [layers, sizeIndex],
   );
 
   const canDrop = useCallback(({ iconEl }) => {

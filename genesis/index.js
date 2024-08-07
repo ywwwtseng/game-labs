@@ -80,6 +80,30 @@ app.post('/api/patterns', async (req, res) => {
   });
 });
 
+app.post('/api/patterns/:id/anim/create', async (req, res) => {
+  const { patterns } = db.data;
+  const index = patterns.findIndex((pattern) => pattern.id === req.params.id);
+
+  if (index === -1) {
+    return res.status(400).send('No pattern founded.');
+  }
+
+  if (patterns[index].frames) {
+    return res.status(400).send('Pattern Animation created already.');
+  }
+
+  // console.log(index)
+  await db.update(({ patterns }) => {
+    patterns[index].frames = [patterns[index].tiles];
+    patterns[index].tiles = null;
+  });
+
+  res.send({
+    ok: true,
+    message: 'Pattern animation created successfully',
+  });
+});
+
 // Route to handle file upload
 app.post('/api/image/upload', upload.single('image'), async (req, res) => {
   if (!req.file) {
