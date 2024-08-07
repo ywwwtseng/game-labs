@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { selectedScene } from '@/features/appState/appStateSlice';
+import { selectedLand } from '@/features/appState/appStateSlice';
 
 export const KEEP_FOLLOWS = undefined;
 export const SELECT_MODE = {
-  PATTERN_OR_TILE: 'PATTERN_OR_TILE',
-  PATTERN: 'PATTERN',
+  OBJECT_2D_OR_TILE: 'OBJECT_2D_OR_TILE',
+  OBJECT_2D: 'OBJECT_2D',
   TILE: 'TILE',
 };
 
@@ -25,13 +25,13 @@ export const selectArea = createAsyncThunk(
   'selectMode/selectArea',
   async (payload, { getState, dispatch }) => {
     const state = getState();
-    const scene = selectedScene(state);
+    const land = selectedLand(state);
 
     try {
       if (!payload.default) {
         dispatch(
           forceSelectArea({
-            mode: SELECT_MODE.PATTERN_OR_TILE,
+            mode: SELECT_MODE.OBJECT_2D_OR_TILE,
             default: null,
             follows: [],
           })
@@ -41,7 +41,7 @@ export const selectArea = createAsyncThunk(
 
       dispatch(
         forceSelectArea({
-          mode: payload.mode || SELECT_MODE.PATTERN_OR_TILE,
+          mode: payload.mode || SELECT_MODE.OBJECT_2D_OR_TILE,
           default: payload.default,
           follows:  payload.follows === KEEP_FOLLOWS ? selectedSelectModeSelectorRectFollows(state) : payload.follows,
         })
@@ -54,7 +54,7 @@ export const selectArea = createAsyncThunk(
 
 const initialState = {
   selector: {
-    mode: SELECT_MODE.PATTERN_OR_TILE,
+    mode: SELECT_MODE.OBJECT_2D_OR_TILE,
     cursorIndex: null,
     progress: false,
     rect: {
@@ -87,14 +87,14 @@ export const selectModeSlice = createSlice({
       state.selector.progress = false;
     },
     selectAreaEnd: (state) => {
-      state.selector.mode = SELECT_MODE.PATTERN_OR_TILE;
+      state.selector.mode = SELECT_MODE.OBJECT_2D_OR_TILE;
       state.selector.rect = {
         default: null,
         follows: [],
       };
     },
     destroy: (state) => {
-      state.selector.mode = SELECT_MODE.PATTERN_OR_TILE;
+      state.selector.mode = SELECT_MODE.OBJECT_2D_OR_TILE;
       state.selector.rect = {
         default: null,
         follows: [],

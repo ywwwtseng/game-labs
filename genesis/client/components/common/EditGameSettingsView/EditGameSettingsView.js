@@ -8,7 +8,7 @@ import { GameStructureView } from '@/components/common/EditGameSettingsView/Game
 import { OperableItem } from '@/components/common/OperableItem';
 import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
 import { SpriteSheetTileList } from '@/components/common/EditGameSettingsView/SpriteSheetTileList/SpriteSheetTileList';
-import { PatternList } from '@/components/common/EditGameSettingsView/PatternList/PatternList';
+import { Object2DList } from '@/components/common/EditGameSettingsView/Object2DList/Object2DList';
 import {
   useSpriteSheets,
   useUpdateSpriteSheets,
@@ -23,10 +23,10 @@ import { CanvasUtil } from '@/utils/CanvasUtil';
 function EditGameSettingsView() {
   const spriteSheets = useSpriteSheets();
   const updateSpriteSheets = useUpdateSpriteSheets();
-  const [selected, setSelected] = useLocalStorage('selected:spritesheet_or_pattern');
+  const [selected, setSelected] = useLocalStorage('selected:spritesheet_or_object2d');
 
   const { selectedOption, register } = useDropdownState({
-    key: 'selected:spritesheets_or_patterns_type',
+    key: 'selected:spritesheets_or_object2ds_type',
     options: [
       {
         type: 'option',
@@ -59,7 +59,7 @@ function EditGameSettingsView() {
               formData.append('transparent', transparent);
           
               try {
-                const response = await fetch('/api/image/upload', {
+                const response = await fetch('/api/sprites/create', {
                   method: 'POST',
                   body: formData,
                 });
@@ -108,8 +108,8 @@ function EditGameSettingsView() {
       },
       {
         type: 'option',
-        id: 'patterns',
-        label: 'Patterns',
+        id: 'object2ds',
+        label: 'Object2Ds',
         list: () => (
           <OperableItem
             className="px-1"
@@ -122,7 +122,7 @@ function EditGameSettingsView() {
         ),
         detail: () => (
           <div className="rounded w-full flex-1 bg-[#282828] mt-1 flex flex-col">
-            <PatternList type={selected} />
+            <Object2DList type={selected} />
           </div>
         )
       },

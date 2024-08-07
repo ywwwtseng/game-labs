@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Modal } from '@/components/ui/Modal';
 import { BaseInput } from '@/components/ui/BaseInput';
-import { addScene } from '@/features/appState/appStateSlice';
+import { addLand } from '@/features/appState/appStateSlice';
 
-function CreateSceneModal() {
-  const scene = useSelector((state) => state.appState.scene);
+function CreateLandModal() {
+  const land = useSelector((state) => state.appState.land);
   const dispatch = useDispatch();
 
   const [name, setName] = useState('');
@@ -15,7 +15,7 @@ function CreateSceneModal() {
 
   return (
     <Modal width="172px">
-      <Modal.Header title="Create Scene" showCloseButton={Boolean(scene)} />
+      <Modal.Header title="Create Land" showCloseButton={Boolean(land)} />
       <Modal.Body>
         <BaseInput
           label="Name"
@@ -56,7 +56,7 @@ function CreateSceneModal() {
           disabled={disabled}
           onClick={() => {
             dispatch(
-              addScene({
+              addLand({
                 name,
                 width: Number(width),
                 height: Number(height),
@@ -71,4 +71,4 @@ function CreateSceneModal() {
   );
 }
 
-export { CreateSceneModal };
+export { CreateLandModal };

@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  addTileToScene,
-  addTilesToScene,
-  moveSceneTiles,
-  deleteScenePatterns,
+  addTileToLand,
+  addTilesToLand,
+  moveLandTiles,
+  deleteLandObject2Ds,
   deleteSelectedElements,
-  selectedScene,
-  drawPattern,
+  selectedLand,
+  drawObject2D,
 } from '@/features/appState/appStateSlice';
 import {
   setCursorIndex,
@@ -38,21 +38,21 @@ import {
   S_KEY,
 } from '@/hooks/useKeyBoard';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { usePatterns } from '@/hooks/usePatterns';
+import { useObject2Ds } from '@/hooks/useObject2Ds';
 import { useModal } from '@/context/ModalContext';
-import { CreatePatternModal } from '@/components/common/CreatePatternModal';
+import { CreateObject2DModal } from '@/components/common/CreateObject2DModal';
 
 function SelectModeBehavior({ children }) {
   const dispatch = useDispatch();
   const bufferRef = useRef({});
   const genesisRef = useRef({});
   const spriteSheets = useSpriteSheets();
-  const scene = useSelector(selectedScene);
+  const land = useSelector(selectedLand);
   const cursorIndex = useSelector(selectedCursorIndex);
   const selector = useSelector(selectedSelectModeSelector);
-  const patterns = usePatterns();
+  const object2ds = useObject2Ds();
 
-  const { open: openCreatePatternModal } = useModal(CreatePatternModal);
+  const { open: openCreateObject2DModal } = useModal(CreateObject2DModal);
 
   const inputMapping = useMemo(
     () => ({
@@ -69,11 +69,11 @@ function SelectModeBehavior({ children }) {
           return;
         }
 
-        const notEmptyTiles = CanvasUtil.cloneSceneSelectedTiles(selector.rect.default, scene)
+        const notEmptyTiles = CanvasUtil.cloneLandSelectedTiles(selector.rect.default, land)
           .some((column) => column.some((tile) => tile?.length > 0));
 
         if (notEmptyTiles) {
-          openCreatePatternModal();
+          openCreateObject2DModal();
         }
       },
       [ARROW_LEFT_KEY]: (event) => {},
@@ -81,11 +81,11 @@ function SelectModeBehavior({ children }) {
       [ARROW_UP_KEY]: (event) => {},
       [ARROW_DOWN_KEY]: (event) => {},
       [BACKSPACE_KEY]: (event) => {
-        if (!selector.rect.default || !scene) return;
+        if (!selector.rect.default || !land) return;
         dispatch(deleteSelectedElements());
       },
     }),
-    [selector.rect.default, scene]
+    [selector.rect.default, land]
   );
 
   const { isHolding } = useKeyBoard(inputMapping);
@@ -103,21 +103,21 @@ function SelectModeBehavior({ children }) {
       let follows = rects.follows;
 
       if (type === 'mouseup') {
-        if (mode === SELECT_MODE.PATTERN_OR_TILE && isHolding(E_KEY)) {
+        if (mode === SELECT_MODE.OBJECT_2D_OR_TILE && isHolding(E_KEY)) {
           mode = SELECT_MODE.TILE;
         }
 
-        if (mode === SELECT_MODE.PATTERN_OR_TILE) {
-          follows = CanvasUtil.getFollowedSelectedPatternRects(rects.default, scene);
+        if (mode === SELECT_MODE.OBJECT_2D_OR_TILE) {
+          follows = CanvasUtil.getFollowedSelectedObject2DRects(rects.default, land);
 
           if (follows.length === 0) {
             mode = SELECT_MODE.TILE;
           } else {
-            mode = SELECT_MODE.PATTERN;
+            mode = SELECT_MODE.OBJECT_2D;
           }
         }
 
-        if (mode === SELECT_MODE.PATTERN && selector.rect.follows.length !== 0) {
+        if (mode === SELECT_MODE.OBJECT_2D && selector.rect.follows.length !== 0) {
           follows = KEEP_FOLLOWS;
         }
       }
@@ -136,13 +136,13 @@ function SelectModeBehavior({ children }) {
     onMoveDown: (rects) => {
       const mode = selector.mode;
 
-      if (mode === SELECT_MODE.PATTERN) {
+      if (mode === SELECT_MODE.OBJECT_2D) {
         if (!bufferRef.current.follows) {
          
           bufferRef.current.follows = rects.follows.map(
             ({ genesis: rect }) => {
-              const pattern = CanvasUtil.cloneSceneSelectedPattern(rect, scene, patterns);
-              return pattern.tiles;
+              const object2d = CanvasUtil.cloneLandSelectedObject2D(rect, land, object2ds);
+              return object2d.tiles;
             }
           );
 
@@ -150,26 +150,26 @@ function SelectModeBehavior({ children }) {
             genesisRef.current.follows = rects.follows.map(
               ({ genesis }) => ({
                 genesis,
-                pattern: CanvasUtil.findPatternBySelectedRect(genesis, scene),
+                object2d: CanvasUtil.findObject2DBySelectedRect(genesis, land),
               })
             );
           }
 
           if (!isHolding(S_KEY)) {
-            dispatch(deleteScenePatterns({ rects: selector.rect.follows }));
+            dispatch(deleteLandObject2Ds({ rects: selector.rect.follows }));
           }
 
         }
 
       } else if (mode === SELECT_MODE.TILE) {
         if (!bufferRef.current.default) {
-          bufferRef.current.default = CanvasUtil.cloneSceneSelectedTiles(
+          bufferRef.current.default = CanvasUtil.cloneLandSelectedTiles(
             rects.default.genesis,
-            scene,
+            land,
             ({ tile, x, y }) => {
               if (tile && !isHolding(S_KEY)) {
                 dispatch(
-                  addTileToScene({
+                  addTileToLand({
                     index: [x, y],
                     tile: undefined,
                   })
@@ -184,7 +184,7 @@ function SelectModeBehavior({ children }) {
         if (isMoveAddTilesMode()) {
           if (rects.default.next && genesisRef.current.default) {
             dispatch(
-              addTilesToScene({
+              addTilesToLand({
                 selectedArea: selector.rect.default,
                 localOriginIndex: [
                   rects.default.next[0],
@@ -208,7 +208,7 @@ function SelectModeBehavior({ children }) {
       if (selector.mode === SELECT_MODE.TILE) {
         if (selector.rect.default && bufferRef.current.default) {
           dispatch(
-            moveSceneTiles({
+            moveLandTiles({
               selectedArea: selector.rect.default,
               localOriginIndex: [
                 selector.rect.default[0],
@@ -229,9 +229,9 @@ function SelectModeBehavior({ children }) {
         if (selector.rect.follows && genesisRef.current.follows) {
           selector.rect.follows.forEach((rect, index) => {
             dispatch(
-              drawPattern({
+              drawObject2D({
                 rect,
-                pattern: genesisRef.current.follows[index].pattern,
+                object2d: genesisRef.current.follows[index].object2d,
               })
             );
           });
@@ -285,7 +285,7 @@ function SelectModeBehavior({ children }) {
         });
       }
 
-      if (selector.mode === SELECT_MODE.PATTERN) {
+      if (selector.mode === SELECT_MODE.OBJECT_2D) {
         selector.rect.follows.forEach((rect) => {
           CanvasUtil.selected(ctx, rect, 'rgba(255,255,255,0.8)');
         });
@@ -293,7 +293,7 @@ function SelectModeBehavior({ children }) {
         CanvasUtil.selected(ctx, selector.rect.default);
       }
     },
-    [selector, scene]
+    [selector, land]
   );
 
   const { setup: setupDropToDraw } = useDropToDraw({ id: 'canvas' });

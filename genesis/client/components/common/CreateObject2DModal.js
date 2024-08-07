@@ -4,7 +4,7 @@ import { Modal } from '@/components/ui/Modal';
 import { BaseInput } from '@/components/ui/BaseInput';
 import { Text } from '@/components/ui/Text';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
-import { selectedScene } from '@/features/appState/appStateSlice';
+import { selectedLand } from '@/features/appState/appStateSlice';
 import {
   useSpriteSheets,
   useUpdateSpriteSheets,
@@ -15,8 +15,8 @@ import { ArrayUtil } from '@/utils/ArrayUtil';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { selectedSelectModeSelectorRectDefault } from '@/features/selectMode/selectModeSlice';
 
-function CreatePatternModal() {
-  const scene = useSelector(selectedScene);
+function CreateObject2DModal() {
+  const land = useSelector(selectedLand);
   const selectedRect = useSelector(selectedSelectModeSelectorRectDefault);
   const spriteSheets = useSpriteSheets();
   const updateSpriteSheets = useUpdateSpriteSheets();
@@ -25,14 +25,14 @@ function CreatePatternModal() {
   const [type, setType] = useState('');
 
   const tiles = useMemo(() => {
-    return CanvasUtil.cloneSceneSelectedTiles(
+    return CanvasUtil.cloneLandSelectedTiles(
       selectedRect,
-      scene,
+      land,
       ({ tile }) => {
         return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[tile?.index?.[1]];
       },
     );
-  }, [selectedRect, scene]);
+  }, [selectedRect, land]);
 
   const layers = useMemo(
     () => [
@@ -45,13 +45,13 @@ function CreatePatternModal() {
     [selectedRect, tiles],
   );
 
-  const { trigger } = useMutation('/api/patterns');
+  const { trigger } = useMutation('/api/object2ds');
 
   const disabled = !name.trim();
 
   return (
     <Modal>
-      <Modal.Header title="Create Pattern" showCloseButton />
+      <Modal.Header title="Create Object2D" showCloseButton />
       <Modal.Body className="flex">
         <div>
           <Canvas2D
@@ -77,9 +77,9 @@ function CreatePatternModal() {
         <Modal.Action
           disabled={disabled}
           onClick={async () => {
-            const tiles = CanvasUtil.cloneSceneSelectedTiles(
+            const tiles = CanvasUtil.cloneLandSelectedTiles(
               selectedRect,
-              scene,
+              land,
               ({ tile }) => (tile ? { index: tile.index, source: tile.source } : null),
             );
 
@@ -99,4 +99,4 @@ function CreatePatternModal() {
   );
 }
 
-export { CreatePatternModal };
+export { CreateObject2DModal };

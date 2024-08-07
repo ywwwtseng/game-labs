@@ -48,7 +48,7 @@ export const drawTiles = createAsyncThunk(
       const index = CanvasUtil.positionToIndex(pos);
 
       dispatch(
-        addTilesToScene({
+        addTilesToLand({
           selectedArea: [index[0], index[1], sizeIndexX, sizeIndexY],
           localOriginIndex: [originX, originY],
           transparent,
@@ -61,28 +61,28 @@ export const drawTiles = createAsyncThunk(
   },
 );
 
-export const drawPattern = createAsyncThunk(
-  'appState/drawPattern',
+export const drawObject2D = createAsyncThunk(
+  'appState/drawObject2D',
   async (T, { dispatch }) => {
     try {
-      if (T.event && T.pattern) {
-        const rect = Object2D.getRect(T.pattern);
+      if (T.event && T.object2d) {
+        const rect = Object2D.getRect(T.object2d);
         const pos = CanvasUtil.getDraggedIconPosition(T.event, rect, { x: 8, y: 8 });
         const index = CanvasUtil.positionToIndex(pos);
   
         dispatch(
-          addPatternToScene({
+          addObject2DToLand({
             rect: [...index, rect[2], rect[3]],
-            pattern: T.pattern,
+            object2d: T.object2d,
           }),
         );
       }
   
-      if (T.rect && T.pattern) {
+      if (T.rect && T.object2d) {
         dispatch(
-          addPatternToScene({
+          addObject2DToLand({
             rect: T.rect,
-            pattern: T.pattern,
+            object2d: T.object2d,
           }),
         );
       }
@@ -94,14 +94,14 @@ export const drawPattern = createAsyncThunk(
   },
 );
 
-export const moveSceneTiles = createAsyncThunk(
-  'appState/moveSceneTiles',
+export const moveLandTiles = createAsyncThunk(
+  'appState/moveLandTiles',
   async (
     { selectedArea, localOriginIndex, tiles, transparent },
     { dispatch },
   ) => {
     dispatch(
-      addTilesToScene({
+      addTilesToLand({
         selectedArea,
         localOriginIndex,
         tiles,
@@ -119,14 +119,14 @@ export const deleteSelectedElements = createAsyncThunk(
       const selector = selectMode.selectedSelectModeSelector(state);
 
       if (selector.mode === selectMode.SELECT_MODE.TILE) {
-        dispatch(deleteSceneTiles(selector.rect.default));
+        dispatch(deleteLandTiles(selector.rect.default));
       }
 
-      if (selector.mode === selectMode.SELECT_MODE.PATTERN) {
+      if (selector.mode === selectMode.SELECT_MODE.OBJECT_2D) {
         dispatch(
           selectMode.forceSelectArea({ default: selector.rect.default }),
         );
-        dispatch(deleteScenePatterns({ rects: selector.rect.follows, completely: true }));
+        dispatch(deleteLandObject2Ds({ rects: selector.rect.follows, completely: true }));
         dispatch(selectMode.destroy());
       }
 
@@ -140,8 +140,8 @@ export const deleteSelectedElements = createAsyncThunk(
 
 const initialState = {
   mode: MODE.SELECT,
-  // scene: undefined
-  scene: {
+  // land: undefined
+  land: {
     name: 'Land #1',
     width: 512,
     height: 512,
@@ -150,17 +150,17 @@ const initialState = {
       {
         name: 'Background Layer',
         tiles: [],
-        patterns: [],
+        object2ds: [],
       },
       {
         name: 'Entity Layer',
         tiles: [],
-        patterns: [],
+        object2ds: [],
       },
       {
         name: 'Foreground Layer',
         tiles: [],
-        patterns: [],
+        object2ds: [],
       },
     ],
   },
@@ -170,58 +170,58 @@ export const appStateSlice = createSlice({
   name: 'appState',
   initialState,
   reducers: {
-    addScene: (state, action) => {
-      state.scene = { ...state.scene, ...action.payload };
+    addLand: (state, action) => {
+      state.land = { ...state.land, ...action.payload };
     },
-    addPatternToScene(state, action) {
-      const layerIndex = state.scene.selectedLayerIndex;
-      const pattern_id = action.payload.pattern.id;
+    addObject2DToLand(state, action) {
+      const layerIndex = state.land.selectedLayerIndex;
+      const object2d_id = action.payload.object2d.id;
 
-      state.scene.layers[layerIndex].patterns.push({
-        id: pattern_id,
+      state.land.layers[layerIndex].object2ds.push({
+        id: object2d_id,
         rect: action.payload.rect,
       });
     },
-    addTileToScene: (state, action) => {
-      const layerIndex = state.scene.selectedLayerIndex;
+    addTileToLand: (state, action) => {
+      const layerIndex = state.land.selectedLayerIndex;
       const [indexX, indexY] = action.payload.index;
       const tile = action.payload.tile;
 
-      if (!state.scene.layers[layerIndex].tiles[indexX]) {
-        state.scene.layers[layerIndex].tiles[indexX] = [];
+      if (!state.land.layers[layerIndex].tiles[indexX]) {
+        state.land.layers[layerIndex].tiles[indexX] = [];
       }
 
-      if (!state.scene.layers[layerIndex].tiles[indexX][indexY]) {
-        state.scene.layers[layerIndex].tiles[indexX][indexY] = [];
+      if (!state.land.layers[layerIndex].tiles[indexX][indexY]) {
+        state.land.layers[layerIndex].tiles[indexX][indexY] = [];
       }
 
       if (tile) {
-        state.scene.layers[layerIndex].tiles[indexX][indexY].push(tile);
+        state.land.layers[layerIndex].tiles[indexX][indexY].push(tile);
       } else {
-        state.scene.layers[layerIndex].tiles[indexX][indexY] = [];
+        state.land.layers[layerIndex].tiles[indexX][indexY] = [];
       }
     },
-    addTilesToScene: (state, action) => {
+    addTilesToLand: (state, action) => {
       const selectedArea = action.payload.selectedArea;
       const [originX, originY] = action.payload.localOriginIndex;
       const transparent = action.payload.transparent || [];
-      const layerIndex = state.scene.selectedLayerIndex;
+      const layerIndex = state.land.selectedLayerIndex;
 
       MatrixUtil.traverse(selectedArea, ({ x, y }, index) => {
         if (!transparent.includes(`${originX + x}.${originY + y}`)) {
-          if (!state.scene.layers[layerIndex].tiles[index.x]) {
-            state.scene.layers[layerIndex].tiles[index.x] = [];
+          if (!state.land.layers[layerIndex].tiles[index.x]) {
+            state.land.layers[layerIndex].tiles[index.x] = [];
           }
           const tileItems = action.payload.tiles?.[x]?.[y];
 
-          if (!state.scene.layers[layerIndex].tiles[index.x][index.y]) {
-            state.scene.layers[layerIndex].tiles[index.x][index.y] = [];
+          if (!state.land.layers[layerIndex].tiles[index.x][index.y]) {
+            state.land.layers[layerIndex].tiles[index.x][index.y] = [];
           }
 
           if (tileItems) {
-            state.scene.layers[layerIndex].tiles[index.x][index.y].push(...tileItems);
+            state.land.layers[layerIndex].tiles[index.x][index.y].push(...tileItems);
           } else {
-            state.scene.layers[layerIndex].tiles[index.x][index.y].push({
+            state.land.layers[layerIndex].tiles[index.x][index.y].push({
               source: action.payload.source,
               index: [originX + x, originY + y],
             });
@@ -230,63 +230,63 @@ export const appStateSlice = createSlice({
       });
     },
     fillTile: (state, action) => {
-      const layerIndex = state.scene.selectedLayerIndex;
+      const layerIndex = state.land.selectedLayerIndex;
       const selectedRect = action.payload.selectedRect;
       const tile = action.payload.tile;
 
       MatrixUtil.traverse(selectedRect, (_, { x, y }) => {
-        if (!state.scene.layers[layerIndex].tiles[x]) {
-          state.scene.layers[layerIndex].tiles[x] = [];
+        if (!state.land.layers[layerIndex].tiles[x]) {
+          state.land.layers[layerIndex].tiles[x] = [];
         }
 
-        state.scene.layers[layerIndex].tiles[x][y] = [tile];
+        state.land.layers[layerIndex].tiles[x][y] = [tile];
       });
     },
-    deleteSceneTiles: (state, action) => {
+    deleteLandTiles: (state, action) => {
       const selectedArea = CanvasUtil.normalizeRect(action.payload);
-      const layerIndex = state.scene.selectedLayerIndex;
+      const layerIndex = state.land.selectedLayerIndex;
 
       MatrixUtil.traverse(selectedArea, (_, { x, y }) => {
-        if (!state.scene.layers[layerIndex].tiles[x]) {
-          state.scene.layers[layerIndex].tiles[x] = [];
+        if (!state.land.layers[layerIndex].tiles[x]) {
+          state.land.layers[layerIndex].tiles[x] = [];
         }
-        state.scene.layers[layerIndex].tiles[x][y] = undefined;
+        state.land.layers[layerIndex].tiles[x][y] = undefined;
       });
     },
-    deleteScenePatterns: (state, action) => {
-      const layerIndex = state.scene.selectedLayerIndex;
+    deleteLandObject2Ds: (state, action) => {
+      const layerIndex = state.land.selectedLayerIndex;
       const { rects, completely } = action.payload;
-      const patterns = state.scene.layers[layerIndex].patterns;
+      const object2ds = state.land.layers[layerIndex].object2ds;
 
       if (completely) {
-        state.scene.layers[layerIndex].patterns = state.scene.layers[layerIndex].patterns.filter((pattern) => {
-          return !rects.some(rect => CanvasUtil.same(rect, pattern.rect));
+        state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter((object2d) => {
+          return !rects.some(rect => CanvasUtil.same(rect, object2d.rect));
         });
 
       } else {
         for (let i = 0; i < rects.length; i++) {
           const rect = rects[i];
   
-          for (let j = patterns.length - 1; j >= 0; j--) {
-            const pattern = state.scene.layers[layerIndex].patterns[j];
+          for (let j = object2ds.length - 1; j >= 0; j--) {
+            const object2d = state.land.layers[layerIndex].object2ds[j];
   
-            if (pattern && CanvasUtil.same(rect, pattern.rect)) {
-              delete state.scene.layers[layerIndex].patterns[j];
+            if (object2d && CanvasUtil.same(rect, object2d.rect)) {
+              delete state.land.layers[layerIndex].object2ds[j];
               break;
             }
           }
         }
   
-        state.scene.layers[layerIndex].patterns = state.scene.layers[layerIndex].patterns.filter(Boolean);
+        state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter(Boolean);
       }
 
       
     },
     addLayer: (state) => {
-      state.scene.layers.push({ tiles: [] });
+      state.land.layers.push({ tiles: [] });
     },
     selectLayer: (state, action) => {
-      state.scene.selectedLayerIndex = action.payload;
+      state.land.selectedLayerIndex = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -297,20 +297,20 @@ export const appStateSlice = createSlice({
 });
 
 export const {
-  addScene,
-  addTileToScene,
-  addTilesToScene,
+  addLand,
+  addTileToLand,
+  addTilesToLand,
   fillTile,
-  deleteSceneTiles,
-  deleteScenePatterns,
-  addPatternToScene,
+  deleteLandTiles,
+  deleteLandObject2Ds,
+  addObject2DToLand,
   addLayer,
   selectLayer,
 } = appStateSlice.actions;
 
 export const selectedIsDrawMode = (state) => state.appState.mode === MODE.DRAW;
-export const selectedScene = (state) => state.appState.scene;
+export const selectedLand = (state) => state.appState.land;
 export const selectedCurrentLayerSelector = (state) =>
-  state.appState.scene.layers[state.appState.scene.selectedLayerIndex];
+  state.appState.land.layers[state.appState.land.selectedLayerIndex];
 
 export default appStateSlice.reducer;

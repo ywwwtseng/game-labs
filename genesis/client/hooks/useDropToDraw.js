@@ -5,7 +5,7 @@ import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import {
   drawTiles,
   fillTile,
-  drawPattern,
+  drawObject2D,
 } from '@/features/appState/appStateSlice';
 import { SELECT_MODE, selectedSelectModeSelector } from '@/features/selectMode/selectModeSlice';
 import { overlaps } from '@/helpers/BoundingBox';
@@ -22,7 +22,7 @@ function useDropToDraw({ id }) {
         const rect = [...data.index, 1, 1];
 
         if (
-          selector.mode !== SELECT_MODE.PATTERN &&
+          selector.mode !== SELECT_MODE.OBJECT_2D &&
           selector.rect.default && selector.rect.follows.length === 0 &&
           overlaps({ rect: selector.rect.default, with: id }, { event, rect })
         ) {
@@ -63,12 +63,12 @@ function useDropToDraw({ id }) {
         );
 
       },
-      pattern: (event, data) => {
+      object2d: (event, data) => {
         if (!data) return;
         dispatch(
-          drawPattern({
+          drawObject2D({
             event,
-            pattern: data.pattern,
+            object2d: data.object2d,
           }),
         );
       },

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "dev": "concurrently \"nodemon index.js\" \"parcel watch client/index.html\""
+    "dev": "concurrently \"nodemon server/index.js\" \"parcel watch client/index.html\""
   },
   "type": "module",
   "author": "",

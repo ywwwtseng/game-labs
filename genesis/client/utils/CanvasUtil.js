@@ -201,12 +201,12 @@ class CanvasUtil {
     })
   }
 
-  static createSpriteLayers({ scene, spriteSheets, patterns }) {
-    if (Object.keys(spriteSheets).length === 0 || patterns.length === 0) {
+  static createSpriteLayers({ land, spriteSheets, object2ds }) {
+    if (Object.keys(spriteSheets).length === 0 || object2ds.length === 0) {
       return [];
     }
 
-    return scene.layers.map((layer) => {
+    return land.layers.map((layer) => {
       return {
         tiles: MatrixUtil.map(layer.tiles, (tileItems) => {
           return tileItems.map((tile) => {
@@ -218,21 +218,21 @@ class CanvasUtil {
             }
           });
         }),
-        patterns: layer.patterns.reduce((acc, { id: pattern_id, rect: pattern_rect }) => {
-          const pattern = patterns.find(({ id }) => id === pattern_id);
-          if (!acc.buffer[pattern.id]) {
-            if (Object2D.hasAnimation(pattern)) {
-              acc.buffer[pattern.id] = pattern.frames.map((tiles) => {
+        object2ds: layer.object2ds.reduce((acc, { id: object2d_id, rect: object2d_rect }) => {
+          const object2d = object2ds.find(({ id }) => id === object2d_id);
+          if (!acc.buffer[object2d.id]) {
+            if (Object2D.hasAnimation(object2d)) {
+              acc.buffer[object2d.id] = object2d.frames.map((tiles) => {
                 return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
               });
             } else {
-              acc.buffer[pattern.id] = CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
+              acc.buffer[object2d.id] = CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
             }
           }
 
           acc.order = [...acc.order, {
-            id: pattern.id,
-            rect: pattern_rect,
+            id: object2d.id,
+            rect: object2d_rect,
           }];
 
           return acc;
@@ -246,12 +246,12 @@ class CanvasUtil {
       layers.forEach((layer) => {
         CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);
 
-        if (layer.patterns) {
-          layer.patterns.order.forEach((pattern) => {
-            const tilesBuffer = layer.patterns.buffer[pattern.id][0] || layer.patterns.buffer[pattern.id]
+        if (layer.object2ds) {
+          layer.object2ds.order.forEach((object2d) => {
+            const tilesBuffer = layer.object2ds.buffer[object2d.id][0] || layer.object2ds.buffer[object2d.id]
             CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, {
-              x: pattern.rect[0],
-              y: pattern.rect[1],
+              x: object2d.rect[0],
+              y: object2d.rect[1],
             });
           });
         }
@@ -289,8 +289,8 @@ class CanvasUtil {
     return false;
   }
 
-  static cloneSceneSelectedTiles(rect, scene, callback = (any) => any) {
-    const layer = scene.layers[scene.selectedLayerIndex];
+  static cloneLandSelectedTiles(rect, land, callback = (any) => any) {
+    const layer = land.layers[land.selectedLayerIndex];
     return MatrixUtil.create(rect, (_, { x, y }) => {
       return layer.tiles?.[x]?.[y]?.map((tile) => {
         return callback({ tile, x, y });
@@ -298,51 +298,51 @@ class CanvasUtil {
     });
   }
 
-  static findPatternBySelectedRect(rect, scene) {
-    const patterns = scene.layers[scene.selectedLayerIndex].patterns;
+  static findObject2DBySelectedRect(rect, land) {
+    const object2ds = land.layers[land.selectedLayerIndex].object2ds;
 
-    for (let i = patterns.length - 1; i >= 0; i--) {
-      const pattern = patterns[i];
+    for (let i = object2ds.length - 1; i >= 0; i--) {
+      const object2d = object2ds[i];
 
-      if (CanvasUtil.same(rect, pattern.rect)) {
-        return pattern;
+      if (CanvasUtil.same(rect, object2d.rect)) {
+        return object2d;
       }
     }
 
     return null;
   }
 
-  static cloneSceneSelectedPattern(rect, scene, patterns) {
-    const pattern = CanvasUtil.findPatternBySelectedRect(rect, scene);
-    const source = pattern.id.split('.')[0];
-    const tiles = patterns.find(({ id }) => pattern.id === id).tiles;
+  static cloneLandSelectedObject2D(rect, land, object2ds) {
+    const object2d = CanvasUtil.findObject2DBySelectedRect(rect, land);
+    const source = object2d.id.split('.')[0];
+    const tiles = object2ds.find(({ id }) => object2d.id === id).tiles;
 
     return {
-      id: pattern.id,
-      tiles: patterns.find(({ id }) => pattern.id === id).tiles,
+      id: object2d.id,
+      tiles: object2ds.find(({ id }) => object2d.id === id).tiles,
     };
   }
 
-  static getFollowedSelectedPatternRects(selectedRect, scene) {
+  static getFollowedSelectedObject2DRects(selectedRect, land) {
     if (!selectedRect) {
       return [];
     }
 
-    const patterns = scene.layers[scene.selectedLayerIndex].patterns;
+    const object2ds = land.layers[land.selectedLayerIndex].object2ds;
 
     let follows = [];
 
-    for (let i = patterns.length - 1; i >= 0; i--) {
-      const pattern = patterns[i];
+    for (let i = object2ds.length - 1; i >= 0; i--) {
+      const object2d = object2ds[i];
 
-      if (follows.every((rect) => !CanvasUtil.same(rect, pattern.rect)) && overlaps(pattern.rect, selectedRect)) {
-        if (follows.every((rect) => !contain(pattern.rect, { in: rect }))) {
-          follows.unshift(pattern.rect);
+      if (follows.every((rect) => !CanvasUtil.same(rect, object2d.rect)) && overlaps(object2d.rect, selectedRect)) {
+        if (follows.every((rect) => !contain(object2d.rect, { in: rect }))) {
+          follows.unshift(object2d.rect);
         }
       }
 
-      if (contain(selectedRect, { in: pattern.rect })) {
-        follows = [pattern.rect];
+      if (contain(selectedRect, { in: object2d.rect })) {
+        follows = [object2d.rect];
         break;
       }
       
@@ -351,8 +351,8 @@ class CanvasUtil {
     return follows;
   }
 
-  static getPatternRect(pattern) {
-    return [0, 0, ...MatrixUtil.sizeIndex(pattern.tiles || pattern.frames[0])];
+  static getObject2DRect(object2d) {
+    return [0, 0, ...MatrixUtil.sizeIndex(object2d.tiles || object2d.frames[0])];
   }
 
   static createFollowCursor({ event, rect, groupRect, canvas }) {
@@ -426,15 +426,15 @@ class CanvasUtil {
     return [bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1]];
   }
 
-  static exportScene({ scene, spriteSheets, patterns }) {
-    const layers = CanvasUtil.createSpriteLayers({ scene, spriteSheets, patterns });
+  static exportLand({ land, spriteSheets, object2ds }) {
+    const layers = CanvasUtil.createSpriteLayers({ land, spriteSheets, object2ds });
     const buffer = CanvasUtil.createSpriteLayerBuffer(
       layers,
-      scene.width,
-      scene.height,
+      land.width,
+      land.height,
     );
 
-    DomUtil.downloadImage({ name: `${scene.name}.png`, buffer });
+    DomUtil.downloadImage({ name: `${land.name}.png`, buffer });
   }
 
   static same(any1, any2) {

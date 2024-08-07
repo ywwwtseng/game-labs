@@ -10,10 +10,10 @@ import { selectedIsDrawMode } from '@/features/appState/appStateSlice';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { Object2D } from '@/utils/Object2D';
 
-function Pattern({ pattern, draggable = false, className }) {
+function Object2DReview({ object2d, draggable = false, className }) {
   const spriteSheets = useSpriteSheets();
   const ref = useRef(null);
-  const tiles = Object2D.tiles(pattern);
+  const tiles = Object2D.tiles(object2d);
 
   const sizeIndex = useMemo(() => {
     return MatrixUtil.sizeIndex(tiles);
@@ -70,8 +70,8 @@ function Pattern({ pattern, draggable = false, className }) {
       <Draggable
         disabled={!Boolean(draggable)}
         data={{
-          type: 'pattern',
-          pattern,
+          type: 'object2d',
+          object2d,
         }}
         icon={{
           display: () => {
@@ -94,4 +94,4 @@ function Pattern({ pattern, draggable = false, className }) {
   );
 }
 
-export { Pattern };
+export { Object2DReview };

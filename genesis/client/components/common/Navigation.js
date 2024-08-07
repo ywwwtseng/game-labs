@@ -2,23 +2,23 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Text } from '@/components/ui/Text';
 import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
-import { CreateSceneModal } from '@/components/common/CreateSceneModal';
+import { CreateLandModal } from '@/components/common/CreateLandModal';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { getBoundingBox } from '@/helpers/BoundingBox';
-import { selectedScene } from '@/features/appState/appStateSlice';
+import { selectedLand } from '@/features/appState/appStateSlice';
 import { useModal } from '@/context/ModalContext';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { usePatterns } from '@/hooks/usePatterns';
+import { useObject2Ds } from '@/hooks/useObject2Ds';
 import logo from '@/icon.png';
 
 function Navigation() {
-  const scene = useSelector(selectedScene);
+  const land = useSelector(selectedLand);
   const spriteSheets = useSpriteSheets();
-  const patterns = usePatterns();
+  const object2ds = useObject2Ds();
 
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);
-  const { open } = useModal(CreateSceneModal);
+  const { open } = useModal(CreateLandModal);
 
   const dropdowns = [
     {
@@ -27,14 +27,14 @@ function Navigation() {
       options: [
         {
           type: 'option',
-          label: 'New Scene',
+          label: 'New Land',
           onClick: open,
         },
         {
           type: 'option',
           label: 'Export PNG File',
           onClick: () => {
-            CanvasUtil.exportScene({ scene, spriteSheets, patterns });
+            CanvasUtil.exportLand({ land, spriteSheets, object2ds });
           },
         },
       ],
@@ -89,10 +89,10 @@ function Navigation() {
   );
 
   useEffect(() => {
-    if (scene === undefined) {
-      openCreateSceneModal();
+    if (land === undefined) {
+      openCreateLandModal();
     }
-  }, [scene]);
+  }, [land]);
 
   return (
     <>

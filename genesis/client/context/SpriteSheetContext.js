@@ -10,12 +10,12 @@ import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { ImageUtil } from '@/utils/ImageUtil';
 
-export const SpriteSheetContext = createContext({ spriteSheets: {}, patterns: {} });
+export const SpriteSheetContext = createContext({ spriteSheets: {}, object2ds: {} });
 
 export const SpriteSheetProvider = ({ children }) => {
   const { data } = useSWR('/api/sprites');
   const [spriteSheets, setSpriteSheets] = useState({});
-  const [patterns, setPatterns] = useState({});
+  const [object2ds, setObject2Ds] = useState({});
 
 
   useEffect(() => {
@@ -57,32 +57,20 @@ export const SpriteSheetProvider = ({ children }) => {
               tiles,
               sizeIndex,
               transparent: spriteSheet.transparent.split(','),
-              animations: [],
             };
 
-            if (!acc.patterns[spriteSheet.id]) {
-              acc.patterns[spriteSheet.id] = {};
-            }
-
-            spriteSheet.patterns.forEach((pattern) => {
-              acc.patterns[spriteSheet.id][pattern.id] = pattern;
-            });
-
-            
-
-            acc.patterns
             return acc;
-          }, { spriteSheets: {}, patterns: {} });
+          }, { spriteSheets: {}, object2ds: {} });
         })
-        .then(({ spriteSheets, patterns }) => {
-          setPatterns(patterns);
+        .then(({ spriteSheets, object2ds }) => {
+          setObject2Ds(object2ds);
           setSpriteSheets(spriteSheets);
         });
     }
   }, [data?.list]);
 
   return (
-    <SpriteSheetContext.Provider value={{ spriteSheets, patterns }}>
+    <SpriteSheetContext.Provider value={{ spriteSheets, object2ds }}>
       {children}
     </SpriteSheetContext.Provider>
   );

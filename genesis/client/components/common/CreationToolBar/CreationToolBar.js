@@ -6,17 +6,17 @@ import { BoxIcon } from '@/components/icon/BoxIcon';
 import { CreationToolBarButton } from '@/components/common/CreationToolBar/CreationToolBarButton';
 import { CreationToolBarToggle } from '@/components/common/CreationToolBar/CreationToolBarToggle';
 import { SpriteTool } from '@/components/common/CreationToolBar/SpriteTool/SpriteTool';
-import { PatternTool } from '@/components/common/CreationToolBar/PatternTool/PatternTool';
+import { Object2DTool } from '@/components/common/CreationToolBar/Object2DTool/Object2DTool';
 import { setMode } from '@/features/appState/appStateSlice';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { MODE } from '@/constants';
-import { usePatterns } from '@/hooks/usePatterns';
+import { useObject2Ds } from '@/hooks/useObject2Ds';
 
 function CreationToolBar() {
   const mode = useSelector((state) => state.appState.mode);
   const dispatch = useDispatch();
   const spriteSheets = useSpriteSheets();
-  const patterns = usePatterns();
+  const object2ds = useObject2Ds();
 
   return (
     <div
@@ -40,8 +40,8 @@ function CreationToolBar() {
       />
       <CreationToolBarToggle
         icon={BoxIcon}
-        disabled={patterns.length == 0}
-        menu={PatternTool}
+        disabled={object2ds.length == 0}
+        menu={Object2DTool}
       />
     </div>
   );

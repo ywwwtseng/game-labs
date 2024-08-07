@@ -4,27 +4,27 @@ import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { usePatterns } from '@/hooks/usePatterns';
+import { useObject2Ds } from '@/hooks/useObject2Ds';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 
-function SceneCanvas() {
-  const scene = useSelector((state) => state.appState.scene);
+function LandCanvas() {
+  const land = useSelector((state) => state.appState.land);
   const spriteSheets = useSpriteSheets();
-  const patterns = usePatterns();
+  const object2ds = useObject2Ds();
 
   const layers = useMemo(
     () => [
       CANVAS_LAYER.SPRITE_LAYERS({
-        layers: CanvasUtil.createSpriteLayers({ scene, spriteSheets, patterns }),
-        width: scene.width,
-        height: scene.height,
+        layers: CanvasUtil.createSpriteLayers({ land, spriteSheets, object2ds }),
+        width: land.width,
+        height: land.height,
       }),
       CANVAS_LAYER.GRID({
-        width: scene.width,
-        height: scene.height,
+        width: land.width,
+        height: land.height,
       }),
     ],
-    [scene, spriteSheets, patterns],
+    [land, spriteSheets, object2ds],
   );
 
   return (
@@ -35,12 +35,12 @@ function SceneCanvas() {
           className="relative z-10 rounded w-full h-full overflow-hidden flex items-center justify-center bg-[#353535]"
           {...register}
         >
-          {scene && (
+          {land && (
             <Canvas2D
               id="canvas"
               accept="tiles"
-              width={scene.width}
-              height={scene.height}
+              width={land.width}
+              height={land.height}
               layers={layers}
               {...connect}
             />
@@ -51,4 +51,4 @@ function SceneCanvas() {
   );
 }
 
-export { SceneCanvas };
+export { LandCanvas };

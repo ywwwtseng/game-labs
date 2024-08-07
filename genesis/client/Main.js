@@ -2,7 +2,7 @@ import { Navigation } from '@/components/common/Navigation';
 import { CreationToolBar } from '@/components/common/CreationToolBar/CreationToolBar';
 import { ShortcutBar } from '@/components/common/ShortcutBar';
 import { EditGameSettingsView } from '@/components/common/EditGameSettingsView/EditGameSettingsView';
-import { SceneCanvas } from '@/components/common/SceneCanvas';
+import { LandCanvas } from '@/components/common/LandCanvas';
 import { AppInfo } from '@/components/common/AppInfo/AppInfo';
 
 function Main() {
@@ -13,7 +13,7 @@ function Main() {
         <div className="rounded flex-1 max-h-screen h-full flex flex-col">
           <CreationToolBar />
           <ShortcutBar />
-          <SceneCanvas />
+          <LandCanvas />
           <AppInfo />
         </div>
         <EditGameSettingsView />

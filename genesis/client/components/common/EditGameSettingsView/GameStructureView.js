@@ -10,12 +10,12 @@ import { addLayer, selectLayer } from '@/features/appState/appStateSlice';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 function GameStructureView() {
-  const scene = useSelector((state) => state.appState.scene);
+  const land = useSelector((state) => state.appState.land);
   const dispatch = useDispatch();
-  const scenes = [scene];
-  const [selectedScene, selectScene] = useLocalStorage(
-    'selected:scene',
-    scenes[0].name,
+  const lands = [land];
+  const [selectedLand, selectLand] = useLocalStorage(
+    'selected:land',
+    lands[0].name,
   );
 
   return (
@@ -24,34 +24,34 @@ function GameStructureView() {
         icon={<GlobalIcon />}
         label="World"
         actions={[
-          <BaseButton key="new-scene">
+          <BaseButton key="new-land">
             <CirclePlusIcon />
-          </BaseButton>,
+          </BaseButton>
         ]}
       />
       <div className="flex-1 overflow-y-scroll no-scrollbar">
-        {scenes.map((scene) => (
-          <React.Fragment key={scene.name}>
+        {lands.map((land) => (
+          <React.Fragment key={land.name}>
             <OperableItem
               className="px-1"
               checkIcon
-              selected={selectedScene === scene.name}
+              selected={selectedLand === land.name}
               // onClick={() =>
-              //   selectScene(selectedScene === scene.name ? null : scene.name)
+              //   selectLand(selectedLand === land.name ? null : land.name)
               // }
-              label={scene.name}
+              label={land.name}
             />
-            {scene.layers.map((layer, index) => (
+            {land.layers.map((layer, index) => (
               <OperableItem
                 className="px-1"
-                key={`${scene.name}-layer-${index}`}
+                key={`${land.name}-layer-${index}`}
                 className="pl-6"
                 label={
                   <div className="flex items-center">
                     <AngleRightIcon
                       size={3}
                       className={
-                        scene.selectedLayerIndex === index
+                        land.selectedLayerIndex === index
                           ? 'opacity-100'
                           : 'opacity-0'
                       }
@@ -59,7 +59,7 @@ function GameStructureView() {
                     <span className="ml-1">{layer.name}</span>
                   </div>
                 }
-                selected={scene.selectedLayerIndex === index}
+                selected={land.selectedLayerIndex === index}
                 onClick={() => dispatch(selectLayer(index))}
               />
             ))}

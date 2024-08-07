@@ -6,20 +6,20 @@ import { Text } from '@/components/ui/Text';
 import { CloseIcon } from '@/components/icon/CloseIcon';
 import { BoxIcon } from '@/components/icon/BoxIcon';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
-import { Pattern } from '@/components/common/Pattern';
-import { usePatterns } from '@/hooks/usePatterns';
+import { Object2DReview } from '@/components/common/Object2DReview';
+import { useObject2Ds } from '@/hooks/useObject2Ds';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 
-function PatternTool({ origin, onClose }) {
-  const patterns = usePatterns();
+function Object2DTool({ origin, onClose }) {
+  const object2ds = useObject2Ds();
 
   return (
-    <Menu origin={origin} id="pattern-tool">
+    <Menu origin={origin} id="object2d-tool">
       <Menu.Header>
         <div className="flex items-center self-center text-xs whitespace-nowrap text-white mr-auto">
           <BoxIcon />
           <div className="ml-0.5">
-            Pattern Palette
+            Object2D Palette
           </div>
         </div>
         <BaseButton onClick={onClose}>
@@ -32,8 +32,8 @@ function PatternTool({ origin, onClose }) {
         <div
           className="grid grid-cols-3 gap-2 grid-rows-3"
         >
-          {patterns?.map((pattern) => (
-            <Pattern draggable={{ dragArea: 'pattern-tool' }} key={pattern.id} pattern={pattern} />
+          {object2ds?.map((object2d) => (
+            <Object2DReview draggable={{ dragArea: 'object2d-tool' }} key={object2d.id} object2d={object2d} />
           ))}
         </div>
       </div>
@@ -41,4 +41,4 @@ function PatternTool({ origin, onClose }) {
   );
 }
 
-export { PatternTool };
+export { Object2DTool };
