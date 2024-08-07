@@ -98,17 +98,6 @@ export function useSpriteSheet(source) {
   return spriteSheets[source];
 }
 
-export function usePatterns() {
-  const { patterns } = useContext(SpriteSheetContext);
-  return patterns;
-}
-
-export function useSpriteSheetPatterns(source) {
-  const { patterns } = useContext(SpriteSheetContext);
-  return patterns[source];
-}
-
-
 export function useUpdateSpriteSheets() {
   const { mutate } = useSWR('/api/sprites');
   return mutate;

@@ -36,7 +36,7 @@ function CreatePatternModal() {
 
   const layers = useMemo(
     () => [
-      CANVAS_LAYER.SPRITE_LAYER({
+      CANVAS_LAYER.SPRITE_LAYERS({
         layers: [{ tiles }],
         width: selectedRect[2] * 16,
         height: selectedRect[3] * 16,

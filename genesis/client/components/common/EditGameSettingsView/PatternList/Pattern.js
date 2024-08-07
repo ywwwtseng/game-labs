@@ -34,7 +34,7 @@ function Pattern({ spriteSheets, pattern }) {
 
   const buffer = useMemo(
     () =>
-      CANVAS_LAYER.SPRITE_LAYER({
+      CANVAS_LAYER.SPRITE_LAYERS({
         layers: [{ tiles }],
         width: sizeIndex[0] * 16,
         height: sizeIndex[1] * 16,

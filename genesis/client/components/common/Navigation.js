@@ -3,16 +3,21 @@ import { useSelector } from 'react-redux';
 import { Text } from '@/components/ui/Text';
 import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
 import { CreateSceneModal } from '@/components/common/CreateSceneModal';
-import { useExportPng } from '@/hooks/useExportPng';
+import { CanvasUtil } from '@/utils/CanvasUtil';
 import { getBoundingBox } from '@/helpers/BoundingBox';
+import { selectedScene } from '@/features/appState/appStateSlice';
 import { useModal } from '@/context/ModalContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { usePatterns } from '@/hooks/usePatterns';
 import logo from '@/icon.png';
 
 function Navigation() {
-  const scene = useSelector((state) => state.appState.scene);
+  const scene = useSelector(selectedScene);
+  const spriteSheets = useSpriteSheets();
+  const patterns = usePatterns();
+
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);
-  const exportPng = useExportPng();
   const { open } = useModal(CreateSceneModal);
 
   const dropdowns = [
@@ -28,7 +33,9 @@ function Navigation() {
         {
           type: 'option',
           label: 'Export PNG File',
-          onClick: exportPng,
+          onClick: () => {
+            CanvasUtil.exportScene({ scene, spriteSheets, patterns });
+          },
         },
       ],
     },

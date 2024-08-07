@@ -10,6 +10,14 @@ class DomUtil {
 
     return T;
   }
+
+  static downloadImage({ name, buffer }) {
+    const image = buffer.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = image;
+    link.download = name;
+    link.click();
+  }
 }
 
 export { DomUtil };

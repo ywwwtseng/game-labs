@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import { Pattern } from '@/components/common/EditGameSettingsView/PatternList/Pattern';
-import { useSpriteSheetPatterns, useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 
 function PatternList({ source }) {
   const { data } = useSWR('/api/patterns');

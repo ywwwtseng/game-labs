@@ -1,6 +1,7 @@
 import range from 'lodash-es/range';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { MatrixUtil } from '@/utils/MatrixUtil';
+import { DomUtil } from '@/utils/DomUtil';
 import { Vec2Util } from '@/utils/Vec2Util';
 import { overlaps, contain } from '@/helpers/BoundingBox';
 
@@ -191,6 +192,44 @@ class CanvasUtil {
     });
   }
 
+  static createSpriteLayers({ scene, spriteSheets, patterns }) {
+    if (Object.keys(spriteSheets).length === 0 || patterns.length === 0) {
+      return [];
+    }
+
+    return scene.layers.map((layer) => {
+      return {
+        tiles: MatrixUtil.map(layer.tiles, (tileItems) => {
+          return tileItems.map((tile) => {
+            if (tile.source && tile.index) {
+              const { source, index } = tile;
+              return {
+                buffer: spriteSheets[source].tiles[index[0]][index[1]].buffer,
+              };
+            }
+          });
+        }),
+        patterns: layer.patterns.reduce((acc, { id: pattern_id, rect: pattern_rect }) => {
+          const pattern = patterns.find(({ id }) => id === pattern_id);
+          if (!acc.buffer[pattern.id]) {
+            acc.buffer[pattern.id] = MatrixUtil.create(pattern.tiles, ({ value: tileItems }) => {
+              return tileItems?.map((tile) => ({
+                buffer: spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
+              }));
+            });
+          }
+
+          acc.order = [...acc.order, {
+            id: pattern.id,
+            rect: pattern_rect,
+          }];
+
+          return acc;
+        }, { buffer: {}, order: [] }),
+      };
+    });
+  }
+
   static createSpriteLayerBuffer(layers, width, height) {
     return CanvasUtil.createBuffer(width, height, (ctx) => {
       layers.forEach((layer) => {
@@ -373,6 +412,17 @@ class CanvasUtil {
     }
 
     return [bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1]];
+  }
+
+  static exportScene({ scene, spriteSheets, patterns }) {
+    const layers = CanvasUtil.createSpriteLayers({ scene, spriteSheets, patterns });
+    const buffer = CanvasUtil.createSpriteLayerBuffer(
+      layers,
+      scene.width,
+      scene.height,
+    );
+
+    DomUtil.downloadImage({ name: `${scene.name}.png`, buffer });
   }
 
   static same(any1, any2) {
