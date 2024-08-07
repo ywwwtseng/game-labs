@@ -5,7 +5,7 @@ import { BaseButton } from '@/components/ui/BaseButton';
 import { Text } from '@/components/ui/Text';
 import { CloseIcon } from '@/components/icon/CloseIcon';
 import { SpriteSheetIcon } from '@/components/icon/SpriteSheetIcon';
-import { SpriteToolGallery } from '@/components/common/SpriteTool/SpriteToolGallery';
+import { SpriteToolGallery } from '@/components/common/CreationToolBar/SpriteTool/SpriteToolGallery';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
 
@@ -25,7 +25,7 @@ function SpriteTool({ origin, onClose }) {
     <Menu ref={menuRef} origin={origin}>
       <Menu.Header>
         <div className="flex items-center self-center text-xs whitespace-nowrap text-white mr-auto">
-          <SpriteSheetIcon size={4} />
+          <SpriteSheetIcon />
           <div className="ml-0.5">
             Sprite Palette
           </div>

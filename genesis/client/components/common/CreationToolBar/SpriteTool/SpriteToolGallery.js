@@ -1,11 +1,11 @@
 import cx from 'classnames';
-import { SpriteToolPalette } from '@/components/common/SpriteTool/SpriteToolPalette';
+import { SpriteToolPalette } from '@/components/common/CreationToolBar/SpriteTool/SpriteToolPalette';
 
 function SpriteToolGallery({ selectedSource, spriteSheets, onClick }) {
   return (
     <div
       className={cx('p-2', {
-        'max-h-[224px] h-[224px] overflow-y-scroll no-scrollbar':
+        'max-h-[224px] h-[224px] min-w-[224px] overflow-y-scroll no-scrollbar':
           !selectedSource,
       })}
       style={
@@ -26,7 +26,7 @@ function SpriteToolGallery({ selectedSource, spriteSheets, onClick }) {
         {Object.values(spriteSheets).map((spriteSheet) => (
           <div
             key={spriteSheet.source}
-            className='cursor-pointer bg-[#353535]'
+            className="cursor-pointer bg-[#353535]"
             onClick={() => onClick(spriteSheet.source === selectedSource ? null : spriteSheet.source)}
           >
             <img
