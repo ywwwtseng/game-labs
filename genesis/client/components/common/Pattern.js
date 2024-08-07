@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import cx from 'classnames';
 import { useSelector } from 'react-redux';
 import { Draggable } from '@/containers/Draggable';
 import { CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { Text } from '@/components/ui/Text';
 import { MatrixUtil } from '@/utils/MatrixUtil';
-import { contain } from '@/helpers/BoundingBox';
+import { contain, overlaps } from '@/helpers/BoundingBox';
 import { selectedIsDrawMode } from '@/features/appState/appStateSlice';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 
-function Pattern({ pattern }) {
+function Pattern({ pattern, draggable = false, className }) {
   const spriteSheets = useSpriteSheets();
   const ref = useRef(null);
   const sizeIndex = useMemo(() => {
@@ -42,14 +43,27 @@ function Pattern({ pattern }) {
     [sizeIndex, tiles, spriteSheets, pattern.tiles],
   );
 
+  const canDrop = useCallback(({ iconEl }) => {
+    if (iconEl && contain(iconEl, { in: 'canvas' })) {
+      if (draggable?.dragArea && overlaps(iconEl, draggable?.dragArea)) {
+        return false;
+      }
+
+      return true;
+    }
+
+    return false;
+  }, []);
+
   useEffect(() => {
     const ctx = ref.current.getContext('2d');
     ctx.drawImage(buffer, 0, 0, size.x, size.y);
   }, [buffer]);
 
   return (
-    <div className="w-16 h-16 flex items-center justify-center cursor-pointer">
+    <div className={cx('w-16 h-16 flex items-center justify-center cursor-pointer', className)}>
       <Draggable
+        disabled={!Boolean(draggable)}
         data={{
           type: 'pattern',
           pattern,
@@ -64,16 +78,10 @@ function Pattern({ pattern }) {
             return canvas;
           },
         }}
-        beforeDrop={(_, { iconEl }) =>
-          iconEl && contain(iconEl, { in: 'canvas' })
+        beforeDrop={(_, { iconEl }) => {
+          return canDrop({ iconEl });
         }
-        onMove={(_, { iconEl }) => {
-          if (iconEl) {
-            iconEl.style.opacity = contain(iconEl, { in: 'canvas' })
-              ? 1
-              : 0.5;
-          }
-        }}
+        }
       >
         <canvas ref={ref} width={size.x} height={size.y} />
       </Draggable>

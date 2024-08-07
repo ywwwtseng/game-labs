@@ -3,8 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AreaHeader } from '@/components/common/AreaHeader';
 import { OperableItem } from '@/components/common/OperableItem';
 import { BaseButton } from '@/components/ui/BaseButton';
-// import { LayersIcon } from '@/components/icon/LayersIcon';
-import { PlusIcon } from '@/components/icon/PlusIcon';
+import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { GlobalIcon } from '@/components/icon/GlobalIcon';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
 import { addLayer, selectLayer } from '@/features/appState/appStateSlice';
@@ -26,7 +25,7 @@ function GameStructureView() {
         label="World"
         actions={[
           <BaseButton key="new-scene">
-            <PlusIcon />
+            <CirclePlusIcon />
           </BaseButton>,
         ]}
       />
@@ -34,6 +33,7 @@ function GameStructureView() {
         {scenes.map((scene) => (
           <React.Fragment key={scene.name}>
             <OperableItem
+              className="px-1"
               checkIcon
               selected={selectedScene === scene.name}
               // onClick={() =>
@@ -43,6 +43,7 @@ function GameStructureView() {
             />
             {scene.layers.map((layer, index) => (
               <OperableItem
+                className="px-1"
                 key={`${scene.name}-layer-${index}`}
                 className="pl-6"
                 label={

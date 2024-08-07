@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { FileInput } from '@/components/ui/FileInput';
 import { AreaHeader } from '@/components/common/AreaHeader';
-import { PlusIcon } from '@/components/icon/PlusIcon';
+import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { GridIcon } from '@/components/icon/GridIcon';
 import { GameStructureView } from '@/components/common/EditGameSettingsView/GameStructureView';
 import { OperableItem } from '@/components/common/OperableItem';
@@ -72,13 +72,14 @@ function EditGameSettingsView() {
                 console.error('Error uploading image:', error);
               }
             }}>
-            <PlusIcon />
+            <CirclePlusIcon />
           </FileInput>,
         ],
         list: () => (
           <div className="flex-1 overflow-y-scroll no-scrollbar">
             {Object.values(spriteSheets).map((spriteSheet) => (
               <OperableItem
+                className="px-1"
                 key={spriteSheet.source}
                 checkIcon
                 selected={selected === spriteSheet.source}
@@ -111,6 +112,7 @@ function EditGameSettingsView() {
         label: 'Patterns',
         list: () => (
           <OperableItem
+            className="px-1"
             key="all"
             checkIcon
             selected

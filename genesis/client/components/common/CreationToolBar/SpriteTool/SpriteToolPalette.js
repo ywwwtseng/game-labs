@@ -22,13 +22,6 @@ function SpriteToolPalette({ spriteSheet, defaultSelected }) {
       beforeDrop: (_, { iconEl }) =>
         iconEl && contain(iconEl, { in: 'canvas' })
       ,
-      onMove: (_, { iconEl }) => {
-        if (iconEl) {
-          iconEl.style.opacity = contain(iconEl, { in: 'canvas' })
-            ? 1
-            : 0.5;
-        }
-      }
     },
     icon: {
       display: (_, { rect }) => {

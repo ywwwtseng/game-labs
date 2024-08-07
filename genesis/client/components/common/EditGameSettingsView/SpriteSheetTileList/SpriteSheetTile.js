@@ -34,6 +34,7 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
 
   return (
     <OperableItem
+      className="px-1"
       label={
         <Draggable
           disabled={isDrawMode}
@@ -52,13 +53,6 @@ function SpriteSheetTile({ spriteSheet, index, width = 16, height = 16 }) {
           beforeDrop={(_, { iconEl }) =>
             iconEl && contain(iconEl, { in: 'canvas' })
           }
-          onMove={(_, { iconEl }) => {
-            if (iconEl) {
-              iconEl.style.opacity = contain(iconEl, { in: 'canvas' })
-                ? 1
-                : 0.5;
-            }
-          }}
         >
           <canvas ref={ref} width={width} height={height} />
         </Draggable>

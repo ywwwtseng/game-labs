@@ -43,6 +43,13 @@ function useDragAndDrop({
 
     if (delta) {
       onMove?.(event, { delta, iconEl: iconElRef.current });
+
+      if (iconElRef.current && beforeDrop) {
+        iconElRef.current.style.opacity = beforeDrop(event, { iconEl: iconElRef.current })
+          ? 1
+          : 0.5;
+      }
+      
     }
   }, []);
 

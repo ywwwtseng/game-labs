@@ -14,7 +14,7 @@ function PatternTool({ origin, onClose }) {
   const patterns = usePatterns();
 
   return (
-    <Menu origin={origin}>
+    <Menu origin={origin} id="pattern-tool">
       <Menu.Header>
         <div className="flex items-center self-center text-xs whitespace-nowrap text-white mr-auto">
           <BoxIcon />
@@ -33,7 +33,7 @@ function PatternTool({ origin, onClose }) {
           className="grid grid-cols-3 gap-2 grid-rows-3"
         >
           {patterns?.map((pattern) => (
-            <Pattern key={pattern.id} pattern={pattern} />
+            <Pattern draggable={{ dragArea: 'pattern-tool' }} key={pattern.id} pattern={pattern} />
           ))}
         </div>
       </div>
