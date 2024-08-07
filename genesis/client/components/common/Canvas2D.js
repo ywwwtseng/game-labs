@@ -14,6 +14,14 @@ export const CANVAS_LAYER = {
       height + 1,
     ),
   }),
+  OBJECT2D_LAYERS: ({ layers, width, height }) => ({
+    name: 'OBJECT2D_LAYERS',
+    buffer: CanvasUtil.createObject2DLayerBuffer(
+      layers,
+      width + 1,
+      height + 1,
+    ),
+  }),
 };
 
 function Canvas2D({
@@ -32,7 +40,11 @@ function Canvas2D({
     CanvasUtil.clear(ctx);
 
     layers.forEach((layer) => {
-      ctx.drawImage(layer.buffer, 0, 0);
+      if (layer.buffer) {
+        ctx.drawImage(layer.buffer, 0, 0);
+      } else if (typeof layer === 'function') {
+        layer(ctx);
+      }
     });
 
     if (cache) {

@@ -11,11 +11,15 @@ function LandCanvas() {
   const land = useSelector(selectedLand);
   const spriteSheets = useSpriteSheets();
   const object2ds = useObject2Ds();
-
   const layers = useMemo(
     () => [
       CANVAS_LAYER.SPRITE_LAYERS({
-        layers: CanvasUtil.createSpriteLayers({ land, spriteSheets, object2ds }),
+        layers: CanvasUtil.createSpriteLayers({ land, spriteSheets }),
+        width: land.width,
+        height: land.height,
+      }),
+      CANVAS_LAYER.OBJECT2D_LAYERS({
+        layers: CanvasUtil.createObject2DLayers({ land, spriteSheets, object2ds }),
         width: land.width,
         height: land.height,
       }),

@@ -201,8 +201,8 @@ class CanvasUtil {
     });
   }
 
-  static createSpriteLayers({ land, spriteSheets, object2ds }) {
-    if (Object.keys(spriteSheets).length === 0 || object2ds.length === 0) {
+  static createSpriteLayers({ land, spriteSheets }) {
+    if (Object.keys(spriteSheets).length === 0) {
       return [];
     }
 
@@ -218,6 +218,17 @@ class CanvasUtil {
             }
           });
         }),
+      };
+    });
+  }
+
+  static createObject2DLayers({ land, spriteSheets, object2ds }) {
+    if (Object.keys(spriteSheets).length === 0 || object2ds.length === 0) {
+      return [];
+    }
+
+    return land.layers.map((layer) => {
+      return {
         object2ds: layer.object2ds.reduce((acc, { id: object2d_id, rect: object2d_rect }) => {
           const object2d = object2ds.find(({ id }) => id === object2d_id);
 
@@ -249,8 +260,14 @@ class CanvasUtil {
   static createSpriteLayerBuffer(layers, width, height) {
     return CanvasUtil.createBuffer(width, height, (ctx) => {
       layers.forEach((layer) => {
-        CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);
+        CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);        
+      });
+    });
+  }
 
+  static createObject2DLayerBuffer(layers, width, height) {
+    return CanvasUtil.createBuffer(width, height, (ctx) => {
+      layers.forEach((layer) => {
         if (layer.object2ds) {
           layer.object2ds.order.forEach((object2d) => {
             const tilesBuffer = layer.object2ds.buffer[object2d.id].frames?.[0] || layer.object2ds.buffer[object2d.id];
@@ -260,8 +277,6 @@ class CanvasUtil {
             });
           });
         }
-
-        
       });
     });
   }
