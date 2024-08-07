@@ -224,9 +224,11 @@ class CanvasUtil {
           
           if (!acc.buffer[object2d.id]) {
             if (Object2DUtil.hasAnimation(object2d)) {
-              acc.buffer[object2d.id] = object2d.frames.map((tiles) => {
-                return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
-              });
+              acc.buffer[object2d.id] = {
+                frames: object2d.frames.map((tiles) => {
+                  return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
+                })
+              };
             } else {
 
               acc.buffer[object2d.id] = CanvasUtil.transferTilesToBuffer({ tiles: object2d.tiles, spriteSheets });
@@ -251,11 +253,7 @@ class CanvasUtil {
 
         if (layer.object2ds) {
           layer.object2ds.order.forEach((object2d) => {
-            const tilesBuffer = MatrixUtil.isMatrix(layer.object2ds.buffer[object2d.id])
-              ? layer.object2ds.buffer[object2d.id] 
-              : layer.object2ds.buffer[object2d.id][0];
-
-            const size = MatrixUtil.sizeIndex(tilesBuffer);
+            const tilesBuffer = layer.object2ds.buffer[object2d.id].frames?.[0] || layer.object2ds.buffer[object2d.id];
             CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, {
               x: object2d.rect[0],
               y: object2d.rect[1],

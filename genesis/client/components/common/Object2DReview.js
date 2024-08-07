@@ -5,12 +5,10 @@ import { CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { contain, overlaps } from '@/helpers/BoundingBox';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { Object2DUtil } from '@/utils/Object2DUtil';
 
-function Object2DReview({ object2d, draggable = false, className }) {
+function Object2DReview({ object2d, tiles, draggable = false, className }) {
   const spriteSheets = useSpriteSheets();
   const ref = useRef(null);
-  const tiles = Object2DUtil.tiles(object2d);
 
   const sizeIndex = useMemo(() => {
     return MatrixUtil.sizeIndex(tiles);

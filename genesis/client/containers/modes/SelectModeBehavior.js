@@ -56,7 +56,7 @@ function SelectModeBehavior({ children }) {
 
   const inputMapping = useMemo(
     () => ({
-      [P_KEY]: () => {
+      [P_KEY]: (event) => {
         if (bufferRef.current.default || genesisRef.current.default) {
           return;
         }
@@ -68,6 +68,7 @@ function SelectModeBehavior({ children }) {
         if (selector.mode !== SELECT_MODE.TILE) {
           return;
         }
+
 
         const notEmptyTiles = CanvasUtil.cloneLandSelectedTiles(selector.rect.default, land)
           .some((column) => column.some((tile) => tile?.length > 0));

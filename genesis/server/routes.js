@@ -2,7 +2,7 @@ import upload from './middlewares/upload.js';
 import SpritesController from './controllers/sprites_controller.js';
 import Object2DController from './controllers/object2ds_controller.js';
 
-const routes = (app, db) => {
+const routes = (app) => {
   // sprites
   app.post('/api/sprites/create', upload.single('image'), SpritesController.create);
   app.get('/api/sprites', SpritesController.get);
@@ -11,6 +11,7 @@ const routes = (app, db) => {
   app.post('/api/object2ds', Object2DController.create);
   app.post('/api/object2ds/:id/anim/enable', Object2DController.enableAnim);
   app.post('/api/object2ds/:id/anim/disable', Object2DController.disableAnim);
+  app.post('/api/object2ds/:id/anim/frame', Object2DController.addAnimFrame);
 };
 
 export default routes;

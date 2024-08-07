@@ -1,14 +1,10 @@
-import { useRef, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Menu } from '@/components/ui/Menu';
 import { BaseButton } from '@/components/ui/BaseButton';
-import { Text } from '@/components/ui/Text';
 import { CloseIcon } from '@/components/icon/CloseIcon';
 import { BoxIcon } from '@/components/icon/BoxIcon';
-import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
 import { Object2DReview } from '@/components/common/Object2DReview';
 import { useObject2Ds } from '@/queries/useObject2Ds';
-import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { Object2DUtil } from '@/utils/Object2DUtil';
 
 function Object2DTool({ origin, onClose }) {
   const object2ds = useObject2Ds();
@@ -33,7 +29,12 @@ function Object2DTool({ origin, onClose }) {
           className="grid grid-cols-3 gap-2 grid-rows-3"
         >
           {object2ds?.map((object2d) => (
-            <Object2DReview draggable={{ dragArea: 'object2d-tool' }} key={object2d.id} object2d={object2d} />
+            <Object2DReview 
+              key={object2d.id}
+              object2d={object2d}
+              tiles={Object2DUtil.tiles(object2d)}
+              draggable={{ dragArea: 'object2d-tool' }}
+            />
           ))}
         </div>
       </div>
