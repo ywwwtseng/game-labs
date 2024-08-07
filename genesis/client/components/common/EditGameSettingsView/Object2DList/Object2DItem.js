@@ -10,13 +10,13 @@ import { DomUtil } from '@/utils/DomUtil';
 import { PlusIcon } from '@/components/icon/PlusIcon';
 import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { CircleMinusIcon } from '@/components/icon/CircleMinusIcon';
-import { Object2D } from '@/utils/Object2D';
+import { Object2DUtil } from '@/utils/Object2DUtil';
 
 function Object2DItem({ object2d }) {
   const { open, toggle } = useAnchor();
   const { trigger: enableAnim } = useMutation(`/api/object2ds/${object2d.id}/anim/enable`, ['/api/object2ds']);
   const { trigger: disableAnim } = useMutation(`/api/object2ds/${object2d.id}/anim/disable`, ['/api/object2ds']);
-  const hasAnimation = Object2D.hasAnimation(object2d);
+  const hasAnimation = Object2DUtil.hasAnimation(object2d);
 
   return (
     <OperableItem

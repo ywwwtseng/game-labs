@@ -4,7 +4,7 @@ import { MatrixUtil } from '@/utils/MatrixUtil';
 import { DomUtil } from '@/utils/DomUtil';
 import { Vec2Util } from '@/utils/Vec2Util';
 import { overlaps, contain } from '@/helpers/BoundingBox';
-import { Object2D } from '@/utils/Object2D';
+import { Object2DUtil } from '@/utils/Object2DUtil';
 
 class CanvasUtil {
   static get transparent() {
@@ -221,7 +221,7 @@ class CanvasUtil {
         object2ds: layer.object2ds.reduce((acc, { id: object2d_id, rect: object2d_rect }) => {
           const object2d = object2ds.find(({ id }) => id === object2d_id);
           if (!acc.buffer[object2d.id]) {
-            if (Object2D.hasAnimation(object2d)) {
+            if (Object2DUtil.hasAnimation(object2d)) {
               acc.buffer[object2d.id] = object2d.frames.map((tiles) => {
                 return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
               });

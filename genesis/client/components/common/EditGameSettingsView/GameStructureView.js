@@ -13,10 +13,7 @@ function GameStructureView() {
   const land = useSelector((state) => state.appState.land);
   const dispatch = useDispatch();
   const lands = [land];
-  const [selectedLand, selectLand] = useLocalStorage(
-    'selected:land',
-    lands[0].name,
-  );
+  const [selectedLand, selectLand] = useLocalStorage('selected:land', lands[0].name);
 
   return (
     <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828]">

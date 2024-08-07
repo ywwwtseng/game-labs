@@ -4,7 +4,7 @@ import * as drawMode from '@/features/drawMode/drawModeSlice';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { MODE } from '@/constants';
-import { Object2D } from '@/utils/Object2D';
+import { Object2DUtil } from '@/utils/Object2DUtil';
 
 export const setMode = createAsyncThunk(
   'appState/setMode',
@@ -66,7 +66,7 @@ export const drawObject2D = createAsyncThunk(
   async (T, { dispatch }) => {
     try {
       if (T.event && T.object2d) {
-        const rect = Object2D.getRect(T.object2d);
+        const rect = Object2DUtil.getRect(T.object2d);
         const pos = CanvasUtil.getDraggedIconPosition(T.event, rect, { x: 8, y: 8 });
         const index = CanvasUtil.positionToIndex(pos);
   

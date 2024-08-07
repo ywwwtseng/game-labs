@@ -1,19 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import cx from 'classnames';
-import { useSelector } from 'react-redux';
 import { Draggable } from '@/containers/Draggable';
 import { CANVAS_LAYER } from '@/components/common/Canvas2D';
-import { Text } from '@/components/ui/Text';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { contain, overlaps } from '@/helpers/BoundingBox';
-import { selectedIsDrawMode } from '@/features/appState/appStateSlice';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { Object2D } from '@/utils/Object2D';
+import { Object2DUtil } from '@/utils/Object2DUtil';
 
 function Object2DReview({ object2d, draggable = false, className }) {
   const spriteSheets = useSpriteSheets();
   const ref = useRef(null);
-  const tiles = Object2D.tiles(object2d);
+  const tiles = Object2DUtil.tiles(object2d);
 
   const sizeIndex = useMemo(() => {
     return MatrixUtil.sizeIndex(tiles);

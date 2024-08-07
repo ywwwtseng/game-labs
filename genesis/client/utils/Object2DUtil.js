@@ -1,8 +1,8 @@
 import { MatrixUtil } from '@/utils/MatrixUtil';
 
-class Object2D {
+class Object2DUtil {
   static getRect(object) {
-    return [0, 0, ...MatrixUtil.sizeIndex(Object2D.tiles(object))];
+    return [0, 0, ...MatrixUtil.sizeIndex(Object2DUtil.tiles(object))];
   }
 
   static hasAnimation(object) {
@@ -10,7 +10,7 @@ class Object2D {
   }
 
   static tiles(object) {
-    if (Object2D.hasAnimation(object)) {
+    if (Object2DUtil.hasAnimation(object)) {
       return object.frames[0];
     } else {
       return object.tiles;
@@ -18,4 +18,4 @@ class Object2D {
   }
 }
 
-export { Object2D };
+export { Object2DUtil };
