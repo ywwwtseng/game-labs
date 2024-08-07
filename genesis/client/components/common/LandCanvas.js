@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
-import { MatrixUtil } from '@/utils/MatrixUtil';
 import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { useObject2Ds } from '@/hooks/useObject2Ds';
+import { useObject2Ds } from '@/queries/useObject2Ds';
 import { CanvasUtil } from '@/utils/CanvasUtil';
+import { selectedLand } from '@/features/appState/appStateSlice';
 
 function LandCanvas() {
-  const land = useSelector((state) => state.appState.land);
+  const land = useSelector(selectedLand);
   const spriteSheets = useSpriteSheets();
   const object2ds = useObject2Ds();
 

@@ -561,6 +561,35 @@
         ]
       ],
       "frames": null
+    },
+    {
+      "id": "object2d_1723039153222",
+      "name": "FireStand",
+      "tiles": null,
+      "frames": [
+        [
+          [
+            [
+              {
+                "index": [
+                  17,
+                  28
+                ],
+                "source": "sprites_1722165371808"
+              }
+            ],
+            [
+              {
+                "index": [
+                  17,
+                  29
+                ],
+                "source": "sprites_1722165371808"
+              }
+            ]
+          ]
+        ]
+      ]
     }
   ],
   "sprites": [

@@ -1,6 +1,7 @@
 const Object2DController = {
   async create(req, res) {
     await req.db.update(({ object2ds }) => {
+      console.log( req.body)
       object2ds.push({
         id: `object2d_${Date.now()}`,
         name: req.body.name,

@@ -1,4 +1,3 @@
-import range from 'lodash-es/range';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { DomUtil } from '@/utils/DomUtil';
@@ -173,7 +172,7 @@ class CanvasUtil {
 
   static drawTilesOnCanvas(ctx, tile, offset = { x: 0, y: 0 }) {
     MatrixUtil.traverse(tile, ({ value, x, y }) => {
-      if (value.buffer) {
+      if (value?.buffer) {
         CanvasUtil.drawBufferOnCanvas(
           ctx,
           value.buffer,
@@ -181,6 +180,7 @@ class CanvasUtil {
           offset.y + y
         );
       } else if (Array.isArray(value)) {
+
         value.forEach((tile) => {
           CanvasUtil.drawBufferOnCanvas(
             ctx,
@@ -198,7 +198,7 @@ class CanvasUtil {
       return tileItems?.map((tile) => ({
         buffer: spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
       }));
-    })
+    });
   }
 
   static createSpriteLayers({ land, spriteSheets, object2ds }) {
@@ -220,13 +220,16 @@ class CanvasUtil {
         }),
         object2ds: layer.object2ds.reduce((acc, { id: object2d_id, rect: object2d_rect }) => {
           const object2d = object2ds.find(({ id }) => id === object2d_id);
+
+          
           if (!acc.buffer[object2d.id]) {
             if (Object2DUtil.hasAnimation(object2d)) {
               acc.buffer[object2d.id] = object2d.frames.map((tiles) => {
                 return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
               });
             } else {
-              acc.buffer[object2d.id] = CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
+
+              acc.buffer[object2d.id] = CanvasUtil.transferTilesToBuffer({ tiles: object2d.tiles, spriteSheets });
             }
           }
 
@@ -248,7 +251,11 @@ class CanvasUtil {
 
         if (layer.object2ds) {
           layer.object2ds.order.forEach((object2d) => {
-            const tilesBuffer = layer.object2ds.buffer[object2d.id][0] || layer.object2ds.buffer[object2d.id]
+            const tilesBuffer = MatrixUtil.isMatrix(layer.object2ds.buffer[object2d.id])
+              ? layer.object2ds.buffer[object2d.id] 
+              : layer.object2ds.buffer[object2d.id][0];
+
+            const size = MatrixUtil.sizeIndex(tilesBuffer);
             CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, {
               x: object2d.rect[0],
               y: object2d.rect[1],

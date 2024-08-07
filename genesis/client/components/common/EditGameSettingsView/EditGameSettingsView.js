@@ -9,20 +9,18 @@ import { OperableItem } from '@/components/common/OperableItem';
 import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
 import { SpriteSheetTileList } from '@/components/common/EditGameSettingsView/SpriteSheetTileList/SpriteSheetTileList';
 import { Object2DList } from '@/components/common/EditGameSettingsView/Object2DList/Object2DList';
-import {
-  useSpriteSheets,
-  useUpdateSpriteSheets,
-} from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useDropdownState } from '@/hooks/useDropdownState';
 import { LoaderUtil } from '@/utils/LoaderUtil';
 import { ImageUtil } from '@/utils/ImageUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { CanvasUtil } from '@/utils/CanvasUtil';
+import { useCreateSprite } from '@/mutations/useCreateSprite';
 
 function EditGameSettingsView() {
   const spriteSheets = useSpriteSheets();
-  const updateSpriteSheets = useUpdateSpriteSheets();
+  const createSprite = useCreateSprite();
   const [selected, setSelected] = useLocalStorage('selected:spritesheet_or_object2d');
 
   const { selectedOption, register } = useDropdownState({
@@ -58,19 +56,7 @@ function EditGameSettingsView() {
               formData.append('image', file);
               formData.append('transparent', transparent);
           
-              try {
-                const response = await fetch('/api/sprites/create', {
-                  method: 'POST',
-                  body: formData,
-                });
-          
-                const result = await response.json();
-                if (result.ok) {
-                  updateSpriteSheets();
-                }
-              } catch (error) {
-                console.error('Error uploading image:', error);
-              }
+              createSprite.mutate(formData);
             }}>
             <CirclePlusIcon />
           </FileInput>,

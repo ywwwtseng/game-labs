@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import fs from 'fs';
 import bodyParser from 'body-parser';
 import { fileURLToPath } from 'url';
 import { JSONFilePreset } from 'lowdb/node';

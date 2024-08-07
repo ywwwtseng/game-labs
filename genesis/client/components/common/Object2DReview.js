@@ -63,7 +63,7 @@ function Object2DReview({ object2d, draggable = false, className }) {
   }, [buffer]);
 
   return (
-    <div className={cx('w-16 h-16 flex items-center justify-center cursor-pointer', className)}>
+    <div className={cx('w-16 h-16 flex items-center justify-center cursor-pointer bg-[#353535]', className)}>
       <Draggable
         disabled={!Boolean(draggable)}
         data={{

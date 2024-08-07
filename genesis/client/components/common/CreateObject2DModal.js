@@ -1,25 +1,19 @@
 import { useMemo, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Modal } from '@/components/ui/Modal';
 import { BaseInput } from '@/components/ui/BaseInput';
-import { Text } from '@/components/ui/Text';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { selectedLand } from '@/features/appState/appStateSlice';
-import {
-  useSpriteSheets,
-  useUpdateSpriteSheets,
-} from '@/context/SpriteSheetContext';
-import { AlertIcon } from '@/components/icon/AlertIcon';
-import { useMutation } from '@/hooks/useMutation';
-import { ArrayUtil } from '@/utils/ArrayUtil';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { selectedSelectModeSelectorRectDefault } from '@/features/selectMode/selectModeSlice';
+import { useCreateObject2D } from '@/mutations/useCreateObject2D';
 
 function CreateObject2DModal() {
   const land = useSelector(selectedLand);
   const selectedRect = useSelector(selectedSelectModeSelectorRectDefault);
   const spriteSheets = useSpriteSheets();
-  const updateSpriteSheets = useUpdateSpriteSheets();
+  const createObject2D = useCreateObject2D();
 
   const [name, setName] = useState('');
   const [type, setType] = useState('');
@@ -44,8 +38,6 @@ function CreateObject2DModal() {
     ],
     [selectedRect, tiles],
   );
-
-  const { trigger } = useMutation('/api/object2ds');
 
   const disabled = !name.trim();
 
@@ -83,13 +75,11 @@ function CreateObject2DModal() {
               ({ tile }) => (tile ? { index: tile.index, source: tile.source } : null),
             );
 
-            const res = await trigger({
+            createObject2D.mutate({
               name,
               type,
               tiles,
             });
-
-            updateSpriteSheets();
           }}
         >
           Create

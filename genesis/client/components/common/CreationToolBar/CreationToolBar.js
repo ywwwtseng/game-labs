@@ -10,7 +10,7 @@ import { Object2DTool } from '@/components/common/CreationToolBar/Object2DTool/O
 import { setMode } from '@/features/appState/appStateSlice';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { MODE } from '@/constants';
-import { useObject2Ds } from '@/hooks/useObject2Ds';
+import { useObject2Ds } from '@/queries/useObject2Ds';
 
 function CreationToolBar() {
   const mode = useSelector((state) => state.appState.mode);

@@ -1,4 +1,5 @@
 import multer from 'multer';
+import fs from 'fs';
 
 const MIME_TYPE_MAP = {
   'image/png': 'png',

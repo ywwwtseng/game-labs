@@ -7,7 +7,7 @@ import { CloseIcon } from '@/components/icon/CloseIcon';
 import { BoxIcon } from '@/components/icon/BoxIcon';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
 import { Object2DReview } from '@/components/common/Object2DReview';
-import { useObject2Ds } from '@/hooks/useObject2Ds';
+import { useObject2Ds } from '@/queries/useObject2Ds';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 
 function Object2DTool({ origin, onClose }) {

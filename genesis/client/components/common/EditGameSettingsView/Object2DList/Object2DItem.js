@@ -1,22 +1,23 @@
-import { useState } from 'react';
 import { OperableItem } from '@/components/common/OperableItem';
 import { Text } from '@/components/ui/Text';
 import { Object2DReview } from '@/components/common/Object2DReview';
 import { BaseButton } from '@/components/ui/BaseButton';
 import { AreaHeader } from '@/components/common/AreaHeader';
 import { useAnchor } from '@/hooks/useAnchor';
-import { useMutation } from '@/hooks/useMutation';
 import { DomUtil } from '@/utils/DomUtil';
 import { PlusIcon } from '@/components/icon/PlusIcon';
 import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { CircleMinusIcon } from '@/components/icon/CircleMinusIcon';
 import { Object2DUtil } from '@/utils/Object2DUtil';
+import { useEnableObject2DAnim } from '@/mutations/useEnableObject2DAnim';
+import { useDisableObject2DAnim } from '@/mutations/useDisableObject2DAnim';
 
 function Object2DItem({ object2d }) {
   const { open, toggle } = useAnchor();
-  const { trigger: enableAnim } = useMutation(`/api/object2ds/${object2d.id}/anim/enable`, ['/api/object2ds']);
-  const { trigger: disableAnim } = useMutation(`/api/object2ds/${object2d.id}/anim/disable`, ['/api/object2ds']);
+  const disableObject2DAnim = useDisableObject2DAnim();
+  const enableObject2DAnim = useEnableObject2DAnim();
   const hasAnimation = Object2DUtil.hasAnimation(object2d);
+  console.log(hasAnimation)
 
   return (
     <OperableItem
@@ -37,27 +38,29 @@ function Object2DItem({ object2d }) {
                 actions={[
                   <BaseButton key="create-animation" onClick={() => {
                     if (hasAnimation) {
-                      disableAnim();
+                      disableObject2DAnim.mutate(object2d.id);
                     } else {
-                      enableAnim();
+                      enableObject2DAnim.mutate(object2d.id);
                     }
                   }}>
                     {hasAnimation ? <CircleMinusIcon /> : <CirclePlusIcon />}
                   </BaseButton>
                 ]}
               />
-              <div className="flex p-1 gap-2 overflow-x-scroll no-scrollbar">
-                <div className="flex flex-col">
-                  <Object2DReview
-                    className="rounded"
-                    object2d={object2d}
-                  />
-                  <Text className="mt-0.5">Frame #1</Text>
+              {hasAnimation && (
+                <div className="flex p-1 gap-2 overflow-x-scroll no-scrollbar">
+                  <div className="flex flex-col">
+                    <Object2DReview
+                      className="rounded"
+                      object2d={object2d}
+                    />
+                    <Text className="mt-0.5">Frame #1</Text>
+                  </div>
+                  <div className="min-w-16 h-16 rounded border border-dashed border-white/80 flex items-center justify-center">
+                    <PlusIcon size={5} />
+                  </div>
                 </div>
-                <div className="min-w-16 h-16 rounded border border-dashed border-white/80 flex items-center justify-center">
-                  <PlusIcon size={5} />
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>

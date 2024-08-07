@@ -1,7 +1,5 @@
-import useSWR from 'swr';
 import { Object2DItem } from '@/components/common/EditGameSettingsView/Object2DList/Object2DItem';
-import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { useObject2Ds } from '@/hooks/useObject2Ds';
+import { useObject2Ds } from '@/queries/useObject2Ds';
 
 function Object2DList({ type }) {
   const object2ds = useObject2Ds();

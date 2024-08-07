@@ -8,7 +8,7 @@ import { getBoundingBox } from '@/helpers/BoundingBox';
 import { selectedLand } from '@/features/appState/appStateSlice';
 import { useModal } from '@/context/ModalContext';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { useObject2Ds } from '@/hooks/useObject2Ds';
+import { useObject2Ds } from '@/queries/useObject2Ds';
 import logo from '@/icon.png';
 
 function Navigation() {
