@@ -6,12 +6,12 @@ import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { selectedLand } from '@/features/appState/appStateSlice';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { CanvasUtil } from '@/utils/CanvasUtil';
-import { selectedSelectModeSelectorRectDefault } from '@/features/selectMode/selectModeSlice';
+import { selectedEditModeSelectorRectDefault } from '@/features/editMode/editModeSlice';
 import { useCreateObject2D } from '@/mutations/useCreateObject2D';
 
 function CreateObject2DModal() {
   const land = useSelector(selectedLand);
-  const selectedRect = useSelector(selectedSelectModeSelectorRectDefault);
+  const selectedRect = useSelector(selectedEditModeSelectorRectDefault);
   const spriteSheets = useSpriteSheets();
   const createObject2D = useCreateObject2D();
 

@@ -9,7 +9,7 @@ export const SELECT_MODE = {
 };
 
 export const selectAreaStart = createAsyncThunk(
-  'selectMode/selectAreaStart',
+  'editMode/selectAreaStart',
   async (payload, { dispatch }) => {
     dispatch(selectAreaStartProgcess(Boolean(payload)));
     dispatch(
@@ -22,7 +22,7 @@ export const selectAreaStart = createAsyncThunk(
 );
 
 export const selectArea = createAsyncThunk(
-  'selectMode/selectArea',
+  'editMode/selectArea',
   async (payload, { getState, dispatch }) => {
     const state = getState();
     const land = selectedLand(state);
@@ -43,7 +43,7 @@ export const selectArea = createAsyncThunk(
         forceSelectArea({
           mode: payload.mode || SELECT_MODE.OBJECT_2D_OR_TILE,
           default: payload.default,
-          follows:  payload.follows === KEEP_FOLLOWS ? selectedSelectModeSelectorRectFollows(state) : payload.follows,
+          follows:  payload.follows === KEEP_FOLLOWS ? selectedEditModeSelectorRectFollows(state) : payload.follows,
         })
       );
     } catch (error) {
@@ -64,8 +64,8 @@ const initialState = {
   },
 };
 
-export const selectModeSlice = createSlice({
-  name: 'selectMode',
+export const editModeSlice = createSlice({
+  name: 'editMode',
   initialState,
   reducers: {
     selectAreaStartEnd: () => {},
@@ -110,16 +110,16 @@ export const {
   selectAreaStop,
   selectAreaDefault,
   destroy,
-} = selectModeSlice.actions;
+} = editModeSlice.actions;
 
 export const selectedCursorIndex = (state) =>
-  state.selectMode.selector.cursorIndex;
-export const selectedSelectModeSelector = (state) => state.selectMode.selector;
-export const selectedSelectModeSelectorRect = (state) =>
-  state.selectMode.selector.rect;
-export const selectedSelectModeSelectorRectDefault = (state) =>
-  state.selectMode.selector.rect.default;
-export const selectedSelectModeSelectorRectFollows = (state) =>
-  state.selectMode.selector.rect.follows;
+  state.editMode.selector.cursorIndex;
+export const selectedEditModeSelector = (state) => state.editMode.selector;
+export const selectedEditModeSelectorRect = (state) =>
+  state.editMode.selector.rect;
+export const selectedEditModeSelectorRectDefault = (state) =>
+  state.editMode.selector.rect.default;
+export const selectedEditModeSelectorRectFollows = (state) =>
+  state.editMode.selector.rect.follows;
 
-export default selectModeSlice.reducer;
+export default editModeSlice.reducer;

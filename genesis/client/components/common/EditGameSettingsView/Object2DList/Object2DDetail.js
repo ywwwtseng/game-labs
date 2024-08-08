@@ -79,9 +79,8 @@ function Object2DDetail({ object2d, onClose }) {
         <div className="flex p-1 gap-2 overflow-x-scroll no-scrollbar">
           
           {object2d.frames.map((frame, index) => (
-            <div className="flex flex-col">
+            <div className="flex flex-col" key={`${object2d.id}-frame-${index}`}>
               <Object2DReview
-                key={`${object2d.id}-frame-${index}`}
                 className="rounded"
                 object2d={object2d}
                 tiles={frame}

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import * as selectMode from '@/features/selectMode/selectModeSlice';
+import * as editMode from '@/features/editMode/editModeSlice';
 import * as drawMode from '@/features/drawMode/drawModeSlice';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
@@ -10,7 +10,7 @@ export const setMode = createAsyncThunk(
   'appState/setMode',
   async ({ mode, payload }, { getState, dispatch }) => {
     const lifecycle = {
-      [MODE.SELECT]: selectMode,
+      [MODE.SELECT]: editMode,
       [MODE.DRAW]: drawMode,
     };
 
@@ -116,18 +116,18 @@ export const deleteSelectedElements = createAsyncThunk(
   async (_, { getState, dispatch }) => {
     try {
       const state = getState();
-      const selector = selectMode.selectedSelectModeSelector(state);
+      const selector = editMode.selectedEditModeSelector(state);
 
-      if (selector.mode === selectMode.SELECT_MODE.TILE) {
+      if (selector.mode === editMode.SELECT_MODE.TILE) {
         dispatch(deleteLandTiles(selector.rect.default));
       }
 
-      if (selector.mode === selectMode.SELECT_MODE.OBJECT_2D) {
+      if (selector.mode === editMode.SELECT_MODE.OBJECT_2D) {
         dispatch(
-          selectMode.forceSelectArea({ default: selector.rect.default }),
+          editMode.forceSelectArea({ default: selector.rect.default }),
         );
         dispatch(deleteLandObject2Ds({ rects: selector.rect.follows, completely: true }));
-        dispatch(selectMode.destroy());
+        dispatch(editMode.destroy());
       }
 
     } catch (error) {
@@ -139,7 +139,7 @@ export const deleteSelectedElements = createAsyncThunk(
 );
 
 const initialState = {
-  mode: MODE.SELECT,
+  mode: MODE.EDIT,
   // land: undefined
   land: {
     name: 'Land #1',

@@ -7,12 +7,12 @@ import {
   fillTile,
   drawObject2D,
 } from '@/features/appState/appStateSlice';
-import { SELECT_MODE, selectedSelectModeSelector } from '@/features/selectMode/selectModeSlice';
+import { SELECT_MODE, selectedEditModeSelector } from '@/features/editMode/editModeSlice';
 import { overlaps } from '@/helpers/BoundingBox';
 
 function useDropToDraw({ id }) {
   const dispatch = useDispatch();
-  const selector = useSelector(selectedSelectModeSelector);
+  const selector = useSelector(selectedEditModeSelector);
   const spriteSheets = useSpriteSheets();
   const events = useMemo(
     () => ({

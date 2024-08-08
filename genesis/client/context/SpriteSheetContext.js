@@ -4,20 +4,17 @@ import {
   useState,
   useContext,
 } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderUtil } from '@/utils/LoaderUtil';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { ImageUtil } from '@/utils/ImageUtil';
 import { useSprites } from '@/queries/useSprites';
 
-export const SpriteSheetContext = createContext({ spriteSheets: {}, object2ds: {} });
+export const SpriteSheetContext = createContext({ spriteSheets: {} });
 
 export const SpriteSheetProvider = ({ children }) => {
   const sprites = useSprites()
   const [spriteSheets, setSpriteSheets] = useState({});
-  const [object2ds, setObject2Ds] = useState({});
-
 
   useEffect(() => {
     if (sprites.length > 0) {
@@ -51,7 +48,7 @@ export const SpriteSheetProvider = ({ children }) => {
               };
             });
 
-            acc.spriteSheets[spriteSheet.id] = {
+            acc[spriteSheet.id] = {
               image,
               name: spriteSheet.name,
               source: spriteSheet.id,
@@ -61,17 +58,14 @@ export const SpriteSheetProvider = ({ children }) => {
             };
 
             return acc;
-          }, { spriteSheets: {}, object2ds: {} });
+          }, {});
         })
-        .then(({ spriteSheets, object2ds }) => {
-          setObject2Ds(object2ds);
-          setSpriteSheets(spriteSheets);
-        });
+        .then(setSpriteSheets);
     }
   }, [sprites]);
 
   return (
-    <SpriteSheetContext.Provider value={{ spriteSheets, object2ds }}>
+    <SpriteSheetContext.Provider value={{ spriteSheets }}>
       {children}
     </SpriteSheetContext.Provider>
   );
