@@ -74,7 +74,12 @@ function EditModeBehavior({ children }) {
           .some((column) => column.some((tile) => tile?.length > 0));
 
         if (notEmptyTiles) {
-          openCreateObject2DModal();
+          const tiles = CanvasUtil.cloneLandSelectedTiles(
+            selector.rect.default,
+            land,
+            ({ tile }) => (tile ? { index: tile.index, source: tile.source } : null),
+          );
+          openCreateObject2DModal({ tiles });
         }
       },
       [ARROW_LEFT_KEY]: (event) => {},

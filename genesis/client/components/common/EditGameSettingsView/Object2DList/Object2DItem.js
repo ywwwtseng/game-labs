@@ -6,7 +6,7 @@ import { Object2DUtil } from '@/utils/Object2DUtil';
 import { useAnchor } from '@/hooks/useAnchor';
 
 function Object2DItem({ object2d }) {
-  const { open, toggle } = useAnchor();
+  const { open, toggle } = useAnchor({ identity: 'data-toggle' });
 
   return (
     <OperableItem

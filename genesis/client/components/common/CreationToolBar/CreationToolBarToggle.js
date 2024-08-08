@@ -3,7 +3,7 @@ import { CreationToolBarButton } from '@/components/common/CreationToolBar/Creat
 import { useAnchor } from '@/hooks/useAnchor';
 
 const CreationToolBarToggle = forwardRef(({ menu: Menu, ...props }, ref) => {
-  const { open, bounds, close, toggle } = useAnchor();
+  const { open, bounds, close, toggle } = useAnchor({ identity: 'data-toggle' });
 
   useImperativeHandle(ref, () => ({
     close,

@@ -45,8 +45,8 @@ export const ModalProvider = ({ children }) => {
 export const useModal = (Modal, modalProps = {}) => {
   const { openModal } = useContext(ModalContext);
 
-  const open = useCallback(() => {
-    openModal(<Modal {...modalProps} />);
+  const open = useCallback((props) => {
+    openModal(<Modal {...props} {...modalProps} />);
   }, []);
 
   return {

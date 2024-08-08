@@ -3,9 +3,10 @@ import { getBoundingBox } from '@/helpers/BoundingBox';
 
 const defaultProps = {
   clickAwayListener: false,
+  identity: null,
 };
 
-function useAnchor({ clickAwayListener = false } = defaultProps) {
+function useAnchor({ clickAwayListener = false, identity = null } = defaultProps) {
   const [anchor, setAnchor] = useState(null);
   const close = useCallback((event) => {
     event.preventDefault();
@@ -21,11 +22,15 @@ function useAnchor({ clickAwayListener = false } = defaultProps) {
     event.preventDefault();
     event.stopPropagation();
 
-    setAnchor(
-      event.target.getAttribute('data-toggle')
-        ? event.target
-        : event.target.closest('[data-toggle]'),
-    );
+    if (identity) {
+      setAnchor(
+        event.target.getAttribute(identity) || event.button === 2
+          ? event.target
+          : event.target.closest(`[${identity}]`),
+      );
+    } else {
+      setAnchor(event);
+    }
 
     if (clickAwayListener) {
       window.addEventListener('click', close);

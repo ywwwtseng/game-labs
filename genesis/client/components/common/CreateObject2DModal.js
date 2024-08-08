@@ -1,42 +1,34 @@
 import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Modal } from '@/components/ui/Modal';
 import { BaseInput } from '@/components/ui/BaseInput';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
-import { selectedLand } from '@/features/appState/appStateSlice';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
-import { CanvasUtil } from '@/utils/CanvasUtil';
-import { selectedEditModeSelectorRectDefault } from '@/features/editMode/editModeSlice';
 import { useCreateObject2D } from '@/mutations/useCreateObject2D';
+import { MatrixUtil } from '@/utils/MatrixUtil';
 
-function CreateObject2DModal() {
-  const land = useSelector(selectedLand);
-  const selectedRect = useSelector(selectedEditModeSelectorRectDefault);
-  const spriteSheets = useSpriteSheets();
+function CreateObject2DModal({ tiles }) {
   const createObject2D = useCreateObject2D();
+  const spriteSheets = useSpriteSheets();
+  const size = MatrixUtil.size(tiles);
 
   const [name, setName] = useState('');
   const [type, setType] = useState('');
 
-  const tiles = useMemo(() => {
-    return CanvasUtil.cloneLandSelectedTiles(
-      selectedRect,
-      land,
-      ({ tile }) => {
-        return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[tile?.index?.[1]];
-      },
-    );
-  }, [selectedRect, land]);
-
   const layers = useMemo(
     () => [
       CANVAS_LAYER.SPRITE_LAYERS({
-        layers: [{ tiles }],
-        width: selectedRect[2] * 16,
-        height: selectedRect[3] * 16,
+        layers: [{ 
+          tiles: MatrixUtil.create(tiles, ({ value: tileItems }) => {
+            return tileItems.map((tile) => {
+              return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[tile?.index?.[1]];
+            });
+          })
+        }],
+        width: size.x,
+        height: size.y,
       }),
     ],
-    [selectedRect, tiles],
+    [tiles],
   );
 
   const disabled = !name.trim();
@@ -48,8 +40,8 @@ function CreateObject2DModal() {
         <div>
           <Canvas2D
             layers={layers}
-            width={selectedRect[2] * 16}
-            height={selectedRect[3] * 16}
+            width={size.x}
+            height={size.y}
           />
         </div>
         <div className="pl-2">
@@ -69,12 +61,6 @@ function CreateObject2DModal() {
         <Modal.Action
           disabled={disabled}
           onClick={async () => {
-            const tiles = CanvasUtil.cloneLandSelectedTiles(
-              selectedRect,
-              land,
-              ({ tile }) => (tile ? { index: tile.index, source: tile.source } : null),
-            );
-
             createObject2D.mutate({
               name,
               type,

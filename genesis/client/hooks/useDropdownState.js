@@ -2,7 +2,7 @@ import { useAnchor } from '@/hooks/useAnchor';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 function useDropdownState({ key, options, value, onChange }) {
-  const { open, toggle } = useAnchor({ clickAwayListener: true });
+  const { open, toggle } = useAnchor({ clickAwayListener: true, identity: 'data-toggle' });
   const [selected, setSelected] = useLocalStorage(key, value || options[0].id);
   const selectedOption = options.find((option) => option.id === selected);
 

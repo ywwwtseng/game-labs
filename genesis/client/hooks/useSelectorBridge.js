@@ -18,6 +18,7 @@ function useSelectorBridge({
   onMoveDown = () => {},
   onMoveDownEnd = () => {},
   onSelected = () => {},
+  onRightButtonClick = () => {},
 }) {
   const isPressRef = useRef(false);
   const hasMoveDownBehaviorRef = useRef(false);
@@ -40,6 +41,16 @@ function useSelectorBridge({
 
   const onMouseDown = useCallback(
     (event) => {
+      if (event.button === 2) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (contain(event, { in: { rect: selector.rect.default, with: canvasId } })) {
+          onRightButtonClick?.(event, selector.rect.default);
+        }
+        return;
+      }
+
       if (draggable && selector.rect.default) {
         const group =
           !selector.rect.follows || selector.rect.follows.length === 0

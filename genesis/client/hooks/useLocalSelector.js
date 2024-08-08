@@ -10,6 +10,7 @@ function useLocalSelector({
   dragAndDrop = false,
   icon = null,
   onSelected = () => {},
+  onRightButtonClick = () => {},
 }) {
   const [state, setState] = useState({
     cursorIndex: null,
@@ -66,6 +67,7 @@ function useLocalSelector({
     selectAreaStop,
     setCursorIndex,
     onSelected,
+    onRightButtonClick,
   });
 }
 

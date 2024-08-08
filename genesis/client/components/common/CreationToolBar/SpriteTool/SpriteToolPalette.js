@@ -3,9 +3,12 @@ import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { useLocalSelector } from '@/hooks/useLocalSelector';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { contain } from '@/helpers/BoundingBox';
+import { useAnchor } from '@/hooks/useAnchor';
+import { SpriteToolPaletteRightMenu } from '@/components/common/CreationToolBar/SpriteTool/SpriteToolPaletteRightMenu';
 
 function SpriteToolPalette({ spriteSheet, defaultSelected }) {
   const canvasId = `spriteSheet-${spriteSheet.source}`;
+  const { open, bounds, toggle } = useAnchor({ clickAwayListener: true });
   const { selector, register, connect } = useLocalSelector({
     defaultSelected,
     canvasId,
@@ -32,6 +35,9 @@ function SpriteToolPalette({ spriteSheet, defaultSelected }) {
         return CanvasUtil.drawSelected(rect, spriteSheet);
       },
     },
+    onRightButtonClick: (event) => {
+      toggle(event);
+    }
   });
 
   const layers = useMemo(
@@ -70,6 +76,13 @@ function SpriteToolPalette({ spriteSheet, defaultSelected }) {
         height={spriteSheet.image.naturalHeight}
         {...connect}
       />
+      {open && (
+        <SpriteToolPaletteRightMenu
+          style={{ left: bounds.pos.x, top: bounds.pos.y }}
+          spriteSheet={spriteSheet}
+          selectedRect={selector.rect.default}
+        />
+      )}
     </div>
   );
 }
