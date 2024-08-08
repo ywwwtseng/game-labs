@@ -83,7 +83,7 @@ function Object2DDetail({ object2d, onClose }) {
                 object2d={object2d}
                 tiles={frame}
               />
-              <Text className="mt-0.5">{`Frame #${index}`}</Text>
+              <Text className="mt-0.5">{`Frame #${index + 1}`}</Text>
             </div>
           ))}
           <div className="min-w-16 h-16 rounded border border-dashed border-white/80 flex items-center justify-center">

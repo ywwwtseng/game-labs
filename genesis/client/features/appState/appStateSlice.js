@@ -242,6 +242,22 @@ export const appStateSlice = createSlice({
         state.land.layers[layerIndex].tiles[x][y] = tiles[index.x][index.y];
       });
     },
+    flatSelectedTiles: (state, action) => {
+      const layerIndex = state.land.selectedLayerIndex;
+      const { rect } = action.payload;
+
+      MatrixUtil.traverse(rect, (_, { x, y }) => {
+        if (!state.land.layers[layerIndex].tiles[x]) {
+          state.land.layers[layerIndex].tiles[x] = [];
+        }
+
+        const tile = state.land.layers[layerIndex].tiles[x][y];
+
+        if (tile) {
+          state.land.layers[layerIndex].tiles[x][y] = [tile[tile.length - 1]];
+        }
+      });
+    },
     fillTile: (state, action) => {
       const layerIndex = state.land.selectedLayerIndex;
       const selectedRect = action.payload.selectedRect;
@@ -320,6 +336,7 @@ export const {
   addLayer,
   selectLayer,
   departObject2D,
+  flatSelectedTiles,
 } = appStateSlice.actions;
 
 export const selectedMode = (state) => state.appState.mode;

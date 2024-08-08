@@ -11,6 +11,7 @@ import {
   deleteLandTiles,
   addObject2DToLand,
   departObject2D,
+  flatSelectedTiles,
 } from '@/features/appState/appStateSlice';
 import {
   setCursorIndex,
@@ -38,6 +39,7 @@ import {
   ARROW_DOWN_KEY,
   D_KEY,
   E_KEY,
+  F_KEY,
   O_KEY,
   S_KEY,
   X_KEY,
@@ -62,6 +64,10 @@ function EditModeBehavior({ children }) {
   const inputMapping = useMemo(
     () => ({
       [O_KEY]: (event) => {
+        if (selector.mode !== SELECT_MODE.TILE) {
+          return;
+        }
+
         if (bufferRef.current.default || genesisRef.current.default) {
           return;
         }
@@ -71,11 +77,6 @@ function EditModeBehavior({ children }) {
         if (!rect) {
           return;
         }
-
-        if (selector.mode !== SELECT_MODE.TILE) {
-          return;
-        }
-
 
         const notEmptyTiles = CanvasUtil.cloneLandSelectedTiles(rect, land)
           .some((column) => column.some((tile) => tile?.length > 0));
@@ -114,6 +115,19 @@ function EditModeBehavior({ children }) {
           rect,
           object2d: object2ds.find(({ id }) => id === object2d.id),
         }));
+      },
+      [F_KEY]: (event) => {
+        if (selector.mode !== SELECT_MODE.TILE) {
+          return;
+        }
+
+        const rect = selector.rect.default;
+
+        if (!rect) {
+          return;
+        }
+
+        dispatch(flatSelectedTiles({ rect }));
       },
       [ARROW_LEFT_KEY]: (event) => {},
       [ARROW_RIGHT_KEY]: (event) => {},
