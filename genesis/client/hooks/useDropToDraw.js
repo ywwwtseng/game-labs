@@ -51,6 +51,25 @@ function useDropToDraw({ id }) {
       tiles: (event, data) => {
         if (!data) return;
 
+        if (data.rect[2] === 1 && data.rect[3] === 1) {
+          if ( selector.mode !== SELECT_MODE.OBJECT_2D &&
+            selector.rect.default && selector.rect.follows.length === 0 &&
+            overlaps({ rect: selector.rect.default, with: id }, { event, rect: data.rect })
+          ) {
+            dispatch(
+              fillTile({
+                selectedRect: selector.rect.default,
+                tile: {
+                  index: [data.rect[0], data.rect[1]],
+                  source: data.source,
+                },
+              }),
+            );
+
+            return;
+          }
+        }
+
         dispatch(
           drawTiles({
             event,
