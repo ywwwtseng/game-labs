@@ -126,7 +126,7 @@ export const deleteSelectedElements = createAsyncThunk(
         dispatch(
           editMode.forceSelectArea({ default: selector.rect.default }),
         );
-        dispatch(deleteLandObject2Ds({ rects: selector.rect.follows, completely: true }));
+        dispatch(deleteLandObject2Ds({ rects: selector.rect.follows, completely: false }));
         dispatch(editMode.destroy());
       }
 
@@ -229,6 +229,19 @@ export const appStateSlice = createSlice({
         }
       });
     },
+    departObject2D: (state, action) => {
+      const layerIndex = state.land.selectedLayerIndex;
+      const { rect, object2d } = action.payload;
+      const tiles = Object2DUtil.tiles(object2d);
+
+      MatrixUtil.traverse(rect, (index, { x, y }) => {
+        if (!state.land.layers[layerIndex].tiles[x]) {
+          state.land.layers[layerIndex].tiles[x] = [];
+        }
+
+        state.land.layers[layerIndex].tiles[x][y] = tiles[index.x][index.y];
+      });
+    },
     fillTile: (state, action) => {
       const layerIndex = state.land.selectedLayerIndex;
       const selectedRect = action.payload.selectedRect;
@@ -306,6 +319,7 @@ export const {
   addObject2DToLand,
   addLayer,
   selectLayer,
+  departObject2D,
 } = appStateSlice.actions;
 
 export const selectedMode = (state) => state.appState.mode;

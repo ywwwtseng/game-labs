@@ -14,6 +14,7 @@ export const E_KEY = 69;
 export const O_KEY = 79;
 export const P_KEY = 80;
 export const S_KEY = 83;
+export const X_KEY = 88;
 
 function useKeyBoard(inputMapping) {
   const inputRef = useObservableRef(inputMapping);

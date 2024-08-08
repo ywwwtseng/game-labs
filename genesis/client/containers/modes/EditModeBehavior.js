@@ -10,6 +10,7 @@ import {
   drawObject2D,
   deleteLandTiles,
   addObject2DToLand,
+  departObject2D,
 } from '@/features/appState/appStateSlice';
 import {
   setCursorIndex,
@@ -39,13 +40,12 @@ import {
   E_KEY,
   O_KEY,
   S_KEY,
+  X_KEY,
 } from '@/hooks/useKeyBoard';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useObject2Ds } from '@/queries/useObject2Ds';
 import { useModal } from '@/context/ModalContext';
 import { CreateObject2DModal } from '@/components/common/CreateObject2DModal';
-import { getBoundingBox } from '@/helpers/BoundingBox';
-import { DomUtil } from '@/utils/DomUtil';
 
 function EditModeBehavior({ children }) {
   const dispatch = useDispatch();
@@ -96,6 +96,24 @@ function EditModeBehavior({ children }) {
             dispatch(selectAreaEnd());
           }});
         }
+      },
+      [X_KEY]: (event) => {
+        if (selector.mode !== SELECT_MODE.OBJECT_2D) {
+          return;
+        }
+
+        if (selector.rect.follows.length !== 1) {
+          return;
+        }
+
+        const rect = selector.rect.follows[0];
+        const object2d = CanvasUtil.findObject2DBySelectedRect(rect, land);
+
+        dispatch(deleteSelectedElements());
+        dispatch(departObject2D({
+          rect,
+          object2d: object2ds.find(({ id }) => id === object2d.id),
+        }));
       },
       [ARROW_LEFT_KEY]: (event) => {},
       [ARROW_RIGHT_KEY]: (event) => {},
