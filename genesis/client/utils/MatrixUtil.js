@@ -1,4 +1,4 @@
-import range from 'lodash-es/range';
+import { ArrayUtil } from '@/utils/ArrayUtil';
 
 class MatrixUtil {
   static isMatrix(matrix) {
@@ -52,7 +52,7 @@ class MatrixUtil {
   }
 
   static _mapBySizeIndex(size, callback) {
-    return range(size[1]).map((y) => range(size[0]).map((x) => callback(x, y)));
+    return ArrayUtil.range(size[1]).map((y) => ArrayUtil.range(size[0]).map((x) => callback(x, y)));
   }
 
   static traverse(T, callback) {
@@ -76,14 +76,14 @@ class MatrixUtil {
   }
 
   static _traverseBySizeIndex(sizeIndex, callback) {
-    range(sizeIndex[1]).forEach((y) =>
-      range(sizeIndex[0]).forEach((x) => callback({ x, y })),
+    ArrayUtil.range(sizeIndex[1]).forEach((y) =>
+      ArrayUtil.range(sizeIndex[0]).forEach((x) => callback({ x, y })),
     );
   }
 
   static _traverseRect(rect, callback) {
-    range(rect[3]).forEach((y) =>
-      range(rect[2]).forEach((x) =>
+    ArrayUtil.range(rect[3]).forEach((y) =>
+      ArrayUtil.range(rect[2]).forEach((x) =>
         callback({ x, y }, { x: rect[0] + x, y: rect[1] + y }),
       ),
     );

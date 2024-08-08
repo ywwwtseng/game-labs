@@ -177,8 +177,6 @@ export const appStateSlice = createSlice({
       const layerIndex = state.land.selectedLayerIndex;
       const object2d_id = action.payload.object2d.id;
 
-      console.log(action.payload)
-
       state.land.layers[layerIndex].object2ds.push({
         id: object2d_id,
         rect: action.payload.rect,
