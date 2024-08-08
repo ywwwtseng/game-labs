@@ -5,7 +5,7 @@ import Object2DController from './controllers/object2ds_controller.js';
 const routes = (app) => {
   // sprites
   app.post('/api/sprites/create', upload.single('image'), SpritesController.create);
-  app.get('/api/sprites', SpritesController.get);
+  app.get('/api/sprites', SpritesController.list);
   // object2d
   app.get('/api/object2ds', Object2DController.list);
   app.post('/api/object2ds', Object2DController.create);

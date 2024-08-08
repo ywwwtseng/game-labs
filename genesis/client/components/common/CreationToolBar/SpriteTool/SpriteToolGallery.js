@@ -37,6 +37,7 @@ function SpriteToolGallery({ selectedSource, spriteSheets, onClick }) {
                 'min-w-7 max-h-7 opacity-60': selectedSource && spriteSheet.source !== selectedSource
               })}
               src={spriteSheet.image.src}
+              draggable="false"
             />
           </div>
         ))}

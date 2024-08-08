@@ -21,7 +21,7 @@ const Object2DController = {
 
   async list(req, res) {
     const { object2ds } = req.db.data;
-    res.send({ list: object2ds });
+    res.send({ data: object2ds });
   },
 
   async enableAnim(req, res) {

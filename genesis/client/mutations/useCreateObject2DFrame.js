@@ -1,5 +1,5 @@
 import { createObject2DFrame } from '@/api';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@/features/query';
 
 function useCreateObject2DFrame() {
   const queryClient = useQueryClient();
@@ -7,7 +7,7 @@ function useCreateObject2DFrame() {
   return useMutation({
     mutationFn: createObject2DFrame,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['object2ds'] });
+      queryClient.invalidateQueries({ queryKeys: ['object2ds'] });
     }
   });
 }

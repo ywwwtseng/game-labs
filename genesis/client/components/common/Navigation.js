@@ -98,7 +98,7 @@ function Navigation() {
     <>
       <nav className="flex w-full items-center mx-auto px-2 bg-[#1D1D1D]">
         <div className="flex items-center h-full space-x-3 mr-4 rtl:space-x-reverse">
-          <img src={logo} alt="logo" />
+          <img src={logo} draggable="false" alt="logo" />
           <Text weight="medium" size="xs" color="white">
             Genesis
           </Text>

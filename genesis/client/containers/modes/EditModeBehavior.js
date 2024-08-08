@@ -44,6 +44,8 @@ import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useObject2Ds } from '@/queries/useObject2Ds';
 import { useModal } from '@/context/ModalContext';
 import { CreateObject2DModal } from '@/components/common/CreateObject2DModal';
+import { getBoundingBox } from '@/helpers/BoundingBox';
+import { DomUtil } from '@/utils/DomUtil';
 
 function EditModeBehavior({ children }) {
   const dispatch = useDispatch();

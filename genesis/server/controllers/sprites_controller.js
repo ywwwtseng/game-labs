@@ -19,9 +19,9 @@ const SpritesController = {
     });
   },
 
-  async get(req, res) {
+  async list(req, res) {
     const { sprites } = req.db.data;
-    res.send({ list: sprites });
+    res.send({ data: sprites });
   }
 };
 

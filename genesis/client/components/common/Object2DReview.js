@@ -83,7 +83,7 @@ function Object2DReview({ object2d, tiles, draggable = false, className }) {
         }
         }
       >
-        <canvas ref={ref} width={size.x} height={size.y} />
+        <canvas ref={ref} draggable="false" width={size.x} height={size.y} />
       </Draggable>
     </div>
   );

@@ -1,5 +1,5 @@
 import { disableObject2DAnim } from '@/api';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@/features/query';
 
 function useDisableObject2DAnim() {
   const queryClient = useQueryClient();
@@ -7,7 +7,7 @@ function useDisableObject2DAnim() {
   return useMutation({
     mutationFn: disableObject2DAnim,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['object2ds'] });
+      queryClient.invalidateQueries({ queryKeys: ['object2ds'] });
     }
   });
 }

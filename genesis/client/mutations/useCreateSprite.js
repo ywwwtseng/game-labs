@@ -1,5 +1,5 @@
 import { postSprite } from '@/api';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@/features/query';
 
 function useCreateSprite() {
   const queryClient = useQueryClient();
@@ -7,7 +7,7 @@ function useCreateSprite() {
   return useMutation({
     mutationFn: postSprite,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sprites'] });
+      queryClient.invalidateQueries({ queryKeys: ['sprites'] });
     }
   });
 }

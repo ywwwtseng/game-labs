@@ -1,5 +1,5 @@
 import { enableObject2DAnim } from '@/api';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@/features/query';
 
 function useEnableObject2DAnim() {
   const queryClient = useQueryClient();
@@ -7,7 +7,7 @@ function useEnableObject2DAnim() {
   return useMutation({
     mutationFn: enableObject2DAnim,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['object2ds'] });
+      queryClient.invalidateQueries({ queryKeys: ['object2ds'] });
     }
   });
 }

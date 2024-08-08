@@ -107,7 +107,7 @@ function EditGameSettingsView() {
           />
         ),
         detail: () => (
-          <div className="rounded w-full flex-1 bg-[#282828] mt-1 flex flex-col">
+          <div className="relative rounded w-full flex-1 bg-[#282828] mt-1 flex flex-col">
             <Object2DList type={selected} />
           </div>
         )
