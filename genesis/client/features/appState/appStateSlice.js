@@ -253,7 +253,7 @@ export const appStateSlice = createSlice({
 
         const tile = state.land.layers[layerIndex].tiles[x][y];
 
-        if (tile) {
+        if (tile && tile.length > 0) {
           state.land.layers[layerIndex].tiles[x][y] = [tile[tile.length - 1]];
         }
       });
