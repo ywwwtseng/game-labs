@@ -119,15 +119,15 @@ function overlaps(T1, T2) {
   );
 }
 
-function completely_overlap(T1, T2) {
-  const bounds_1 = getBoundingBox(T1);
-  const bounds_2 = getBoundingBox(T2);
+function completely_contain(inner, { in: outer }) {
+  const outer_bounds = getBoundingBox(outer);
+  const inner_bounds = getBoundingBox(inner);
 
   return (
-    bounds_1.bottom === bounds_2.top &&
-    bounds_1.top === bounds_2.bottom &&
-    bounds_1.left === bounds_2.right &&
-    bounds_1.right === bounds_2.left
+    outer_bounds.top < inner_bounds.top &&
+    outer_bounds.bottom > inner_bounds.bottom &&
+    outer_bounds.left < inner_bounds.left &&
+    outer_bounds.right > inner_bounds.right
   );
 }
 
@@ -143,4 +143,4 @@ function contain(inner, { in: outer }) {
   );
 }
 
-export { BoundingBox, getBoundingBox, overlaps, contain };
+export { BoundingBox, getBoundingBox, overlaps, contain, completely_contain };

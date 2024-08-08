@@ -1,8 +1,7 @@
-import { getBoundingBox } from '@/helpers/BoundingBox';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { DomUtil } from '@/utils/DomUtil';
 import { Vec2Util } from '@/utils/Vec2Util';
-import { overlaps, contain } from '@/helpers/BoundingBox';
+import { overlaps, contain, completely_contain, getBoundingBox } from '@/helpers/BoundingBox';
 import { Object2DUtil } from '@/utils/Object2DUtil';
 
 class CanvasUtil {
@@ -346,26 +345,42 @@ class CanvasUtil {
     }
 
     const object2ds = land.layers[land.selectedLayerIndex].object2ds;
-
-    let follows = [];
+    const follows = [[], []];
 
     for (let i = object2ds.length - 1; i >= 0; i--) {
       const object2d = object2ds[i];
 
-      if (follows.every((rect) => !CanvasUtil.same(rect, object2d.rect)) && overlaps(object2d.rect, selectedRect)) {
-        if (follows.every((rect) => !contain(object2d.rect, { in: rect }))) {
-          follows.unshift(object2d.rect);
+      // unsame and overlaps
+      if (
+        follows.flat().every((rect) => !CanvasUtil.same(rect, object2d.rect)) && overlaps(object2d.rect, selectedRect)
+      ) {
+
+        // not select behind contain object2d
+        if (follows.flat().every((rect) => !contain(object2d.rect, { in: rect }))) {
+
+          if (completely_contain(selectedRect, { in: object2d.rect })) {
+            follows[1].unshift(object2d.rect);
+          } else {
+            follows[0].unshift(object2d.rect);
+          }
         }
       }
-
-      if (contain(selectedRect, { in: object2d.rect })) {
-        follows = [object2d.rect];
-        break;
-      }
-      
     }
 
-    return follows;
+    if (follows[0].length === 0 && follows[1].length > 0) {
+      const size = Math.min(...follows[1].map((rect) => rect[2] * rect[3]));
+      const minRect = follows[1].find((rect) => rect[2] * rect[3] === size);
+      follows[0].unshift(minRect);
+
+      follows[1].forEach((rect) => {
+        if (rect[2] * rect[3] !== size && !completely_contain(minRect, { in: rect })) {
+          follows[0].unshift(rect);
+        }
+      });
+
+    }
+
+    return follows[0];
   }
 
   static getObject2DRect(object2d) {

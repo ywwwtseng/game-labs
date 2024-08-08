@@ -39,8 +39,6 @@ function Object2DDetail({ object2d, onClose }) {
 
   const setup = setupDropzone({ id: `create-object2d-anim-frame-${object2d.id}`, accept: Object.keys(events), events });
 
-  console.log(object2d.frames, 'object2d')
-
   return (
     <div className="absolute top-0 left-0 w-full h-full bg-[#282828] rounded" onClick={DomUtil.stopPropagation} {...setup}>
       <AreaHeader
