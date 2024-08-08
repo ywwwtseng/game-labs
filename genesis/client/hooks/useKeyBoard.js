@@ -11,6 +11,7 @@ export const ARROW_RIGHT_KEY = 39;
 export const ARROW_DOWN_KEY = 40;
 export const D_KEY = 68;
 export const E_KEY = 69;
+export const O_KEY = 79;
 export const P_KEY = 80;
 export const S_KEY = 83;
 

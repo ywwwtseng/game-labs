@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Text } from '@/components/ui/Text';
-import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
+import { BaseDropdown } from '@/components/ui/Dropdown/BaseDropdown';
 import { CreateLandModal } from '@/components/common/CreateLandModal';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { getBoundingBox } from '@/helpers/BoundingBox';
@@ -105,7 +105,7 @@ function Navigation() {
         </div>
 
         {dropdowns.map((dropdown) => (
-          <Dropdown
+          <BaseDropdown
             key={dropdown.id}
             id={dropdown.id}
             triggerProps={{

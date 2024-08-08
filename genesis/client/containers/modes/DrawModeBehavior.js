@@ -4,7 +4,7 @@ import { CanvasUtil } from '@/utils/CanvasUtil';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useCursor } from '@/hooks/useCursor';
 import { drawTiles } from '@/features/appState/appStateSlice';
-import { getBoundingBox, contain } from '@/helpers/BoundingBox';
+import { contain } from '@/helpers/BoundingBox';
 
 function DrawModeBehavior({ children }) {
   const spriteSheets = useSpriteSheets();

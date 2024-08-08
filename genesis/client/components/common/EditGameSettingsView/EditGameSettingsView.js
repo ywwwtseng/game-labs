@@ -6,7 +6,7 @@ import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { GridIcon } from '@/components/icon/GridIcon';
 import { GameStructureView } from '@/components/common/EditGameSettingsView/GameStructureView';
 import { OperableItem } from '@/components/common/OperableItem';
-import { Dropdown } from '@/components/ui/Dropdown/Dropdown';
+import { BaseDropdown } from '@/components/ui/Dropdown/BaseDropdown';
 import { SpriteSheetTileList } from '@/components/common/EditGameSettingsView/SpriteSheetTileList/SpriteSheetTileList';
 import { Object2DList } from '@/components/common/EditGameSettingsView/Object2DList/Object2DList';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
@@ -132,7 +132,7 @@ function EditGameSettingsView() {
       <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828] mt-1">
         <AreaHeader
           icon={<GridIcon />}
-          label={<Dropdown icon {...register} />}
+          label={<BaseDropdown icon {...register} />}
           actions={selectedOption.actions?.()}
         />
         {selectedOption.list?.()}

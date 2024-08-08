@@ -34,7 +34,7 @@ import {
   ARROW_DOWN_KEY,
   D_KEY,
   E_KEY,
-  P_KEY,
+  O_KEY,
   S_KEY,
 } from '@/hooks/useKeyBoard';
 import { useSpriteSheets } from '@/context/SpriteSheetContext';
@@ -56,7 +56,7 @@ function EditModeBehavior({ children }) {
 
   const inputMapping = useMemo(
     () => ({
-      [P_KEY]: (event) => {
+      [O_KEY]: (event) => {
         if (bufferRef.current.default || genesisRef.current.default) {
           return;
         }
