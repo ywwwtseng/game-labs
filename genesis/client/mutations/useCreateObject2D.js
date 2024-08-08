@@ -1,13 +1,16 @@
 import { postObject2D } from '@/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-function useCreateObject2D() {
+function useCreateObject2D(props) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: postObject2D,
-    onSuccess: () => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['object2ds'] });
-    }
+      props?.onSuccess(res);
+
+    },
+    ...props,
   });
 }
 

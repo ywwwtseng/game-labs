@@ -29,7 +29,7 @@ function LandCanvas() {
     land.layers.forEach((layer) => {
       layer.object2ds.forEach(({ id: object2d_id }) => {
         const object2d = object2ds.find(({ id }) => id === object2d_id);
-        if (!buffer[object2d.id]) {
+        if (object2d && !buffer[object2d.id]) {
           if (Object2DUtil.hasAnimation(object2d)) {
             buffer[object2d.id] = {
               frames: object2d.frames.map((tiles) => {
@@ -45,7 +45,7 @@ function LandCanvas() {
     });
 
     return buffer;
-  }, [land, spriteSheets]);
+  }, [land, spriteSheets, object2ds]);
 
 
   const object2DLayer = useCallback((lifetime) => {
@@ -56,6 +56,10 @@ function LandCanvas() {
   
       return land.layers.forEach((layer) => {
         layer.object2ds.forEach((object2d) => {
+          if (object2d.id && !object2DBuffer[object2d.id]) {
+            return;
+          }
+
           if (!object2DBuffer[object2d.id].frames) {
             const tilesBuffer = object2DBuffer[object2d.id];
             CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, { x: object2d.rect[0], y: object2d.rect[1] })
@@ -69,7 +73,7 @@ function LandCanvas() {
         });
       });
     };
-  }, [land, spriteSheets, object2DBuffer]);
+  }, [land, object2ds, spriteSheets, object2DBuffer]);
 
   const gridLayer = useMemo(() => {
     return CANVAS_LAYER.GRID({

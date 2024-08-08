@@ -8,12 +8,15 @@ import {
   deleteSelectedElements,
   selectedLand,
   drawObject2D,
+  deleteLandTiles,
+  addObject2DToLand,
 } from '@/features/appState/appStateSlice';
 import {
   setCursorIndex,
   selectAreaStart,
   selectArea,
   selectAreaStop,
+  selectAreaEnd,
   SELECT_MODE,
   KEEP_FOLLOWS,
 } from '@/features/editMode/editModeSlice';
@@ -61,7 +64,9 @@ function EditModeBehavior({ children }) {
           return;
         }
 
-        if (!selector.rect.default) {
+        const rect = selector.rect.default;
+
+        if (!rect) {
           return;
         }
 
@@ -70,16 +75,24 @@ function EditModeBehavior({ children }) {
         }
 
 
-        const notEmptyTiles = CanvasUtil.cloneLandSelectedTiles(selector.rect.default, land)
+        const notEmptyTiles = CanvasUtil.cloneLandSelectedTiles(rect, land)
           .some((column) => column.some((tile) => tile?.length > 0));
 
         if (notEmptyTiles) {
           const tiles = CanvasUtil.cloneLandSelectedTiles(
-            selector.rect.default,
+            rect,
             land,
             ({ tile }) => (tile ? { index: tile.index, source: tile.source } : null),
           );
-          openCreateObject2DModal({ tiles });
+          
+          openCreateObject2DModal({ tiles, onSuccess: (res) => {
+            dispatch(deleteLandTiles(rect));
+            dispatch(addObject2DToLand({
+              rect,
+              object2d: res.data,
+            }));
+            dispatch(selectAreaEnd());
+          }});
         }
       },
       [ARROW_LEFT_KEY]: (event) => {},

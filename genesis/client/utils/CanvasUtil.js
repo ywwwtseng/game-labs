@@ -221,41 +221,6 @@ class CanvasUtil {
     });
   }
 
-  static createObject2DLayers({ land, spriteSheets, object2ds }) {
-    if (Object.keys(spriteSheets).length === 0 || object2ds.length === 0) {
-      return [];
-    }
-
-    return land.layers.map((layer) => {
-      return {
-        object2ds: layer.object2ds.reduce((acc, { id: object2d_id, rect: object2d_rect }) => {
-          const object2d = object2ds.find(({ id }) => id === object2d_id);
-
-          
-          if (!acc.buffer[object2d.id]) {
-            if (Object2DUtil.hasAnimation(object2d)) {
-              acc.buffer[object2d.id] = {
-                frames: object2d.frames.map((tiles) => {
-                  return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
-                })
-              };
-            } else {
-
-              acc.buffer[object2d.id] = CanvasUtil.transferTilesToBuffer({ tiles: object2d.tiles, spriteSheets });
-            }
-          }
-
-          acc.order = [...acc.order, {
-            id: object2d.id,
-            rect: object2d_rect,
-          }];
-
-          return acc;
-        }, { buffer: {}, order: [] }),
-      };
-    });
-  }
-
   static createSpriteLayerBuffer(layers, width, height) {
     return CanvasUtil.createBuffer(width, height, (ctx) => {
       layers.forEach((layer) => {

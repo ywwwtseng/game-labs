@@ -6,8 +6,8 @@ import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useCreateObject2D } from '@/mutations/useCreateObject2D';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 
-function CreateObject2DModal({ tiles }) {
-  const createObject2D = useCreateObject2D();
+function CreateObject2DModal({ tiles, onSuccess }) {
+  const createObject2D = useCreateObject2D({ onSuccess });
   const spriteSheets = useSpriteSheets();
   const size = MatrixUtil.size(tiles);
 
@@ -19,7 +19,7 @@ function CreateObject2DModal({ tiles }) {
       CANVAS_LAYER.SPRITE_LAYERS({
         layers: [{ 
           tiles: MatrixUtil.create(tiles, ({ value: tileItems }) => {
-            return tileItems.map((tile) => {
+            return tileItems?.map((tile) => {
               return spriteSheets?.[tile?.source]?.tiles?.[tile?.index?.[0]]?.[tile?.index?.[1]];
             });
           })

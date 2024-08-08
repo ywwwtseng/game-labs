@@ -108,6 +108,7 @@ export const {
   selectAreaStartProgcess,
   forceSelectArea,
   selectAreaStop,
+  selectAreaEnd,
   selectAreaDefault,
   destroy,
 } = editModeSlice.actions;

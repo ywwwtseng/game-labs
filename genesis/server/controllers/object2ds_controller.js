@@ -1,16 +1,20 @@
 const Object2DController = {
   async create(req, res) {
+    const object = {
+      id: `object2d_${Date.now()}`,
+      name: req.body.name,
+      tiles: req.body.tiles,
+      frames: null,
+    }
+
     await req.db.update(({ object2ds }) => {
-      object2ds.push({
-        id: `object2d_${Date.now()}`,
-        name: req.body.name,
-        tiles: req.body.tiles,
-        frames: null,
-      });
+      
+      object2ds.push(object);
     });
   
     res.send({
       ok: true,
+      data: object,
       message: 'Object2D uploaded successfully',
     });
   },
