@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { OperableItem } from '@/components/common/OperableItem';
 import { Text } from '@/components/ui/Text';
 import { Object2DReview } from '@/components/common/Object2DReview';
@@ -19,8 +20,9 @@ function Object2DItem({ object2d }) {
               <Text>Name: {object2d.name}</Text>
             </div>
           </div>
-          {open && (
-            <Object2DDetail object2d={object2d} onClose={toggle} />
+          {open && createPortal(
+            <Object2DDetail object2d={object2d} onClose={toggle} />,
+            document.getElementById('settings-area')
           )}
         </div>
       }

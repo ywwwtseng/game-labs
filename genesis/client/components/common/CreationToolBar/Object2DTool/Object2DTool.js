@@ -26,7 +26,7 @@ function Object2DTool({ origin, onClose }) {
         className="p-2 max-h-[224px] h-[224px] min-w-[224px] overflow-y-scroll no-scrollbar"
       >
         <div
-          className="grid grid-cols-3 gap-2 grid-rows-3"
+          className="grid grid-cols-3 grid-rows-3 gap-2"
         >
           {object2ds?.map((object2d) => (
             <Object2DReview 

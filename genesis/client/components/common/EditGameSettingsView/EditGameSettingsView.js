@@ -81,17 +81,12 @@ function EditGameSettingsView() {
             ))}
           </div>
         ),
-        detail: () => (
-          <div className="rounded w-full flex-1 bg-[#282828] mt-1 flex flex-col">
-            {spriteSheets[selected] && (
-              <SpriteSheetTileList
-                key={selected}
-                source={selected}
-              />
-            )}
-          </div>
-        )
-      },
+        detail: () => spriteSheets[selected] && (
+          <SpriteSheetTileList
+            key={selected}
+            source={selected}
+          />)
+        },
       {
         type: 'option',
         id: 'object2ds',
@@ -107,9 +102,7 @@ function EditGameSettingsView() {
           />
         ),
         detail: () => (
-          <div className="relative rounded w-full flex-1 bg-[#282828] mt-1 flex flex-col">
-            <Object2DList type={selected} />
-          </div>
+          <Object2DList type={selected} />
         )
       },
     ]
@@ -127,7 +120,7 @@ function EditGameSettingsView() {
   }, [selectedOption, selected, spriteSheets]);
 
   return (
-    <div className="relative rounded w-64 h-full max-h-full flex flex-col ml-1 z-10">
+    <div className="relative rounded w-[220px] h-full max-h-full flex flex-col ml-1 z-10">
       <GameStructureView />
       <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828] mt-1">
         <AreaHeader
@@ -137,7 +130,9 @@ function EditGameSettingsView() {
         />
         {selectedOption.list?.()}
       </div>
-      {selectedOption?.detail?.()}
+      <div id="settings-area" className="relative rounded w-full flex-1 bg-[#282828] mt-1 flex flex-col">
+        {selectedOption?.detail?.()}
+      </div>
     </div>
   );
 }

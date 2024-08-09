@@ -19,7 +19,7 @@ function SpriteToolGallery({ selectedSource, spriteSheets, onClick }) {
     >
       <div
         className={cx({
-          'grid grid-cols-3 gap-2 grid-rows-3': !selectedSource,
+          'grid grid-cols-3 grid-rows-3 gap-2': !selectedSource,
           'flex items-center gap-2 overflow-x-scroll no-scrollbar px-2 pb-2': selectedSource,
         })}
       >

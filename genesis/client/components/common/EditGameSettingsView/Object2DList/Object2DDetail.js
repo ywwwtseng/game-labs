@@ -40,7 +40,7 @@ function Object2DDetail({ object2d, onClose }) {
   const setup = setupDropzone({ id: `create-object2d-anim-frame-${object2d.id}`, accept: Object.keys(events), events });
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full bg-[#282828] rounded" onClick={DomUtil.stopPropagation} {...setup}>
+    <div className="absolute flex flex-col top-0 left-0 w-full h-full bg-[#282828] rounded" onClick={DomUtil.stopPropagation} {...setup}>
       <AreaHeader
         className="bg-[#282828]"
         label={object2d.name}
@@ -74,19 +74,26 @@ function Object2DDetail({ object2d, onClose }) {
         ]}
       />
       {hasAnimation && (
-        <div className="flex p-1 gap-2 overflow-x-scroll no-scrollbar">
+        <div className="grid grid-cols-3 grid-rows-3 gap-2 p-1 overflow-y-scroll no-scrollbar">
           
           {object2d.frames.map((frame, index) => (
-            <div className="flex flex-col" key={`${object2d.id}-frame-${index}`}>
+            <div className="relative group" key={`${object2d.id}-frame-${index}`}>
               <Object2DReview
                 className="rounded"
                 object2d={object2d}
                 tiles={frame}
               />
-              <Text className="mt-0.5">{`Frame #${index + 1}`}</Text>
+              <div className="absolute top-0.5 left-1">
+                <Text>{`#${index + 1}`}</Text>
+              </div>
+              <div className="absolute top-0 right-0 px-1 py-0.5 hidden group-hover:block">
+                <BaseButton onClick={console.log}>
+                  <CircleMinusIcon />
+                </BaseButton>
+              </div>
             </div>
           ))}
-          <div className="min-w-16 h-16 rounded border border-dashed border-white/80 flex items-center justify-center">
+          <div className="max-w-16 min-h-16 rounded border border-dashed border-white/80 flex items-center justify-center">
             <PlusIcon size={5} />
           </div>
         </div>
