@@ -1,5 +1,5 @@
 import { createObject2DAnimFrame } from '@/api';
-import { useMutation, useQueryClient } from '@/features/query';
+import { useMutation, useQueryClient } from '@/features/query/QueryClientContext';
 
 function useCreateObject2DAnimFrame() {
   const queryClient = useQueryClient();

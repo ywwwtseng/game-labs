@@ -1,5 +1,5 @@
 import { deleteObject2DAnimFrame } from '@/api';
-import { useMutation, useQueryClient } from '@/features/query';
+import { useMutation, useQueryClient } from '@/features/query/QueryClientContext';
 
 function useDeleteObject2DAnimFrame() {
   const queryClient = useQueryClient();

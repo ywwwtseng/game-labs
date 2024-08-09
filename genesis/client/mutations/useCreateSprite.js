@@ -1,5 +1,5 @@
 import { postSprite } from '@/api';
-import { useMutation, useQueryClient } from '@/features/query';
+import { useMutation, useQueryClient } from '@/features/query/QueryClientContext';
 
 function useCreateSprite() {
   const queryClient = useQueryClient();

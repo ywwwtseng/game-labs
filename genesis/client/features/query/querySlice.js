@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const serialize = (T) => JSON.stringify(T);
 
-export const query = createAsyncThunk(
-  'query/query',
+export const  executeQuery = createAsyncThunk(
+  'query/executeQuery',
   async ({ queryKey, queryFn }, { dispatch }) => {
     const res = await queryFn();
 
@@ -14,9 +14,7 @@ export const query = createAsyncThunk(
 
 });
 
-const initialState = {
-  client: {},
-};
+const initialState = {};
 
 export const querySlice = createSlice({
   name: 'query',
@@ -24,7 +22,7 @@ export const querySlice = createSlice({
   reducers: {
     setQuery: (state, action) => {
       const { queryKey, data } = action.payload;
-      state.client[queryKey] = {
+      state[queryKey] = {
         data,
       };
     },

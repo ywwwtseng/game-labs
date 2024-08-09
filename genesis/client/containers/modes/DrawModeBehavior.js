@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CanvasUtil } from '@/utils/CanvasUtil';
-import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { useCursor } from '@/hooks/useCursor';
 import { drawTiles } from '@/features/appState/appStateSlice';
 import { contain } from '@/helpers/BoundingBox';

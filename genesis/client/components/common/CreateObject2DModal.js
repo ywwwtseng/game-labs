@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { BaseInput } from '@/components/ui/BaseInput';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
-import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { useCreateObject2D } from '@/mutations/useCreateObject2D';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 

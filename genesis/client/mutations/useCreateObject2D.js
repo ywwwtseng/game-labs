@@ -1,5 +1,5 @@
 import { postObject2D } from '@/api';
-import { useMutation, useQueryClient } from '@/features/query';
+import { useMutation, useQueryClient } from '@/features/query/QueryClientContext';
 
 function useCreateObject2D({ onSuccess }) {
   const queryClient = useQueryClient();

@@ -1,4 +1,4 @@
-import { useQuery } from '@/features/query';
+import { useQuery } from '@/features/query/QueryClientContext';
 import { fetchSprites } from '@/api';
 
 function useSprites() {

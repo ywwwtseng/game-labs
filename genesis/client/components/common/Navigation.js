@@ -7,7 +7,7 @@ import { CanvasUtil } from '@/utils/CanvasUtil';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { selectedLand } from '@/features/appState/appStateSlice';
 import { useModal } from '@/context/ModalContext';
-import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { useObject2Ds } from '@/queries/useObject2Ds';
 import logo from '@/icon.png';
 

@@ -1,4 +1,4 @@
-import { useQuery } from '@/features/query';
+import { useQuery } from '@/features/query/QueryClientContext';
 import { fetchObject2Ds } from '@/api';
 
 function useObject2Ds() {

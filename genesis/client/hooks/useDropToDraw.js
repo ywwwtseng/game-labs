@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setupDropzone } from '@/context/DragAndDropContext';
-import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import {
   drawTiles,
   fillTile,

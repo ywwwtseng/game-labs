@@ -1,6 +1,6 @@
 import { Provider } from 'react-redux';
-import { QueryClientProvider } from '@/features/query';
-import { SpriteSheetProvider } from '@/context/SpriteSheetContext';
+import { QueryClientProvider } from '@/features/query/QueryClientContext';
+import { SpriteSheetProvider } from '@/features/appState/SpriteSheetContext';
 import { DragAndDropProvider } from '@/context/DragAndDropContext';
 import { ModalProvider } from '@/context/ModalContext';
 import { WindowSizeProvider } from '@/context/WindowSizeContext';

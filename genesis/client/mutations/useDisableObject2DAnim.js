@@ -1,5 +1,5 @@
 import { disableObject2DAnim } from '@/api';
-import { useMutation, useQueryClient } from '@/features/query';
+import { useMutation, useQueryClient } from '@/features/query/QueryClientContext';
 
 function useDisableObject2DAnim() {
   const queryClient = useQueryClient();

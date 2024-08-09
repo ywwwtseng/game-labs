@@ -1,4 +1,4 @@
-import { useSpriteSheet } from '@/context/SpriteSheetContext';
+import { useSpriteSheet } from '@/features/appState/SpriteSheetContext';
 import { SpriteSheetTile } from '@/components/common/EditGameSettingsView/SpriteSheetTileList/SpriteSheetTile';
 import { AreaHeader } from '@/components/common/AreaHeader';
 import { Text } from '@/components/ui/Text';

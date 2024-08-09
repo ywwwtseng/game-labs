@@ -1,5 +1,5 @@
 import { enableObject2DAnim } from '@/api';
-import { useMutation, useQueryClient } from '@/features/query';
+import { useMutation, useQueryClient } from '@/features/query/QueryClientContext';
 
 function useEnableObject2DAnim() {
   const queryClient = useQueryClient();

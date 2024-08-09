@@ -1,7 +1,7 @@
 import { useEffect, createContext, useRef, useCallback, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useObservableRef } from '@/hooks/useObservableRef';
-import { query, serialize } from '@/features/query/querySlice';
+import { executeQuery, serialize } from '@/features/query/querySlice';
 
 export const QueryClientContext = createContext({
   setQueryFn: () => {},
@@ -30,15 +30,15 @@ export const QueryClientProvider = ({ children }) => {
 export function useQuery({ queryKey, queryFn }) {
   const { setQueryFn } = useContext(QueryClientContext);
   const dispatch = useDispatch();
-  const client = useSelector(state => state.query.client[serialize(queryKey)]);
+  const query = useSelector(state => state.query[serialize(queryKey)]);
 
   useEffect(() => {
     setQueryFn({ queryKey, queryFn });
-    dispatch(query({ queryKey, queryFn }));
+    dispatch(executeQuery({ queryKey, queryFn }));
   }, []);
 
   return {
-    data: client?.data,
+    data: query?.data,
   };
 }
 

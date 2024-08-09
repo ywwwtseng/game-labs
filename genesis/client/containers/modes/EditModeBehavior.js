@@ -44,7 +44,7 @@ import {
   S_KEY,
   X_KEY,
 } from '@/hooks/useKeyBoard';
-import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { useObject2Ds } from '@/queries/useObject2Ds';
 import { useModal } from '@/context/ModalContext';
 import { CreateObject2DModal } from '@/components/common/CreateObject2DModal';

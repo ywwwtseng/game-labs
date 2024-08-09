@@ -1,5 +1,5 @@
 import { updateObject2DAnimRate } from '@/api';
-import { useMutation, useQueryClient } from '@/features/query';
+import { useMutation, useQueryClient } from '@/features/query/QueryClientContext';
 
 function useUpdateObject2DAnimRate() {
   const queryClient = useQueryClient();

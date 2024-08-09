@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
-import { useSpriteSheets } from '@/context/SpriteSheetContext';
+import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { useObject2Ds } from '@/queries/useObject2Ds';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { Object2DUtil } from '@/utils/Object2DUtil';
