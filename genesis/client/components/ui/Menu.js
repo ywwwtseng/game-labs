@@ -4,13 +4,16 @@ import {
   useState,
   useCallback,
   useImperativeHandle,
+  useEffect,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Draggable } from '@/containers/Draggable';
+import { useWindowSize } from '@/context/WindowSizeContext';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 
 const Menu = forwardRef(
   ({ children, origin, limit = 'edit-area', ...props }, ref) => {
+    const windowSize =useWindowSize();
     const itemRef = useRef();
     const [pos, setPos] = useState(origin);
     const updatePos = useCallback((_, { delta }) => {
@@ -61,6 +64,11 @@ const Menu = forwardRef(
         updatePos(undefined, { delta: { x: 0, y: 0 } });
       },
     }));
+
+    useEffect(() => {
+      updatePos(undefined, { delta: { x: 0, y: 0 } });
+    }, [windowSize])
+
 
     return createPortal(
       <Draggable

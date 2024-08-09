@@ -3,6 +3,7 @@ import { QueryClientProvider } from '@/features/query';
 import { SpriteSheetProvider } from '@/context/SpriteSheetContext';
 import { DragAndDropProvider } from '@/context/DragAndDropContext';
 import { ModalProvider } from '@/context/ModalContext';
+import { WindowSizeProvider } from '@/context/WindowSizeContext';
 import { store } from '@/store';
 import { Main } from '@/Main';
 
@@ -11,11 +12,13 @@ export function App() {
     <QueryClientProvider>
         <Provider store={store}>
           <SpriteSheetProvider>
-            <DragAndDropProvider>
-              <ModalProvider>
-                <Main />
-              </ModalProvider>
-            </DragAndDropProvider>
+            <WindowSizeProvider>
+              <DragAndDropProvider>
+                <ModalProvider>
+                  <Main />
+                </ModalProvider>
+              </DragAndDropProvider>
+            </WindowSizeProvider>
           </SpriteSheetProvider>
         </Provider>
     </QueryClientProvider>
