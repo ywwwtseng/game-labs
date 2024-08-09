@@ -29,15 +29,19 @@ function LandCanvas() {
     land.layers.forEach((layer) => {
       layer.object2ds.forEach(({ id: object2d_id }) => {
         const object2d = object2ds.find(({ id }) => id === object2d_id);
+
+        console.log(object2d)
         if (object2d && !buffer[object2d.id]) {
           if (Object2DUtil.hasAnimation(object2d)) {
             buffer[object2d.id] = {
-              frames: object2d.frames.map((tiles) => {
-                return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
-              })
+              anim: {
+                rate: object2d.anim.rate,
+                frames: object2d.anim.frames.map((tiles) => {
+                  return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
+                })
+              }
             };
           } else {
-
             buffer[object2d.id] = CanvasUtil.transferTilesToBuffer({ tiles: object2d.tiles, spriteSheets });
           }
         }
@@ -60,15 +64,15 @@ function LandCanvas() {
             return;
           }
 
-          if (!object2DBuffer[object2d.id].frames) {
-            const tilesBuffer = object2DBuffer[object2d.id];
-            CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, { x: object2d.rect[0], y: object2d.rect[1] })
+          if (object2DBuffer[object2d.id].anim) {
+            const anim = object2DBuffer[object2d.id].anim;
+            const frameLen =  (1 / 60) * (12 / anim.rate);
+            const frameIndex = lifetime ? Math.floor(lifetime / frameLen) % anim.frames.length : 0;
+            const frame = anim.frames[frameIndex];
+            CanvasUtil.drawTilesOnCanvas(ctx, frame, { x: object2d.rect[0], y: object2d.rect[1] });
           } else {
-            const frames = object2DBuffer[object2d.id].frames;
-            const frameLen = 0.07
-            const frameIndex = lifetime ? Math.floor(lifetime / frameLen) % frames.length : 0;
-            const frame = frames[frameIndex];
-            CanvasUtil.drawTilesOnCanvas(ctx, frame, { x: object2d.rect[0], y: object2d.rect[1] })
+            const tilesBuffer = object2DBuffer[object2d.id];
+            CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, { x: object2d.rect[0], y: object2d.rect[1] });
           }
         });
       });

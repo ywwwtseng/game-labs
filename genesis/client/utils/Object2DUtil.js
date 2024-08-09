@@ -6,12 +6,12 @@ class Object2DUtil {
   }
 
   static hasAnimation(object) {
-    return Boolean(object.frames);
+    return Boolean(object.anim);
   }
 
   static tiles(object) {
     if (Object2DUtil.hasAnimation(object)) {
-      return object.frames[0];
+      return object.anim.frames[0];
     } else {
       return object.tiles;
     }

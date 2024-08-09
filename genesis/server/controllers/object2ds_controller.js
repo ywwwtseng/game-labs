@@ -32,12 +32,15 @@ const Object2DController = {
       return res.status(400).send('No Object2D founded.');
     }
 
-    if (object2ds[index].frames) {
+    if (object2ds[index].anim) {
       return res.status(400).send('Object2D Animation created already.');
     }
 
     await req.db.update(({ object2ds }) => {
-      object2ds[index].frames = [object2ds[index].tiles];
+      object2ds[index].anim = {
+        rate: 2,
+        frames: [object2ds[index].tiles],
+      };
       object2ds[index].tiles = null;
     });
 
@@ -55,15 +58,41 @@ const Object2DController = {
       return res.status(400).send('No Object2D founded.');
     }
 
+    if (!object2ds[index].anim) {
+      return res.status(400).send('No Object2D animation attribute founded.');
+    }
+
     await req.db.update(({ object2ds }) => {
-      object2ds[index].tiles = object2ds[index].frames[0];
-      object2ds[index].frames = null;
+      object2ds[index].tiles = object2ds[index].anim.frames[0];
+      object2ds[index].anim = null;
     });
 
     res.send({
       ok: true,
       message: 'Object2D animation disabled successfully',
     });
+  },
+
+  async updateAnimRate(req, res) {
+    const { object2ds } = req.db.data;
+      const index = object2ds.findIndex((object2d) => object2d.id === req.params.id);
+  
+      if (index === -1) {
+        return res.status(400).send('No Object2D founded.');
+      }
+  
+      if (!object2ds[index].anim) {
+        return res.status(400).send('No Object2D animation attribute founded.');
+      }
+  
+      await req.db.update(({ object2ds }) => {
+        object2ds[index].anim.rate = req.body.rate;
+      });
+  
+      res.send({
+        ok: true,
+        message: 'Object2D animation rate updated successfully',
+      });
   },
 
   async addAnimFrame(req, res) {
@@ -74,12 +103,12 @@ const Object2DController = {
       return res.status(400).send('No Object2D founded.');
     }
 
-    if (!object2ds[index].frames) {
+    if (!object2ds[index].anim) {
       return res.status(400).send('No Object2D animation attribute founded.');
     }
 
     await req.db.update(({ object2ds }) => {
-      object2ds[index].frames.push(req.body.tiles);
+      object2ds[index].anim.frames.push(req.body.tiles);
     });
 
     res.send({
@@ -106,7 +135,7 @@ const Object2DController = {
     }
 
     await req.db.update(({ object2ds }) => {
-      object2ds[index].frames = object2ds[index].frames.filter((_, index) => index !== Number(req.params.index));
+      object2ds[index].frames = object2ds[index].anim.frames.filter((_, index) => index !== Number(req.params.index));
     });
 
     res.send({

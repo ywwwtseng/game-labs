@@ -17,6 +17,7 @@ const routes = (app) => {
   app.post('/api/object2ds', Object2DController.create);
   app.post('/api/object2ds/:id/anim/enable', Object2DController.enableAnim);
   app.post('/api/object2ds/:id/anim/disable', Object2DController.disableAnim);
+  app.post('/api/object2ds/:id/anim/rate', Object2DController.updateAnimRate);
   app.post('/api/object2ds/:id/anim/frames', Object2DController.addAnimFrame);
   app.delete('/api/object2ds/:id/anim/frames/:index', Object2DController.removeAnimFrame);
 };

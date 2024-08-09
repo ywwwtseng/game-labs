@@ -15,15 +15,9 @@ function Object2DItem({ object2d }) {
   const chips = useMemo(() => {
     const array = [];
 
-    array.push({
-      bg: `bg-${palette[0]}`,
-      children: 'Object2D',
-    });
-
     if (Object2DUtil.hasAnimation(object2d)) {
-      console.log( `bg-${palette[1]}`)
       array.push({
-        bg: `bg-${palette[1]}`,
+        bg: `bg-${palette[0]}`,
         children: 'Animation',
       });
     }
