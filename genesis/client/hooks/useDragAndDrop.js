@@ -10,6 +10,7 @@ function useDragAndDrop({
   icon,
   handle,
   onMove,
+  onMouseDown,
   beforeDrop = () => true,
 }) {
   const iconRef = useObservableRef(icon);
@@ -71,6 +72,7 @@ function useDragAndDrop({
   }, []);
 
   const handleMouseDown = useCallback((event) => {
+    onMouseDown?.(event);
     if (handle) {
       if (event.target.getAttribute('data-handle') !== handle) {
         return;

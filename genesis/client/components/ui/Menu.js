@@ -37,20 +37,40 @@ const Menu = forwardRef(
           y: bounds.top,
         };
       });
+
+      itemRef.current.style.opacity = 1;
+    }, []);
+
+    const updateMenuZIndex = useCallback(() => {
+      const menus = document.getElementsByClassName('menu');
+
+      for (let index = 0; index < menus.length; index++) {
+        const menu = menus[index];
+
+        if (menu === itemRef.current) {
+          menu.style.zIndex = 31;
+        } else {
+          menu.style.zIndex = 30;
+        }
+      }
     }, []);
 
     useImperativeHandle(ref, () => ({
       checkPos: () => {
+        itemRef.current.style.opacity = 0;
         updatePos(undefined, { delta: { x: 0, y: 0 } });
       },
     }));
 
     return createPortal(
-      <Draggable handle="handle" onMove={updatePos}>
+      <Draggable
+        handle="handle"
+        onMove={updatePos}
+        onMouseDown={updateMenuZIndex}>
         <div
           ref={itemRef}
-          className="select-none absolute z-30 rounded bg-[#2B2B2B]"
-          style={{ left: `${pos.x}px`, top: `${pos.y}px` }}
+          className="menu select-none absolute rounded bg-[#2B2B2B]"
+          style={{ left: `${pos.x}px`, top: `${pos.y}px`, zIndex: 30 }}
           {...props}
         >
           {children}

@@ -6,8 +6,9 @@ function Draggable({
   data,
   icon,
   handle,
-  onMove,
   children,
+  onMove,
+  onMouseDown,
   beforeDrop,
 }) {
   const { handleMouseDown } = useDragAndDrop({
@@ -15,6 +16,7 @@ function Draggable({
     icon,
     handle,
     onMove,
+    onMouseDown,
     beforeDrop,
   });
 
