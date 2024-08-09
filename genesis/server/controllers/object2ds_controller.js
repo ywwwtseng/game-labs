@@ -87,6 +87,33 @@ const Object2DController = {
       message: 'Object2D animation frame added successfully',
     });
   },
+
+  async removeAnimFrame(req, res) {
+    console.log('removeAnimFrame')
+    const { object2ds } = req.db.data;
+    const index = object2ds.findIndex((object2d) => object2d.id === req.params.id);
+
+    if (index === -1) {
+      return res.status(400).send('No Object2D founded.');
+    }
+
+    if (!object2ds[index].frames) {
+      return res.status(400).send('No Object2D animation attribute founded.');
+    }
+
+    if (object2ds[index].frames.length === 1) {
+      return Object2DController.disableAnim(req, res);
+    }
+
+    await req.db.update(({ object2ds }) => {
+      object2ds[index].frames = object2ds[index].frames.filter((_, index) => index !== Number(req.params.index));
+    });
+
+    res.send({
+      ok: true,
+      message: 'Object2D animation frame removed successfully',
+    });
+  },
 }
 
 export default Object2DController;

@@ -61,7 +61,7 @@ function Object2DReview({ object2d, tiles, draggable = false, className }) {
   }, [buffer]);
 
   return (
-    <div className={cx('min-w-16 w-16 h-16 flex items-center justify-center cursor-pointer bg-[#353535]', className)}>
+    <div className={cx('min-w-16 min-h-16 w-16 h-16 flex items-center justify-center cursor-pointer bg-[#353535]', className)}>
       <Draggable
         disabled={!Boolean(draggable)}
         data={{
