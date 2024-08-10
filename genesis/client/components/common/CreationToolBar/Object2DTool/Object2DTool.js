@@ -3,11 +3,12 @@ import { BaseButton } from '@/components/ui/BaseButton';
 import { CloseIcon } from '@/components/icon/CloseIcon';
 import { BoxIcon } from '@/components/icon/BoxIcon';
 import { Object2DReview } from '@/components/common/Object2DReview';
-import { useObject2Ds } from '@/queries/useObject2Ds';
+import { useQuery } from '@/features/query/QueryClientContext';
+import { sql } from '@/sql';
 import { Object2DUtil } from '@/utils/Object2DUtil';
 
 function Object2DTool({ origin, onClose }) {
-  const object2ds = useObject2Ds();
+const { data: object2ds } = useQuery(sql.object2ds.list);
 
   return (
     <Menu origin={origin} id="object2d-tool">

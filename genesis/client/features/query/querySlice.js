@@ -26,9 +26,24 @@ export const querySlice = createSlice({
         data,
       };
     },
+    setQueryData(state, action) {
+      const { relateQueryKey, data } = action.payload;
+
+      for (let index = 0; index < Object.keys(state).length; index++) {
+        const queryKey = Object.keys(state)[index];
+
+        if (queryKey.includes(relateQueryKey)) {
+          if (Array.isArray(state[queryKey].data)) {
+            const index = state[queryKey].data.findIndex(({ id }) => id === data.id);
+            state[queryKey].data[index] = data;
+          }
+        }
+        
+      }
+    }
   },
 });
 
-export const { setQuery } = querySlice.actions;
+export const { setQuery, setQueryData } = querySlice.actions;
 
 export default querySlice.reducer;

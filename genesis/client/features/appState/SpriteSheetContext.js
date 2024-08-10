@@ -8,12 +8,13 @@ import { LoaderUtil } from '@/utils/LoaderUtil';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { ImageUtil } from '@/utils/ImageUtil';
-import { useSprites } from '@/queries/useSprites';
+import { useQuery } from '@/features/query/QueryClientContext';
+import { sql } from '@/sql';
 
 export const SpriteSheetContext = createContext({ spriteSheets: {} });
 
 export const SpriteSheetProvider = ({ children }) => {
-  const sprites = useSprites()
+  const { data: sprites } = useQuery(sql.sprites.list);
   const [spriteSheets, setSpriteSheets] = useState({});
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export const SpriteSheetProvider = ({ children }) => {
             Promise.all([
               spriteSheet,
               LoaderUtil.loadImage(
-                `${window.location.origin}${spriteSheet.path}`,
+                `${window.location.origin}${spriteSheet.file}`,
               ),
             ]),
           ),

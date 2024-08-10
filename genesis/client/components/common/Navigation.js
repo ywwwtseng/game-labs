@@ -8,13 +8,14 @@ import { getBoundingBox } from '@/helpers/BoundingBox';
 import { selectedLand } from '@/features/appState/appStateSlice';
 import { useModal } from '@/context/ModalContext';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
-import { useObject2Ds } from '@/queries/useObject2Ds';
+import { useQuery } from '@/features/query/QueryClientContext';
+import { sql } from '@/sql';
 import logo from '@/icon.png';
 
 function Navigation() {
   const land = useSelector(selectedLand);
   const spriteSheets = useSpriteSheets();
-  const object2ds = useObject2Ds();
+const { data: object2ds } = useQuery(sql.object2ds.list);
 
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);

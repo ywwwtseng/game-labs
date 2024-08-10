@@ -1,8 +1,9 @@
 import { Object2DItem } from '@/components/common/EditGameSettingsView/Object2DList/Object2DItem';
-import { useObject2Ds } from '@/queries/useObject2Ds';
+import { useQuery } from '@/features/query/QueryClientContext';
+import { sql } from '@/sql';
 
 function Object2DList({ type }) {
-  const object2ds = useObject2Ds();
+const { data: object2ds } = useQuery(sql.object2ds.list);
 
   return (
     <div className="relative rounded w-full flex-1 bg-[#282828] mt-1 flex flex-col">

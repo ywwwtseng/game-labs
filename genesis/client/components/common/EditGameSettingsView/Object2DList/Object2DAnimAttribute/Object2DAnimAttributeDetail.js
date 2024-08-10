@@ -5,21 +5,26 @@ import { BaseButton } from '@/components/ui/BaseButton';
 import { AreaHeader } from '@/components/common/AreaHeader';
 import { PlusIcon } from '@/components/icon/PlusIcon';
 import { CircleMinusIcon } from '@/components/icon/CircleMinusIcon';
-import { Object2DUtil } from '@/utils/Object2DUtil';
 import { setupDropzone } from '@/context/DragAndDropContext';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useCreateObject2DAnimFrame } from '@/mutations/useCreateObject2DAnimFrame';
-import { useDeleteObject2DAnimFrame } from '@/mutations/useDeleteObject2DAnimFrame';
-import { useUpdateObject2DAnimRate } from '@/mutations/useUpdateObject2DAnimRate';
+import { useMutation } from '@/features/query/QueryClientContext';
+import { MatrixUtil } from '@/utils/MatrixUtil';
+import { sql } from '@/sql';
 
 function Object2DAnimAttributeDetail({ object2d }) {
-  const [animRate, setAnimRate] = useState(object2d.anim.rate || 5);
-  const createObject2DAnimFrame = useCreateObject2DAnimFrame();
-  const deleteObject2DAnimFrame = useDeleteObject2DAnimFrame();
-  const updateObject2DAnimRate = useUpdateObject2DAnimRate();
-  const hasAnimation = Object2DUtil.hasAnimation(object2d);
+  const [animRate, setAnimRate] = useState(object2d.anim.rate);
+  const createObject2DAnimFrame = useMutation(sql.object2ds.anim.frames.add);
+  const deleteObject2DAnimFrame = useMutation(sql.object2ds.anim.frames.remove);
+  const updateObject2DAnimRate = useMutation(sql.object2ds.anim.rate);
   const onDebounceChange = useDebounce((rate) => {
-    updateObject2DAnimRate.mutate({id: object2d.id, rate});
+    updateObject2DAnimRate.mutate({
+      params: {
+        id: object2d.id,
+      },
+      data: {
+        rate
+      }
+    });
   });
 
   const events = useMemo(() => ({
@@ -32,7 +37,10 @@ function Object2DAnimAttributeDetail({ object2d }) {
         source,
       }]);
 
-      createObject2DAnimFrame.mutate({id: object2d.id, tiles});
+      createObject2DAnimFrame.mutate({
+        params: {id: object2d.id},
+        data: {frame: tiles}
+      });
     },
   }), []);
 
@@ -69,7 +77,10 @@ function Object2DAnimAttributeDetail({ object2d }) {
             <Text className="absolute top-0 left-1">{`#${index + 1}`}</Text>
             <div className="absolute top-0 right-0 px-1 py-0.5 hidden group-hover:block">
               <BaseButton onClick={() => {
-                deleteObject2DAnimFrame.mutate({ id: object2d.id, index });
+                deleteObject2DAnimFrame.mutate({
+                  params: { id: object2d.id },
+                  data: { index }
+                });
               }}>
                 <CircleMinusIcon />
               </BaseButton>

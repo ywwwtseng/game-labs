@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { FileInput } from '@/components/ui/FileInput';
 import { AreaHeader } from '@/components/common/AreaHeader';
@@ -16,11 +16,13 @@ import { LoaderUtil } from '@/utils/LoaderUtil';
 import { ImageUtil } from '@/utils/ImageUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { CanvasUtil } from '@/utils/CanvasUtil';
-import { useCreateSprite } from '@/mutations/useCreateSprite';
+import { useMutation } from '@/features/query/QueryClientContext';
+import { sql } from '@/sql';
 
 function EditGameSettingsView() {
   const spriteSheets = useSpriteSheets();
-  const createSprite = useCreateSprite();
+  const createSprite = useMutation(sql.sprites.create);
+
   const [selected, setSelected] = useLocalStorage('selected:spritesheet_or_object2d');
 
   const { selectedOption, register } = useDropdownState({
@@ -54,9 +56,13 @@ function EditGameSettingsView() {
           
               const formData = new FormData();
               formData.append('image', file);
-              formData.append('transparent', transparent);
+              formData.append('data.sprite.id', 'relate(file)');
+              formData.append('data.sprite.name', file.name.replace('.png', ''));
+              formData.append('data.sprite.transparent', transparent);
           
-              createSprite.mutate(formData);
+              createSprite.mutate({
+                formData
+              });
             }}>
             <CirclePlusIcon />
           </FileInput>,

@@ -45,7 +45,8 @@ import {
   X_KEY,
 } from '@/hooks/useKeyBoard';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
-import { useObject2Ds } from '@/queries/useObject2Ds';
+import { useQuery } from '@/features/query/QueryClientContext';
+import { sql } from '@/sql';
 import { useModal } from '@/context/ModalContext';
 import { CreateObject2DModal } from '@/components/common/CreateObject2DModal';
 
@@ -57,7 +58,7 @@ function EditModeBehavior({ children }) {
   const land = useSelector(selectedLand);
   const cursorIndex = useSelector(selectedCursorIndex);
   const selector = useSelector(selectedEditModeSelector);
-  const object2ds = useObject2Ds();
+const { data: object2ds } = useQuery(sql.object2ds.list);
 
   const { open: openCreateObject2DModal } = useModal(CreateObject2DModal);
 

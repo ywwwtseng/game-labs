@@ -4,11 +4,12 @@ import { CreationToolBarToggle } from '@/components/common/CreationToolBar/Creat
 import { SpriteTool } from '@/components/common/CreationToolBar/SpriteTool/SpriteTool';
 import { Object2DTool } from '@/components/common/CreationToolBar/Object2DTool/Object2DTool';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
-import { useObject2Ds } from '@/queries/useObject2Ds';
+import { useQuery } from '@/features/query/QueryClientContext';
+import { sql } from '@/sql';
 
 function CreationToolBar() {
   const spriteSheets = useSpriteSheets();
-  const object2ds = useObject2Ds();
+const { data: object2ds } = useQuery(sql.object2ds.list);
 
   return (
     <div

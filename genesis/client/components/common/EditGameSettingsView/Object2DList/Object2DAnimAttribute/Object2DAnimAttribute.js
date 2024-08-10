@@ -4,12 +4,12 @@ import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { CircleMinusIcon } from '@/components/icon/CircleMinusIcon';
 import { Object2DAnimAttributeDetail } from '@/components/common/EditGameSettingsView/Object2DList/Object2DAnimAttribute/Object2DAnimAttributeDetail';
 import { Object2DUtil } from '@/utils/Object2DUtil';
-import { useEnableObject2DAnim } from '@/mutations/useEnableObject2DAnim';
-import { useDisableObject2DAnim } from '@/mutations/useDisableObject2DAnim';
+import { useMutation } from '@/features/query/QueryClientContext';
+import { sql } from '@/sql';
 
 function Object2DAnimAttribute({ object2d }) {
-  const disableObject2DAnim = useDisableObject2DAnim();
-  const enableObject2DAnim = useEnableObject2DAnim();
+  const disableObject2DAnim = useMutation(sql.object2ds.anim.disable);
+  const enableObject2DAnim = useMutation(sql.object2ds.anim.enable);
   const hasAnimation = Object2DUtil.hasAnimation(object2d);
 
   return (
@@ -20,9 +20,23 @@ function Object2DAnimAttribute({ object2d }) {
         actions={[
           <BaseButton key="create-animation" onClick={() => {
             if (hasAnimation) {
-              disableObject2DAnim.mutate(object2d.id);
+              disableObject2DAnim.mutate({
+                params: {
+                  id: object2d.id
+                }
+              });
             } else {
-              enableObject2DAnim.mutate(object2d.id);
+              enableObject2DAnim.mutate({
+                params: {
+                  id: object2d.id,
+                },
+                data: {
+                  anim: {
+                    rate: 2,
+                    frames: [object2d.tiles],
+                  },
+                }
+              });
             }
           }}>
             {hasAnimation ? <CircleMinusIcon /> : <CirclePlusIcon />}

@@ -3,11 +3,14 @@ import { Modal } from '@/components/ui/Modal';
 import { BaseInput } from '@/components/ui/BaseInput';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
-import { useCreateObject2D } from '@/mutations/useCreateObject2D';
+import { useMutation } from '@/features/query/QueryClientContext';
+import { sql } from '@/sql';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 
 function CreateObject2DModal({ tiles, onSuccess }) {
-  const createObject2D = useCreateObject2D({ onSuccess });
+  const createObject2D = useMutation(
+    sql.object2ds.create, { onSuccess }
+  );
   const spriteSheets = useSpriteSheets();
   const size = MatrixUtil.size(tiles);
 
@@ -62,9 +65,13 @@ function CreateObject2DModal({ tiles, onSuccess }) {
           disabled={disabled}
           onClick={async () => {
             createObject2D.mutate({
-              name,
-              type,
-              tiles,
+              data: {
+                object2d: {
+                  name,
+                  type,
+                  tiles,
+                }
+              }
             });
           }}
         >
