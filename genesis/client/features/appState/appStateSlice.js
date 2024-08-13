@@ -125,7 +125,7 @@ export const deleteSelectedElements = createAsyncThunk(
       dispatch(
         editMode.forceSelectArea({ default: selector.rect.default }),
       );
-      dispatch(deleteLandObject2Ds({ rects: selector.rect.follows, completely: false }));
+      dispatch(deleteLandObject2Ds({ rects: selector.rect.follows }));
       dispatch(editMode.destroy());
     }
   },
@@ -277,32 +277,31 @@ export const appStateSlice = createSlice({
     },
     deleteLandObject2Ds: (state, action) => {
       const layerIndex = state.land.selectedLayerIndex;
-      const { rects, completely } = action.payload;
+      const { rects } = action.payload;
       const object2ds = state.land.layers[layerIndex].object2ds;
 
-      if (completely) {
-        state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter((object2d) => {
-          return !rects.some(rect => CanvasUtil.same(rect, object2d.rect));
-        });
+      for (let i = 0; i < rects.length; i++) {
+        const rect = rects[i];
 
-      } else {
-        for (let i = 0; i < rects.length; i++) {
-          const rect = rects[i];
-  
-          for (let j = object2ds.length - 1; j >= 0; j--) {
-            const object2d = state.land.layers[layerIndex].object2ds[j];
-  
-            if (object2d && CanvasUtil.same(rect, object2d.rect)) {
-              delete state.land.layers[layerIndex].object2ds[j];
-              break;
-            }
+        for (let j = object2ds.length - 1; j >= 0; j--) {
+          const object2d = state.land.layers[layerIndex].object2ds[j];
+
+          if (object2d && CanvasUtil.same(rect, object2d.rect)) {
+            delete state.land.layers[layerIndex].object2ds[j];
+            break;
           }
         }
-  
-        state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter(Boolean);
       }
 
-      
+      state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter(Boolean);
+    },
+    deleteLandObject2DsCompletely(state, action) {
+      const layerIndex = state.land.selectedLayerIndex;
+      const { rects } = action.payload;
+
+      state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter((object2d) => {
+        return !rects.some(rect => CanvasUtil.same(rect, object2d.rect));
+      });     
     },
     addLayer: (state) => {
       state.land.layers.push({ tiles: [] });
