@@ -567,7 +567,7 @@
       "name": "FireStand",
       "tiles": null,
       "anim": {
-        "rate": 1,
+        "rate": 2,
         "frames": [
           [
             [

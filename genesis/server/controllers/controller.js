@@ -103,6 +103,23 @@ async function exec({type, db, path, params, data }) {
 
   if (type === 'mutation') {
     await db.write();
+
+    const findCmdIndex = pathArray.findIndex((path) => path.match(regex.find));
+
+    if (findCmdIndex !== -1) {
+      return exec({
+        type: 'query',
+        db,
+        path: pathArray.slice(
+          0,
+          pathArray.findIndex((path) => path.match(regex.find)) + 1
+        ),
+        params,
+      });
+    }
+
+    
+    
   }
 
   return result;

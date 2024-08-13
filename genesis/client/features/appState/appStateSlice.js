@@ -114,27 +114,20 @@ export const moveLandTiles = createAsyncThunk(
 export const deleteSelectedElements = createAsyncThunk(
   'appState/deleteSelectedElements',
   async (_, { getState, dispatch }) => {
-    try {
-      const state = getState();
-      const selector = editMode.selectedEditModeSelector(state);
+    const state = getState();
+    const selector = editMode.selectedEditModeSelector(state);
 
-      if (selector.mode === editMode.SELECT_MODE.TILE) {
-        dispatch(deleteLandTiles(selector.rect.default));
-      }
-
-      if (selector.mode === editMode.SELECT_MODE.OBJECT_2D) {
-        dispatch(
-          editMode.forceSelectArea({ default: selector.rect.default }),
-        );
-        dispatch(deleteLandObject2Ds({ rects: selector.rect.follows, completely: false }));
-        dispatch(editMode.destroy());
-      }
-
-    } catch (error) {
-      console.log(error)
+    if (selector.mode === editMode.SELECT_MODE.TILE) {
+      dispatch(deleteLandTiles(selector.rect.default));
     }
 
-   
+    if (selector.mode === editMode.SELECT_MODE.OBJECT_2D) {
+      dispatch(
+        editMode.forceSelectArea({ default: selector.rect.default }),
+      );
+      dispatch(deleteLandObject2Ds({ rects: selector.rect.follows, completely: false }));
+      dispatch(editMode.destroy());
+    }
   },
 );
 
