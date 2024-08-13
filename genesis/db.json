@@ -753,7 +753,7 @@
       "name": "Pool",
       "tiles": null,
       "anim": {
-        "rate": 2,
+        "rate": 0,
         "frames": [
           [
             [

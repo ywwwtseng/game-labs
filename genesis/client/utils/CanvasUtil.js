@@ -221,7 +221,7 @@ class CanvasUtil {
     });
   }
 
-  static createSpriteLayerBuffer(layers, width, height) {
+  static createSpriteLayersBuffer(layers, width, height) {
     return CanvasUtil.createBuffer(width, height, (ctx) => {
       layers.forEach((layer) => {
         CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);        
@@ -229,17 +229,55 @@ class CanvasUtil {
     });
   }
 
-  static createObject2DLayerBuffer(layers, width, height) {
-    return CanvasUtil.createBuffer(width, height, (ctx) => {
-      layers.forEach((layer) => {
-        if (layer.object2ds) {
-          layer.object2ds.order.forEach((object2d) => {
-            const tilesBuffer = layer.object2ds.buffer[object2d.id].frames?.[0] || layer.object2ds.buffer[object2d.id];
-            CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, {
-              x: object2d.rect[0],
-              y: object2d.rect[1],
-            });
-          });
+  static createObject2DBuffers({ land, spriteSheets, object2ds }) {
+    const buffer = {};
+    if (Object.keys(spriteSheets).length === 0 || object2ds.length === 0) {
+      return buffer;
+    }
+
+    land.layers.forEach((layer) => {
+      layer.object2ds.forEach(({ id: object2d_id }) => {
+        const object2d = object2ds.find(({ id }) => id === object2d_id);
+        if (object2d && !buffer[object2d.id]) {
+          if (Object2DUtil.hasAnimation(object2d)) {
+            buffer[object2d.id] = {
+              anim: {
+                rate: object2d.anim.rate,
+                frames: object2d.anim.frames.map((tiles) => {
+                  return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
+                })
+              }
+            };
+          } else {
+            buffer[object2d.id] = CanvasUtil.transferTilesToBuffer({ tiles: object2d.tiles, spriteSheets });
+          }
+        }
+      })
+    });
+
+    return buffer;
+  }
+
+  static createObject2DLayersBuffer({ ctx, lifetime, land, object2ds, spriteSheets, object2DBuffers }) {
+    if (Object.keys(spriteSheets).length === 0 || object2ds.length === 0) {
+      return [];
+    }
+
+    return land.layers.forEach((layer) => {
+      layer.object2ds.forEach((object2d) => {
+        if (object2d.id && !object2DBuffers[object2d.id]) {
+          return;
+        }
+
+        if (object2DBuffers[object2d.id].anim) {
+          const anim = object2DBuffers[object2d.id].anim;
+          const frameLen =  (1 / 60) * (12 / anim.rate);
+          const frameIndex = lifetime ? Math.floor(lifetime / frameLen) % anim.frames.length : 0;
+          const frame = anim.frames[frameIndex];
+          CanvasUtil.drawTilesOnCanvas(ctx, frame, { x: object2d.rect[0], y: object2d.rect[1] });
+        } else {
+          const tilesBuffer = object2DBuffers[object2d.id];
+          CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, { x: object2d.rect[0], y: object2d.rect[1] });
         }
       });
     });
@@ -424,12 +462,15 @@ class CanvasUtil {
   }
 
   static exportLand({ land, spriteSheets, object2ds }) {
-    const layers = CanvasUtil.createSpriteLayers({ land, spriteSheets, object2ds });
-    const buffer = CanvasUtil.createSpriteLayerBuffer(
-      layers,
-      land.width,
-      land.height,
-    );
+    const layers = CanvasUtil.createSpriteLayers({ land, spriteSheets });
+    const object2DBuffers = CanvasUtil.createObject2DBuffers({ land, spriteSheets, object2ds });
+
+    const buffer = CanvasUtil.createBuffer(land.width, land.height, (ctx) => {
+      layers.forEach((layer) => {
+        CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);
+        CanvasUtil.createObject2DLayersBuffer({ ctx, land, object2ds, spriteSheets, object2DBuffers })     
+      });
+    });
 
     DomUtil.downloadImage({ name: `${land.name}.png`, buffer });
   }

@@ -8,20 +8,12 @@ export const CANVAS_LAYER = {
   }),
   SPRITE_LAYERS: ({ layers, width, height }) => ({
     name: 'SPRITE_LAYERS',
-    buffer: CanvasUtil.createSpriteLayerBuffer(
+    buffer: CanvasUtil.createSpriteLayersBuffer(
       layers,
       width + 1,
       height + 1,
     ),
-  }),
-  OBJECT2D_LAYERS: ({ layers, width, height }) => ({
-    name: 'OBJECT2D_LAYERS',
-    buffer: CanvasUtil.createObject2DLayerBuffer(
-      layers,
-      width + 1,
-      height + 1,
-    ),
-  }),
+  })
 };
 
 function Canvas2D({

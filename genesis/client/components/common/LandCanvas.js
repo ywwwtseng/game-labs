@@ -13,7 +13,7 @@ function LandCanvas() {
   const land = useSelector(selectedLand);
   const spriteSheets = useSpriteSheets();
   const { data: object2ds } = useQuery(sql.object2ds.list);
-  const spritesLayer = useMemo(() => {
+  const spritesLayers = useMemo(() => {
     return CANVAS_LAYER.SPRITE_LAYERS({
       layers: CanvasUtil.createSpriteLayers({ land, spriteSheets }),
       width: land.width,
@@ -21,64 +21,16 @@ function LandCanvas() {
     });
   }, [land, spriteSheets]);
 
-  const object2DBuffer = useMemo(() => {
-    const buffer = {};
-    if (Object.keys(spriteSheets).length === 0 || object2ds.length === 0) {
-      return buffer;
-    }
-
-    land.layers.forEach((layer) => {
-      layer.object2ds.forEach(({ id: object2d_id }) => {
-        const object2d = object2ds.find(({ id }) => id === object2d_id);
-
-        console.log(object2d)
-        if (object2d && !buffer[object2d.id]) {
-          if (Object2DUtil.hasAnimation(object2d)) {
-            buffer[object2d.id] = {
-              anim: {
-                rate: object2d.anim.rate,
-                frames: object2d.anim.frames.map((tiles) => {
-                  return CanvasUtil.transferTilesToBuffer({ tiles, spriteSheets });
-                })
-              }
-            };
-          } else {
-            buffer[object2d.id] = CanvasUtil.transferTilesToBuffer({ tiles: object2d.tiles, spriteSheets });
-          }
-        }
-      })
-    });
-
-    return buffer;
+  const object2DBuffers = useMemo(() => {
+    return CanvasUtil.createObject2DBuffers({ land, spriteSheets, object2ds });
   }, [land, spriteSheets, object2ds]);
 
 
-  const object2DLayer = useCallback((lifetime) => {
+  const object2DLayers = useCallback((lifetime) => {
     return function(ctx) {
-      if (Object.keys(spriteSheets).length === 0 || object2ds.length === 0) {
-        return [];
-      }
-  
-      return land.layers.forEach((layer) => {
-        layer.object2ds.forEach((object2d) => {
-          if (object2d.id && !object2DBuffer[object2d.id]) {
-            return;
-          }
-
-          if (object2DBuffer[object2d.id].anim) {
-            const anim = object2DBuffer[object2d.id].anim;
-            const frameLen =  (1 / 60) * (12 / anim.rate);
-            const frameIndex = lifetime ? Math.floor(lifetime / frameLen) % anim.frames.length : 0;
-            const frame = anim.frames[frameIndex];
-            CanvasUtil.drawTilesOnCanvas(ctx, frame, { x: object2d.rect[0], y: object2d.rect[1] });
-          } else {
-            const tilesBuffer = object2DBuffer[object2d.id];
-            CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, { x: object2d.rect[0], y: object2d.rect[1] });
-          }
-        });
-      });
+      return CanvasUtil.createObject2DLayersBuffer({ ctx, lifetime, land, object2ds, spriteSheets, object2DBuffers });
     };
-  }, [land, object2ds, spriteSheets, object2DBuffer]);
+  }, [land, object2ds, spriteSheets, object2DBuffers]);
 
   const gridLayer = useMemo(() => {
     return CANVAS_LAYER.GRID({
@@ -89,8 +41,8 @@ function LandCanvas() {
 
   const layers = useCallback(
     (lifetime) => [
-      spritesLayer,
-      object2DLayer(lifetime),
+      spritesLayers,
+      object2DLayers(lifetime),
       (lifetime === undefined && gridLayer),
     ].filter(Boolean),
     [land, spriteSheets, object2ds],
