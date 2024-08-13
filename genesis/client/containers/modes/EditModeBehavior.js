@@ -2,14 +2,12 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addTileToLand,
-  addTilesToLand,
+  addLandTilesByRect,
   moveLandTiles,
-  deleteLandObject2Ds,
+  cmd,
   deleteSelectedElements,
   selectedLand,
   drawObject2D,
-  deleteLandTiles,
-  addObject2DToLand,
   departObject2D,
   flatSelectedTiles,
 } from '@/features/appState/appStateSlice';
@@ -22,7 +20,6 @@ import {
   SELECT_MODE,
   KEEP_FOLLOWS,
 } from '@/features/editMode/editModeSlice';
-import { executeCommands, redo, undo } from '@/features/commandManager/commandManagerSlice';
 import {
   selectedCursorIndex,
   selectedEditModeSelector,
@@ -93,8 +90,8 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
           );
           
           openCreateObject2DModal({ tiles, onSuccess: (res) => {
-            dispatch(deleteLandTiles(rect));
-            dispatch(addObject2DToLand({
+            dispatch(cmd.tiles.delete({ rect }));
+            dispatch(cmd.object2ds.add({
               rect,
               object2d: res.data,
             }));
@@ -136,12 +133,12 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
       [Z_KEY]: (event) => {
         if (event.metaKey) {
           EventUtil.stop(event);
-          dispatch(redo());
+          dispatch(cmd.undo());
         }
 
         if (event.metaKey && event.shiftKey) {
           EventUtil.stop(event);
-          dispatch(undo());
+          dispatch(cmd.redo());
         }
       },
       [ARROW_LEFT_KEY]: (event) => {},
@@ -176,7 +173,7 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
         }
 
         if (mode === SELECT_MODE.OBJECT_2D_OR_TILE) {
-          follows = CanvasUtil.getFollowedSelectedObject2DRects(rects.default, land);
+          follows = CanvasUtil.getFollowedSelectedRects(rects.default, land);
 
           if (follows.length === 0) {
             mode = SELECT_MODE.TILE;
@@ -224,7 +221,7 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
           }
 
           if (!isHolding(S_KEY)) {
-            dispatch(deleteLandObject2Ds({ rects: selector.rect.follows }));
+            dispatch(cmd.object2ds.delete({ rects: selector.rect.follows }));
           }
 
         }
@@ -252,7 +249,7 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
         if (isMoveAddTilesMode()) {
           if (rects.default.next && genesisRef.current.default) {
             dispatch(
-              addTilesToLand({
+              addLandTilesByRect({
                 selectedArea: selector.rect.default,
                 localOriginIndex: [
                   rects.default.next[0],

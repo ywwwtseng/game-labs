@@ -6,7 +6,7 @@ import { BaseButton } from '@/components/ui/BaseButton';
 import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { GlobalIcon } from '@/components/icon/GlobalIcon';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
-import { selectLayer } from '@/features/appState/appStateSlice';
+import { selectLandLayer } from '@/features/appState/appStateSlice';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 function GameStructureView() {
@@ -56,7 +56,7 @@ function GameStructureView() {
                   </div>
                 }
                 selected={land.selectedLayerIndex === index}
-                onClick={() => dispatch(selectLayer(index))}
+                onClick={() => dispatch(selectLandLayer(index))}
               />
             ))}
           </React.Fragment>

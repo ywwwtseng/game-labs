@@ -342,7 +342,8 @@ class CanvasUtil {
     };
   }
 
-  static getFollowedSelectedObject2DRects(selectedRect, land) {
+  // return followed selected rects
+  static getFollowedSelectedRects(selectedRect, land) {
     if (!selectedRect) {
       return [];
     }
@@ -384,6 +385,27 @@ class CanvasUtil {
     }
 
     return follows[0];
+  }
+
+  static getSelectedObject2DIndicesMap({ land, rects }) {
+    const indices = {};
+    const layerIndex = land.selectedLayerIndex;
+    const object2ds = land.layers[layerIndex].object2ds;
+
+    for (let i = 0; i < rects.length; i++) {
+      const rect = rects[i];
+
+      for (let j = object2ds.length - 1; j >= 0; j--) {
+        const object2d = land.layers[layerIndex].object2ds[j];
+
+        if (object2d && CanvasUtil.same(rect, object2d.rect)) {
+          indices[j] = object2d;
+          break;
+        }
+      }
+    }
+
+    return indices;
   }
 
   static getObject2DRect(object2d) {
