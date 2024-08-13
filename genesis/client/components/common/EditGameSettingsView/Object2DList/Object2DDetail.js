@@ -3,13 +3,13 @@ import { BaseButton } from '@/components/ui/BaseButton';
 import { AreaHeader } from '@/components/common/AreaHeader';
 import { CloseIcon } from '@/components/icon/CloseIcon';
 import { Object2DAnimAttribute } from '@/components/common/EditGameSettingsView/Object2DList/Object2DAnimAttribute/Object2DAnimAttribute';
-import { DomUtil } from '@/utils/DomUtil';
+import { EventUtil } from '@/utils/EventUtil';
 import { Object2DUtil } from '@/utils/Object2DUtil';
 
 
 function Object2DDetail({ object2d, onClose }) {
   return (
-    <div className="absolute flex flex-col top-0 left-0 w-full h-full bg-[#282828] rounded" onClick={DomUtil.stopPropagation}>
+    <div className="absolute flex flex-col top-0 left-0 w-full h-full bg-[#282828] rounded" onClick={EventUtil.stopPropagation}>
       <AreaHeader
         className="bg-[#282828]"
         label={object2d.name}

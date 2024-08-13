@@ -1,12 +1,12 @@
 import cx from 'classnames';
-import { DomUtil } from '@/utils/DomUtil';
+import { EventUtil } from '@/utils/EventUtil';
 
 function BaseInput({ className, label, ...props }) {
   return (
     <label
       className="block flex items-center py-1 w-18"
-      onKeyDown={DomUtil.stopPropagation}
-      onKeyUp={DomUtil.stopPropagation}
+      onKeyDown={EventUtil.stopPropagation}
+      onKeyUp={EventUtil.stopPropagation}
     >
       <span className="block text-xs text-white mr-2 w-9">{label}</span>
       <input

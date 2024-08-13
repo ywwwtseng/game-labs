@@ -22,6 +22,7 @@ import {
   SELECT_MODE,
   KEEP_FOLLOWS,
 } from '@/features/editMode/editModeSlice';
+import { executeCommands, redo, undo } from '@/features/commandManager/commandManagerSlice';
 import {
   selectedCursorIndex,
   selectedEditModeSelector,
@@ -43,12 +44,14 @@ import {
   O_KEY,
   S_KEY,
   X_KEY,
+  Z_KEY,
 } from '@/hooks/useKeyBoard';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { useQuery } from '@/features/query/QueryClientContext';
 import { sql } from '@/sql';
 import { useModal } from '@/context/ModalContext';
 import { CreateObject2DModal } from '@/components/common/CreateObject2DModal';
+import { EventUtil } from '@/utils/EventUtil';
 
 function EditModeBehavior({ children }) {
   const dispatch = useDispatch();
@@ -129,6 +132,17 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
         }
 
         dispatch(flatSelectedTiles({ rect }));
+      },
+      [Z_KEY]: (event) => {
+        if (event.metaKey) {
+          EventUtil.stop(event);
+          dispatch(redo());
+        }
+
+        if (event.metaKey && event.shiftKey) {
+          EventUtil.stop(event);
+          dispatch(undo());
+        }
       },
       [ARROW_LEFT_KEY]: (event) => {},
       [ARROW_RIGHT_KEY]: (event) => {},
