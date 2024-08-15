@@ -1,6 +1,9 @@
 import { MatrixUtil } from '@/utils/MatrixUtil';
 
 class Object2DUtil {
+  static isObject2D(object) {
+    return object.id && object.id.includes('object2d');
+  }
   static getRect(object) {
     return [0, 0, ...MatrixUtil.sizeIndex(Object2DUtil.tiles(object))];
   }

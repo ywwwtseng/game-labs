@@ -13,8 +13,7 @@ function SpriteTool({ origin, onClose }) {
   const menuRef = useRef();
   const spriteSheets = useSpriteSheets();
   const dispatch = useDispatch();
-  const drawMode = useSelector((state) => state.drawMode);
-  const [selectedSource, setSelectedSource] = useState(drawMode.source);
+  const [selectedSource, setSelectedSource] = useState(null);
   const spriteSheet = spriteSheets[selectedSource];
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import editModeReducer from '@/features/editMode/editModeSlice';
 import queryReducer from '@/features/query/querySlice';
 import { CommandManager } from '@/helpers/CommandManager';
 
+window.commandManager = new CommandManager()
 export const store = configureStore({
   reducer: {
     appState: appStateReducer,
@@ -13,7 +14,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     thunk: {
       extraArgument: {
-        commandManager: new CommandManager()
+        commandManager: window.commandManager
       }
     }
   })

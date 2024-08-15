@@ -2,12 +2,9 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addTileToLand,
-  addLandTilesByRect,
-  moveLandTiles,
   cmd,
   deleteSelectedElements,
   selectedLand,
-  drawObject2D,
   departObject2D,
   flatSelectedTiles,
 } from '@/features/appState/appStateSlice';
@@ -131,14 +128,12 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
         dispatch(flatSelectedTiles({ rect }));
       },
       [Z_KEY]: (event) => {
-        if (event.metaKey) {
-          EventUtil.stop(event);
-          dispatch(cmd.undo());
-        }
+        EventUtil.stop(event);
 
         if (event.metaKey && event.shiftKey) {
-          EventUtil.stop(event);
           dispatch(cmd.redo());
+        } else if (event.metaKey) {
+          dispatch(cmd.undo());
         }
       },
       [ARROW_LEFT_KEY]: (event) => {},
@@ -249,17 +244,17 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
         if (isMoveAddTilesMode()) {
           if (rects.default.next && genesisRef.current.default) {
             dispatch(
-              addLandTilesByRect({
-                selectedArea: selector.rect.default,
-                localOriginIndex: [
-                  rects.default.next[0],
-                  rects.default.next[1],
-                ],
-                tiles: bufferRef.current.default,
-                transparent: MatrixUtil.findIndexArray(
-                  bufferRef.current.default, (tile) => tile === undefined
-                ).map(([x, y]) => `${x + rects.default.next[0]}.${y + rects.default.next[1]}`),
-              })
+              // cmd.tiles.add({
+              //   selectedArea: selector.rect.default,
+              //   tilesOrigin: [
+              //     rects.default.next[0],
+              //     rects.default.next[1],
+              //   ],
+              //   tiles: bufferRef.current.default,
+              //   transparent: MatrixUtil.findIndexArray(
+              //     bufferRef.current.default, (tile) => tile === undefined
+              //   ).map(([x, y]) => `${x + rects.default.next[0]}.${y + rects.default.next[1]}`),
+              // })
             );
           }
         }
@@ -273,17 +268,9 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
       if (selector.mode === SELECT_MODE.TILE) {
         if (selector.rect.default && bufferRef.current.default) {
           dispatch(
-            moveLandTiles({
-              selectedArea: selector.rect.default,
-              localOriginIndex: [
-                selector.rect.default[0],
-                selector.rect.default[1],
-              ],
-              tiles: bufferRef.current.default,
-              transparent: MatrixUtil.findIndexArray(
-                bufferRef.current.default,
-                (tile) => tile === undefined
-              ).map(([x, y]) => `${x + selector.rect.default[0]}.${y + selector.rect.default[1]}`),
+            cmd.tiles.add({
+              rect: selector.rect.default,
+              tilesMatrix: bufferRef.current.default,
             })
           );
         }
@@ -294,7 +281,7 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
         if (selector.rect.follows && genesisRef.current.follows) {
           selector.rect.follows.forEach((rect, index) => {
             dispatch(
-              drawObject2D({
+              cmd.object2ds.add({
                 rect,
                 object2d: genesisRef.current.follows[index].object2d,
               })

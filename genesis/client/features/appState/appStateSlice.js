@@ -33,82 +33,6 @@ export const setMode = createAsyncThunk(
   },
 );
 
-export const drawTiles = createAsyncThunk(
-  'appState/drawTiles',
-  async ({ event, selectedTiles, transparent = [] }, { dispatch }) => {
-    try {
-      const [originX, originY, sizeIndexX, sizeIndexY] = selectedTiles.rect;
-
-      const pos = CanvasUtil.getDraggedIconPosition(event, selectedTiles.rect, {
-        x: 8,
-        y: 8,
-      });
-      const index = CanvasUtil.positionToIndex(pos);
-
-      dispatch(
-        addLandTilesByRect({
-          selectedArea: [index[0], index[1], sizeIndexX, sizeIndexY],
-          localOriginIndex: [originX, originY],
-          transparent,
-          source: selectedTiles.source,
-        }),
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  },
-);
-
-export const drawObject2D = createAsyncThunk(
-  'appState/drawObject2D',
-  async (T, { dispatch }) => {
-    try {
-      if (T.event && T.object2d) {
-        const rect = Object2DUtil.getRect(T.object2d);
-        const pos = CanvasUtil.getDraggedIconPosition(T.event, rect, { x: 8, y: 8 });
-        const index = CanvasUtil.positionToIndex(pos);
-  
-        dispatch(
-          cmd.object2ds.add({
-            rect: [...index, rect[2], rect[3]],
-            object2d: T.object2d,
-          }),
-        );
-      }
-  
-      if (T.rect && T.object2d) {
-        dispatch(
-          cmd.object2ds.add({
-            rect: T.rect,
-            object2d: T.object2d,
-          }),
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
-
-    
-  },
-);
-
-export const moveLandTiles = createAsyncThunk(
-  'appState/moveLandTiles',
-  async (
-    { selectedArea, localOriginIndex, tiles, transparent },
-    { dispatch },
-  ) => {
-    dispatch(
-      addLandTilesByRect({
-        selectedArea,
-        localOriginIndex,
-        tiles,
-        transparent,
-      }),
-    );
-  },
-);
-
 export const cmd = {
   redo: createAsyncThunk(
     'appState/redo',
@@ -128,21 +52,48 @@ export const cmd = {
     add: createAsyncThunk(
       'appState/addTiles',
       async (
-        { selectedArea, localOriginIndex, tiles, transparent },
+        payload,
         { getState, dispatch, extra: { commandManager }
       }) => {
         const state = getState();
         const layerIndex = state.appState.land.selectedLayerIndex;
+
+        let rect;
+        let tilesMatrix;
+
+        if (payload.event && payload.tiles) {
+          const { event, tiles, transparent = [] } = payload;
+          const originX = tiles.rect[0];
+          const originY = tiles.rect[1];
+          
+          rect = CanvasUtil.getDraggedIconRect(event, tiles.rect);
+          tilesMatrix = MatrixUtil.create(rect, ({ x, y }) => {
+            if (transparent.includes(`${originX + x}.${originY + y}`)) {
+              return null;
+            }
+    
+            return [{
+              source: tiles.source,
+              index: [originX + x, originY + y],
+            }];
+          });
+        } else if (payload.rect && payload.tile) {
+          rect = payload.rect;
+          tilesMatrix = MatrixUtil.create(rect, () => [payload.tile]);
+        } else if (payload.rect && payload.tilesMatrix) {
+          rect = payload.rect;
+          tilesMatrix = payload.tilesMatrix;
+        }
     
         commandManager.executeCmd({
           execute: () => {
-            // dispatch(deleteLandTilesByRect({ layerIndex, rect: CanvasUtil.normalizeRect(rect) }));
+            dispatch(addLandTiles({ layerIndex, rect, tiles: tilesMatrix }));
           },
           undo: () => {
-            // dispatch(addLandObject2DsByIndices({ layerIndex, object2DIndicesMap }));
+            dispatch(deleteLandTilesByTiles({ layerIndex, rect, tiles: tilesMatrix }));
           },
           redo: () => {
-            // dispatch(deleteLandTilesByRect({ layerIndex, rect: CanvasUtil.normalizeRect(rect) }));
+            dispatch(addLandTiles({ layerIndex, rect, tiles: tilesMatrix }));
           },
         });
       },
@@ -152,13 +103,14 @@ export const cmd = {
       async ({ rect }, { getState, dispatch, extra: { commandManager } }) => {
         const state = getState();
         const layerIndex = state.appState.land.selectedLayerIndex;
+        const tiles = CanvasUtil.cloneLandSelectedTiles(rect, state.appState.land, ({ tile }) => tile);
     
         commandManager.executeCmd({
           execute: () => {
             dispatch(deleteLandTilesByRect({ layerIndex, rect: CanvasUtil.normalizeRect(rect) }));
           },
           undo: () => {
-            // dispatch(addLandObject2DsByIndices({ layerIndex, object2DIndicesMap }));
+            dispatch(addLandTiles({ layerIndex, rect, tiles }));
           },
           redo: () => {
             dispatch(deleteLandTilesByRect({ layerIndex, rect: CanvasUtil.normalizeRect(rect) }));
@@ -171,15 +123,16 @@ export const cmd = {
   object2ds: {
     add: createAsyncThunk(
       'appState/addObject2Ds',
-      async ({ object2d, rect }, { getState, dispatch, extra: { commandManager } }) => {
-        
+      async (payload, { getState, dispatch, extra: { commandManager } }) => {
+        const object2d = payload.object2d;
+  
         const state = getState();
         const layerIndex = state.appState.land.selectedLayerIndex;
 
         const object2DIndicesMap = {
           [state.appState.land.layers[layerIndex].object2ds.length]: {
             id: object2d.id,
-            rect,
+            rect: payload.rect || CanvasUtil.getDraggedIconRect(payload.event, object2d),
           }
         };
 
@@ -282,6 +235,7 @@ export const appStateSlice = createSlice({
         }
       }
     },
+    // TODO
     addTileToLand: (state, action) => {
       const layerIndex = state.land.selectedLayerIndex;
       const [indexX, indexY] = action.payload.index;
@@ -301,34 +255,45 @@ export const appStateSlice = createSlice({
         state.land.layers[layerIndex].tiles[indexX][indexY] = [];
       }
     },
-    addLandTilesByRect: (state, action) => {
-      const selectedArea = action.payload.selectedArea;
-      const [originX, originY] = action.payload.localOriginIndex;
-      const transparent = action.payload.transparent || [];
-      const layerIndex = state.land.selectedLayerIndex;
+    addLandTiles: (state, action) => {
+      const { rect, layerIndex, tiles } = action.payload;
 
-      MatrixUtil.traverse(selectedArea, ({ x, y }, index) => {
-        if (!transparent.includes(`${originX + x}.${originY + y}`)) {
+      MatrixUtil.traverse(rect, ({ x, y }, index) => {
+        const tileItems = tiles[x][y];
+
+        if (tileItems) {
           if (!state.land.layers[layerIndex].tiles[index.x]) {
             state.land.layers[layerIndex].tiles[index.x] = [];
           }
-          const tileItems = action.payload.tiles?.[x]?.[y];
 
           if (!state.land.layers[layerIndex].tiles[index.x][index.y]) {
             state.land.layers[layerIndex].tiles[index.x][index.y] = [];
           }
 
-          if (tileItems) {
-            state.land.layers[layerIndex].tiles[index.x][index.y].push(...tileItems);
-          } else {
-            state.land.layers[layerIndex].tiles[index.x][index.y].push({
-              source: action.payload.source,
-              index: [originX + x, originY + y],
-            });
-          }
+          state.land.layers[layerIndex].tiles[index.x][index.y].push(...tileItems);
         }
       });
     },
+    deleteLandTilesByTiles: (state, action) => {
+      const { rect, layerIndex, tiles } = action.payload;
+
+      MatrixUtil.traverse(rect, ({ x, y }, index) => {
+        const tileItems = tiles[x][y];
+
+        if (tileItems) {
+          if (!state.land.layers[layerIndex].tiles[index.x]) {
+            return;
+          }
+
+          if (!state.land.layers[layerIndex].tiles[index.x][index.y]) {
+            return;
+          }
+
+          state.land.layers[layerIndex].tiles[index.x][index.y].splice(-tileItems.length, tileItems.length);
+        }
+      });
+    },
+    // TODO
     departObject2D: (state, action) => {
       const layerIndex = state.land.selectedLayerIndex;
       const { rect, object2d } = action.payload;
@@ -342,6 +307,7 @@ export const appStateSlice = createSlice({
         state.land.layers[layerIndex].tiles[x][y] = tiles[index.x][index.y];
       });
     },
+    // TODO
     flatSelectedTiles: (state, action) => {
       const layerIndex = state.land.selectedLayerIndex;
       const { rect } = action.payload;
@@ -356,19 +322,6 @@ export const appStateSlice = createSlice({
         if (tile && tile.length > 0) {
           state.land.layers[layerIndex].tiles[x][y] = [tile[tile.length - 1]];
         }
-      });
-    },
-    fillTile: (state, action) => {
-      const layerIndex = state.land.selectedLayerIndex;
-      const selectedRect = action.payload.selectedRect;
-      const tile = action.payload.tile;
-
-      MatrixUtil.traverse(selectedRect, (_, { x, y }) => {
-        if (!state.land.layers[layerIndex].tiles[x]) {
-          state.land.layers[layerIndex].tiles[x] = [];
-        }
-
-        state.land.layers[layerIndex].tiles[x][y] = [tile];
       });
     },
     deleteLandTilesByRect: (state, action) => {
@@ -390,14 +343,14 @@ export const appStateSlice = createSlice({
 
       state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter(Boolean);
     },
-    deleteLandObject2DsCompletely(state, action) {
-      const layerIndex = state.land.selectedLayerIndex;
-      const { rects } = action.payload;
+    // deleteLandObject2DsCompletely(state, action) {
+    //   const layerIndex = state.land.selectedLayerIndex;
+    //   const { rects } = action.payload;
 
-      state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter((object2d) => {
-        return !rects.some(rect => CanvasUtil.same(rect, object2d.rect));
-      });     
-    },
+    //   state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter((object2d) => {
+    //     return !rects.some(rect => CanvasUtil.same(rect, object2d.rect));
+    //   });     
+    // },
     selectLandLayer: (state, action) => {
       state.land.selectedLayerIndex = action.payload;
     },
@@ -414,9 +367,9 @@ export const {
   selectLandLayer,
   // tiles
   addTileToLand,
-  addLandTilesByRect,
-  fillTile,
+  addLandTiles,
   deleteLandTilesByRect,
+  deleteLandTilesByTiles,
   flatSelectedTiles,
   // object2d
   departObject2D,

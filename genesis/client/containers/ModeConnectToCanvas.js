@@ -1,12 +1,10 @@
 import { useSelector } from 'react-redux';
 import { EditModeBehavior } from '@/containers/modes/EditModeBehavior';
-import { DrawModeBehavior } from '@/containers/modes/DrawModeBehavior';
 import { PreviewModeBehavior } from '@/containers/modes/PreviewModeBehavior';
 import { MODE } from '@/constants';
 
 const Behavior = {
   [MODE.EDIT]: EditModeBehavior,
-  [MODE.DRAW]: DrawModeBehavior,
   [MODE.PREVIEW]: PreviewModeBehavior,
 };
 

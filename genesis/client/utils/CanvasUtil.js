@@ -34,6 +34,15 @@ class CanvasUtil {
 
     return pos;
   }
+
+  static getDraggedIconRect(event, T) {
+    const rect = Object2DUtil.isObject2D(T) ? Object2DUtil.getRect(T) : T;
+    const pos = CanvasUtil.getDraggedIconPosition(event, rect, { x: 8, y: 8 });
+    const index = CanvasUtil.positionToIndex(pos);
+
+    return [...index, rect[2], rect[3]];
+  }
+
   static getRectPosIndex(rect) {
     const { pos } = getBoundingBox(rect);
     const index = CanvasUtil.positionToIndex(pos);
@@ -291,7 +300,7 @@ class CanvasUtil {
 
   static hasExistedTile({
     selectedArea,
-    localOriginIndex,
+    tilesOrigin,
     layer,
     transparent,
   }) {
@@ -300,7 +309,7 @@ class CanvasUtil {
         if (
           layer.tiles?.[selectedArea[0] + x]?.[selectedArea[1] + y] &&
           !transparent.includes(
-            `${localOriginIndex[0] + x}.${localOriginIndex[1] + y}`
+            `${tilesOrigin[0] + x}.${tilesOrigin[1] + y}`
           )
         ) {
           return true;

@@ -130,15 +130,18 @@ function useSelectorBridge({
         const dx = index[0] - selector.rect.default[0];
         const dy = index[1] - selector.rect.default[1];
 
-        selectArea({
-          default: [
-            selector.rect.default[0],
-            selector.rect.default[1],
-            dx > 0 ? dx + 1 : dx === 0 ? 1 : dx - 1,
-            dy > 0 ? dy + 1 : dy === 0 ? 1 : dy - 1,
-          ],
-          follows: [],
-        }, 'mousemove');
+        selectArea(
+          {
+            default: [
+              selector.rect.default[0],
+              selector.rect.default[1],
+              dx > 0 ? dx + 1 : dx === 0 ? 1 : dx - 1,
+              dy > 0 ? dy + 1 : dy === 0 ? 1 : dy - 1,
+            ],
+            follows: [],
+          },
+          'mousemove'
+        );
       } else if (!dragAndDrop && isPressRef.current === true) {
         hasMoveDownBehaviorRef.current = true;
         const { genesis } = dataTransfer.getData();
@@ -148,22 +151,27 @@ function useSelectorBridge({
 
         if (!CanvasUtil.same(selector.rect.default, next)) {
 
-          selectArea({
-            default: next,
-            follows: selector.rect.follows?.map((_, index) =>
-              genesis.follows[index].follow(next)
-            ),
-          }, 'mosuemove');
-          onMoveDown({
-            default: {
-              genesis: genesis.default.rect,
-              next,
-            },
-            follows: selector.rect.follows?.map((_, index) => ({
-              genesis: genesis.follows[index].rect,
-              next: genesis.follows[index].follow(next),
-            })),
-          });
+          selectArea(
+            {
+              default: next,
+              follows: selector.rect.follows?.map((_, index) =>
+                genesis.follows[index].follow(next)
+              ),
+            }, 
+            'mosuemove'
+          );
+          onMoveDown(
+            {
+              default: {
+                genesis: genesis.default.rect,
+                next,
+              },
+              follows: selector.rect.follows?.map((_, index) => ({
+                genesis: genesis.follows[index].rect,
+                next: genesis.follows[index].follow(next),
+              })),
+            }
+          );
         }
       }
     },

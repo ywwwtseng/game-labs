@@ -2,11 +2,7 @@ import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setupDropzone } from '@/context/DragAndDropContext';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
-import {
-  drawTiles,
-  fillTile,
-  drawObject2D,
-} from '@/features/appState/appStateSlice';
+import { cmd } from '@/features/appState/appStateSlice';
 import { SELECT_MODE, selectedEditModeSelector } from '@/features/editMode/editModeSlice';
 import { overlaps } from '@/helpers/BoundingBox';
 
@@ -27,8 +23,8 @@ function useDropToDraw({ id }) {
           overlaps({ rect: selector.rect.default, with: id }, { event, rect })
         ) {
           dispatch(
-            fillTile({
-              selectedRect: selector.rect.default,
+            cmd.tiles.add({
+              rect: selector.rect.default,
               tile: {
                 index: data.index,
                 source: data.source,
@@ -37,9 +33,9 @@ function useDropToDraw({ id }) {
           );
         } else {
           dispatch(
-            drawTiles({
+            cmd.tiles.add({
               event,
-              selectedTiles: {
+              tiles: {
                 rect,
                 source: data.source,
               },
@@ -57,8 +53,8 @@ function useDropToDraw({ id }) {
             overlaps({ rect: selector.rect.default, with: id }, { event, rect: data.rect })
           ) {
             dispatch(
-              fillTile({
-                selectedRect: selector.rect.default,
+              cmd.tiles.add({
+                rect: selector.rect.default,
                 tile: {
                   index: [data.rect[0], data.rect[1]],
                   source: data.source,
@@ -71,9 +67,9 @@ function useDropToDraw({ id }) {
         }
 
         dispatch(
-          drawTiles({
+          cmd.tiles.add({
             event,
-            selectedTiles: {
+            tiles: {
               rect: data.rect,
               source: data.source,
             },
@@ -85,7 +81,7 @@ function useDropToDraw({ id }) {
       object2d: (event, data) => {
         if (!data) return;
         dispatch(
-          drawObject2D({
+          cmd.object2ds.add({
             event,
             object2d: data.object2d,
           }),
