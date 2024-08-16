@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
@@ -6,10 +6,13 @@ import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { Object2DUtil } from '@/utils/Object2DUtil';
 import { selectedLand } from '@/features/appState/appStateSlice';
+import { useCamera } from '@/hooks/useCamera';
 import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
+import { getBoundingBox } from '@/helpers/BoundingBox';
 
 function LandCanvas() {
+  const camera = useCamera();
   const land = useSelector(selectedLand);
   const spriteSheets = useSpriteSheets();
   const { data: object2ds } = useQuery(sql.object2ds.list);
@@ -60,8 +63,8 @@ function LandCanvas() {
             <Canvas2D
               id="canvas"
               accept="tiles"
-              width={land.width}
-              height={land.height}
+              width={camera.size}
+              height={camera.size}
               layers={layers(connect.lifetime)}
               {...connect}
             />

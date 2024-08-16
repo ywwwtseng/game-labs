@@ -20,6 +20,7 @@ function Canvas2D({
   id = 'canvas',
   layers = [],
   cache,
+  camera,
   width,
   height,
   ...props

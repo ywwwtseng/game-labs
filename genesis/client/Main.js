@@ -8,7 +8,7 @@ import { AppInfo } from '@/components/common/AppInfo/AppInfo';
 
 function Main() {
   return (
-    <div className="select-none h-screen min-w-[1024px] flex flex-col bg-[#1D1D1D]">
+    <div className="select-none h-screen flex flex-col bg-[#1D1D1D]">
       <Navigation />
       <div className="relative flex items-center flex-1 rounded">
         <div className="rounded flex-1 max-h-screen h-full flex flex-col">

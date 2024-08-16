@@ -13,7 +13,7 @@ import { getBoundingBox } from '@/helpers/BoundingBox';
 
 const Menu = forwardRef(
   ({ children, origin, limit = 'edit-area', ...props }, ref) => {
-    const windowSize =useWindowSize();
+    const windowSize = useWindowSize();
     const itemRef = useRef();
     const [pos, setPos] = useState(origin);
     const updatePos = useCallback((_, { delta }) => {
