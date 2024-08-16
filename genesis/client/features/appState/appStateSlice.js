@@ -36,14 +36,16 @@ export const setMode = createAsyncThunk(
 export const cmd = {
   redo: createAsyncThunk(
     'appState/redo',
-    async (_, { extra: { commandManager } }) => {
+    async (_, { dispatch, extra: { commandManager } }) => {
+      dispatch(editMode.destroy());
       commandManager.redo();
      
     }
   ),
   undo: createAsyncThunk(
     'appState/undo',
-    async (_, { extra: { commandManager } }) => {
+    async (_, { dispatch, extra: { commandManager } }) => {
+      dispatch(editMode.destroy());
       commandManager.undo();
      
     }
@@ -86,6 +88,7 @@ export const cmd = {
         }
     
         commandManager.executeCmd({
+          merge: payload.merge,
           execute: () => {
             dispatch(addLandTiles({ layerIndex, rect, tiles: tilesMatrix }));
           },
@@ -103,7 +106,7 @@ export const cmd = {
       async ({ rect }, { getState, dispatch, extra: { commandManager } }) => {
         const state = getState();
         const layerIndex = state.appState.land.selectedLayerIndex;
-        const tiles = CanvasUtil.cloneLandSelectedTiles(rect, state.appState.land, ({ tile }) => tile);
+        const tiles = CanvasUtil.copyLandTiles(rect, state.appState.land);
     
         commandManager.executeCmd({
           execute: () => {
@@ -118,7 +121,22 @@ export const cmd = {
         });
       },
     ),
-    // flat
+    flat: createAsyncThunk(
+      'appState/flatTiles',
+      async ({ rect }, { getState, dispatch }) => {
+        const state = getState();
+        const land = selectedLand(state);
+
+        const flattenedTiles = CanvasUtil.copyLandTiles(
+          rect,
+          land,
+          (tileItems) => [tileItems?.[tileItems.length - 1]]?.filter(Boolean)
+        );
+
+        dispatch(cmd.tiles.delete({ rect }));
+        dispatch(cmd.tiles.add({ merge: true, rect, tilesMatrix: flattenedTiles }));
+      },
+    )
   },
   object2ds: {
     add: createAsyncThunk(
@@ -137,6 +155,7 @@ export const cmd = {
         };
 
         commandManager.executeCmd({
+          merge: payload.merge,
           execute: () => {
             dispatch(addLandObject2DsByIndices({ layerIndex, object2DIndicesMap }));
           },
@@ -169,7 +188,14 @@ export const cmd = {
         });
       },
     ),
-    // depart
+    depart: createAsyncThunk(
+      'appState/departObject2D',
+      async ({ rect, object2d }, { getState, dispatch }) => {
+        dispatch(editMode.destroy());
+        dispatch(cmd.object2ds.delete({ rects: [rect] }));
+        dispatch(cmd.tiles.add({ merge: true, rect, tilesMatrix: object2d.tiles }));
+      },
+    ),
   }
 };
 
@@ -235,26 +261,6 @@ export const appStateSlice = createSlice({
         }
       }
     },
-    // TODO
-    addTileToLand: (state, action) => {
-      const layerIndex = state.land.selectedLayerIndex;
-      const [indexX, indexY] = action.payload.index;
-      const tile = action.payload.tile;
-
-      if (!state.land.layers[layerIndex].tiles[indexX]) {
-        state.land.layers[layerIndex].tiles[indexX] = [];
-      }
-
-      if (!state.land.layers[layerIndex].tiles[indexX][indexY]) {
-        state.land.layers[layerIndex].tiles[indexX][indexY] = [];
-      }
-
-      if (tile) {
-        state.land.layers[layerIndex].tiles[indexX][indexY].push(tile);
-      } else {
-        state.land.layers[layerIndex].tiles[indexX][indexY] = [];
-      }
-    },
     addLandTiles: (state, action) => {
       const { rect, layerIndex, tiles } = action.payload;
 
@@ -293,37 +299,6 @@ export const appStateSlice = createSlice({
         }
       });
     },
-    // TODO
-    departObject2D: (state, action) => {
-      const layerIndex = state.land.selectedLayerIndex;
-      const { rect, object2d } = action.payload;
-      const tiles = Object2DUtil.tiles(object2d);
-
-      MatrixUtil.traverse(rect, (index, { x, y }) => {
-        if (!state.land.layers[layerIndex].tiles[x]) {
-          state.land.layers[layerIndex].tiles[x] = [];
-        }
-
-        state.land.layers[layerIndex].tiles[x][y] = tiles[index.x][index.y];
-      });
-    },
-    // TODO
-    flatSelectedTiles: (state, action) => {
-      const layerIndex = state.land.selectedLayerIndex;
-      const { rect } = action.payload;
-
-      MatrixUtil.traverse(rect, (_, { x, y }) => {
-        if (!state.land.layers[layerIndex].tiles[x]) {
-          state.land.layers[layerIndex].tiles[x] = [];
-        }
-
-        const tile = state.land.layers[layerIndex].tiles[x][y];
-
-        if (tile && tile.length > 0) {
-          state.land.layers[layerIndex].tiles[x][y] = [tile[tile.length - 1]];
-        }
-      });
-    },
     deleteLandTilesByRect: (state, action) => {
       const { layerIndex, rect } = action.payload;
 
@@ -343,14 +318,6 @@ export const appStateSlice = createSlice({
 
       state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter(Boolean);
     },
-    // deleteLandObject2DsCompletely(state, action) {
-    //   const layerIndex = state.land.selectedLayerIndex;
-    //   const { rects } = action.payload;
-
-    //   state.land.layers[layerIndex].object2ds = state.land.layers[layerIndex].object2ds.filter((object2d) => {
-    //     return !rects.some(rect => CanvasUtil.same(rect, object2d.rect));
-    //   });     
-    // },
     selectLandLayer: (state, action) => {
       state.land.selectedLayerIndex = action.payload;
     },
@@ -366,13 +333,10 @@ export const {
   addLand,
   selectLandLayer,
   // tiles
-  addTileToLand,
   addLandTiles,
   deleteLandTilesByRect,
   deleteLandTilesByTiles,
-  flatSelectedTiles,
   // object2d
-  departObject2D,
   addLandObject2DsByIndices,
   deleteLandObject2DsByIndices,
 } = appStateSlice.actions;
@@ -382,4 +346,4 @@ export const selectedLand = (state) => state.appState.land;
 export const selectedCurrentLayerSelector = (state) =>
   state.appState.land.layers[state.appState.land.selectedLayerIndex];
 
-export default appStateSlice.reducer;
+export const { reducer } = appStateSlice;

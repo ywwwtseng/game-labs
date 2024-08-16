@@ -2,11 +2,8 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   cmd,
-  addTileToLand,
   deleteSelectedElements,
   selectedLand,
-  departObject2D,
-  flatSelectedTiles,
 } from '@/features/appState/appStateSlice';
 import {
   setCursorIndex,
@@ -46,16 +43,19 @@ import { sql } from '@/sql';
 import { useModal } from '@/context/ModalContext';
 import { CreateObject2DModal } from '@/components/common/CreateObject2DModal';
 import { EventUtil } from '@/utils/EventUtil';
+import { useCache } from '@/hooks/useCache';
+import { MoveSelectAreaContext } from '@/helpers/MoveSelectAreaContext';
 
 function EditModeBehavior({ children }) {
   const dispatch = useDispatch();
+  const context = useCache(new MoveSelectAreaContext());
   const bufferRef = useRef({});
-  const genesisRef = useRef({});
+  const originRef = useRef({});
   const spriteSheets = useSpriteSheets();
   const land = useSelector(selectedLand);
   const cursorIndex = useSelector(selectedCursorIndex);
   const selector = useSelector(selectedEditModeSelector);
-const { data: object2ds } = useQuery(sql.object2ds.list);
+  const { data: object2ds } = useQuery(sql.object2ds.list);
 
   const { open: openCreateObject2DModal } = useModal(CreateObject2DModal);
 
@@ -66,7 +66,7 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
           return;
         }
 
-        if (bufferRef.current.default || genesisRef.current.default) {
+        if (context.data.default || context.origin.default) {
           return;
         }
 
@@ -76,15 +76,11 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
           return;
         }
 
-        const notEmptyTiles = CanvasUtil.cloneLandSelectedTiles(rect, land)
+        const notEmptyTiles = CanvasUtil.copyLandTiles(rect, land)
           .some((column) => column.some((tile) => tile?.length > 0));
 
         if (notEmptyTiles) {
-          const tiles = CanvasUtil.cloneLandSelectedTiles(
-            rect,
-            land,
-            ({ tile }) => (tile ? { index: tile.index, source: tile.source } : null),
-          );
+          const tiles = CanvasUtil.copyLandTiles(rect, land);
           
           openCreateObject2DModal({ tiles, onSuccess: (res) => {
             dispatch(cmd.tiles.delete({ rect }));
@@ -107,9 +103,7 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
 
         const rect = selector.rect.follows[0];
         const object2d = CanvasUtil.findObject2DBySelectedRect(rect, land);
-
-        dispatch(deleteSelectedElements());
-        dispatch(departObject2D({
+        dispatch(cmd.object2ds.depart({
           rect,
           object2d: object2ds.find(({ id }) => id === object2d.id),
         }));
@@ -125,7 +119,7 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
           return;
         }
 
-        dispatch(flatSelectedTiles({ rect }));
+        dispatch(cmd.tiles.flat({ rect }));
       },
       [Z_KEY]: (event) => {
         EventUtil.stop(event);
@@ -150,6 +144,7 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
 
   const { isHolding } = useKeyBoard(inputMapping);
 
+  const isDuplicate = () => isHolding(S_KEY);
   const isMoveAddTilesMode = () => isHolding(S_KEY) && isHolding(D_KEY);
 
   const { register, connect } = useSelectorBridge({
@@ -196,116 +191,91 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
     onMoveDown: (rects) => {
       const mode = selector.mode;
 
-      if (mode === SELECT_MODE.OBJECT_2D) {
-        if (!bufferRef.current.follows) {
-         
-          bufferRef.current.follows = rects.follows.map(
-            ({ genesis: rect }) => {
+      context.init(() => {
+        context.duplicate = isDuplicate() && !isMoveAddTilesMode();
+
+        if (mode === SELECT_MODE.OBJECT_2D) {
+          context.data.follows = rects.follows.map(
+            ({ origin: rect }) => {
               const object2d = CanvasUtil.cloneLandSelectedObject2D(rect, land, object2ds);
               return object2d.tiles;
             }
           );
 
-          if (!genesisRef.current.default) {
-            genesisRef.current.follows = rects.follows.map(
-              ({ genesis }) => ({
-                genesis,
-                object2d: CanvasUtil.findObject2DBySelectedRect(genesis, land),
+          context.origin.follows = rects.follows.map(
+            ({ origin }) => ({
+              origin,
+              object2d: CanvasUtil.findObject2DBySelectedRect(origin, land),
+            })
+          );
+
+          if (!context.duplicate) {
+            dispatch(cmd.object2ds.delete({ rects: rects.follows.map(({ origin }) => origin) }));
+          }
+        }
+
+        if (mode === SELECT_MODE.TILE) {
+          context.data.default = CanvasUtil.copyLandTiles(
+            rects.default.origin,
+            land,
+          );
+
+          context.origin.default = rects.default.origin;
+
+          if (!context.duplicate) {
+            dispatch(cmd.tiles.delete({ rect: rects.default.origin }));
+          }
+        }
+      });
+
+      if (mode === SELECT_MODE.TILE) {
+        if (isMoveAddTilesMode()) {
+          if (rects.default.next && context.origin.default) {
+            dispatch(
+              cmd.tiles.add({
+                merge: true,
+                rect: selector.rect.default,
+                tilesMatrix: context.data.default,
               })
             );
           }
-
-          
-
-          if (!isHolding(S_KEY)) {
-            dispatch(cmd.object2ds.delete({ rects: selector.rect.follows }));
-          }
-
-          
-
-        }
-
-      } else if (mode === SELECT_MODE.TILE) {
-        if (!bufferRef.current.default) {
-          bufferRef.current.default = CanvasUtil.cloneLandSelectedTiles(
-            rects.default.genesis,
-            land,
-            ({ tile, x, y }) => {
-              if (tile && !isHolding(S_KEY)) {
-                dispatch(
-                  addTileToLand({
-                    index: [x, y],
-                    tile: undefined,
-                  })
-                );
-              }
-
-              return tile;
-            }
-          );
-        }
-
-        if (isMoveAddTilesMode()) {
-          if (rects.default.next && genesisRef.current.default) {
-            dispatch(
-              // cmd.tiles.add({
-              //   selectedArea: selector.rect.default,
-              //   tilesOrigin: [
-              //     rects.default.next[0],
-              //     rects.default.next[1],
-              //   ],
-              //   tiles: bufferRef.current.default,
-              //   transparent: MatrixUtil.findIndexArray(
-              //     bufferRef.current.default, (tile) => tile === undefined
-              //   ).map(([x, y]) => `${x + rects.default.next[0]}.${y + rects.default.next[1]}`),
-              // })
-            );
-          }
-        }
-
-        if (!genesisRef.current.default) {
-          genesisRef.current.default = rects.default.genesis;
-        }
+        }    
       }
-
-     
     },
     onMoveDownEnd: () => {
       if (selector.mode === SELECT_MODE.TILE) {
-        if (selector.rect.default && bufferRef.current.default) {
+        if (selector.rect.default && context.data.default) {
           dispatch(
             cmd.tiles.add({
+              merge: !context.duplicate,
               rect: selector.rect.default,
-              tilesMatrix: bufferRef.current.default,
+              tilesMatrix: context.data.default,
             })
           );
         }
-
-        bufferRef.current.default = null;
-        genesisRef.current.default = null;
       } else {
-        if (selector.rect.follows && genesisRef.current.follows) {
+        if (selector.rect.follows && context.origin.follows) {
           selector.rect.follows.forEach((rect, index) => {
             dispatch(
               cmd.object2ds.add({
+                merge: !context.duplicate,
                 rect,
-                object2d: genesisRef.current.follows[index].object2d,
+                object2d: context.origin.follows[index].object2d,
               })
             );
           });
         }
-
-        bufferRef.current.follows = null;
-        genesisRef.current.follows = null;
       }
+
+      context.destroy();
     },
   });
 
   const cache = useCallback(
     (ctx) => {
-      if (selector.rect.default && bufferRef.current.default) {
+      if (selector.rect.default && context.data.default) {
         MatrixUtil.traverse(
-          bufferRef.current.default,
+          context.data.default,
           ({ value: tileItems, x, y }) => {
             tileItems?.forEach((tile) => {
               if (tile) {
@@ -322,10 +292,10 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
         );
       }
 
-      if (selector.rect.follows && bufferRef.current.follows) {
+      if (selector.rect.follows && context.data.follows) {
         selector.rect.follows.forEach((rect, index) => {
           MatrixUtil.traverse(
-            bufferRef.current.follows[index],
+            context.data.follows[index],
             ({ value: tileItems, x, y }) => {
               if (tileItems) {
                 tileItems.forEach((tile) => {

@@ -320,12 +320,12 @@ class CanvasUtil {
     return false;
   }
 
-  static cloneLandSelectedTiles(rect, land, callback = (any) => any) {
+  static copyLandTiles(rect, land, callback) {
     const layer = land.layers[land.selectedLayerIndex];
     return MatrixUtil.create(rect, (_, { x, y }) => {
-      return layer.tiles?.[x]?.[y]?.map((tile) => {
-        return callback({ tile, x, y });
-      });
+      const tileItems = layer.tiles?.[x]?.[y];
+
+      return callback ? callback(tileItems) : tileItems;
     });
   }
 

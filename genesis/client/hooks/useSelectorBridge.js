@@ -67,7 +67,7 @@ function useSelectorBridge({
             dataTransfer.setData(dragAndDrop.data(selector.rect.default));
           } else {
             dataTransfer.setData({
-              genesis: {
+              origin: {
                 default: {
                   rect: selector.rect.default,
                   follow: CanvasUtil.createFollowCursor({
@@ -144,10 +144,10 @@ function useSelectorBridge({
         );
       } else if (!dragAndDrop && isPressRef.current === true) {
         hasMoveDownBehaviorRef.current = true;
-        const { genesis } = dataTransfer.getData();
+        const { origin } = dataTransfer.getData();
 
 
-        const next = genesis.default.follow({event});
+        const next = origin.default.follow({event});
 
         if (!CanvasUtil.same(selector.rect.default, next)) {
 
@@ -155,7 +155,7 @@ function useSelectorBridge({
             {
               default: next,
               follows: selector.rect.follows?.map((_, index) =>
-                genesis.follows[index].follow(next)
+                origin.follows[index].follow(next)
               ),
             }, 
             'mosuemove'
@@ -163,12 +163,12 @@ function useSelectorBridge({
           onMoveDown(
             {
               default: {
-                genesis: genesis.default.rect,
+                origin: origin.default.rect,
                 next,
               },
               follows: selector.rect.follows?.map((_, index) => ({
-                genesis: genesis.follows[index].rect,
-                next: genesis.follows[index].follow(next),
+                origin: origin.follows[index].rect,
+                next: origin.follows[index].follow(next),
               })),
             }
           );
@@ -185,16 +185,16 @@ function useSelectorBridge({
       }
 
       if (hasMoveDownBehaviorRef.current === true) {
-        const { genesis } = dataTransfer.getData();
-        const next = genesis.default.follow({ event });
+        const { origin } = dataTransfer.getData();
+        const next = origin.default.follow({ event });
         onMoveDownEnd({
           default: {
-            genesis: genesis.default.rect,
+            origin: origin.default.rect,
             next,
           },
           follows: selector.rect.follows?.map((_, index) => ({
-            genesis: genesis.follows[index].rect,
-            next: genesis.follows[index].follow(next),
+            origin: origin.follows[index].rect,
+            next: origin.follows[index].follow(next),
           })),
         });
         hasMoveDownBehaviorRef.current = false;

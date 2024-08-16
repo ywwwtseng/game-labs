@@ -41,7 +41,13 @@ export class CommandManager {
 
   executeCmd(command) {
     command.execute();
-    this._undoStack.push(command);
+
+    if (command.merge) {
+      this._undoStack.push(new CompositeCommand([this._undoStack.pop(), command]));
+    } else {
+      this._undoStack.push(command);
+    }
+
 
     if (this._undoStack.length > this._maxSteps) {
       this._undoStack.shift();

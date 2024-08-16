@@ -23,7 +23,7 @@ function useKeyBoard(inputMapping) {
   const holdingKeyCodeRef = useRef({});
 
   const isHolding = useCallback(
-    (keyCode) => holdingKeyCodeRef.current[keyCode],
+    (keyCode) => Boolean(holdingKeyCodeRef.current[keyCode]),
     [],
   );
 

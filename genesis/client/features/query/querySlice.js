@@ -92,5 +92,6 @@ export const querySlice = createSlice({
 });
 
 export const { setQueryData, setRelateQueryData } = querySlice.actions;
+export const selectedQuery = (sql) => (state) => state.query[serialize(sql)]
 
-export default querySlice.reducer;
+export const { reducer } = querySlice;

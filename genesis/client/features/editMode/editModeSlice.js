@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { selectedLand } from '@/features/appState/appStateSlice';
+import { CanvasUtil } from '@/utils/CanvasUtil';
+import { selectedQuery } from '@/features/query/querySlice';
+import { sql } from '@/sql';
 
 export const KEEP_FOLLOWS = undefined;
 export const SELECT_MODE = {
@@ -11,7 +14,7 @@ export const SELECT_MODE = {
 export const selectAreaStart = createAsyncThunk(
   'editMode/selectAreaStart',
   async (payload, { dispatch }) => {
-    dispatch(selectAreaStartProgcess(Boolean(payload)));
+    dispatch(selectAreaStartProgress(Boolean(payload)));
     dispatch(
       selectArea({
         default: payload,
@@ -68,11 +71,10 @@ export const editModeSlice = createSlice({
   name: 'editMode',
   initialState,
   reducers: {
-    selectAreaStartEnd: () => {},
     setCursorIndex: (state, action) => {
       state.selector.cursorIndex = action.payload;
     },
-    selectAreaStartProgcess: (state, action) => {
+    selectAreaStartProgress: (state, action) => {
       state.selector.progress = action.payload;
     },
     forceSelectArea: (state, action) => {
@@ -82,7 +84,6 @@ export const editModeSlice = createSlice({
         follows: action.payload.follows || [],
       };
     },
-
     selectAreaStop: (state) => {
       state.selector.progress = false;
     },
@@ -105,7 +106,7 @@ export const editModeSlice = createSlice({
 
 export const {
   setCursorIndex,
-  selectAreaStartProgcess,
+  selectAreaStartProgress,
   forceSelectArea,
   selectAreaStop,
   selectAreaEnd,
@@ -118,9 +119,10 @@ export const selectedCursorIndex = (state) =>
 export const selectedEditModeSelector = (state) => state.editMode.selector;
 export const selectedEditModeSelectorRect = (state) =>
   state.editMode.selector.rect;
+export const selectedEditModeSelectorMode = (state) => state.editMode.selector.mode;
 export const selectedEditModeSelectorRectDefault = (state) =>
   state.editMode.selector.rect.default;
 export const selectedEditModeSelectorRectFollows = (state) =>
   state.editMode.selector.rect.follows;
 
-export default editModeSlice.reducer;
+export const { reducer } = editModeSlice;
