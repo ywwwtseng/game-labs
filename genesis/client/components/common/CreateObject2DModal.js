@@ -3,9 +3,9 @@ import { Modal } from '@/components/ui/Modal';
 import { BaseInput } from '@/components/ui/BaseInput';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
-import { useMutation } from '@/features/query/QueryClientContext';
-import { sql } from '@/sql';
+import { useMutation } from '@/hooks/useMutation';
 import { MatrixUtil } from '@/utils/MatrixUtil';
+import { sql } from '@/sql';
 
 function CreateObject2DModal({ tiles, onSuccess }) {
   const createObject2D = useMutation(

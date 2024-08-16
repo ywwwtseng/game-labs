@@ -1,5 +1,5 @@
 import { Object2DItem } from '@/components/common/EditGameSettingsView/Object2DList/Object2DItem';
-import { useQuery } from '@/features/query/QueryClientContext';
+import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 
 function Object2DList({ type }) {

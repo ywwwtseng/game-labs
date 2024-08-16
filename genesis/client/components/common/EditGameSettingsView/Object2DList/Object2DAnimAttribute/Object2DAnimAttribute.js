@@ -4,7 +4,7 @@ import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { CircleMinusIcon } from '@/components/icon/CircleMinusIcon';
 import { Object2DAnimAttributeDetail } from '@/components/common/EditGameSettingsView/Object2DList/Object2DAnimAttribute/Object2DAnimAttributeDetail';
 import { Object2DUtil } from '@/utils/Object2DUtil';
-import { useMutation } from '@/features/query/QueryClientContext';
+import { useMutation } from '@/hooks/useMutation';
 import { sql } from '@/sql';
 
 function Object2DAnimAttribute({ object2d }) {

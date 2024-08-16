@@ -6,7 +6,7 @@ import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { Object2DUtil } from '@/utils/Object2DUtil';
 import { selectedLand } from '@/features/appState/appStateSlice';
-import { useQuery } from '@/features/query/QueryClientContext';
+import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 
 function LandCanvas() {

@@ -3,7 +3,7 @@ import { BaseButton } from '@/components/ui/BaseButton';
 import { CloseIcon } from '@/components/icon/CloseIcon';
 import { BoxIcon } from '@/components/icon/BoxIcon';
 import { Object2DReview } from '@/components/common/Object2DReview';
-import { useQuery } from '@/features/query/QueryClientContext';
+import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 import { Object2DUtil } from '@/utils/Object2DUtil';
 

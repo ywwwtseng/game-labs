@@ -16,7 +16,7 @@ import { LoaderUtil } from '@/utils/LoaderUtil';
 import { ImageUtil } from '@/utils/ImageUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { CanvasUtil } from '@/utils/CanvasUtil';
-import { useMutation } from '@/features/query/QueryClientContext';
+import { useMutation } from '@/hooks/useMutation';
 import { sql } from '@/sql';
 
 function EditGameSettingsView() {

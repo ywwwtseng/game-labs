@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  addTileToLand,
   cmd,
+  addTileToLand,
   deleteSelectedElements,
   selectedLand,
   departObject2D,
@@ -41,7 +41,7 @@ import {
   Z_KEY,
 } from '@/hooks/useKeyBoard';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
-import { useQuery } from '@/features/query/QueryClientContext';
+import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 import { useModal } from '@/context/ModalContext';
 import { CreateObject2DModal } from '@/components/common/CreateObject2DModal';
@@ -215,9 +215,13 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
             );
           }
 
+          
+
           if (!isHolding(S_KEY)) {
             dispatch(cmd.object2ds.delete({ rects: selector.rect.follows }));
           }
+
+          
 
         }
 
@@ -263,6 +267,8 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
           genesisRef.current.default = rects.default.genesis;
         }
       }
+
+     
     },
     onMoveDownEnd: () => {
       if (selector.mode === SELECT_MODE.TILE) {

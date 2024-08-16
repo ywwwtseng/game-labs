@@ -14,7 +14,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     thunk: {
       extraArgument: {
-        commandManager: window.commandManager
+        commandManager: window.commandManager,
+        queryFns: new Map(),
       }
     }
   })

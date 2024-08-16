@@ -8,7 +8,7 @@ import { LoaderUtil } from '@/utils/LoaderUtil';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { ImageUtil } from '@/utils/ImageUtil';
-import { useQuery } from '@/features/query/QueryClientContext';
+import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 
 export const SpriteSheetContext = createContext({ spriteSheets: {} });
