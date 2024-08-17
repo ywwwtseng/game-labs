@@ -1,6 +1,6 @@
 {
-  "name": "project-web3rpg",
-  "repository": "git@github.com:ywwwtseng/project-web3rpg.git",
+  "name": "echoes-of-infinity",
+  "repository": "git@github.com:ywwwtseng/echoes-of-infinity.git",
   "scripts": {
     "prettier": "npx prettier --write \"**\/*.js\" --single-quote --print-width 80"
   }
