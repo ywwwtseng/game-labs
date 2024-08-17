@@ -3,6 +3,7 @@ import * as editMode from '@/features/editMode/editModeSlice';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { MODE } from '@/constants';
+import { selectedCamera } from '@/features/camera/cameraSlice';
 
 export const setMode = createAsyncThunk(
   'appState/setMode',
@@ -57,6 +58,7 @@ export const cmd = {
         { getState, dispatch, extra: { commandManager }
       }) => {
         const state = getState();
+        const camera = selectedCamera(state);
         const layerIndex = state.appState.land.selectedLayerIndex;
 
         let rect;
@@ -85,6 +87,8 @@ export const cmd = {
           rect = payload.rect;
           tilesMatrix = payload.tilesMatrix;
         }
+
+        rect = CanvasUtil.toCameraSpace(rect, camera);
     
         commandManager.executeCmd({
           merge: payload.merge,
@@ -104,6 +108,8 @@ export const cmd = {
       'appState/deleteTiles',
       async ({ rect }, { getState, dispatch, extra: { commandManager } }) => {
         const state = getState();
+        const camera = selectedCamera(state);
+        rect = CanvasUtil.toCameraSpace(rect, camera);
         const layerIndex = state.appState.land.selectedLayerIndex;
         const tiles = CanvasUtil.copyLandTiles(rect, state.appState.land);
     
@@ -125,9 +131,9 @@ export const cmd = {
       async ({ rect }, { getState, dispatch }) => {
         const state = getState();
         const land = selectedLand(state);
-
+        const camera = selectedCamera(state);
         const flattenedTiles = CanvasUtil.copyLandTiles(
-          rect,
+          CanvasUtil.toCameraSpace(rect, camera),
           land,
           (tileItems) => [tileItems?.[tileItems.length - 1]]?.filter(Boolean)
         );
@@ -144,12 +150,13 @@ export const cmd = {
         const object2d = payload.object2d;
   
         const state = getState();
+        const camera = selectedCamera(state);
         const layerIndex = state.appState.land.selectedLayerIndex;
 
         const object2DIndicesMap = {
           [state.appState.land.layers[layerIndex].object2ds.length]: {
             id: object2d.id,
-            rect: payload.rect || CanvasUtil.getDraggedIconRect(payload.event, object2d),
+            rect: CanvasUtil.toCameraSpace(payload.rect || CanvasUtil.getDraggedIconRect(payload.event, object2d), camera),
           }
         };
 
@@ -172,7 +179,11 @@ export const cmd = {
       async ({ rects }, { getState, dispatch, extra: { commandManager } }) => {
         const state = getState();
         const layerIndex = state.appState.land.selectedLayerIndex;
-        const object2DIndicesMap = CanvasUtil.getSelectedObject2DIndicesMap({ land: state.appState.land, rects });
+        const camera = selectedCamera(state);
+        const object2DIndicesMap = CanvasUtil.getSelectedObject2DIndicesMap({
+          land: state.appState.land,
+          rects: rects.map((rect) => CanvasUtil.toCameraSpace(rect, camera)),
+        });
     
         commandManager.executeCmd({
           execute: () => {
@@ -219,29 +230,6 @@ const initialState = {
   mode: MODE.EDIT,
   selectedLandId: localStorage.getItem('echoes-of-infinity:selected-land-id'),
   land: undefined
-  // land: {
-  //   name: 'Land #1',
-  //   width: 1024,
-  //   height: 1024,
-  //   selectedLayerIndex: 0,
-  //   layers: [
-  //     {
-  //       name: 'Background Layer',
-  //       tiles: [],
-  //       object2ds: [],
-  //     },
-  //     {
-  //       name: 'Entity Layer',
-  //       tiles: [],
-  //       object2ds: [],
-  //     },
-  //     {
-  //       name: 'Foreground Layer',
-  //       tiles: [],
-  //       object2ds: [],
-  //     },
-  //   ],
-  // },
 };
 
 export const appStateSlice = createSlice({
@@ -290,7 +278,10 @@ export const appStateSlice = createSlice({
             state.land.layers[layerIndex].tiles[index.x][index.y] = [];
           }
 
-          state.land.layers[layerIndex].tiles[index.x][index.y].push(...tileItems);
+          const sources = state.land.layers[layerIndex].tiles[index.x][index.y].map(({ source }) => source);
+          state.land.layers[layerIndex].tiles[index.x][index.y].push(
+            ...tileItems.filter((tile) => !sources.includes(tile.source))
+          );
         }
       });
     },

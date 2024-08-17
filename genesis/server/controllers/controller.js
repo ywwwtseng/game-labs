@@ -3,7 +3,7 @@ const regex = {
   mutation: /^mutation:(.*)$/,
 
   find: /find\(([^)]*)\)/,
-  filter: /filter\(([^)]*)\)/,
+  fields: /fields\(([^)]*)\)/,
   create: /create\(([^)]*)\)/,
   update: /update\(([^)]*)\)/,
   set: /set\(([^)]*)\)/,
@@ -51,7 +51,7 @@ const syntax = new Map([
   }],
   [regex.delete, (_, key = _.replace(':', '')) => (dbData) => ({ prevPathKey, data }) => {
     if (key === 'index') {
-      dbData[prevPathKey] = dbData[prevPathKey].filter((_, index ) => index !== data.index);
+      dbData[prevPathKey] = dbData[prevPathKey].fields((_, index ) => index !== data.index);
       return null;
     } else {
       dbData[key] = null;
@@ -65,7 +65,7 @@ const syntax = new Map([
 
     return dbData;
   }],
-  [regex.filter, (key) => (dbData) => ()  => {
+  [regex.fields, (key) => (dbData) => ()  => {
     const columns = key.split(',');
 
     return dbData.map(item => columns.reduce((acc, val) => {

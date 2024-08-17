@@ -1,17 +1,26 @@
-import { useState, useMemo } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useWindowSize } from '@/context/WindowSizeContext';
+import { selectedCamera, updateCameraSize } from '@/features/camera/cameraSlice';
+import { destroy as destroyEditMode } from '@/features/editMode/editModeSlice';
 
-function useCamera() {
+function useCameraResizer() {
+  const dispatch = useDispatch();
+  const camera = useSelector(selectedCamera);
   const windowSize = useWindowSize();
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  const size = useMemo(() => {
-    return Math.floor((Math.min(windowSize.width - 220, windowSize.height - 52) - 50) / 16) * 16;
+
+  useEffect(() => {
+    dispatch(destroyEditMode());
+    dispatch(updateCameraSize());
   }, [windowSize]);
 
-  return {
-    pos,
-    size,
-  }
+  return camera;
 }
 
-export { useCamera };
+function useCamera() {
+  const camera = useSelector(selectedCamera);
+
+  return camera;
+}
+
+export { useCamera, useCameraResizer };

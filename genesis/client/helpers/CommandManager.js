@@ -36,7 +36,7 @@ export class CommandManager {
   constructor() {
     this._undoStack = [];
     this._redoStack = [];
-    this._maxSteps = 20;
+    this._maxSteps = 50;
   }
 
   executeCmd(command) {

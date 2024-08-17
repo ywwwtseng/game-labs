@@ -2,8 +2,9 @@ import { useRef } from 'react';
 import { useObservableRef } from '@/hooks/useObservableRef';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { useCursorDelta } from '@/hooks/useCursorDelta';
+import { EventUtil } from '@/utils/EventUtil';
 
-function useCursor({ icon, onStart, onEnd, onMove, onDownMove }) {
+function useCursor({ icon, onMoveStart, onMoveEnd, onMove, onDownMove }) {
   const cursorDelta = useCursorDelta();
   const isPressRef = useRef(false);
   const iconElRef = useRef(null);
@@ -12,7 +13,9 @@ function useCursor({ icon, onStart, onEnd, onMove, onDownMove }) {
   const iconRef = useObservableRef(icon);
 
   const onMouseMove = (event) => {
-    if (iconRef.current.display) {
+    EventUtil.stop(event);
+
+    if (iconRef.current && iconRef.current.display) {
       if (!iconElRef.current) {
         iconElRef.current = iconRef.current.display(event, iconRef.current.id);
         document.body.append(iconElRef.current);
@@ -48,12 +51,15 @@ function useCursor({ icon, onStart, onEnd, onMove, onDownMove }) {
     onMove?.(event, { delta, iconEl: iconElRef.current });
   };
 
-  const onMouseEnter = () => {
+  const onMouseEnter = (event) => {
+    EventUtil.stop(event);
     moveHandlerRef.current = onMouseMove;
     window.addEventListener('mousemove', moveHandlerRef.current);
   };
 
-  const onMouseLeave = () => {
+  const onMouseLeave = (event) => {
+    EventUtil.stop(event);
+
     if (iconElRef.current) {
       iconElRef.current.remove();
       iconElRef.current = null;
@@ -66,7 +72,9 @@ function useCursor({ icon, onStart, onEnd, onMove, onDownMove }) {
   };
 
   const onMouseUp = (event) => {
-    onEnd?.(event);
+    EventUtil.stop(event);
+
+    onMoveEnd?.(event);
     cursorDelta.end(event);
 
     isPressRef.current = false;
@@ -82,7 +90,9 @@ function useCursor({ icon, onStart, onEnd, onMove, onDownMove }) {
   };
 
   const onMouseDown = (event) => {
-    onStart?.(event);
+    EventUtil.stop(event);
+    
+    onMoveStart?.(event);
 
     isPressRef.current = true;
 

@@ -1,8 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { selectedLand } from '@/features/appState/appStateSlice';
-import { CanvasUtil } from '@/utils/CanvasUtil';
-import { selectedQuery } from '@/features/query/querySlice';
-import { sql } from '@/sql';
 
 export const KEEP_FOLLOWS = undefined;
 export const SELECT_MODE = {
@@ -28,12 +24,11 @@ export const selectArea = createAsyncThunk(
   'editMode/selectArea',
   async (payload, { getState, dispatch }) => {
     const state = getState();
-    const land = selectedLand(state);
 
     try {
       if (!payload.default) {
         dispatch(
-          forceSelectArea({
+          updateSelectAreaRects({
             mode: SELECT_MODE.OBJECT_2D_OR_TILE,
             default: null,
             follows: [],
@@ -43,10 +38,10 @@ export const selectArea = createAsyncThunk(
       }
 
       dispatch(
-        forceSelectArea({
+        updateSelectAreaRects({
           mode: payload.mode || SELECT_MODE.OBJECT_2D_OR_TILE,
           default: payload.default,
-          follows:  payload.follows === KEEP_FOLLOWS ? selectedEditModeSelectorRectFollows(state) : payload.follows,
+          follows: payload.follows === KEEP_FOLLOWS ? selectedEditModeSelectorRectFollows(state) : payload.follows,
         })
       );
     } catch (error) {
@@ -72,12 +67,13 @@ export const editModeSlice = createSlice({
   initialState,
   reducers: {
     setCursorIndex: (state, action) => {
+      // TODO: cause canvas rerender
       state.selector.cursorIndex = action.payload;
     },
     selectAreaStartProgress: (state, action) => {
       state.selector.progress = action.payload;
     },
-    forceSelectArea: (state, action) => {
+    updateSelectAreaRects: (state, action) => {
       state.selector.mode = action.payload.mode;
       state.selector.rect = {
         default: action.payload.default || null,
@@ -107,7 +103,7 @@ export const editModeSlice = createSlice({
 export const {
   setCursorIndex,
   selectAreaStartProgress,
-  forceSelectArea,
+  updateSelectAreaRects,
   selectAreaStop,
   selectAreaEnd,
   selectAreaDefault,

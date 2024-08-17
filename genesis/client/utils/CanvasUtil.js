@@ -174,27 +174,28 @@ class CanvasUtil {
     return buffer;
   }
 
-  static drawBufferOnCanvas(ctx, buffer, x, y) {
-    ctx.drawImage(buffer, 0, 0, 16, 16, x * 16, y * 16, 16, 16);
+  static drawBufferOnCanvas(ctx, buffer, x, y, camera) {
+    ctx.drawImage(buffer, 0, 0, 16, 16, x * 16 - (camera?.pos?.x || 0), y * 16 - (camera?.pos?.y || 0), 16, 16);
   }
 
-  static drawTilesOnCanvas(ctx, tile, offset = { x: 0, y: 0 }) {
-    MatrixUtil.traverse(tile, ({ value, x, y }) => {
+  static drawTilesOnCanvas({ ctx, tiles, camera, offset = { x: 0, y: 0 } }) {
+    MatrixUtil.traverse(tiles, ({ value, x, y }) => {
       if (value?.buffer) {
         CanvasUtil.drawBufferOnCanvas(
           ctx,
           value.buffer,
           offset.x + x,
-          offset.y + y
+          offset.y + y,
+          camera
         );
       } else if (Array.isArray(value)) {
-
         value.forEach((tile) => {
           CanvasUtil.drawBufferOnCanvas(
             ctx,
             tile.buffer,
             offset.x + x,
-            offset.y + y
+            offset.y + y,
+            camera,
           );
         });
       }
@@ -230,10 +231,15 @@ class CanvasUtil {
     });
   }
 
-  static createSpriteLayersBuffer(layers, width, height) {
+  static createSpriteLayersBuffer(
+    layers,
+    camera,
+    width = camera.size.x + 1,
+    height = camera.size.y + 1
+  ) {
     return CanvasUtil.createBuffer(width, height, (ctx) => {
       layers.forEach((layer) => {
-        CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);        
+        CanvasUtil.drawTilesOnCanvas({ ctx, tiles: layer.tiles, camera });        
       });
     });
   }
@@ -267,7 +273,15 @@ class CanvasUtil {
     return buffer;
   }
 
-  static createObject2DLayersBuffer({ ctx, lifetime, land, object2ds, spriteSheets, object2DBuffers }) {
+  static createObject2DLayersBuffer({
+    ctx,
+    lifetime,
+    land,
+    object2ds,
+    spriteSheets,
+    object2DBuffers,
+    camera
+  }) {
     if (Object.keys(spriteSheets).length === 0 || object2ds.length === 0) {
       return [];
     }
@@ -283,10 +297,20 @@ class CanvasUtil {
           const frameLen =  (1 / 60) * (12 / anim.rate);
           const frameIndex = lifetime ? Math.floor(lifetime / frameLen) % anim.frames.length : 0;
           const frame = anim.frames[frameIndex];
-          CanvasUtil.drawTilesOnCanvas(ctx, frame, { x: object2d.rect[0], y: object2d.rect[1] });
+          CanvasUtil.drawTilesOnCanvas({
+            ctx,
+            tiles: frame,
+            offset: { x: object2d.rect[0], y: object2d.rect[1]},
+            camera
+          });
         } else {
           const tilesBuffer = object2DBuffers[object2d.id];
-          CanvasUtil.drawTilesOnCanvas(ctx, tilesBuffer, { x: object2d.rect[0], y: object2d.rect[1] });
+          CanvasUtil.drawTilesOnCanvas({
+            ctx, 
+            tiles: tilesBuffer, 
+            offset: { x: object2d.rect[0], y: object2d.rect[1] },
+            camera
+          });
         }
       });
     });
@@ -329,13 +353,13 @@ class CanvasUtil {
     });
   }
 
-  static findObject2DBySelectedRect(rect, land) {
+  static findObject2DBySelectedRect(rect, land, camera) {
     const object2ds = land.layers[land.selectedLayerIndex].object2ds;
 
     for (let i = object2ds.length - 1; i >= 0; i--) {
       const object2d = object2ds[i];
 
-      if (CanvasUtil.same(rect, object2d.rect)) {
+      if (CanvasUtil.same(CanvasUtil.toCameraSpace(rect, camera), object2d.rect)) {
         return object2d;
       }
     }
@@ -343,8 +367,37 @@ class CanvasUtil {
     return null;
   }
 
-  static cloneLandSelectedObject2D(rect, land, object2ds) {
-    const object2d = CanvasUtil.findObject2DBySelectedRect(rect, land);
+  static toCameraSpace(rect, camera) {
+    return [
+      rect[0] + camera.pos.x / 16,
+      rect[1] + camera.pos.y / 16,
+      rect[2],
+      rect[3],
+    ]
+  }
+
+  static toWorldSpace(rect, camera) {
+    return [
+      rect[0] - camera.pos.x / 16,
+      rect[1] - camera.pos.y / 16,
+      rect[2],
+      rect[3],
+    ]
+  }
+
+  static inCamera(object2d, camera) {
+    const rect = CanvasUtil.toWorldSpace(object2d.rect, camera);
+
+    return rect[0] >= 0
+      && rect[1] >= 0
+      && (rect[0] + rect[2]) * 16 <= camera.size.x
+      && (rect[1] + rect[3]) * 16 <= camera.size.y;
+  }
+
+
+  static cloneLandSelectedObject2D(rect, land, object2ds, camera) {
+
+    const object2d = CanvasUtil.findObject2DBySelectedRect(rect, land, camera);
     return {
       id: object2d.id,
       tiles: Object2DUtil.tiles(object2ds.find(({ id }) => object2d.id === id)),
@@ -352,20 +405,25 @@ class CanvasUtil {
   }
 
   // return followed selected rects
-  static getFollowedSelectedRects(selectedRect, land) {
+  static getFollowedSelectedRects(selectedRect, land, camera) {
     if (!selectedRect) {
       return [];
     }
 
+    selectedRect = CanvasUtil.toCameraSpace(selectedRect, camera);
+
     const object2ds = land.layers[land.selectedLayerIndex].object2ds;
     const follows = [[], []];
+ 
 
     for (let i = object2ds.length - 1; i >= 0; i--) {
       const object2d = object2ds[i];
 
       // unsame and overlaps
       if (
-        follows.flat().every((rect) => !CanvasUtil.same(rect, object2d.rect)) && overlaps(object2d.rect, selectedRect)
+        follows.flat().every((rect) => !CanvasUtil.same(rect, object2d.rect))
+        && overlaps(object2d.rect, selectedRect)
+        && CanvasUtil.inCamera(object2d, camera)
       ) {
 
         // not select behind contain object2d
@@ -393,7 +451,12 @@ class CanvasUtil {
 
     }
 
-    return follows[0];
+    return follows[0].map((rect) => [
+      rect[0] - camera.pos.x / 16,
+      rect[1] - camera.pos.y / 16,
+      rect[2],
+      rect[3]
+    ]);
   }
 
   static getSelectedObject2DIndicesMap({ land, rects }) {

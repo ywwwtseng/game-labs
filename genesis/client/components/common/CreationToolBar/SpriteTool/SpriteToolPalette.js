@@ -44,8 +44,13 @@ function SpriteToolPalette({ spriteSheet, defaultSelected }) {
     () => [
       CANVAS_LAYER.SPRITE_LAYERS({
         layers: [{ tiles: spriteSheet.tiles }],
-        width: spriteSheet.image.naturalWidth,
-        height: spriteSheet.image.naturalHeight,
+        camera: {
+          pos: {x: 0, y: 0},
+          size: {
+            x: spriteSheet.image.naturalWidth,
+            y: spriteSheet.image.naturalHeight,
+          },
+        },
       }),
       CANVAS_LAYER.GRID({
         width: spriteSheet.image.naturalWidth,

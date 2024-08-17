@@ -1,6 +1,6 @@
 export const MODE = {
   EDIT: 'EDIT',
-  DRAW: 'DRAW',
+  VIEW: 'VIEW',
   PREVIEW: 'PREVIEW',
 };
 

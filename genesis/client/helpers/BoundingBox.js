@@ -85,6 +85,21 @@ function getBoundingBox(T) {
     return new BoundingBox({ pos, size });
   }
 
+  if (T?.bounds && T?.with) {
+    const { left, top } = DomUtil.getEl(T.with).getBoundingClientRect();
+    const pos = {
+      x: left + T.bounds.x,
+      y: top + T.bounds.y,
+    };
+    const size = {
+      x: T.bounds.width,
+      y: T.bounds.height,
+    };
+    return new BoundingBox({ pos, size });
+  }
+
+  
+
   if (T?.rect || T?.length === 4) {
     const rect = CanvasUtil.normalizeRect(T.rect || T);
     const [indexX, indexY] = rect;

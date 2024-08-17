@@ -45,9 +45,11 @@ import { CreateObject2DModal } from '@/components/common/CreateObject2DModal';
 import { EventUtil } from '@/utils/EventUtil';
 import { useCache } from '@/hooks/useCache';
 import { MoveSelectAreaContext } from '@/helpers/MoveSelectAreaContext';
+import { useCamera } from '@/hooks/useCamera';
 
 function EditModeBehavior({ children }) {
   const dispatch = useDispatch();
+  const camera = useCamera();
   const context = useCache(new MoveSelectAreaContext());
   const spriteSheets = useSpriteSheets();
   const land = useSelector(selectedLand);
@@ -74,11 +76,11 @@ function EditModeBehavior({ children }) {
           return;
         }
 
-        const notEmptyTiles = CanvasUtil.copyLandTiles(rect, land)
+        const notEmptyTiles = CanvasUtil.copyLandTiles(CanvasUtil.toCameraSpace(rect, camera), land)
           .some((column) => column.some((tile) => tile?.length > 0));
 
         if (notEmptyTiles) {
-          const tiles = CanvasUtil.copyLandTiles(rect, land);
+          const tiles = CanvasUtil.copyLandTiles(CanvasUtil.toCameraSpace(rect, camera), land);
           
           openCreateObject2DModal({ tiles, onSuccess: (res) => {
             dispatch(cmd.tiles.delete({ rect }));
@@ -100,7 +102,7 @@ function EditModeBehavior({ children }) {
         }
 
         const rect = selector.rect.follows[0];
-        const object2d = CanvasUtil.findObject2DBySelectedRect(rect, land);
+        const object2d = CanvasUtil.findObject2DBySelectedRect(rect, land, camera);
         dispatch(cmd.object2ds.depart({
           rect,
           object2d: object2ds.find(({ id }) => id === object2d.id),
@@ -159,7 +161,7 @@ function EditModeBehavior({ children }) {
         }
 
         if (mode === SELECT_MODE.OBJECT_2D_OR_TILE) {
-          follows = CanvasUtil.getFollowedSelectedRects(rects.default, land);
+          follows = CanvasUtil.getFollowedSelectedRects(rects.default, land, camera);
 
           if (follows.length === 0) {
             mode = SELECT_MODE.TILE;
@@ -186,14 +188,13 @@ function EditModeBehavior({ children }) {
     setCursorIndex: (cursorIndex) => dispatch(setCursorIndex(cursorIndex)),
     onMoveDown: (rects) => {
       const mode = selector.mode;
+      context.duplicate = isDuplicate() && !isMoveAddTilesMode();
 
       context.init(() => {
-        context.duplicate = isDuplicate() && !isMoveAddTilesMode();
-
         if (mode === SELECT_MODE.OBJECT_2D) {
           context.data.follows = rects.follows.map(
             ({ origin: rect }) => {
-              const object2d = CanvasUtil.cloneLandSelectedObject2D(rect, land, object2ds);
+              const object2d = CanvasUtil.cloneLandSelectedObject2D(rect, land, object2ds, camera);
               return object2d.tiles;
             }
           );
@@ -201,7 +202,7 @@ function EditModeBehavior({ children }) {
           context.origin.follows = rects.follows.map(
             ({ origin }) => ({
               origin,
-              object2d: CanvasUtil.findObject2DBySelectedRect(origin, land),
+              object2d: CanvasUtil.findObject2DBySelectedRect(origin, land, camera),
             })
           );
 
@@ -212,7 +213,7 @@ function EditModeBehavior({ children }) {
 
         if (mode === SELECT_MODE.TILE) {
           context.data.default = CanvasUtil.copyLandTiles(
-            rects.default.origin,
+            CanvasUtil.toCameraSpace(rects.default.origin, camera),
             land,
           );
 
@@ -279,7 +280,7 @@ function EditModeBehavior({ children }) {
                   ctx,
                   spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
                   selector.rect.default[0] + x,
-                  selector.rect.default[1] + y
+                  selector.rect.default[1] + y,
                 );
               }
             });
@@ -299,7 +300,7 @@ function EditModeBehavior({ children }) {
                     ctx,
                     spriteSheets[tile.source].tiles[tile.index[0]][tile.index[1]].buffer,
                     rect[0] + x,
-                    rect[1] + y
+                    rect[1] + y,
                   );
                 });
                 
@@ -317,7 +318,7 @@ function EditModeBehavior({ children }) {
         CanvasUtil.selected(ctx, selector.rect.default);
       }
     },
-    [selector, land]
+    [selector, land, camera]
   );
 
   const { setup: setupDropToDraw } = useDropToDraw({ id: 'canvas' });

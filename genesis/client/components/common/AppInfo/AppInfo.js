@@ -2,14 +2,14 @@ import { useSelector } from 'react-redux';
 import { Text } from '@/components/ui/Text';
 import { EditModeInfo } from '@/components/common/AppInfo/EditModeInfo';
 import { PreviewModeInfo } from '@/components/common/AppInfo/PreviewModeInfo';
-import { DrawModeInfo } from '@/components/common/AppInfo/DrawModeInfo';
+import { ViewModeInfo } from '@/components/common/AppInfo/ViewModeInfo';
 import { selectedCursorIndex } from '@/features/editMode/editModeSlice';
 import { MODE } from '@/constants';
 
 const ModeInfo = {
   [MODE.PREVIEW]: PreviewModeInfo,
   [MODE.EDIT]: EditModeInfo,
-  [MODE.DRAW]: DrawModeInfo,
+  [MODE.VIEW]: ViewModeInfo,
 };
 
 function AppInfo() {

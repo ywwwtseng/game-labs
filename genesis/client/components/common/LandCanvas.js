@@ -5,12 +5,14 @@ import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { selectedLand } from '@/features/appState/appStateSlice';
-import { useCamera } from '@/hooks/useCamera';
+import { useCamera, useCameraResizer } from '@/hooks/useCamera';
 import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 import { S_KEY, useKeyBoard } from '@/hooks/useKeyBoard';
 import { EventUtil } from '@/utils/EventUtil';
 import { useMutation } from '@/hooks/useMutation';
+import { MatrixUtil } from '@/utils/MatrixUtil';
+import { LandCanvasMap } from '@/components/common/LandCanvasMap';
 
 function LandCanvas() {
   const camera = useCamera();
@@ -23,37 +25,40 @@ function LandCanvas() {
   const spritesLayers = useMemo(() => {
     return CANVAS_LAYER.SPRITE_LAYERS({
       layers: CanvasUtil.createSpriteLayers({ land, spriteSheets }),
-      width: land.width,
-      height: land.height,
+      camera,
     });
-  }, [land, spriteSheets]);
+  }, [land, spriteSheets, camera]);
 
   const object2DBuffers = useMemo(() => {
     return CanvasUtil.createObject2DBuffers({ land, spriteSheets, object2ds });
   }, [land, spriteSheets, object2ds]);
 
 
-  const object2DLayers = useCallback((lifetime) => {
+  const object2DLayers = useCallback((lifetime, camera) => {
     return function(ctx) {
-      return CanvasUtil.createObject2DLayersBuffer({ ctx, lifetime, land, object2ds, spriteSheets, object2DBuffers });
+      return CanvasUtil.createObject2DLayersBuffer({ ctx, lifetime, land, object2ds, spriteSheets, object2DBuffers, camera });
     };
-  }, [land, object2ds, spriteSheets, object2DBuffers]);
+  }, [land, spriteSheets, object2ds, object2DBuffers]);
+
+  
 
   const gridLayer = useMemo(() => {
     return CANVAS_LAYER.GRID({
-      width: land.width,
-      height: land.height,
+      width: camera.size.x,
+      height: camera.size.y,
     });
-  }, [land]);
+  }, [camera.size]);
 
   const layers = useCallback(
     (lifetime) => [
       spritesLayers,
-      object2DLayers(lifetime),
+      object2DLayers(lifetime, camera),
       (lifetime === undefined && gridLayer),
     ].filter(Boolean),
-    [land, spriteSheets, object2ds],
+    [spritesLayers, object2DLayers, gridLayer, camera],
   );
+
+  useCameraResizer();
 
   useKeyBoard(
     {
@@ -68,7 +73,13 @@ function LandCanvas() {
               },
               data: {
                 land: {
-                  layers: land.layers
+                  layers: land.layers.map((layer) => ({
+                    name: layer.name,
+                    object2ds: layer.object2ds,
+                    tiles: MatrixUtil.create([1024/16, 1024/16], ({ x, y }) => {
+                      return layer.tiles?.[x]?.[y] || [];
+                    }),
+                  }))
                 }
               },
             });
@@ -89,14 +100,22 @@ function LandCanvas() {
           {...register}
         >
           {land && (
-            <Canvas2D
-              id="canvas"
-              accept="tiles"
-              width={camera.size}
-              height={camera.size}
-              layers={layers(connect.lifetime)}
-              {...connect}
-            />
+            <>
+              <LandCanvasMap
+                object2DLayers={object2DLayers}
+                camera={camera}
+                land={land}
+                spriteSheets={spriteSheets}
+              />
+              <Canvas2D
+                id="canvas"
+                accept="tiles"
+                width={camera.size.x}
+                height={camera.size.y}
+                layers={layers(connect.lifetime)}
+                {...connect}
+              />
+            </>
           )}
         </div>
       )}

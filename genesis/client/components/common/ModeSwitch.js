@@ -24,6 +24,11 @@ function ModeSwitch() {
             type: 'option',
             id: MODE.PREVIEW,
             label: 'Preview Mode'
+          },
+          {
+            type: 'option',
+            id: MODE.VIEW,
+            label: 'View Mode'
           }
         ]}
       />

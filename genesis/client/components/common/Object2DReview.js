@@ -37,8 +37,13 @@ function Object2DReview({ object2d, tiles, draggable = false, className }) {
     () =>
       CANVAS_LAYER.SPRITE_LAYERS({
         layers,
-        width: sizeIndex[0] * 16,
-        height: sizeIndex[1] * 16,
+        camera: {
+          pos: {x: 0, y: 0},
+          size: {
+            x: sizeIndex[0] * 16,
+            y: sizeIndex[1] * 16,
+          },
+        },
       }).buffer,
     [layers, sizeIndex],
   );

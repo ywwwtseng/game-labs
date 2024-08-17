@@ -18,7 +18,7 @@ const port = 3000;
 app.use(lowdb(db));
 app.use(express.static('dist'));
 app.use(express.static('public'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 
 app.get('/', (req, res) => {
   // Send the HTML file as the response

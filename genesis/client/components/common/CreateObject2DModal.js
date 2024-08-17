@@ -27,8 +27,10 @@ function CreateObject2DModal({ tiles, onSuccess }) {
             });
           })
         }],
-        width: size.x,
-        height: size.y,
+        camera: {
+          pos: {x: 0, y: 0},
+          size,
+        },
       }),
     ],
     [tiles],

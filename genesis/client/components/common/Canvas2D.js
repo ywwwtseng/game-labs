@@ -6,12 +6,11 @@ export const CANVAS_LAYER = {
     name: 'GRID',
     buffer: CanvasUtil.createGridBuffer(width + 1, height + 1),
   }),
-  SPRITE_LAYERS: ({ layers, width, height }) => ({
+  SPRITE_LAYERS: ({ layers, camera }) => ({
     name: 'SPRITE_LAYERS',
     buffer: CanvasUtil.createSpriteLayersBuffer(
       layers,
-      width + 1,
-      height + 1,
+      camera,
     ),
   })
 };

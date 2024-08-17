@@ -1,6 +1,6 @@
 const sql = {
   lands: {
-    list: 'query:lands.find().filter(id,name,width,height)',
+    list: 'query:lands.find().fields(id,width,height)',
     receive: 'query:lands.find(:id)',
     create: 'mutation:lands.create(:land)',
     update: 'mutation:lands.find(:id).update(:land)',

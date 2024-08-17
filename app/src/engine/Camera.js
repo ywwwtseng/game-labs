@@ -3,7 +3,7 @@ import { Vec2 } from '@/engine/math';
 
 export default class Camera {
   constructor() {
-    this.pos = new Vec2(0, 0);
+    this.pos = new Vec2(160, 0);
     this.size = new Vec2(
       Dimensions.get('canvas').width,
       Dimensions.get('canvas').height,
