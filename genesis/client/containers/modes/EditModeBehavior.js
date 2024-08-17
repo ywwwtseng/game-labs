@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   cmd,
@@ -49,8 +49,6 @@ import { MoveSelectAreaContext } from '@/helpers/MoveSelectAreaContext';
 function EditModeBehavior({ children }) {
   const dispatch = useDispatch();
   const context = useCache(new MoveSelectAreaContext());
-  const bufferRef = useRef({});
-  const originRef = useRef({});
   const spriteSheets = useSpriteSheets();
   const land = useSelector(selectedLand);
   const cursorIndex = useSelector(selectedCursorIndex);
@@ -59,8 +57,8 @@ function EditModeBehavior({ children }) {
 
   const { open: openCreateObject2DModal } = useModal(CreateObject2DModal);
 
-  const inputMapping = useMemo(
-    () => ({
+  const { isHolding } = useKeyBoard(
+    {
       [O_KEY]: (event) => {
         if (selector.mode !== SELECT_MODE.TILE) {
           return;
@@ -122,11 +120,11 @@ function EditModeBehavior({ children }) {
         dispatch(cmd.tiles.flat({ rect }));
       },
       [Z_KEY]: (event) => {
-        EventUtil.stop(event);
-
         if (event.metaKey && event.shiftKey) {
+          EventUtil.stop(event);
           dispatch(cmd.redo());
         } else if (event.metaKey) {
+          EventUtil.stop(event);
           dispatch(cmd.undo());
         }
       },
@@ -138,11 +136,9 @@ function EditModeBehavior({ children }) {
         if (!selector.rect.default || !land) return;
         dispatch(deleteSelectedElements());
       },
-    }),
+    },
     [selector.rect.default, land]
   );
-
-  const { isHolding } = useKeyBoard(inputMapping);
 
   const isDuplicate = () => isHolding(S_KEY);
   const isMoveAddTilesMode = () => isHolding(S_KEY) && isHolding(D_KEY);

@@ -23,7 +23,7 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
       />
       <CreationToolBarToggle
         icon={BoxIcon}
-        disabled={object2ds.length == 0}
+        disabled={object2ds?.length == 0}
         menu={Object2DTool}
       />
     </div>

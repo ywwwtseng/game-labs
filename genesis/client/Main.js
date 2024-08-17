@@ -5,8 +5,28 @@ import { ShortcutBar } from '@/components/common/ShortcutBar';
 import { EditGameSettingsView } from '@/components/common/EditGameSettingsView/EditGameSettingsView';
 import { LandCanvas } from '@/components/common/LandCanvas';
 import { AppInfo } from '@/components/common/AppInfo/AppInfo';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectedLand, selectedLandId, setLand } from '@/features/appState/appStateSlice';
+import { sql } from '@/sql';
+import { useQuery } from '@/hooks/useQuery';
+import { useMemo } from 'react';
 
 function Main() {
+  const dispatch = useDispatch();
+  const land = useSelector(selectedLand);
+  const id = useSelector(selectedLandId);
+  const params = useMemo(() => ({ id }), [id]);
+  useQuery(
+    id ? sql.lands.receive : undefined,
+    params,
+    {
+      force: true,
+      onSuccess: (res) => {
+        dispatch(setLand(res?.data));
+      },
+    }
+  );
+
   return (
     <div className="select-none h-screen flex flex-col bg-[#1D1D1D]">
       <Navigation />
@@ -15,7 +35,7 @@ function Main() {
           <ModeSwitch />
           <CreationToolBar />
           {/* <ShortcutBar /> */}
-          <LandCanvas />
+          {land ? <LandCanvas /> : <LandCanvas.Empty />}
           <AppInfo />
         </div>
         <EditGameSettingsView />

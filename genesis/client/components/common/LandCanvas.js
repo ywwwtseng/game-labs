@@ -4,18 +4,22 @@ import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { CanvasUtil } from '@/utils/CanvasUtil';
-import { Object2DUtil } from '@/utils/Object2DUtil';
 import { selectedLand } from '@/features/appState/appStateSlice';
 import { useCamera } from '@/hooks/useCamera';
 import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
-import { getBoundingBox } from '@/helpers/BoundingBox';
+import { S_KEY, useKeyBoard } from '@/hooks/useKeyBoard';
+import { EventUtil } from '@/utils/EventUtil';
+import { useMutation } from '@/hooks/useMutation';
 
 function LandCanvas() {
   const camera = useCamera();
-  const land = useSelector(selectedLand);
   const spriteSheets = useSpriteSheets();
+  const land = useSelector(selectedLand);
+  
   const { data: object2ds } = useQuery(sql.object2ds.list);
+  const updateLand = useMutation(sql.lands.update);
+
   const spritesLayers = useMemo(() => {
     return CANVAS_LAYER.SPRITE_LAYERS({
       layers: CanvasUtil.createSpriteLayers({ land, spriteSheets }),
@@ -51,6 +55,31 @@ function LandCanvas() {
     [land, spriteSheets, object2ds],
   );
 
+  useKeyBoard(
+    {
+      [S_KEY]: (event) => {
+        if (event.metaKey) {
+          EventUtil.stop(event);
+
+          if (land) {
+            updateLand.mutate({
+              params: {
+                id: land.id,
+              },
+              data: {
+                land: {
+                  layers: land.layers
+                }
+              },
+            });
+          }
+
+        }
+      }
+    },
+    [land]
+  );
+
   return (
     <ModeConnectToCanvas>
       {({ register, connect }) => (
@@ -74,5 +103,11 @@ function LandCanvas() {
     </ModeConnectToCanvas>
   );
 }
+
+LandCanvas.Empty = () => {
+  return (
+    <div className="relative z-10 rounded w-full h-full overflow-hidden flex items-center justify-center bg-[#353535]" />
+  )
+};
 
 export { LandCanvas };

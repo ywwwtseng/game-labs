@@ -15,7 +15,7 @@ function Object2DAnimAttributeDetail({ object2d }) {
   const [animRate, setAnimRate] = useState(object2d.anim.rate);
   const createObject2DAnimFrame = useMutation(sql.object2ds.anim.frames.add);
   const deleteObject2DAnimFrame = useMutation(sql.object2ds.anim.frames.remove);
-  const updateObject2DAnimRate = useMutation(sql.object2ds.anim.rate);
+  const updateObject2DAnimRate = useMutation(sql.object2ds.anim.rate.set);
   const onDebounceChange = useDebounce((rate) => {
     updateObject2DAnimRate.mutate({
       params: {

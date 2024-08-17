@@ -1,5 +1,48 @@
 {
-  "lands": [],
+  "lands": [
+    {
+      "id": "land_#1",
+      "name": "",
+      "width": 1024,
+      "height": 1024,
+      "layers": [
+        {
+          "name": "Background Layer",
+          "tiles": [],
+          "object2ds": [
+            {
+              "id": "object2d_1723085467282",
+              "rect": [
+                9,
+                15,
+                2,
+                2
+              ]
+            },
+            {
+              "id": "object2d_1722928040537",
+              "rect": [
+                7,
+                4,
+                8,
+                7
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Entity Layer",
+          "tiles": [],
+          "object2ds": []
+        },
+        {
+          "name": "Foreground Layer",
+          "tiles": [],
+          "object2ds": []
+        }
+      ]
+    }
+  ],
   "object2ds": [
     {
       "id": "object2d_1722928040537",
@@ -754,7 +797,7 @@
       "name": "Pool",
       "tiles": null,
       "anim": {
-        "rate": 0,
+        "rate": 4,
         "frames": [
           [
             [

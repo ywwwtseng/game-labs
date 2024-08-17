@@ -37,7 +37,8 @@ export function useMutation(sql, { queryKeys = [], onSuccess } = { queryKeys: []
     if (match) {
       dispatch(setRelateQueryData({
         relateQueryKey: match[0],
-        data: res?.data
+        params,
+        data: res?.data,
       }));
     }
     

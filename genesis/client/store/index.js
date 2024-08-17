@@ -4,6 +4,7 @@ import { reducer as editModeReducer } from '@/features/editMode/editModeSlice';
 import { reducer as queryReducer } from '@/features/query/querySlice';
 import { CommandManager } from '@/helpers/CommandManager';
 
+window.a = new Map();
 export const store = configureStore({
   reducer: {
     appState: appStateReducer,
@@ -14,7 +15,7 @@ export const store = configureStore({
     thunk: {
       extraArgument: {
         commandManager: new CommandManager(),
-        queryFns: new Map(),
+        queryFns: window.a,
       }
     }
   })

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { useObservableRef } from '@/hooks/useObservableRef';
 
 export const BACKSPACE_KEY = 8;
@@ -18,8 +18,8 @@ export const S_KEY = 83;
 export const X_KEY = 88;
 export const Z_KEY = 90;
 
-function useKeyBoard(inputMapping) {
-  const inputRef = useObservableRef(inputMapping);
+function useKeyBoard(inputMapping, dependency = []) {
+  const inputRef = useObservableRef(useMemo(() => inputMapping), dependency);
   const holdingKeyCodeRef = useRef({});
 
   const isHolding = useCallback(

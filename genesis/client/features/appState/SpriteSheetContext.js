@@ -18,7 +18,7 @@ export const SpriteSheetProvider = ({ children }) => {
   const [spriteSheets, setSpriteSheets] = useState({});
 
   useEffect(() => {
-    if (sprites.length > 0) {
+    if (sprites && sprites.length > 0) {
       Promise.all(
         sprites
           // .filter(({ id }) => !Object.keys(spriteSheets).includes(id))

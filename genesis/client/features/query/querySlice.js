@@ -1,18 +1,13 @@
+import { ObjectUtil } from '@/utils/ObjectUtil';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const serialize = (T) => JSON.stringify(T);
 
-export const getQueryFn = createAsyncThunk(
-  'query/getQueryFn',
-  async ({ queryKey }, { dispatch, extra: { queryFns } }) => {
-    return queryFns.get(serialize(queryKey))
-});
-
 export const executeQuery = createAsyncThunk(
   'query/executeQuery',
-  async ({ queryKey, queryFn, force = false }, { getState, dispatch, extra: { queryFns }, requestId }) => {
-    if (force || !queryFns.get(serialize(queryKey))) {
-      queryFns.set(serialize(queryKey), queryFn);
+  async ({ queryKey, params, queryFn, force = false }, { getState, dispatch, extra: { queryFns }, requestId }) => {
+    if (force || !queryFns.get(serialize({ queryKey, params }))) {
+      queryFns.set(serialize({ queryKey, params }), queryFn);
       const res = await queryFn();
       return res;
     }
@@ -40,15 +35,28 @@ export const querySlice = createSlice({
       };
     },
     setRelateQueryData(state, action) {
-      const { relateQueryKey, data } = action.payload;
+      const { relateQueryKey, params, data } = action.payload;
 
       for (let index = 0; index < Object.keys(state).length; index++) {
         const queryKey = Object.keys(state)[index];
 
         if (queryKey.includes(relateQueryKey)) {
-          if (Array.isArray(state[queryKey].data)) {
+          if (params) {
+            {let queryParams; if (queryParams = JSON.parse(queryKey).params) {
+              if (ObjectUtil.equals(queryParams, params)) {
+                state[queryKey].data = data;
+                break;
+              }
+            }}
+          }
+          
+          if (state[queryKey].data?.push) {
             const index = state[queryKey].data.findIndex(({ id }) => id === data.id);
-            state[queryKey].data[index] = data;
+            if (index !== -1) {
+              state[queryKey].data[index] = data;
+            } else {
+              state[queryKey].data.push(data);
+            }
           }
         }
         
@@ -71,10 +79,10 @@ export const querySlice = createSlice({
       })
       .addCase(executeQuery.fulfilled, (state, action) => {
         if (action.payload) {
-          const { queryKey } = action.meta.arg;
+          const { queryKey, params } = action.meta.arg;
 
-          state[serialize(queryKey)] = {
-            ...state[serialize(queryKey)],
+          state[serialize({ queryKey, params })] = {
+            ...state[serialize({ queryKey, params })],
             loading: 'idle',
             data: action.payload.data,
           };

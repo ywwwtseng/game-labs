@@ -1,36 +1,81 @@
 const regex = {
   query: /^query:(.*)$/,
   mutation: /^mutation:(.*)$/,
+
   find: /find\(([^)]*)\)/,
+  filter: /filter\(([^)]*)\)/,
   create: /create\(([^)]*)\)/,
+  update: /update\(([^)]*)\)/,
   set: /set\(([^)]*)\)/,
   add: /add\(([^)]*)\)/,
   delete: /delete\(([^)]*)\)/,
   relate: /relate\(([^)]*)\)/,
+  auto_increment: /auto_increment\(([^)]*)\)/,
 }
 
 const Schema = {
-  create(key, data) {
-    const relate = data.id.match(regex.relate)[1];
-    data.id = relate && data[relate] ? `${key}_${data[relate].match(/\d+/g).join('')}` : `${key}_${Date.now()}`;
+  create(key, data, dbData) {
+    const relate = data?.id?.match(regex.relate)?.[1];
 
+    if (relate && data[relate]) {
+      data.id = `${key}_${data[relate].match(/\d+/g).join('')}`;
+      return data;
+    }
+
+    const autoIncrement = data?.id?.match(regex.auto_increment);
+
+    if (autoIncrement) {
+      const sign = autoIncrement[1] || '';
+
+      data.id = `${key}_${sign}${dbData.length + 1}`;
+      return data;
+    }
+
+    data.id = `${key}_${Date.now()}`;
     return data;
   },
 };
 
 const syntax = new Map([
-  [regex.find, (key) => (dbData) => ({ params })  => {
-    key = key.replace(':', '');
+  [regex.update, (_, key = _.replace(':', '')) => (dbData) => ({ prevPathKey, params, data }) => {
+    {let match; if (match = prevPathKey.match(regex.find)) {
+      const identity = match[1].replace(':', '');
+      const index = dbData.findIndex(item => item[identity] === params[identity]);
 
+      if (index !== -1) {
+        return dbData[index] = Object.assign(dbData[index], data[key]);
+      }
+    }}
+
+    return undefined;
+  }],
+  [regex.delete, (_, key = _.replace(':', '')) => (dbData) => ({ prevPathKey, data }) => {
+    if (key === 'index') {
+      dbData[prevPathKey] = dbData[prevPathKey].filter((_, index ) => index !== data.index);
+      return null;
+    } else {
+      dbData[key] = null;
+      return dbData;
+    }
+  }],
+  [regex.find, (_, key = _.replace(':', '')) => (dbData) => ({ params })  => {
     if (key) {
       return dbData.find(data => data[key] === params[key]);
     }
 
     return dbData;
   }],
+  [regex.filter, (key) => (dbData) => ()  => {
+    const columns = key.split(',');
+
+    return dbData.map(item => columns.reduce((acc, val) => {
+      acc[val] = item[val];
+      return acc;
+    }, {}));
+  }],
   [regex.create, (key) => (dbData) => ({ data }) => {
     key = key.replace(':', '');
-    const schema = Schema.create(key, data[key]);
+    const schema = Schema.create(key, data[key], dbData);
     dbData.push(schema);
     return schema;
   }],
@@ -44,18 +89,6 @@ const syntax = new Map([
     dbData.push(data[key]);
     return dbData;
   }],
-  [regex.delete, (key) => (dbData) => ({ prevPathKey, data }) => {
-    key = key.replace(':', '');
-
-    if (key === 'index') {
-      dbData[prevPathKey] = dbData[prevPathKey].filter((_, index ) => index !== data.index);
-      return null;
-    } else {
-      dbData[key] = null;
-      return dbData;
-    }
-    
-  }]
 ]);
 
 const findCommand = (pathKey, nextPathKey) => {
@@ -63,7 +96,12 @@ const findCommand = (pathKey, nextPathKey) => {
     if (nextPathKey) {
       const nextMatch = nextPathKey.match(syntaxRegex);
 
+      
       if (syntaxRegex === regex.delete && (nextMatch && nextMatch[1])) {
+        return (dbData) => () => dbData;
+      }
+
+      if (syntaxRegex === regex.update && (nextMatch && nextMatch[1])) {
         return (dbData) => () => dbData;
       }
     }
@@ -88,6 +126,7 @@ async function exec({type, db, path, params, data }) {
     const prevPathKey = pathArray[index - 1];
     const pathKey = pathArray[index];
     const nextPathKey = pathArray[index + 1];
+
     
     const cmd = findCommand(pathKey, nextPathKey);
     if (cmd) {
@@ -168,6 +207,7 @@ const Controller = {
       if (Object.prototype.hasOwnProperty.call(regex, key)) {
         if (sql.match(regex[key])) {
           match = sql.match(regex[key])[1];
+
           if (match) {
             type = key;
             break;
@@ -181,7 +221,8 @@ const Controller = {
         data: await exec({
           type,
           db: req.db,
-          path: match
+          path: match,
+          params,
         }),
         ok: true,
         message: `${sql} successfully`,

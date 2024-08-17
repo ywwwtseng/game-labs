@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { DropDown } from '@/components/ui/Dropdown/DropDown';
+import { DropDown } from '@/components/ui/Dropdown/Dropdown';
 import { selectedMode, setMode } from '@/features/appState/appStateSlice';
 import { MODE } from '@/constants';
 

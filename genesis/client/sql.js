@@ -1,4 +1,10 @@
 const sql = {
+  lands: {
+    list: 'query:lands.find().filter(id,name,width,height)',
+    receive: 'query:lands.find(:id)',
+    create: 'mutation:lands.create(:land)',
+    update: 'mutation:lands.find(:id).update(:land)',
+  },
   sprites: {
     list: 'query:sprites.find()',
     create: 'mutation:sprites.create(:sprite)',
@@ -11,7 +17,9 @@ const sql = {
       enable: 'mutation:object2ds.find(:id).set(:anim)',
       disable: 'mutation:object2ds.find(:id).delete(:anim)',
 
-      rate: 'mutation:object2ds.find(:id).anim.set(:rate)',
+      rate: {
+        set: 'mutation:object2ds.find(:id).anim.set(:rate)'
+      },
       
       frames: {
         add: 'mutation:object2ds.find(:id).anim.frames.add(:frame)',

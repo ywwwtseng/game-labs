@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 
 function useLocalStorage(key, defaultValue) {
   const itemKey = useMemo(() => {
-    return key ? `origin:${key}` : undefined;
+    return key ? `echoes-of-infinity:${key}` : undefined;
   }, []);
 
   const [_state, _setState] = useState(

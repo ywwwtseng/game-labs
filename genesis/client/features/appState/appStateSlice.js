@@ -3,7 +3,6 @@ import * as editMode from '@/features/editMode/editModeSlice';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { MODE } from '@/constants';
-import { Object2DUtil } from '@/utils/Object2DUtil';
 
 export const setMode = createAsyncThunk(
   'appState/setMode',
@@ -218,38 +217,53 @@ export const deleteSelectedElements = createAsyncThunk(
 
 const initialState = {
   mode: MODE.EDIT,
-  // land: undefined
-  land: {
-    name: 'Land #1',
-    width: 1024,
-    height: 1024,
-    selectedLayerIndex: 0,
-    layers: [
-      {
-        name: 'Background Layer',
-        tiles: [],
-        object2ds: [],
-      },
-      {
-        name: 'Entity Layer',
-        tiles: [],
-        object2ds: [],
-      },
-      {
-        name: 'Foreground Layer',
-        tiles: [],
-        object2ds: [],
-      },
-    ],
-  },
+  selectedLandId: localStorage.getItem('echoes-of-infinity:selected-land-id'),
+  land: undefined
+  // land: {
+  //   name: 'Land #1',
+  //   width: 1024,
+  //   height: 1024,
+  //   selectedLayerIndex: 0,
+  //   layers: [
+  //     {
+  //       name: 'Background Layer',
+  //       tiles: [],
+  //       object2ds: [],
+  //     },
+  //     {
+  //       name: 'Entity Layer',
+  //       tiles: [],
+  //       object2ds: [],
+  //     },
+  //     {
+  //       name: 'Foreground Layer',
+  //       tiles: [],
+  //       object2ds: [],
+  //     },
+  //   ],
+  // },
 };
 
 export const appStateSlice = createSlice({
   name: 'appState',
   initialState,
   reducers: {
-    addLand: (state, action) => {
-      state.land = { ...state.land, ...action.payload };
+    selectLandId: (state, action) => {
+      if (!action.payload) {
+        state.land = undefined;
+      }
+
+      localStorage.setItem('echoes-of-infinity:selected-land-id', action.payload || '');
+      state.selectedLandId = action.payload;
+    },
+    setLand: (state, action) => {
+      if (action.payload) {
+        state.land = {
+          ...action.payload,
+          selectedLayerIndex: state.land?.selectedLayerIndex === 'undefined' ? state.land.selectedLayerIndex : 0
+        };
+      }
+      
     },
     addLandObject2DsByIndices(state, action) {
       const { layerIndex, object2DIndicesMap } = action.payload;
@@ -330,7 +344,8 @@ export const appStateSlice = createSlice({
 });
 
 export const {
-  addLand,
+  selectLandId,
+  setLand,
   selectLandLayer,
   // tiles
   addLandTiles,
@@ -343,6 +358,7 @@ export const {
 
 export const selectedMode = (state) => state.appState.mode;
 export const selectedLand = (state) => state.appState.land;
+export const selectedLandId = (state) => state.appState.selectedLandId;
 export const selectedCurrentLayerSelector = (state) =>
   state.appState.land.layers[state.appState.land.selectedLayerIndex];
 

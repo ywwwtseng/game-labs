@@ -8,10 +8,10 @@ function BaseInput({ className, label, ...props }) {
       onKeyDown={EventUtil.stopPropagation}
       onKeyUp={EventUtil.stopPropagation}
     >
-      <span className="block text-xs text-white mr-2 w-9">{label}</span>
+      <span className="block text-xs text-white whitespace-nowrap mr-2 min-w-9">{label}</span>
       <input
         className={cx(
-          'focus:outline-none text-xs text-white px-1 bg-[#353535] w-28',
+          'focus:outline-none text-xs text-white px-1 bg-[#353535] w-28 ml-auto',
           className,
         )}
         {...props}

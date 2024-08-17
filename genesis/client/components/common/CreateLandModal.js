@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Modal } from '@/components/ui/Modal';
 import { BaseInput } from '@/components/ui/BaseInput';
-import { addLand } from '@/features/appState/appStateSlice';
+import { useMutation } from '@/hooks/useMutation';
+import { sql } from '@/sql';
 
 function CreateLandModal() {
   const land = useSelector((state) => state.appState.land);
-  const dispatch = useDispatch();
-
+  const createLand = useMutation(sql.lands.create);
   const [name, setName] = useState('');
-  const [width, setWidth] = useState('');
-  const [height, setHeight] = useState('');
-  const disabled = !name.trim() || isNaN(width) || isNaN(height);
+  const [width, setWidth] = useState(1024);
+  const [height, setHeight] = useState(1024);
 
   return (
     <Modal width="172px">
@@ -20,9 +19,12 @@ function CreateLandModal() {
         <BaseInput
           label="Name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
         />
         <BaseInput
+          disabled
           label="Width"
           value={width}
           onChange={(e) => setWidth(e.target.value)}
@@ -37,6 +39,7 @@ function CreateLandModal() {
           }}
         />
         <BaseInput
+          disabled
           label="Height"
           value={height}
           onChange={(e) => setHeight(e.target.value)}
@@ -53,15 +56,34 @@ function CreateLandModal() {
       </Modal.Body>
       <Modal.Footer>
         <Modal.Action
-          disabled={disabled}
           onClick={() => {
-            dispatch(
-              addLand({
-                name,
-                width: Number(width),
-                height: Number(height),
-              }),
-            );
+            createLand.mutate({
+              data: {
+                land: {
+                  id: 'auto_increment(#)',
+                  name,
+                  width: Number(width),
+                  height: Number(height),
+                  layers: [
+                    {
+                      name: 'Background Layer',
+                      tiles: [],
+                      object2ds: [],
+                    },
+                    {
+                      name: 'Entity Layer',
+                      tiles: [],
+                      object2ds: [],
+                    },
+                    {
+                      name: 'Foreground Layer',
+                      tiles: [],
+                      object2ds: [],
+                    },
+                  ],
+                },
+              }
+            });
           }}
         >
           Create

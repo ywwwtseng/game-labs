@@ -13,13 +13,13 @@ import { sql } from '@/sql';
 import logo from '@/icon.png';
 
 function Navigation() {
-  const land = useSelector(selectedLand);
+  const { data: object2ds } = useQuery(sql.object2ds.list);
+  const { data: lands } = useQuery(sql.lands.list);
   const spriteSheets = useSpriteSheets();
-const { data: object2ds } = useQuery(sql.object2ds.list);
 
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);
-  const { open } = useModal(CreateLandModal);
+  const { open: openCreateLandModal } = useModal(CreateLandModal);
 
   const dropdowns = [
     {
@@ -90,11 +90,11 @@ const { data: object2ds } = useQuery(sql.object2ds.list);
   );
 
   useEffect(() => {
-    if (land === undefined) {
+    if (lands?.length === 0) {
       openCreateLandModal();
     }
-  }, [land]);
-
+  }, [lands]);
+  
   return (
     <>
       <nav className="flex w-full items-center mx-auto px-2 bg-[#1D1D1D]">

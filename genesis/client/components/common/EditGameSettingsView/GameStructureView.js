@@ -6,14 +6,15 @@ import { BaseButton } from '@/components/ui/BaseButton';
 import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { GlobalIcon } from '@/components/icon/GlobalIcon';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
-import { selectLandLayer } from '@/features/appState/appStateSlice';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { selectedLand, selectLandId, selectedLandId, selectLandLayer } from '@/features/appState/appStateSlice';
+import { useQuery } from '@/hooks/useQuery';
+import { sql } from '@/sql';
 
 function GameStructureView() {
-  const land = useSelector((state) => state.appState.land);
   const dispatch = useDispatch();
-  const lands = [land];
-  const [selectedLand, selectLand] = useLocalStorage('selected:land', lands[0].name);
+  const { data: lands } = useQuery(sql.lands.list);
+  const land = useSelector(selectedLand);
+  const id = useSelector(selectedLandId);
 
   return (
     <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828]">
@@ -27,18 +28,18 @@ function GameStructureView() {
         ]}
       />
       <div className="flex-1 overflow-y-scroll no-scrollbar">
-        {lands.map((land) => (
-          <React.Fragment key={land.name}>
+        {lands?.map((l) => (
+          <React.Fragment key={l.id}>
             <OperableItem
               className="px-1"
               checkIcon
-              selected={selectedLand === land.name}
-              // onClick={() =>
-              //   selectLand(selectedLand === land.name ? null : land.name)
-              // }
-              label={land.name}
+              selected={id === l.id}
+              onClick={() =>
+                dispatch(selectLandId(id === l.id ? null : l.id))
+              }
+              label={l.id.toLocaleUpperCase()}
             />
-            {land.layers.map((layer, index) => (
+            {land && land?.layers?.map((layer, index) => (
               <OperableItem
                 className="px-1 pl-6"
                 key={`${land.name}-layer-${index}`}
