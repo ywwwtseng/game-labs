@@ -59,7 +59,7 @@ function EditModeBehavior({ children }) {
 
   const { open: openCreateObject2DModal } = useModal(CreateObject2DModal);
 
-  const { isHolding } = useKeyBoard(
+  const { isPressed } = useKeyBoard(
     {
       [O_KEY]: (event) => {
         if (selector.mode !== SELECT_MODE.TILE) {
@@ -142,8 +142,8 @@ function EditModeBehavior({ children }) {
     [selector.rect.default, land]
   );
 
-  const isDuplicate = () => isHolding(S_KEY);
-  const isMoveAddTilesMode = () => isHolding(S_KEY) && isHolding(D_KEY);
+  const isDuplicate = () => isPressed(S_KEY);
+  const isMoveAddTilesMode = () => isPressed(S_KEY) && isPressed(D_KEY);
 
   const { register, connect } = useSelectorBridge({
     canvasId: 'canvas',
@@ -156,7 +156,7 @@ function EditModeBehavior({ children }) {
       let follows = rects.follows;
 
       if (type === 'mouseup') {
-        if (mode === SELECT_MODE.OBJECT_2D_OR_TILE && isHolding(E_KEY)) {
+        if (mode === SELECT_MODE.OBJECT_2D_OR_TILE && isPressed(E_KEY)) {
           mode = SELECT_MODE.TILE;
         }
 

@@ -8,7 +8,7 @@ import { selectedLand } from '@/features/appState/appStateSlice';
 import { useCamera, useCameraResizer } from '@/hooks/useCamera';
 import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
-import { S_KEY, useKeyBoard } from '@/hooks/useKeyBoard';
+import { META_KEY, S_KEY, useKeyBoard } from '@/hooks/useKeyBoard';
 import { EventUtil } from '@/utils/EventUtil';
 import { useMutation } from '@/hooks/useMutation';
 import { MatrixUtil } from '@/utils/MatrixUtil';
@@ -62,29 +62,26 @@ function LandCanvas() {
 
   useKeyBoard(
     {
-      [S_KEY]: (event) => {
-        if (event.metaKey) {
-          EventUtil.stop(event);
+      [META_KEY.with(S_KEY)]: (event) => {
+        EventUtil.stop(event);
 
-          if (land) {
-            updateLand.mutate({
-              params: {
-                id: land.id,
-              },
-              data: {
-                land: {
-                  layers: land.layers.map((layer) => ({
-                    name: layer.name,
-                    object2ds: layer.object2ds,
-                    tiles: MatrixUtil.create([1024/16, 1024/16], ({ x, y }) => {
-                      return layer.tiles?.[x]?.[y] || [];
-                    }),
-                  }))
-                }
-              },
-            });
-          }
-
+        if (land) {
+          updateLand.mutate({
+            params: {
+              id: land.id,
+            },
+            data: {
+              land: {
+                layers: land.layers.map((layer) => ({
+                  name: layer.name,
+                  object2ds: layer.object2ds,
+                  tiles: MatrixUtil.create([1024/16, 1024/16], ({ x, y }) => {
+                    return layer.tiles?.[x]?.[y] || [];
+                  }),
+                }))
+              }
+            },
+          });
         }
       }
     },
