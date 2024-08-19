@@ -3,7 +3,7 @@ import { ModeSwitch } from '@/components/common/ModeSwitch';
 import { CreationToolBar } from '@/components/common/CreationToolBar/CreationToolBar';
 import { ShortcutBar } from '@/components/common/ShortcutBar';
 import { EditGameSettingsView } from '@/components/common/EditGameSettingsView/EditGameSettingsView';
-import { LandCanvas } from '@/components/common/LandCanvas';
+import { LandCanvasEditArea } from '@/components/common/LandCanvasEditArea/LandCanvasEditArea';
 import { AppInfo } from '@/components/common/AppInfo/AppInfo';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectedLand, selectedLandId, setLand } from '@/features/appState/appStateSlice';
@@ -35,7 +35,7 @@ function Main() {
           <ModeSwitch />
           <CreationToolBar />
           {/* <ShortcutBar /> */}
-          {land ? <LandCanvas /> : <LandCanvas.Empty />}
+          {land ? <LandCanvasEditArea /> : <LandCanvasEditArea.Empty />}
           <AppInfo />
         </div>
         <EditGameSettingsView />

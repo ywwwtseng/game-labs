@@ -12,8 +12,8 @@ function LandCanvasMap({
   camera,
   land,
   spriteSheets,
-  width = 160,
-  height = 160,
+  width = 192,
+  height = 192,
 }) {
   const dispatch = useDispatch();
   const mode = useSelector(selectedMode);

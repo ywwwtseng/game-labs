@@ -4,7 +4,7 @@ import { useWindowSize } from '@/context/WindowSizeContext';
 import { selectedCamera, updateCameraSize } from '@/features/camera/cameraSlice';
 import { destroy as destroyEditMode } from '@/features/editMode/editModeSlice';
 
-function useCameraResizer() {
+export function useCameraResizeObserver() {
   const dispatch = useDispatch();
   const camera = useSelector(selectedCamera);
   const windowSize = useWindowSize();
@@ -17,10 +17,8 @@ function useCameraResizer() {
   return camera;
 }
 
-function useCamera() {
+export function useCamera() {
   const camera = useSelector(selectedCamera);
 
   return camera;
 }
-
-export { useCamera, useCameraResizer };

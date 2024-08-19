@@ -174,11 +174,13 @@ class CanvasUtil {
     return buffer;
   }
 
-  static drawBufferOnCanvas(ctx, buffer, x, y, camera) {
+  static drawBufferOnCanvas(ctx, buffer, x, y, camera, globalAlpha = 1) {
+    ctx.globalAlpha = globalAlpha;
     ctx.drawImage(buffer, 0, 0, 16, 16, x * 16 - (camera?.pos?.x || 0), y * 16 - (camera?.pos?.y || 0), 16, 16);
+    ctx.globalAlpha = 1;
   }
 
-  static drawTilesOnCanvas({ ctx, tiles, camera, offset = { x: 0, y: 0 } }) {
+  static drawTilesOnCanvas({ ctx, tiles, camera, offset = { x: 0, y: 0 }, globalAlpha = 1 }) {
     MatrixUtil.traverse(tiles, ({ value, x, y }) => {
       if (value?.buffer) {
         CanvasUtil.drawBufferOnCanvas(
@@ -186,7 +188,8 @@ class CanvasUtil {
           value.buffer,
           offset.x + x,
           offset.y + y,
-          camera
+          camera,
+          globalAlpha
         );
       } else if (Array.isArray(value)) {
         value.forEach((tile) => {
@@ -196,6 +199,7 @@ class CanvasUtil {
             offset.x + x,
             offset.y + y,
             camera,
+            globalAlpha,
           );
         });
       }
@@ -239,7 +243,7 @@ class CanvasUtil {
   ) {
     return CanvasUtil.createBuffer(width, height, (ctx) => {
       layers.forEach((layer) => {
-        CanvasUtil.drawTilesOnCanvas({ ctx, tiles: layer.tiles, camera });        
+        CanvasUtil.drawTilesOnCanvas({ ctx, tiles: layer.tiles, camera, globalAlpha: 1 });        
       });
     });
   }
@@ -292,24 +296,34 @@ class CanvasUtil {
           return;
         }
 
+        const inCamera = camera && CanvasUtil.inCamera(object2d, camera);
+        const globalAlpha = !camera || inCamera ? 1 : 0.2;
+
         if (object2DBuffers[object2d.id].anim) {
           const anim = object2DBuffers[object2d.id].anim;
           const frameLen =  (1 / 60) * (12 / anim.rate);
           const frameIndex = lifetime ? Math.floor(lifetime / frameLen) % anim.frames.length : 0;
           const frame = anim.frames[frameIndex];
+
+         
+
           CanvasUtil.drawTilesOnCanvas({
             ctx,
             tiles: frame,
             offset: { x: object2d.rect[0], y: object2d.rect[1]},
-            camera
+            camera,
+            globalAlpha,
           });
         } else {
+
+
           const tilesBuffer = object2DBuffers[object2d.id];
           CanvasUtil.drawTilesOnCanvas({
             ctx, 
             tiles: tilesBuffer, 
             offset: { x: object2d.rect[0], y: object2d.rect[1] },
-            camera
+            camera,
+            globalAlpha,
           });
         }
       });

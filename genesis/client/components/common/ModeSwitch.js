@@ -17,6 +17,11 @@ function ModeSwitch() {
         options={[
           {
             type: 'option',
+            id: MODE.VIEW,
+            label: 'View Mode'
+          },
+          {
+            type: 'option',
             id: MODE.EDIT,
             label: 'Edit Mode'
           },
@@ -25,11 +30,6 @@ function ModeSwitch() {
             id: MODE.PREVIEW,
             label: 'Preview Mode'
           },
-          {
-            type: 'option',
-            id: MODE.VIEW,
-            label: 'View Mode'
-          }
         ]}
       />
     </div>

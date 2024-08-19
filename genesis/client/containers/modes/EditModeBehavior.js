@@ -326,6 +326,7 @@ function EditModeBehavior({ children }) {
   return children({
     register,
     connect: { ...connect, ...setupDropToDraw, cache },
+    grid: true,
   });
 }
 
