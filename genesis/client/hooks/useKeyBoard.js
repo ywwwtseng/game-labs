@@ -16,6 +16,7 @@ export const ARROW_DOWN_KEY = 'ArrowDown';
 export const D_KEY = 'KeyD';
 export const E_KEY = 'KeyE';
 export const F_KEY = 'KeyF';
+export const M_KEY = 'KeyM';
 export const O_KEY = 'KeyO';
 export const P_KEY = 'KeyP';
 export const S_KEY = 'KeyS';

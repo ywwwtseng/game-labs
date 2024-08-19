@@ -7,7 +7,7 @@ function ViewModeBehavior({ children }) {
   const dispatch = useDispatch();
 
   const { setup } = useCursor({
-    onMoveStart: (event) => {
+    onDownMoveStart: (event) => {
       event.target.style.cursor = 'pointer';
     },
     onDownMove: (_, { delta }) => {
@@ -16,7 +16,7 @@ function ViewModeBehavior({ children }) {
         dispatch(updateCameraPos({ delta }));
       }
     },
-    onMoveEnd: (event) => {
+    onDownMoveEnd: (event) => {
       event.target.style.cursor = 'default';
       dispatch(normalizeCameraPos());
     },

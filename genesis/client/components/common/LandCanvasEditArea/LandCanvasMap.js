@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectedMode } from '@/features/appState/appStateSlice';
 import { CanvasUtil } from '@/utils/CanvasUtil';
@@ -6,8 +6,10 @@ import { useCursor } from '@/hooks/useCursor';
 import { contain } from '@/helpers/BoundingBox';
 import { updateCameraPos, normalizeCameraPos } from '@/features/camera/cameraSlice';
 import { destroy as destroyEditMode } from '@/features/editMode/editModeSlice';
+import { LAND_CANVAS_MAP_TYPE, LAND_TOTAL } from '@/constants';
 
 function LandCanvasMap({
+  mapType,
   object2DLayers,
   camera,
   land,
@@ -15,6 +17,8 @@ function LandCanvasMap({
   width = 192,
   height = 192,
 }) {
+  const canMoveCamera = useRef(false);
+  const ref = useRef(null);
   const dispatch = useDispatch();
   const mode = useSelector(selectedMode);
 
@@ -26,31 +30,41 @@ function LandCanvasMap({
   }), [camera, land, width, height]);
 
   const { setup } = useCursor({
-    onMove: (event) => {
-      event.target.style.cursor = 'default';
-      if (contain(event, { in: { bounds: viewport, with: 'land-canvas-map' } })) {
-        event.target.style.cursor = 'pointer';
+    onDownMoveStart: (event) => {
+      if (contain(event, { in: { bounds: viewport, with: ref.current } })) {
+        canMoveCamera.current = true;
       }
     },
-    onDownMove: (_, { delta }) => {
-      if (delta) {
-        dispatch(destroyEditMode());
-        dispatch(updateCameraPos({
-          delta: {
-            x: (delta.x / width) * land.width,
-            y: (delta.y / height) * land.height,
-          },
-        }));
+    onDownMove: (event, { delta }) => {
+      if (canMoveCamera.current) {
+        if (delta) {
+          event.target.style.cursor = 'pointer';
+          dispatch(destroyEditMode());
+          dispatch(updateCameraPos({
+            delta: {
+              x: (delta.x / width) * land.width,
+              y: (delta.y / height) * land.height,
+            },
+          }));
+        }
       }
     },
-    onMoveEnd: (event) => {
+    onDownMoveEnd: (event) => {
+      canMoveCamera.current = false;
       event.target.style.cursor = 'default';
       dispatch(normalizeCameraPos());
     },
   });
 
   useEffect(() => {
-    const ctx = document.getElementById('land-canvas-map').getContext('2d');
+    const ctx = ref.current.getContext('2d');
+
+    ctx.globalAlpha = 1;
+
+    if (mapType === LAND_CANVAS_MAP_TYPE.WORLD) {
+      ctx.globalAlpha = 0.2;
+    }
+    
     ctx.clearRect(0, 0, width, height);
 
     const buffer = CanvasUtil.createSpriteLayersBuffer(
@@ -69,22 +83,44 @@ function LandCanvasMap({
     object2DLayers(0)(canvas.getContext('2d'));
     ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height);
 
-    ctx.beginPath();
-    ctx.rect(
-      viewport.x,
-      viewport.y,
-      viewport.width,
-      viewport.height,
-    );
-    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    if (mapType === LAND_CANVAS_MAP_TYPE.LOCAL) {
+      ctx.beginPath();
+      ctx.rect(
+        viewport.x,
+        viewport.y,
+        viewport.width,
+        viewport.height,
+      );
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.stroke();
+    }
+
+    if (mapType === LAND_CANVAS_MAP_TYPE.WORLD) {
+      const no = Number(land.id.replace('land_#', ''));
+
+      ctx.beginPath();
+      ctx.rect(
+        Math.floor(no / Math.sqrt(LAND_TOTAL)),
+        (no - 1) % Math.sqrt(LAND_TOTAL),
+        width / Math.sqrt(LAND_TOTAL),
+        height / Math.sqrt(LAND_TOTAL),
+      );
+      ctx.fillStyle = 'red';
+      ctx.fill();
+    }
 
 
-  }, [object2DLayers, viewport, mode, land, spriteSheets]);
+
+    
+
+
+  }, [object2DLayers, viewport, mode, land, spriteSheets, mapType]);
 
   return (
     <canvas
-      id="land-canvas-map"
+      ref={ref}
       className='absolute z-[50] top-[12px] right-[12px] bg-[#2B2B2B]'
       width={width}
       height={height}

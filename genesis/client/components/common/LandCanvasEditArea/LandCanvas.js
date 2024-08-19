@@ -7,10 +7,9 @@ import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 import { LandCanvasMap } from '@/components/common/LandCanvasEditArea/LandCanvasMap';
 
-function LandCanvas({ land, lifetime, grid, ...connect }) {
+function LandCanvas({ land, lifetime, grid, mapType, ...connect }) {
   const camera = useCamera();
   const spriteSheets = useSpriteSheets();
-  
   const { data: object2ds } = useQuery(sql.object2ds.list);
 
   const spritesLayers = useMemo(() => {
@@ -52,10 +51,11 @@ function LandCanvas({ land, lifetime, grid, ...connect }) {
   return (
     <>
       <LandCanvasMap
-        object2DLayers={object2DLayers}
-        camera={camera}
+        mapType={mapType}
         land={land}
         spriteSheets={spriteSheets}
+        object2DLayers={object2DLayers}
+        camera={camera}
       />
       <Canvas2D
         id="canvas"

@@ -1,17 +1,20 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { ModeConnectToCanvas } from '@/containers/ModeConnectToCanvas';
 import { selectedLand } from '@/features/appState/appStateSlice';
 import { sql } from '@/sql';
-import { META_KEY, S_KEY, useKeyBoard } from '@/hooks/useKeyBoard';
+import { META_KEY, S_KEY, M_KEY, useKeyBoard } from '@/hooks/useKeyBoard';
 import { EventUtil } from '@/utils/EventUtil';
 import { useMutation } from '@/hooks/useMutation';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { LandCanvas } from '@/components/common/LandCanvasEditArea/LandCanvas';
+import { LAND_CANVAS_MAP_TYPE } from '@/constants';
 
 function LandCanvasEditArea() {
   const land = useSelector(selectedLand);
   const updateLand = useMutation(sql.lands.update);
+  const [mapType, setMapType] = useState(LAND_CANVAS_MAP_TYPE.LOCAL);
 
   useKeyBoard(
     {
@@ -36,6 +39,13 @@ function LandCanvasEditArea() {
             },
           });
         }
+      },
+      [M_KEY]: () => {
+        setMapType(
+          mapType === LAND_CANVAS_MAP_TYPE.LOCAL
+            ? LAND_CANVAS_MAP_TYPE.WORLD
+            : LAND_CANVAS_MAP_TYPE.LOCAL
+        );
       }
     },
     [land]
@@ -53,6 +63,7 @@ function LandCanvasEditArea() {
             <LandCanvas
               grid={grid}
               land={land}
+              mapType={mapType}
               {...connect}
             />
           )}

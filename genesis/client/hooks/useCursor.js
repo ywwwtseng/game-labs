@@ -4,7 +4,7 @@ import { getBoundingBox } from '@/helpers/BoundingBox';
 import { useCursorDelta } from '@/hooks/useCursorDelta';
 import { EventUtil } from '@/utils/EventUtil';
 
-function useCursor({ icon, onMoveStart, onMoveEnd, onMove, onDownMove }) {
+function useCursor({ icon, onDownMoveStart, onDownMoveEnd, onMove, onDownMove }) {
   const cursorDelta = useCursorDelta();
   const isPressRef = useRef(false);
   const iconElRef = useRef(null);
@@ -74,7 +74,7 @@ function useCursor({ icon, onMoveStart, onMoveEnd, onMove, onDownMove }) {
   const onMouseUp = (event) => {
     EventUtil.stop(event);
 
-    onMoveEnd?.(event);
+    onDownMoveEnd?.(event);
     cursorDelta.end(event);
 
     isPressRef.current = false;
@@ -92,7 +92,7 @@ function useCursor({ icon, onMoveStart, onMoveEnd, onMove, onDownMove }) {
   const onMouseDown = (event) => {
     EventUtil.stop(event);
     
-    onMoveStart?.(event);
+    onDownMoveStart?.(event);
 
     isPressRef.current = true;
 
