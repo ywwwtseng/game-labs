@@ -15,6 +15,7 @@ import logo from '@/icon.png';
 function Navigation() {
   const { data: object2ds } = useQuery(sql.object2ds.list);
   const { data: lands } = useQuery(sql.lands.list);
+  const land = useSelector(selectedLand);
   const spriteSheets = useSpriteSheets();
 
   const [focus, setFocus] = useState(false);

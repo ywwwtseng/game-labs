@@ -570,12 +570,13 @@ class CanvasUtil {
   }
 
   static exportLand({ land, spriteSheets, object2ds }) {
+    console.log(land, spriteSheets, object2ds )
     const layers = CanvasUtil.createSpriteLayers({ land, spriteSheets });
     const object2DBuffers = CanvasUtil.createObject2DBuffers({ land, spriteSheets, object2ds });
 
     const buffer = CanvasUtil.createBuffer(land.width, land.height, (ctx) => {
       layers.forEach((layer) => {
-        CanvasUtil.drawTilesOnCanvas(ctx, layer.tiles);
+        CanvasUtil.drawTilesOnCanvas({ ctx, tiles: layer.tiles });
         CanvasUtil.createObject2DLayersBuffer({ ctx, land, object2ds, spriteSheets, object2DBuffers })     
       });
     });
