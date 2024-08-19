@@ -49,11 +49,12 @@ const syntax = new Map([
 
     return undefined;
   }],
-  [regex.delete, (_, key = _.replace(':', '')) => (dbData) => ({ prevPathKey, data }) => {
+  [regex.delete, (_, key = _.replace(':', '')) => (dbData) => ({ prevPathKey, params, data }) => {
     if (key === 'index') {
-      dbData[prevPathKey] = dbData[prevPathKey].fields((_, index ) => index !== data.index);
+      dbData[prevPathKey] = dbData[prevPathKey].filter((_, index ) => index !== data.index);
       return null;
     } else {
+      console.log(dbData, key, params, data,'delte')
       dbData[key] = null;
       return dbData;
     }
@@ -95,9 +96,7 @@ const findCommand = (pathKey, nextPathKey) => {
   for (const [syntaxRegex, action] of syntax) {
     if (nextPathKey) {
       const nextMatch = nextPathKey.match(syntaxRegex);
-
-      
-      if (syntaxRegex === regex.delete && (nextMatch && nextMatch[1])) {
+      if (syntaxRegex === regex.delete && (nextMatch && nextMatch[1] && nextMatch[1] === ':index')) {
         return (dbData) => () => dbData;
       }
 
