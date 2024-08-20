@@ -20039,6 +20039,29 @@
           ]
         }
       ]
+    },
+    {
+      "id": "land_#2",
+      "name": "",
+      "width": 1024,
+      "height": 1024,
+      "layers": [
+        {
+          "name": "Background Layer",
+          "tiles": [],
+          "object2ds": []
+        },
+        {
+          "name": "Entity Layer",
+          "tiles": [],
+          "object2ds": []
+        },
+        {
+          "name": "Foreground Layer",
+          "tiles": [],
+          "object2ds": []
+        }
+      ]
     }
   ],
   "object2ds": [

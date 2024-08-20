@@ -30,7 +30,9 @@ function Navigation() {
         {
           type: 'option',
           label: 'New Land',
-          onClick: open,
+          onClick: () => {
+            openCreateLandModal();
+          },
         },
         {
           type: 'option',

@@ -54,7 +54,6 @@ const syntax = new Map([
       dbData[prevPathKey] = dbData[prevPathKey].filter((_, index ) => index !== data.index);
       return null;
     } else {
-      console.log(dbData, key, params, data,'delte')
       dbData[key] = null;
       return dbData;
     }

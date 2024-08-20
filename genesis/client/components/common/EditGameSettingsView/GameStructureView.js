@@ -39,7 +39,7 @@ function GameStructureView() {
               }
               label={l.id.toLocaleUpperCase()}
             />
-            {land && land?.layers?.map((layer, index) => (
+            {land?.id === l.id && land?.layers?.map((layer, index) => (
               <OperableItem
                 className="px-1 pl-6"
                 key={`${land.name}-layer-${index}`}
