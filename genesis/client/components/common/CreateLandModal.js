@@ -59,8 +59,9 @@ function CreateLandModal() {
           onClick={() => {
             createLand.mutate({
               data: {
+                dir: 'lands/draft',
                 land: {
-                  id: 'auto_increment(#)',
+                  id: 'auto_increment()',
                   name,
                   width: Number(width),
                   height: Number(height),

@@ -1,16 +1,16 @@
 import express from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
+import { JSONFilePreset } from 'lowdb/node'
 import { fileURLToPath } from 'url';
-import { JSONFilePreset } from 'lowdb/node';
 import lowdb from './middlewares/lowdb.js';
 import routes from './routes.js';
 
-const defaultData = { lands: [], sprites: [], object2ds: [] };
-const db = await JSONFilePreset('db.json', defaultData);
-
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
+
+const defaultData = { lands: [], sprites: [], object2ds: [] };
+const db = await JSONFilePreset('db.json', defaultData);
 
 const app = express();
 const port = 3000;

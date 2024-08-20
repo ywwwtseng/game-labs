@@ -1,3 +1,7 @@
+import path from 'path';
+import FileSystemUtil from '../utils/FileSystemUtil.js';
+
+
 const regex = {
   query: /^query:(.*)$/,
   mutation: /^mutation:(.*)$/,
@@ -37,14 +41,25 @@ const Schema = {
 };
 
 const syntax = new Map([
-  [regex.update, (_, key = _.replace(':', '')) => (dbData) => ({ prevPathKey, params, data }) => {
+  [regex.update, (_, key = _.replace(':', '')) => (dbData) => async ({ prevPathKey, params, data }) => {
     {let match; if (match = prevPathKey.match(regex.find)) {
       const identity = match[1].replace(':', '');
       const index = dbData.findIndex(item => item[identity] === params[identity]);
 
       if (index !== -1) {
-        return dbData[index] = Object.assign(dbData[index], data[key]);
+        if (dbData[index].pathname) {
+          const oldData = await FileSystemUtil.readFile(dbData[index].pathname);
+          await FileSystemUtil.writeFile(
+            dbData[index].pathname,
+            Object.assign(oldData, data[key])
+          );
+          return dbData[index];
+        } else {
+          return dbData[index] = Object.assign(dbData[index], data[key]);
+        }
       }
+
+      
     }}
 
     return undefined;
@@ -73,9 +88,31 @@ const syntax = new Map([
       return acc;
     }, {}));
   }],
-  [regex.create, (key) => (dbData) => ({ data }) => {
+  [regex.create, (key) => (dbData) => async ({ data }) => {
     key = key.replace(':', '');
-    const schema = Schema.create(key, data[key], dbData);
+    const schema = await Schema.create(key, data[key], dbData);
+
+    if (data.dir) {
+      const pathname = path.join(data.dir, `${schema.id}.json`);
+      schema.pathname = pathname;
+
+      await FileSystemUtil.writeFile(pathname, schema);
+
+      dbData.push({
+        id: schema.id,
+        pathname,
+      });
+
+      return {
+        id: schema.id,
+        pathname,
+      };
+
+    } else {
+      dbData.push(schema);
+      return schema;
+    }
+    
     dbData.push(schema);
     return schema;
   }],
@@ -114,8 +151,8 @@ const findCommand = (pathKey, nextPathKey) => {
 };
 
 
-async function exec({type, db, path, params, data }) {
-  const pathArray = Array.isArray(path) ? path : path.split('.');
+async function exec({type, db, sqlPath, params, data }) {
+  const pathArray = Array.isArray(sqlPath) ? sqlPath : sqlPath.split('.');
 
   let result = db.data;
 
@@ -129,9 +166,9 @@ async function exec({type, db, path, params, data }) {
     const cmd = findCommand(pathKey, nextPathKey);
     if (cmd) {
       if (type === 'query') {
-        result = cmd(result)({ params });
+        result = await cmd(result)({ params });
       } else if (type === 'mutation') {
-        result = cmd(result)({ prevPathKey, params, data });
+        result = await cmd(result)({ prevPathKey, params, data });
       }
     } else {
       result = result && result[pathKey] !== undefined ? result[pathKey] : undefined;
@@ -141,22 +178,19 @@ async function exec({type, db, path, params, data }) {
   if (type === 'mutation') {
     await db.write();
 
-    const findCmdIndex = pathArray.findIndex((path) => path.match(regex.find));
+    const findCmdIndex = pathArray.findIndex((p) => p.match(regex.find));
 
     if (findCmdIndex !== -1) {
       return exec({
         type: 'query',
         db,
-        path: pathArray.slice(
+        sqlPath: pathArray.slice(
           0,
-          pathArray.findIndex((path) => path.match(regex.find)) + 1
+          pathArray.findIndex((p) => p.match(regex.find)) + 1
         ),
         params,
       });
     }
-
-    
-    
   }
 
   return result;
@@ -199,14 +233,14 @@ const Controller = {
     }
 
     let type;
-    let match;
+    let sqlPath;
 
     for (const key in regex) {
       if (Object.prototype.hasOwnProperty.call(regex, key)) {
         if (sql.match(regex[key])) {
-          match = sql.match(regex[key])[1];
+          sqlPath = sql.match(regex[key])[1];
 
-          if (match) {
+          if (sqlPath) {
             type = key;
             break;
           }
@@ -219,7 +253,7 @@ const Controller = {
         data: await exec({
           type,
           db: req.db,
-          path: match,
+          sqlPath,
           params,
         }),
         ok: true,
@@ -231,7 +265,7 @@ const Controller = {
         data: await exec({
           type,
           db: req.db,
-          path: match,
+          sqlPath,
           params,
           data
         }),

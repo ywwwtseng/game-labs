@@ -1,11 +1,13 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useModal } from '@/context/ModalContext';
 import { AreaHeader } from '@/components/common/AreaHeader';
 import { OperableItem } from '@/components/common/OperableItem';
 import { BaseButton } from '@/components/ui/BaseButton';
 import { CirclePlusIcon } from '@/components/icon/CirclePlusIcon';
 import { GlobalIcon } from '@/components/icon/GlobalIcon';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
+import { CreateLandModal } from '@/components/common/CreateLandModal';
 import { selectedLand, selectLandId, selectedLandId, selectLandLayer } from '@/features/appState/appStateSlice';
 import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
@@ -15,6 +17,7 @@ function GameStructureView() {
   const { data: lands } = useQuery(sql.lands.list);
   const land = useSelector(selectedLand);
   const id = useSelector(selectedLandId);
+  const { open: openCreateLandModal } = useModal(CreateLandModal);
 
   return (
     <div className="flex flex-col rounded w-full max-h-[124px] h-[124px] bg-[#282828]">
@@ -22,7 +25,7 @@ function GameStructureView() {
         icon={<GlobalIcon />}
         label="World"
         actions={[
-          <BaseButton key="new-land">
+          <BaseButton key="new-land" onClick={openCreateLandModal}>
             <CirclePlusIcon />
           </BaseButton>
         ]}

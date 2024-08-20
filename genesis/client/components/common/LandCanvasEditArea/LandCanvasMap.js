@@ -66,7 +66,6 @@ function LandCanvasMap({
     }
     
     ctx.clearRect(0, 0, width, height);
-
     const buffer = CanvasUtil.createSpriteLayersBuffer(
       CanvasUtil.createSpriteLayers({ land, spriteSheets }),
       {
@@ -98,7 +97,7 @@ function LandCanvasMap({
     }
 
     if (mapType === LAND_CANVAS_MAP_TYPE.WORLD) {
-      const no = Number(land.id.replace('land_#', ''));
+      const no = Number(land.id.replace('land_', ''));
 
       ctx.beginPath();
       ctx.rect(
