@@ -40,7 +40,7 @@ function GameStructureView() {
               onClick={() =>
                 dispatch(selectLandId(id === l.id ? null : l.id))
               }
-              label={l.id.toLocaleUpperCase()}
+              label={l.id.replace('_', ' #').toLocaleUpperCase()}
             />
             {land?.id === l.id && land?.layers?.map((layer, index) => (
               <OperableItem

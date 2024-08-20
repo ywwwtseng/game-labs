@@ -43,7 +43,8 @@ export default class WorldScene extends Scene {
     const loadWorldScene = createWorldSceneLoader(
       this.gameContext.entityFactory,
     );
-    const setupWorldScene = await loadWorldScene(this.name);
+
+    const setupWorldScene = await loadWorldScene();
     setupWorldScene(this);
     await new Promise((resolve) => setTimeout(resolve, 2000));
 

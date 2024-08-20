@@ -2,6 +2,9 @@
   "name": "echoes-of-infinity",
   "repository": "git@github.com:ywwwtseng/echoes-of-infinity.git",
   "scripts": {
+    "dev": "yarn dev:app & yarn dev:labs",
+    "dev:app": "cd app && yarn dev",
+    "dev:labs": "cd labs && yarn dev",
     "prettier": "npx prettier --write \"**\/*.js\" --single-quote --print-width 80"
   }
 }

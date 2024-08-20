@@ -79,8 +79,8 @@ function setupTriggers(sceneSpec, scene) {
 }
 
 export function createWorldSceneLoader(entityFactory) {
-  return function loadScene(name) {
-    return loadJSON(`/scene/${name}.json`)
+  return function loadScene() {
+    return loadJSON('/scene/world.json')
       .then((sceneSpec) =>
         Promise.all([
           sceneSpec,

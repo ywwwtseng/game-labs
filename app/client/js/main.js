@@ -77,11 +77,11 @@ async function main(canvas) {
 }
 
 const canvas = document.getElementById('screen');
-canvas.width = Dimensions.get('canvas').width;
-canvas.height = Dimensions.get('canvas').height;
 
 const start = (event) => {
   main(canvas);
+  canvas.width = Dimensions.get('canvas').width;
+  canvas.height = Dimensions.get('canvas').height;
   event.target.remove();
 };
 

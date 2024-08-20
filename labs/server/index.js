@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url); // get the resolved path to t
 const __dirname = path.dirname(__filename); // get the name of the directory
 
 const defaultData = { lands: [], sprites: [], object2ds: [] };
-const db = await JSONFilePreset('db.json', defaultData);
+const db = await JSONFilePreset('game.json', defaultData);
 
 const app = express();
 const port = 3000;
@@ -18,6 +18,7 @@ const port = 3000;
 app.use(lowdb(db));
 app.use(express.static('dist'));
 app.use(express.static('public'));
+app.use('/game.json', express.static('game.json'));
 app.use(bodyParser.json({limit: '50mb'}));
 
 app.get('/', (req, res) => {
