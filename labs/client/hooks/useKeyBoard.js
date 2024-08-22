@@ -63,8 +63,11 @@ function useKeyBoard(inputMapping, dependency = []) {
         key = META_KEY.with(code);
       }
 
-
-      if (keyStatesRef.current[key] === keyState) {
+      if (
+        keyStatesRef.current[key] === keyState
+        && !key.includes(META_KEY.code)
+        && !key.includes(MEAT_SHIFT_KEY.code)
+      ) {
         return;
       }
 

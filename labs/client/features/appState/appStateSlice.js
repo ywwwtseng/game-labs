@@ -60,6 +60,7 @@ export const cmd = {
       }) => {
         const state = getState();
         const camera = selectedCamera(state);
+        const layer = selectedCurrentLayerSelector(state);
         const layerIndex = state.appState.land.selectedLayerIndex;
 
         let rect;
@@ -90,7 +91,18 @@ export const cmd = {
         }
 
         rect = CanvasUtil.toCameraSpace(rect, camera);
+
+        if (payload.uniq) {
+          tilesMatrix = MatrixUtil.create(rect, (index, coordinate) => {
+            return tilesMatrix[index.x][index.y]?.filter((tile) => {
+              const existedTiles = layer.tiles?.[coordinate.x]?.[coordinate.y];
+              return existedTiles?.every((existedTile) => !CanvasUtil.sameTile(tile, existedTile));
+            });
+          });
+        }
     
+        
+
         commandManager.executeCmd({
           merge: payload.merge,
           execute: () => {
@@ -280,9 +292,11 @@ export const appStateSlice = createSlice({
           }
 
           const existedTiles = state.land.layers[layerIndex].tiles[index.x][index.y];
-          state.land.layers[layerIndex].tiles[index.x][index.y].push(
-            ...tileItems.filter((tile) => !existedTiles.find((existedTile) => CanvasUtil.sameTile(existedTile, tile)))
-          );
+          // state.land.layers[layerIndex].tiles[index.x][index.y].push(
+          //   ...tileItems.filter((tile) => !existedTiles.find((existedTile) => CanvasUtil.sameTile(existedTile, tile)))
+          // );
+
+          state.land.layers[layerIndex].tiles[index.x][index.y].push(...tileItems);
         }
       });
     },

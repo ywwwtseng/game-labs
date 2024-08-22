@@ -1,5 +1,5 @@
 import Entity from '@/engine/Entity';
-import { loadSpriteSheet } from '@/engine/loaders/sprite';
+import { loadObject2D } from '@/engine/loaders/object2d';
 import { DIRECTION } from '@/engine/constants';
 import { loadAudioBoard } from '@/engine/loaders/audio';
 
@@ -12,7 +12,7 @@ import SkillController from '@/js/traits/SkillController';
 
 export function loadRole(audioContext) {
   return Promise.all([
-    loadSpriteSheet('role'),
+    loadObject2D('role'),
     loadAudioBoard('role', audioContext),
   ]).then(([sprite, audio]) => {
     return createRoleFactory(sprite, audio);

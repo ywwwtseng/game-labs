@@ -6,6 +6,7 @@ class MoveSelectAreaContext {
   _init() {
     this._inited = false;
     this.duplicate = false;
+    this.duplicate_and_move = false;
 
     this.origin = {
       default: null,

@@ -62,5 +62,7 @@ export default class SceneManager {
       activeScene.update(gameContext);
       activeScene.draw(gameContext);
     }
+
+    
   }
 }

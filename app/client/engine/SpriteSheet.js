@@ -1,42 +1,46 @@
+import { Matrix } from '@/engine/math';
+
 export default class SpriteSheet {
   constructor(image, width, height) {
     this.image = image;
     this.width = width;
     this.height = height;
-    this.tiles = new Map();
-    this.animations = new Map();
+    this.tiles = new Matrix();
+
+    for (let x = 0; x < image.naturalWidth / this.width; x++) {
+      for (let y = 0; y < image.naturalHeight / this.width; y++) {
+        const buffer = this.createTileBuffer(x, y);
+        this.tiles.set(x, y, buffer);
+      }
+    }
   }
 
-  defineAnim(name, animation) {
-    this.animations.set(name, animation);
-  }
-
-  define(name, x, y, width, height) {
+  createTileBuffer(x, y) {
     const buffer = document.createElement('canvas');
-    buffer.width = width;
-    buffer.height = height;
+    buffer.width = this.width;
+    buffer.height = this.height;
     buffer
       .getContext('2d')
-      .drawImage(this.image, x, y, width, height, 0, 0, width, height);
+      .drawImage(
+        this.image,
+        x * this.width,
+        y * this.height,
+        this.width,
+        this.height,
+        0,
+        0,
+        this.width,
+        this.height
+      );
 
-    this.tiles.set(name, buffer);
+    return buffer;
   }
 
-  defineTile(name, x, y) {
-    this.define(name, x * this.width, y * this.height, this.width, this.height);
-  }
-
-  draw(name, context, x, y) {
-    const buffer = this.tiles.get(name);
-    context.drawImage(buffer, x, y);
-  }
-
-  drawAnim(name, context, x, y, distance) {
-    const animation = this.animations.get(name);
-    this.drawTile(animation(distance), context, x, y);
-  }
-
-  drawTile(name, context, x, y) {
-    this.draw(name, context, x * this.width, y * this.height);
+  drawTile(index, context, x, y) {
+    context.drawImage(
+      this.tiles.get(...index),
+      x * this.width,
+      y * this.height,
+    );
   }
 }

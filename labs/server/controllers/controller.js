@@ -94,7 +94,7 @@ const syntax = new Map([
 
     if (data.dir) {
       const pathname = path.join(data.dir, `${schema.id}.json`);
-      schema.pathname = pathname;
+      schema.pathname = `/${pathname}`;
 
       await FileSystemUtil.writeFile(pathname, schema);
 

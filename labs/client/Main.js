@@ -9,13 +9,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectedLand, selectedLandId, setLand } from '@/features/appState/appStateSlice';
 import { sql } from '@/sql';
 import { useQuery } from '@/hooks/useQuery';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 function Main() {
   const dispatch = useDispatch();
   const id = useSelector(selectedLandId);
   const { data: lands } = useQuery(sql.lands.list);
-  const params = useMemo(() => ({ id }), [id]);
   const pathname = lands?.find((land) => land.id === id)?.pathname;
   const land = useSelector(selectedLand);
 
@@ -27,7 +26,6 @@ function Main() {
           dispatch(setLand(data))
         });
     }
-    console.log(pathname, 'pathname')
   }, [pathname]);
 
   return (

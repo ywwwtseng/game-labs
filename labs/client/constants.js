@@ -21,6 +21,6 @@ export const LAND_CANVAS_MAP_TYPE = {
   WORLD: 'WORLD',
 };
 
-export const LAND_TOTAL = 10000;
+export const LAND_TOTAL = 1024;
 
 export const TILE_SIZE = 16;

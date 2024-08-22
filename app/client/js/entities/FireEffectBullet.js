@@ -1,13 +1,13 @@
 import Entity from '@/engine/Entity';
 import Trait from '@/engine/Trait';
-import { loadSpriteSheet } from '@/engine/loaders/sprite';
+import { loadObject2D } from '@/engine/loaders/object2d';
 
 import Velocity from '@/js/traits/Velocity';
 import Killable from '@/js/traits/Killable';
 import SkillController from '@/js/traits/SkillController';
 
 export function loadFireEffectBullet() {
-  return loadSpriteSheet('fire-effect-bullet').then(
+  return loadObject2D('fire-effect-bullet').then(
     createFireEffectBulletFactory,
   );
 }

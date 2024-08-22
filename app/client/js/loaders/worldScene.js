@@ -3,7 +3,8 @@ import Entity from '@/engine/Entity';
 import { createBackgroundLayer } from '@/engine/layers/background';
 import { createSpriteLayer } from '@/engine/layers/sprites';
 import { loadMusicSheet } from '@/engine/loaders/music';
-import { loadSpriteSheet } from '@/engine/loaders/sprite';
+import { loadObject2Ds } from '@/engine/loaders/object2d';
+import { loadSpriteSheets } from '@/engine/loaders/sprite';
 import { loadJSON } from '@/engine/loaders';
 
 import SceneTimer from '@/js/traits/SceneTimer';
@@ -33,22 +34,26 @@ function setupBehavior(scene) {
   });
 }
 
-function setupBackgrounds(sceneSpec, scene, sceneSprites, patterns) {
-  sceneSpec.layers.forEach((layer) => {
-    const grid = createGrid(layer.tiles, patterns);
-    const backgroundLayer = createBackgroundLayer(scene, grid, sceneSprites);
+function setupBackgrounds(land, scene, sprites, object2ds) {
+  land.layers.forEach((layer) => {
+    const tiles = getLayerTiles(layer, object2ds);
+    const backgroundLayer = createBackgroundLayer(scene, tiles, sprites, object2ds);
     scene.comp.layers.push(backgroundLayer);
-    scene.tileCollider.addGrid(grid);
+    // scene.tileCollider.addGrid(grid);
   });
 }
 
+function setupObjects(land, scene, sprites, object2ds) {
+
+}
+
 function setupEntities(sceneSpec, scene, entityFactory) {
-  sceneSpec.entities.forEach(({ name, pos: [x, y] }) => {
-    const createEntity = entityFactory[name];
-    const entity = createEntity();
-    entity.pos.set(x, y);
-    scene.entities.push(entity);
-  });
+  // sceneSpec.entities.forEach(({ name, pos: [x, y] }) => {
+  //   const createEntity = entityFactory[name];
+  //   const entity = createEntity();
+  //   entity.pos.set(x, y);
+  //   scene.entities.push(entity);
+  // });
   const spriteLayer = createSpriteLayer(scene.entities);
   scene.comp.layers.push(spriteLayer);
 }
@@ -80,26 +85,51 @@ function setupTriggers(sceneSpec, scene) {
 
 export function createWorldSceneLoader(entityFactory) {
   return function loadScene() {
-    return loadJSON('/scene/world.json')
-      .then((sceneSpec) =>
+    return loadJSON('http://localhost:3000/world.json')
+      .then((worldSpec) =>
         Promise.all([
-          sceneSpec,
-          loadSpriteSheet(sceneSpec.spriteSheet),
-          loadMusicSheet(sceneSpec.spriteSheet),
-          loadPatternSheet(sceneSpec.patternSheet),
+          worldSpec,
+          loadSpriteSheets(worldSpec.sprites),
+          loadObject2Ds(worldSpec.object2ds),
+          // loadMusicSheet(sceneSpec.spriteSheet),
+          // loadPatternSheet(sceneSpec.patternSheet),
         ]),
       )
-      .then(([sceneSpec, sceneSprites, musicPlayer, patterns]) => {
+      .then(([worldSpec, sprites, object2ds, musicPlayer]) => {
         return (scene) => {
           scene.music.setPlayer(musicPlayer);
+          // setupTriggers(sceneSpec, scene);
+          // setupBehavior(scene);
+          return {
+            async setupLand() {
+              const land = await loadJSON(`http://localhost:3000${worldSpec.lands[0].pathname}`);
+              setupBackgrounds(land, scene, sprites, object2ds);
 
-          setupBackgrounds(sceneSpec, scene, sceneSprites, patterns);
-          setupEntities(sceneSpec, scene, entityFactory, sceneSprites);
-          setupTriggers(sceneSpec, scene);
-          setupBehavior(scene);
+            },
+            async setupEntities() {
+              setupEntities(worldSpec, scene, entityFactory);
+            }
+          };
         };
       });
   };
+}
+
+function getLayerTiles(layer, object2ds) {
+  const matrix = new Matrix(layer.tiles);
+
+  layer.object2ds.forEach(({ id, rect }) => {
+    const object2d = object2ds[id];
+
+    object2d.tiles.forEach((tile, x, y) => {
+      const existedTile = matrix.get(rect[0] + x, rect[1] + y);
+      if (existedTile) {
+        matrix.set(rect[0] + x, rect[1] + y, [...existedTile, { pattern: object2d.id, index: [x, y] }]);
+      }
+    });
+  });
+
+  return matrix.grid;
 }
 
 function createGrid(tiles, patterns) {

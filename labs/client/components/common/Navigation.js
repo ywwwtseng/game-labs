@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Text } from '@/components/ui/Text';
 import { BaseDropdown } from '@/components/ui/Dropdown/BaseDropdown';
 import { CreateLandModal } from '@/components/common/CreateLandModal';
+import { GamePreviewModal } from '@/components/common/GamePreviewModal';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { selectedLand } from '@/features/appState/appStateSlice';
@@ -21,6 +22,7 @@ function Navigation() {
   const [focus, setFocus] = useState(false);
   const [opened, setOpened] = useState(null);
   const { open: openCreateLandModal } = useModal(CreateLandModal);
+  const { open: openGamePreviewModal } = useModal(GamePreviewModal);
 
   const dropdowns = [
     {
@@ -39,6 +41,19 @@ function Navigation() {
           label: 'Export PNG File',
           onClick: () => {
             CanvasUtil.exportLand({ land, spriteSheets, object2ds });
+          },
+        },
+      ],
+    },
+    {
+      id: 'game',
+      label: 'Game',
+      options: [
+        {
+          type: 'option',
+          label: 'Game Review',
+          onClick: () => {
+            openGamePreviewModal();
           },
         },
       ],

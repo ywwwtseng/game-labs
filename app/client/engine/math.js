@@ -1,6 +1,6 @@
 export class Matrix {
-  constructor() {
-    this.grid = [];
+  constructor(grid) {
+    this.grid = grid || [];
   }
 
   forEach(callback) {

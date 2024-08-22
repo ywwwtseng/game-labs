@@ -1,4 +1,4 @@
-import SpriteSheet from '@/engine/SpriteSheet';
+import LegacyObject2D from '@/engine/LegacyObject2D';
 import Dimensions from '@/engine/Dimensions';
 import { loadImage } from '@/engine/loaders';
 
@@ -25,7 +25,7 @@ class Font {
 
 export function loadFont() {
   return loadImage('./img/font.png').then((image) => {
-    const fontSprite = new SpriteSheet(image);
+    const fontSprite = new LegacyObject2D(image);
 
     const size = 8;
     const rowLen = image.width;

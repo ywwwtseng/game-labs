@@ -1,7 +1,22 @@
 import { Vec2 } from '@/engine/math';
 
+const eventsFor = {
+  touch: {
+    start: 'touchstart',
+    move: 'touchmove',
+    stop: 'touchend',
+    cancel: 'touchcancel'
+  },
+  mouse: {
+    start: 'mousedown',
+    move: 'mousemove',
+    stop: 'mouseup'
+  }
+};
+
 export default class Joystick {
   constructor() {
+    this.eventType = 'ontouchstart' in window ? 'touch': 'mouse';
     this.maxRadius = 40;
     this.circle = document.createElement('div');
     this.circle.style.cssText = `
@@ -37,7 +52,7 @@ export default class Joystick {
     this.move = this.move.bind(this);
     this.up = this.up.bind(this);
 
-    document.addEventListener('touchstart', this.tap.bind(this), {
+    document.addEventListener(eventsFor[this.eventType].start, this.tap.bind(this), {
       passive: false,
     });
   }
@@ -63,15 +78,21 @@ export default class Joystick {
     this.origin = this.getMousePosition(event);
     this.startTime = Date.now();
 
-    document.addEventListener('touchmove', this.move, { passive: false });
-    document.addEventListener('touchend', this.up, { passive: false });
-    document.addEventListener('touchcancel', this.up, { passive: false });
+    document.addEventListener(eventsFor[this.eventType].move, this.move, { passive: false });
+    document.addEventListener(eventsFor[this.eventType].stop, this.up, { passive: false });
+    if (eventsFor[this.eventType].cancel) {
+      document.addEventListener(eventsFor[this.eventType].cancel, this.up, { passive: false });
+    }
   }
 
   move(event) {
     event.preventDefault();
     event = event || window.event;
     const mouse = this.getMousePosition(event);
+
+    if (!this.origin) {
+      return;
+    }
 
     const delta = mouse.clone().sub(this.origin).limit(this.maxRadius);
 
@@ -123,9 +144,11 @@ export default class Joystick {
       this.onMove({ x: 0, y: 0 });
     }
 
-    document.removeEventListener('touchmove', this.move, { passive: false });
-    document.removeEventListener('touchend', this.up, { passive: false });
-    document.removeEventListener('touchcancel', this.up, { passive: false });
+    document.removeEventListener(eventsFor[this.eventType].move, this.move, { passive: false });
+    document.removeEventListener(eventsFor[this.eventType].stop, this.up, { passive: false });
+    if (eventsFor[this.eventType].cancel) {
+      document.removeEventListener(eventsFor[this.eventType].cancel, this.up, { passive: false });
+    }
   }
 
   onPress() {}

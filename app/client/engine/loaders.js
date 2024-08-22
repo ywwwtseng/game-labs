@@ -9,5 +9,5 @@ export function loadImage(url) {
 }
 
 export function loadJSON(url) {
-  return fetch(url).then((r) => r.json());
+  return fetch(url, { mode: 'cors'}).then((r) => r.json());
 }

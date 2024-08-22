@@ -2,7 +2,7 @@ import Dimensions from '@/engine/Dimensions';
 import TileResolver from '@/engine/TileResolver';
 import { Vec2 } from '@/engine/math';
 
-export function createBackgroundLayer(scene, tiles, sprites) {
+export function createBackgroundLayer(scene, tiles, sprites, object2ds) {
   const resolver = new TileResolver(tiles);
 
   const buffer = document.createElement('canvas');
@@ -21,29 +21,44 @@ export function createBackgroundLayer(scene, tiles, sprites) {
 
     for (let x = startIndex.x; x <= endIndex.x; ++x) {
       for (let y = startIndex.y; y <= endIndex.y; ++y) {
-        const col = tiles.grid[x];
+        const col = tiles[x];
 
         if (col) {
           const tile = col[y];
 
-          if (tile) {
-            if (sprites.animations.has(tile.name)) {
-              sprites.drawAnim(
-                tile.name,
-                context,
-                x - startIndex.x,
-                y - startIndex.y,
-                scene.totalTime,
-              );
-            } else {
-              sprites.drawTile(
-                tile.name,
-                context,
-                x - startIndex.x,
-                y - startIndex.y,
-              );
-            }
+          if (tile?.length > 0) {
+            tile.forEach((tile) => {
+              if (tile.source) {
+                sprites[tile.source].drawTile(tile.index, context, x - startIndex.x, y - startIndex.y);
+              } else if (tile.pattern) {
+                if (object2ds[tile.pattern].anim) {
+                  object2ds[tile.pattern].drawAnim(sprites, tile.index, context, x - startIndex.x, y - startIndex.y, scene.totalTime);
+                } else {
+                  object2ds[tile.pattern].drawTile(sprites, tile.index, context, x - startIndex.x, y - startIndex.y);
+                }
+              }
+            });
           }
+
+
+          // if (tile) {
+          //   if (sprites.animations.has(tile.name)) {
+          //     sprites.drawAnim(
+          //       tile.name,
+          //       context,
+          //       x - startIndex.x,
+          //       y - startIndex.y,
+          //       scene.totalTime,
+          //     );
+          //   } else {
+          //     sprites.drawTile(
+          //       tile.name,
+          //       context,
+          //       x - startIndex.x,
+          //       y - startIndex.y,
+          //     );
+          //   }
+          // }
         }
       }
     }
@@ -59,6 +74,8 @@ export function createBackgroundLayer(scene, tiles, sprites) {
       resolver.toIndex(camera.pos.y),
     );
     const drawTo = drawFrom.clone().add(drawSize);
+
+
 
     redraw(drawFrom, drawTo);
 

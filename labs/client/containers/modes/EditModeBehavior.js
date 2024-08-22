@@ -190,6 +190,7 @@ function EditModeBehavior({ children }) {
     onMoveDown: (rects) => {
       const mode = selector.mode;
       context.duplicate = isDuplicate() && !isMoveAddTilesMode();
+      context.duplicate_and_move = isMoveAddTilesMode();
 
       context.init(() => {
         if (mode === SELECT_MODE.OBJECT_2D) {
@@ -220,7 +221,7 @@ function EditModeBehavior({ children }) {
 
           context.origin.default = rects.default.origin;
 
-          if (!context.duplicate) {
+          if (!context.duplicate && !context.duplicate_and_move) {
             dispatch(cmd.tiles.delete({ rect: rects.default.origin }));
           }
         }
@@ -232,12 +233,13 @@ function EditModeBehavior({ children }) {
             dispatch(
               cmd.tiles.add({
                 merge: true,
+                uniq: true,
                 rect: selector.rect.default,
                 tilesMatrix: context.data.default,
               })
             );
           }
-        }    
+        }
       }
     },
     onMoveDownEnd: () => {

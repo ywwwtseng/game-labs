@@ -15,11 +15,17 @@ import * as tileHandlers from '@/js/tiles';
 
 function focusPlyer(scene) {
   for (const player of findPlayers(scene.entities)) {
-    scene.camera.pos.x = Math.floor(
-      player.pos.x - scene.camera.size.x / 2 + player.size.x / 2,
+    scene.camera.pos.x = Math.max(
+      0,
+      Math.floor(
+        player.pos.x - scene.camera.size.x / 2 + player.size.x / 2,
+      )
     );
-    scene.camera.pos.y = Math.floor(
-      player.pos.y - scene.camera.size.y / 2 + player.size.y / 2,
+    scene.camera.pos.y = Math.max(
+      0,
+      Math.floor(
+        player.pos.y - scene.camera.size.y / 2 + player.size.y / 2,
+      )
     );
   }
 }
@@ -45,7 +51,9 @@ export default class WorldScene extends Scene {
     );
 
     const setupWorldScene = await loadWorldScene();
-    setupWorldScene(this);
+    const { setupLand, setupEntities } = setupWorldScene(this);
+    await setupLand();
+    await setupEntities();
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     this.events.listen(WorldScene.EVENT_TRIGGER, (spec, trigger, touches) => {
@@ -61,7 +69,7 @@ export default class WorldScene extends Scene {
       this.gameContext.font,
       this,
     );
-    const dashboardLayer = createDashboardLayer(this.gameContext.font, this);
+    // const dashboardLayer = createDashboardLayer(this.gameContext.font, this);
 
     const playerEnv = createPlayerEnv(this.gameContext.player);
     this.entities.unshift(playerEnv);
@@ -70,18 +78,18 @@ export default class WorldScene extends Scene {
     this.entities.unshift(this.gameContext.player);
 
     if (debugMode) {
-      this.comp.layers.push(
-        createCollisionLayer(this),
-        createCameraLayer(this.camera),
-      );
-      setupMouseControl(
-        this.gameContext.canvas,
-        this.gameContext.player,
-        this.camera,
-      );
+      // this.comp.layers.push(
+      //   createCollisionLayer(this),
+      //   createCameraLayer(this.camera),
+      // );
+      // setupMouseControl(
+      //   this.gameContext.canvas,
+      //   this.gameContext.player,
+      //   this.camera,
+      // );
     }
 
-    this.comp.layers.push(dashboardLayer);
+    // this.comp.layers.push(dashboardLayer);
   }
 
   draw(gameContext) {

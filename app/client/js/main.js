@@ -29,10 +29,7 @@ async function main(canvas) {
 
   const player = makePlayer(entityFactory.role(), 'PLAYER');
 
-  const inputRouter =
-    !debugMode && 'ontouchstart' in window
-      ? setupJoystick(window)
-      : setupKeyboard(window);
+  const inputRouter = debugMode ? setupKeyboard(window) : setupJoystick(window);
 
   inputRouter.addReceiver(player);
 
@@ -56,10 +53,10 @@ async function main(canvas) {
   const sceneManager = new SceneManager(gameContext);
 
   async function runScene(name) {
-    await sceneManager.loadScene('loading', LoadingScene, {
-      text: `Loading ${name}`,
-    });
-    sceneManager.runScene('loading');
+    // await sceneManager.loadScene('loading', LoadingScene, {
+    //   text: `Loading ${name}`,
+    // });
+    // sceneManager.runScene('loading');
     await sceneManager.loadScene(name, WorldScene);
     sceneManager.runScene(name);
   }
@@ -78,27 +75,29 @@ async function main(canvas) {
 
 const canvas = document.getElementById('screen');
 
-const start = (event) => {
+const start = () => {
   main(canvas);
   canvas.width = Dimensions.get('canvas').width;
   canvas.height = Dimensions.get('canvas').height;
-  event.target.remove();
+  // event.target.remove();
 };
 
-const button = document.createElement('button');
-button.innerText = 'START';
-button.style.position = 'fixed';
-button.style.width = '100px';
-button.style.height = '40px';
-button.style.top = '0px';
-button.style.bottom = '0px';
-button.style.right = '0px';
-button.style.left = '0px';
-button.style.margin = 'auto';
-button.style.backgroundColor = 'black';
-button.style.color = 'white';
-document.body.appendChild(button);
-button.addEventListener('click', start);
+start();
+
+// const button = document.createElement('button');
+// button.innerText = 'START';
+// button.style.position = 'fixed';
+// button.style.width = '100px';
+// button.style.height = '40px';
+// button.style.top = '0px';
+// button.style.bottom = '0px';
+// button.style.right = '0px';
+// button.style.left = '0px';
+// button.style.margin = 'auto';
+// button.style.backgroundColor = 'black';
+// button.style.color = 'white';
+// document.body.appendChild(button);
+// button.addEventListener('click', start);
 
 window.addEventListener('resize', (event) => {
   canvas.width = Dimensions.get('canvas').width;

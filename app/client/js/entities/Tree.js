@@ -1,13 +1,13 @@
 import Entity from '@/engine/Entity';
 import Trait from '@/engine/Trait';
-import { loadSpriteSheet } from '@/engine/loaders/sprite';
+import { loadObject2D } from '@/engine/loaders/object2d';
 import { DIRECTION } from '@/engine/constants';
 
 import Physics from '@/js/traits/Physics';
 import Solid from '@/js/traits/Solid';
 
 export function loadTree() {
-  return loadSpriteSheet('game-tiles').then(createTreeFactory);
+  return loadObject2D('game-tiles').then(createTreeFactory);
 }
 
 class Behavior extends Trait {}

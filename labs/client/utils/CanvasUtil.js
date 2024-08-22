@@ -570,7 +570,6 @@ class CanvasUtil {
   }
 
   static exportLand({ land, spriteSheets, object2ds }) {
-    console.log(land, spriteSheets, object2ds )
     const layers = CanvasUtil.createSpriteLayers({ land, spriteSheets });
     const object2DBuffers = CanvasUtil.createObject2DBuffers({ land, spriteSheets, object2ds });
 

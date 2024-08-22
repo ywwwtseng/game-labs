@@ -105,13 +105,13 @@ class MatrixUtil {
       return MatrixUtil._createBySizeIndex(
         T,
         callback,
-        (offset = { x: 0, y: 0 }),
+        { x: 0, y: 0 },
       );
     } else if (T.length === 4) {
       return MatrixUtil._createBySizeIndex(
         [T[2], T[3]],
         callback,
-        (offset = { x: T[0], y: T[1] }),
+        { x: T[0], y: T[1] },
       );
     }
   }
