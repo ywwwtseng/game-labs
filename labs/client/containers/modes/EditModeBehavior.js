@@ -36,6 +36,8 @@ import {
   S_KEY,
   X_KEY,
   Z_KEY,
+  META_KEY,
+  MEAT_SHIFT_KEY,
 } from '@/hooks/useKeyBoard';
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { useQuery } from '@/hooks/useQuery';
@@ -121,14 +123,13 @@ function EditModeBehavior({ children }) {
 
         dispatch(cmd.tiles.flat({ rect }));
       },
-      [Z_KEY]: (event) => {
-        if (event.metaKey && event.shiftKey) {
-          EventUtil.stop(event);
-          dispatch(cmd.redo());
-        } else if (event.metaKey) {
-          EventUtil.stop(event);
-          dispatch(cmd.undo());
-        }
+      [META_KEY.with(Z_KEY)]: (event) => {
+        EventUtil.stop(event);
+        dispatch(cmd.undo());
+      },
+      [MEAT_SHIFT_KEY.with(Z_KEY)]: (event) => {
+        EventUtil.stop(event);
+        dispatch(cmd.redo());
       },
       [ARROW_LEFT_KEY]: (event) => {},
       [ARROW_RIGHT_KEY]: (event) => {},

@@ -24,12 +24,18 @@ export const X_KEY = 'KeyX';
 export const Z_KEY = 'KeyZ';
 export const META_KEY = {
   code: 'metaKey',
-  isMetaKey(code) {
-    return code === 'MetaLeft' || code === 'MetaRight';
+  isMetaKey(event) {
+    return event.code === 'MetaLeft' || event.code === 'MetaRight';
   },
   with(code) {
     return `${this.code}.${code}`;
   },
+};
+export const MEAT_SHIFT_KEY = {
+  code: 'metaKey.shiftKey',
+  with(code) {
+    return `${this.code}.${code}`;
+  }
 };
 
 function useKeyBoard(inputMapping, dependency = []) {
@@ -49,26 +55,24 @@ function useKeyBoard(inputMapping, dependency = []) {
 
       const keyState = event.type === 'keydown' ? PRESSED : RELEASED;
 
-      if (keyStatesRef.current[code] === keyState) {
+      let key = code;
+
+      if (event.metaKey && event.shiftKey) {
+        key = MEAT_SHIFT_KEY.with(code);
+      } else if (event.metaKey) {
+        key = META_KEY.with(code);
+      }
+
+
+      if (keyStatesRef.current[key] === keyState) {
         return;
       }
 
-      if (event.metaKey) {
-        if (keyStatesRef.current[META_KEY.with(code)] === keyState) {
-          return;
-        }
-      }
-
       if (keyState === PRESSED) {
-        if (event.metaKey) {
-          keyStatesRef.current[META_KEY.with(code)] = keyState;
-          inputRef.current?.[META_KEY.with(code)]?.(event);
-        } else {
-          keyStatesRef.current[code] = keyState;
-          inputRef.current?.[code]?.(event);
-        }
+        keyStatesRef.current[key] = keyState;
+        inputRef.current?.[key]?.(event);
       } else {
-        if (META_KEY.isMetaKey(code)) {
+        if (META_KEY.isMetaKey(event)) {
           Object.keys(keyStatesRef.current).filter((key) => key.includes(META_KEY.code)).forEach((key) => {
             delete keyStatesRef.current[key];
           });

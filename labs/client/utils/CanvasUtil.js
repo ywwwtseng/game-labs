@@ -587,6 +587,10 @@ class CanvasUtil {
   static same(any1, any2) {
     return any1.every((item, index) => item === any2[index]);
   }
+
+  static sameTile(tile1, tile2) {
+    return tile1.source === tile2.source && Vec2Util.same(tile1.index, tile2.index);
+  }
 }
 
 export { CanvasUtil };

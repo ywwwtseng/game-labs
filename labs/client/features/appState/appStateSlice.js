@@ -4,6 +4,7 @@ import { CanvasUtil } from '@/utils/CanvasUtil';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { MODE } from '@/constants';
 import { selectedCamera } from '@/features/camera/cameraSlice';
+import { Vec2Util } from '@/utils/Vec2Util';
 
 export const setMode = createAsyncThunk(
   'appState/setMode',
@@ -278,9 +279,9 @@ export const appStateSlice = createSlice({
             state.land.layers[layerIndex].tiles[index.x][index.y] = [];
           }
 
-          const sources = state.land.layers[layerIndex].tiles[index.x][index.y].map(({ source }) => source);
+          const existedTiles = state.land.layers[layerIndex].tiles[index.x][index.y];
           state.land.layers[layerIndex].tiles[index.x][index.y].push(
-            ...tileItems.filter((tile) => !sources.includes(tile.source))
+            ...tileItems.filter((tile) => !existedTiles.find((existedTile) => CanvasUtil.sameTile(existedTile, tile)))
           );
         }
       });
