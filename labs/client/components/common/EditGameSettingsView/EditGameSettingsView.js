@@ -35,6 +35,7 @@ function EditGameSettingsView() {
         actions: () => [
           <FileInput
             key="create-spritesheet"
+            filetypes={['image/png']}
             onChange={async (file) => {
               const image = await LoaderUtil.readFile(file).then(LoaderUtil.loadImage);
               const sizeIndex = ImageUtil.getSizeIndex(image);

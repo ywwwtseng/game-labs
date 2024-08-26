@@ -1,4 +1,4 @@
-function FileInput({ children, onChange }) {
+function FileInput({ children, filetypes = [], onChange }) {
   const handleFileChange = async (event) => {
     await onChange(event.target.files[0]);
     event.target.value = '';
@@ -9,7 +9,16 @@ function FileInput({ children, onChange }) {
     event.stopPropagation();
 
     const files = event.dataTransfer.files;
-    if (files.length === 0) return;
+    if (files.length === 0) {
+      return;
+    }
+
+    const file = files[0];
+
+    if (filetypes.length > 0 && !filetypes.includes(file.type)) {
+      return;
+    }
+
     await onChange(files[0]);
   };
 
@@ -29,6 +38,7 @@ function FileInput({ children, onChange }) {
         <input
           id="dropzone-file"
           type="file"
+          accept={filetypes.join(", ")}
           className="hidden"
           onChange={handleFileChange}
         />
