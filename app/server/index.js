@@ -1,4 +1,5 @@
 const WebSocket = require('ws');
+const systemUsage = require('./utils/system_usage');
 
 // 創建 WebSocket 伺服器
 const wss = new WebSocket.Server({ port: 8080 });
@@ -12,9 +13,13 @@ wss.on('connection', (ws) => {
   const sendData = () => {
     if (ws.readyState === WebSocket.OPEN) {
       const data = {
-        event: 'timestamp',
-        data: Date.now(),
+        event: 'system',
+        data: {
+          timestamp: Date.now(),
+          usage: systemUsage.usage(),
+        },
       };
+
       ws.send(JSON.stringify(data));
       setTimeout(sendData, tickRate);
     }

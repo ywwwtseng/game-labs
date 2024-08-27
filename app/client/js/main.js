@@ -46,8 +46,9 @@ async function main(canvas) {
 
   const ws = new SocketClient();
 
-  ws.listen('timestamp', (data) => {
-    gameContext.timestamp = data;
+  ws.listen('system', (data) => {
+    console.log(data)
+    gameContext.timestamp = data.timestamp;
   });
 
   const sceneManager = new SceneManager(gameContext);
