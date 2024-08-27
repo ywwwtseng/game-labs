@@ -12,17 +12,10 @@ import { Object2DList } from '@/components/common/EditGameSettingsView/Object2DL
 import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useDropdownState } from '@/hooks/useDropdownState';
-import { LoaderUtil } from '@/utils/LoaderUtil';
-import { ImageUtil } from '@/utils/ImageUtil';
-import { MatrixUtil } from '@/utils/MatrixUtil';
-import { CanvasUtil } from '@/utils/CanvasUtil';
-import { useMutation } from '@/hooks/useMutation';
-import { sql } from '@/sql';
+import { CreateSpriteSheetInput } from '@/components/common/CreateSpriteSheetInput';
 
 function EditGameSettingsView() {
   const spriteSheets = useSpriteSheets();
-  const createSprite = useMutation(sql.sprites.create);
-
   const [selected, setSelected] = useLocalStorage('selected:spritesheet_or_object2d');
 
   const { selectedOption, register } = useDropdownState({
@@ -33,40 +26,9 @@ function EditGameSettingsView() {
         id: 'spritesheets',
         label: 'SpriteSheets',
         actions: () => [
-          <FileInput
-            key="create-spritesheet"
-            filetypes={['image/png']}
-            onChange={async (file) => {
-              const image = await LoaderUtil.readFile(file).then(LoaderUtil.loadImage);
-              const sizeIndex = ImageUtil.getSizeIndex(image);
-          
-              const transparent = [];
-          
-              MatrixUtil.traverse(sizeIndex, ({ x, y }) => {
-                const buffer = CanvasUtil.createBufferBySource(
-                  image,
-                  x * 16,
-                  y * 16,
-                  16,
-                  16,
-                );
-                if (buffer.toDataURL() === CanvasUtil.transparent) {
-                  transparent.push(`${x}.${y}`);
-                }
-              });
-          
-              const formData = new FormData();
-              formData.append('image', file);
-              formData.append('data.sprite.id', 'relate(file)');
-              formData.append('data.sprite.name', file.name.replace('.png', ''));
-              formData.append('data.sprite.transparent', transparent);
-          
-              createSprite.mutate({
-                formData
-              });
-            }}>
+          <CreateSpriteSheetInput key="create-spritesheet-input">
             <CirclePlusIcon />
-          </FileInput>,
+          </CreateSpriteSheetInput>,
         ],
         list: () => (
           <div className="flex-1 overflow-y-scroll no-scrollbar">

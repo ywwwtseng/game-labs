@@ -1,12 +1,14 @@
-function FileInput({ children, filetypes = [], onChange }) {
+import { EventUtil } from "@/utils/EventUtil";
+
+function FileInput({ children, filetypes = [], className, onChange }) {
   const handleFileChange = async (event) => {
     await onChange(event.target.files[0]);
     event.target.value = '';
   };
 
   const handleDrop = async (event) => {
-    event.preventDefault();
-    event.stopPropagation();
+    EventUtil.stop(event);
+
 
     const files = event.dataTransfer.files;
     if (files.length === 0) {
@@ -19,7 +21,7 @@ function FileInput({ children, filetypes = [], onChange }) {
       return;
     }
 
-    await onChange(files[0]);
+    await onChange(files[0]);    
   };
 
   const handleDragOver = (event) => {
@@ -29,18 +31,20 @@ function FileInput({ children, filetypes = [], onChange }) {
 
   return (
     <div
-      className="flex items-center justify-center"
+      className={className}
+      onClick={EventUtil.stopPropagation}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
-      <label htmlFor="dropzone-file">
+      <label>
         {children}
         <input
-          id="dropzone-file"
           type="file"
           accept={filetypes.join(", ")}
           className="hidden"
           onChange={handleFileChange}
+          onFocus={console.log}
+          onBlur={console.log}
         />
       </label>
     </div>

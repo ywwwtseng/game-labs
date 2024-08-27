@@ -46,8 +46,8 @@ function BaseDropdown({ label, icon, open, options, menuProps = {}, triggerProps
             menuProps.className,
           )}
         >
-          {options.map((option) => (
-            <BaseDropdownItem key={option.label} option={option} />
+          {options.map((option, index) => (
+            <BaseDropdownItem key={`${option.type}-${index}`} option={option} />
           ))}
         </div>
       )}

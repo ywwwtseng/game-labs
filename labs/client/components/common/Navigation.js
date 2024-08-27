@@ -4,6 +4,7 @@ import { Text } from '@/components/ui/Text';
 import { BaseDropdown } from '@/components/ui/Dropdown/BaseDropdown';
 import { CreateLandModal } from '@/components/common/CreateLandModal';
 import { GamePreviewModal } from '@/components/common/GamePreviewModal';
+import { CreateSpriteSheetInput } from '@/components/common/CreateSpriteSheetInput';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { selectedLand } from '@/features/appState/appStateSlice';
@@ -26,35 +27,39 @@ function Navigation() {
 
   const dropdowns = [
     {
-      id: 'file',
-      label: 'File',
-      options: [
-        {
-          type: 'option',
-          label: 'New Land',
-          onClick: () => {
-            openCreateLandModal();
-          },
-        },
-        {
-          type: 'option',
-          label: 'Export PNG File',
-          onClick: () => {
-            CanvasUtil.exportLand({ land, spriteSheets, object2ds });
-          },
-        },
-      ],
-    },
-    {
       id: 'game',
       label: 'Game',
       options: [
         {
           type: 'option',
-          label: 'Game Review',
+          label: 'New Land',
+          onClick: openCreateLandModal,
+        },
+        {
+          type: 'option',
+          label: (
+            <CreateSpriteSheetInput className="w-full h-full">
+              <Text className="w-full">New SpriteSheet</Text>
+            </CreateSpriteSheetInput>
+          ),
+        },
+        {
+          type: 'divide',
+        },
+        {
+          type: 'option',
+          label: 'Export Land As PNG File',
           onClick: () => {
-            openGamePreviewModal();
+            CanvasUtil.exportLand({ land, spriteSheets, object2ds });
           },
+        },
+        {
+          type: 'divide',
+        },
+        {
+          type: 'option',
+          label: 'Game Review',
+          onClick: openGamePreviewModal,
         },
       ],
     },
@@ -64,7 +69,7 @@ function Navigation() {
       options: [
         {
           type: 'option',
-          label: 'Genesis Help',
+          label: 'Echoes of Infinity Help',
         },
       ],
     },

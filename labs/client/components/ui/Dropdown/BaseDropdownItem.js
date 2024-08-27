@@ -9,9 +9,6 @@ function BaseDropdownItem({ option }) {
       role="menuitem"
       tabIndex="-1"
       onClick={(event) => {
-        // event.preventDefault();
-        // event.stopPropagation();
-
         if (option.onClick) {
           option.onClick(event, option.id);
         }
