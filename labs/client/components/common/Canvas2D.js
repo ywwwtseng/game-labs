@@ -25,7 +25,6 @@ function Canvas2D({
   ...props
 }) {
   const ref = useRef(null);
-  const padding = 1;
 
   useEffect(() => {
     const ctx = ref.current.getContext('2d');

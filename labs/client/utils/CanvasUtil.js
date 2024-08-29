@@ -55,6 +55,14 @@ class CanvasUtil {
     return [indexX, indexY];
   }
 
+  static cameraToRect(camera) {
+    return [
+      ...CanvasUtil.positionToIndex(camera.pos),
+      Math.ceil(camera.size.x / 16) + 1,
+      Math.ceil(camera.size.y / 16) + 1,
+    ];
+  }
+
   static indexToPosition(index) {
     return {
       x: index[0] * 16,
@@ -174,14 +182,29 @@ class CanvasUtil {
     return buffer;
   }
 
+  static traverseTilesWithRect(tiles, rect, callback) {
+    if (!rect) {
+      MatrixUtil.traverse(tiles, callback);
+    } else {
+      MatrixUtil.traverse(rect, (_, { x, y }) => {
+        const value = tiles?.[x]?.[y];
+
+        if (value) {
+          callback({ value, x, y });
+        }
+
+      });
+    }
+  }
+
   static drawBufferOnCanvas(ctx, buffer, x, y, camera, globalAlpha = 1) {
     ctx.globalAlpha = globalAlpha;
     ctx.drawImage(buffer, 0, 0, 16, 16, x * 16 - (camera?.pos?.x || 0), y * 16 - (camera?.pos?.y || 0), 16, 16);
     ctx.globalAlpha = 1;
   }
 
-  static drawTilesOnCanvas({ ctx, tiles, camera, offset = { x: 0, y: 0 }, globalAlpha = 1 }) {
-    MatrixUtil.traverse(tiles, ({ value, x, y }) => {
+  static drawTilesOnCanvas({ ctx, tiles, rect, camera, offset = { x: 0, y: 0 }, globalAlpha = 1 }) {
+    CanvasUtil.traverseTilesWithRect(tiles, rect, ({ value, x, y }) => {
       if (value?.buffer) {
         CanvasUtil.drawBufferOnCanvas(
           ctx,
@@ -243,7 +266,13 @@ class CanvasUtil {
   ) {
     return CanvasUtil.createBuffer(width, height, (ctx) => {
       layers.forEach((layer) => {
-        CanvasUtil.drawTilesOnCanvas({ ctx, tiles: layer.tiles, camera, globalAlpha: 1 });        
+        CanvasUtil.drawTilesOnCanvas({
+          ctx,
+          tiles: layer.tiles,
+          camera, 
+          rect: CanvasUtil.cameraToRect(camera),
+          globalAlpha: 1
+        });        
       });
     });
   }
