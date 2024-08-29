@@ -10,13 +10,13 @@ function Object2DReview({ object2d, tiles, draggable = false, className }) {
   const spriteSheets = useSpriteSheets();
   const ref = useRef(null);
 
-  const sizeIndex = useMemo(() => {
-    return MatrixUtil.sizeIndex(tiles);
+  const sizeCount = useMemo(() => {
+    return MatrixUtil.sizeCount(tiles);
   }, [tiles]);
 
   const size = {
-    x: sizeIndex[0] > sizeIndex[1] ? 64 : (64 * sizeIndex[0]) / sizeIndex[1],
-    y: sizeIndex[1] > sizeIndex[0] ? 64 : (64 * sizeIndex[1]) / sizeIndex[0],
+    x: sizeCount[0] > sizeCount[1] ? 64 : (64 * sizeCount[0]) / sizeCount[1],
+    y: sizeCount[1] > sizeCount[0] ? 64 : (64 * sizeCount[1]) / sizeCount[0],
   };
 
   const layers = useMemo(() => {
@@ -40,12 +40,12 @@ function Object2DReview({ object2d, tiles, draggable = false, className }) {
         camera: {
           pos: {x: 0, y: 0},
           size: {
-            x: sizeIndex[0] * 16,
-            y: sizeIndex[1] * 16,
+            x: sizeCount[0] * 16,
+            y: sizeCount[1] * 16,
           },
         },
       }).buffer,
-    [layers, sizeIndex],
+    [layers, sizeCount],
   );
 
   const canDrop = useCallback(({ iconEl }) => {
@@ -76,8 +76,8 @@ function Object2DReview({ object2d, tiles, draggable = false, className }) {
         icon={{
           display: () => {
             const canvas = document.createElement('canvas');
-            canvas.width = sizeIndex[0] * 16;
-            canvas.height = sizeIndex[1] * 16;
+            canvas.width = sizeCount[0] * 16;
+            canvas.height = sizeCount[1] * 16;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(buffer, 0, 0, canvas.width, canvas.height);
             return canvas;

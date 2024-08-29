@@ -5,7 +5,7 @@ class Object2DUtil {
     return object.id && object.id.includes('object2d');
   }
   static getRect(object) {
-    return [0, 0, ...MatrixUtil.sizeIndex(Object2DUtil.tiles(object))];
+    return [0, 0, ...MatrixUtil.sizeCount(Object2DUtil.tiles(object))];
   }
 
   static hasAnimation(object) {

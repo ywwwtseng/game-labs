@@ -8,7 +8,7 @@ class ImageUtil {
       height,
     };
   }
-  static getSizeIndex(image) {
+  static getSizeCount(image) {
     const size = ImageUtil.getSize(image);
 
     return [Math.ceil(size.width / 16), Math.ceil(size.height / 16)];

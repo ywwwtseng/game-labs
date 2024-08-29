@@ -15,11 +15,11 @@ function CreateSpriteSheetInput({ className, children }) {
       filetypes={['image/png']}
       onChange={async (file) => {
         const image = await LoaderUtil.readFile(file).then(LoaderUtil.loadImage);
-        const sizeIndex = ImageUtil.getSizeIndex(image);
+        const sizeCount = ImageUtil.getSizeCount(image);
     
         const transparent = [];
     
-        MatrixUtil.traverse(sizeIndex, ({ x, y }) => {
+        MatrixUtil.traverse(sizeCount, ({ x, y }) => {
           const buffer = CanvasUtil.createBufferBySource(
             image,
             x * 16,

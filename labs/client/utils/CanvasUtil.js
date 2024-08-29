@@ -221,7 +221,7 @@ class CanvasUtil {
 
     return land.layers.map((layer) => {
       return {
-        tiles: MatrixUtil.map(layer.tiles, (tileItems) => {
+        tiles: MatrixUtil.map(layer.tiles, ({ value: tileItems }) => {
           return tileItems.map((tile) => {
             if (tile.source && tile.index) {
               const { source, index } = tile;
@@ -495,7 +495,7 @@ class CanvasUtil {
   }
 
   static getObject2DRect(object2d) {
-    return [0, 0, ...MatrixUtil.sizeIndex(object2d.tiles || object2d.frames[0])];
+    return [0, 0, ...MatrixUtil.sizeCount(object2d.tiles || object2d.frames[0])];
   }
 
   static createFollowCursor({ event, rect, groupRect, canvas }) {

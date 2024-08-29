@@ -5,7 +5,7 @@ class MatrixUtil {
     return Array.isArray(matrix) && Array.isArray(matrix.filter(Boolean)[0]);
   }
 
-  static sizeIndex(T) {
+  static sizeCount(T) {
     if (MatrixUtil.isMatrix(T)) {
       const matrix = T;
       return [matrix.length, matrix[0].length];
@@ -37,7 +37,7 @@ class MatrixUtil {
     } else if (MatrixUtil.isMatrix(T)) {
       return MatrixUtil._mapByMatrix(T, callback);
     } else if (T.length === 2) {
-      return MatrixUtil._mapBySizeIndex(T, callback);
+      return MatrixUtil._mapBySizeCount(T, callback);
     }
   }
 
@@ -45,14 +45,14 @@ class MatrixUtil {
     return matrix.map((column, x) => {
       return column.map((value, y) => {
         if (value) {
-          return callback(value, x, y);
+          return callback({value, x, y});
         }
       });
     });
   }
 
-  static _mapBySizeIndex(size, callback) {
-    return ArrayUtil.range(size[1]).map((y) => ArrayUtil.range(size[0]).map((x) => callback(x, y)));
+  static _mapBySizeCount(size, callback) {
+    return ArrayUtil.range(size[1]).map((y) => ArrayUtil.range(size[0]).map((x) => callback({x, y})));
   }
 
   static traverse(T, callback) {
@@ -61,7 +61,7 @@ class MatrixUtil {
     } else if (T.length === 4) {
       MatrixUtil._traverseRect(T, callback);
     } else if (T.length === 2) {
-      MatrixUtil._traverseBySizeIndex(T, callback);
+      MatrixUtil._traverseBySizeCount(T, callback);
     }
   }
 
@@ -75,9 +75,9 @@ class MatrixUtil {
     });
   }
 
-  static _traverseBySizeIndex(sizeIndex, callback) {
-    ArrayUtil.range(sizeIndex[1]).forEach((y) =>
-      ArrayUtil.range(sizeIndex[0]).forEach((x) => callback({ x, y })),
+  static _traverseBySizeCount(sizeCount, callback) {
+    ArrayUtil.range(sizeCount[1]).forEach((y) =>
+      ArrayUtil.range(sizeCount[0]).forEach((x) => callback({ x, y })),
     );
   }
 
@@ -91,7 +91,7 @@ class MatrixUtil {
 
   static create(T, callback, offset) {
     if (MatrixUtil.isMatrix(T)) {
-      const rect = [0, 0, ...MatrixUtil.sizeIndex(T)];
+      const rect = [0, 0, ...MatrixUtil.sizeCount(T)];
       return MatrixUtil.create(
         rect,
         ({ x, y }) => {
@@ -102,13 +102,13 @@ class MatrixUtil {
       );
     }
     if (T.length === 2) {
-      return MatrixUtil._createBySizeIndex(
+      return MatrixUtil._createBySizeCount(
         T,
         callback,
         { x: 0, y: 0 },
       );
     } else if (T.length === 4) {
-      return MatrixUtil._createBySizeIndex(
+      return MatrixUtil._createBySizeCount(
         [T[2], T[3]],
         callback,
         { x: T[0], y: T[1] },
@@ -116,9 +116,9 @@ class MatrixUtil {
     }
   }
 
-  static _createBySizeIndex(sizeIndex, callback, offset = { x: 0, y: 0 }) {
+  static _createBySizeCount(sizeCount, callback, offset = { x: 0, y: 0 }) {
     const matrix = [];
-    MatrixUtil.traverse(sizeIndex, ({ x, y }) => {
+    MatrixUtil.traverse(sizeCount, ({ x, y }) => {
       if (!matrix[x]) {
         matrix[x] = [];
       }

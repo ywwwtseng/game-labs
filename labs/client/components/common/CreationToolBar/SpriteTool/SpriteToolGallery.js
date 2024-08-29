@@ -11,8 +11,8 @@ function SpriteToolGallery({ selectedSource, spriteSheets, onClick }) {
       style={
         selectedSource
           ? {
-              width: `${spriteSheets[selectedSource].sizeIndex[0] * 16 + 1 + 32}px`,
-              maxWidth: `${spriteSheets[selectedSource].sizeIndex[0] * 16 + 1 + 32}px`,
+              width: `${spriteSheets[selectedSource].sizeCount[0] * 16 + 1 + 32}px`,
+              maxWidth: `${spriteSheets[selectedSource].sizeCount[0] * 16 + 1 + 32}px`,
             }
           : {}
       }
