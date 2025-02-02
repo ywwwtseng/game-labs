@@ -1,7 +1,7 @@
 {
-  "name": "Echoes of Infinity",
-  "short_name": "Echoes of Infinity",
-  "description": "Echoes of Infinity",
+  "name": "Game Labs",
+  "short_name": "Game Labs",
+  "description": "Game Labs",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

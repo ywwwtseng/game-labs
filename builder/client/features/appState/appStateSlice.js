@@ -241,7 +241,7 @@ export const deleteSelectedElements = createAsyncThunk(
 
 const initialState = {
   mode: MODE.EDIT,
-  selectedLandId: localStorage.getItem('echoes-of-infinity:selected-land-id'),
+  selectedLandId: localStorage.getItem('game-labs:selected-land-id'),
   land: undefined
 };
 
@@ -254,7 +254,7 @@ export const appStateSlice = createSlice({
         state.land = undefined;
       }
 
-      localStorage.setItem('echoes-of-infinity:selected-land-id', action.payload || '');
+      localStorage.setItem('game-labs:selected-land-id', action.payload || '');
       state.selectedLandId = action.payload;
     },
     setLand: (state, action) => {

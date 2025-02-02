@@ -69,7 +69,7 @@ function Navigation() {
       options: [
         {
           type: 'option',
-          label: 'Echoes of Infinity Help',
+          label: 'Game Labs Help',
         },
       ],
     },
@@ -124,7 +124,7 @@ function Navigation() {
         <div className="flex items-center h-full space-x-3 mr-4 rtl:space-x-reverse">
           <img src={logo} draggable="false" alt="logo" />
           <Text weight="medium" size="xs" color="white">
-            Echoes of Infinity
+            Game Labs
           </Text>
         </div>
 
