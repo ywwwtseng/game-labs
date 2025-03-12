@@ -9,7 +9,7 @@ import { OperableItem } from '@/components/common/OperableItem';
 import { BaseDropdown } from '@/components/ui/Dropdown/BaseDropdown';
 import { SpriteSheetTileList } from '@/components/common/EditGameSettingsView/SpriteSheetTileList/SpriteSheetTileList';
 import { Object2DList } from '@/components/common/EditGameSettingsView/Object2DList/Object2DList';
-import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useDropdownState } from '@/hooks/useDropdownState';
 import { CreateSpriteSheetInput } from '@/components/common/CreateSpriteSheetInput';

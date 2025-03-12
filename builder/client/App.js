@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux';
-import { SpriteSheetProvider } from '@/features/appState/SpriteSheetContext';
+import { SpriteSheetProvider } from '@/context/SpriteSheetContext';
 import { DragAndDropProvider } from '@/context/DragAndDropContext';
 import { ModalProvider } from '@/context/ModalContext';
 import { WindowSizeProvider } from '@/context/WindowSizeContext';

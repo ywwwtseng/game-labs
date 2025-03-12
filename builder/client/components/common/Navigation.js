@@ -9,7 +9,7 @@ import { CanvasUtil } from '@/utils/CanvasUtil';
 import { getBoundingBox } from '@/helpers/BoundingBox';
 import { selectedLand } from '@/features/appState/appStateSlice';
 import { useModal } from '@/context/ModalContext';
-import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 import logo from '@/icon.png';

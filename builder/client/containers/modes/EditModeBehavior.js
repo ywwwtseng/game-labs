@@ -39,7 +39,7 @@ import {
   META_KEY,
   MEAT_SHIFT_KEY,
 } from '@/hooks/useKeyBoard';
-import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 import { useModal } from '@/context/ModalContext';

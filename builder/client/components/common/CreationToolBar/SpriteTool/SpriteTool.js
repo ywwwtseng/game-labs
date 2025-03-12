@@ -6,7 +6,7 @@ import { Text } from '@/components/ui/Text';
 import { CloseIcon } from '@/components/icon/CloseIcon';
 import { SpriteSheetIcon } from '@/components/icon/SpriteSheetIcon';
 import { SpriteToolGallery } from '@/components/common/CreationToolBar/SpriteTool/SpriteToolGallery';
-import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { AngleRightIcon } from '@/components/icon/AngleRightIcon';
 
 function SpriteTool({ origin, onClose }) {

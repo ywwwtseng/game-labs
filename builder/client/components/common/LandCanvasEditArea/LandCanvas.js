@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { Canvas2D, CANVAS_LAYER } from '@/components/common/Canvas2D';
-import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { CanvasUtil } from '@/utils/CanvasUtil';
 import { useCamera, useCameraResizeObserver } from '@/hooks/useCamera';
 import { useQuery } from '@/hooks/useQuery';

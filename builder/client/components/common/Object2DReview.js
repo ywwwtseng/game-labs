@@ -4,7 +4,7 @@ import { Draggable } from '@/containers/Draggable';
 import { CANVAS_LAYER } from '@/components/common/Canvas2D';
 import { MatrixUtil } from '@/utils/MatrixUtil';
 import { contain, overlaps } from '@/helpers/BoundingBox';
-import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 
 function Object2DReview({ object2d, tiles, draggable = false, className }) {
   const spriteSheets = useSpriteSheets();

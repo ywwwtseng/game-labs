@@ -3,7 +3,7 @@ import { BoxIcon } from '@/components/icon/BoxIcon';
 import { CreationToolBarToggle } from '@/components/common/CreationToolBar/CreationToolBarToggle';
 import { SpriteTool } from '@/components/common/CreationToolBar/SpriteTool/SpriteTool';
 import { Object2DTool } from '@/components/common/CreationToolBar/Object2DTool/Object2DTool';
-import { useSpriteSheets } from '@/features/appState/SpriteSheetContext';
+import { useSpriteSheets } from '@/context/SpriteSheetContext';
 import { useQuery } from '@/hooks/useQuery';
 import { sql } from '@/sql';
 
